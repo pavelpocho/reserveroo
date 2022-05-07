@@ -5,10 +5,11 @@
   "license": "",
   "sideEffects": false,
   "scripts": {
-    "build": "npm run clean && cross-env NODE_ENV=production netlify build",
-    "dev": "npm run clean && cross-env NODE_ENV=development netlify dev",
+    "build": "npm run generate-prisma && npm run clean && cross-env NODE_ENV=production netlify build",
+    "dev": "npm run generate-prisma && npm run clean && cross-env NODE_ENV=development netlify dev",
     "start": "cross-env NODE_ENV=production netlify dev",
     "clean": "node clean.js",
+    "generate-prisma": "prisma generate",
     "migrate-prisma": "prisma migrate dev && prisma db seed",
     "deploy": "npm run build && netlify deploy"
   },

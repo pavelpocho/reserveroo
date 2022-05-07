@@ -1,5 +1,5 @@
 [build]
-  command = "remix build"
+  command = "npm run generate-prisma && npm run clean && cross-env NODE_ENV=production netlify build"
   publish = "public"
 
 [dev]
