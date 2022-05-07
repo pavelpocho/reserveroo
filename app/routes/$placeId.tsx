@@ -10,7 +10,7 @@ import { styles } from "~/constants/styles";
 import { getPlace, Place } from "~/models/place.server";
 
 export const loader: LoaderFunction = async ({ params }) => {
-  return getPlace({ id: parseInt(params.placeId ?? '') })
+  return getPlace({ id: params.placeId ?? '' })
 }
 
 const Banner = styled.div`

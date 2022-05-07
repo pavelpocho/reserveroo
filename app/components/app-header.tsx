@@ -1,9 +1,8 @@
-import { Link } from "@remix-run/react";
-import { LinksFunction } from "@remix-run/react/routeModules"
+import { Form, useLoaderData } from "@remix-run/react";
+import { ActionFunction } from "@remix-run/server-runtime";
 import styled from 'styled-components';
 import { styles } from "~/constants/styles";
 import { UnstyledLink } from "~/root";
-import { Button } from "./button";
 
 const Wrap = styled.header`
   background-color: ${styles.colors.primary};
@@ -30,9 +29,26 @@ const MenuItem = styled.p`
   }
 `;
 
-export const AppHeader: React.FC = ({ children }) => {
+interface AppHeaderProps {
+  children: React.ReactNode;
+  userId: string | null;
+}
+
+export default function AppHeader({ children, userId }: AppHeaderProps) {
+
   return <Wrap>
     <UnstyledLink to='/'><Title>{children}</Title></UnstyledLink>
     <UnstyledLink to='/about'><MenuItem>About us</MenuItem></UnstyledLink>
+    { !userId && <>
+      <UnstyledLink to='/authenticate/login'><MenuItem>Sign In</MenuItem></UnstyledLink>
+      <UnstyledLink to='/authenticate/register'><MenuItem>Create Account</MenuItem></UnstyledLink>
+    </> }
+    { userId && <>
+      <Form action='/logout' method='post'>
+        <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
+        <input type='submit' />
+      </Form>
+    </>}
+    <p>{userId ?? 'No user id'}</p>
   </Wrap>
 }

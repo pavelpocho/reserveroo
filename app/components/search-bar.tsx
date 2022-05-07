@@ -3,7 +3,7 @@ import { Form, useSubmit } from "@remix-run/react";
 import styled from "styled-components"
 import SearchIcon from "~/assets/icons/Search";
 import { styles } from "~/constants/styles";
-import { useLangs } from "~/contexts/translationContext";
+import { useLangs } from "~/contexts/langsContext";
 
 interface SearchBarProps {
   defaultValue?: string

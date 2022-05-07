@@ -17,8 +17,8 @@ function deleteFolderRecursive(path) {
   }
 };
 
-console.log("Cleaning working tree...");
+console.log("Cleaning build destination...");
 
 deleteFolderRecursive("./public/build");
 
-console.log("Successfully cleaned working tree!");
+console.log("Successfully cleaned build destination!");

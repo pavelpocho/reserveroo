@@ -12,11 +12,16 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
+import React from "react";
+import { useState } from "react";
 import styled from "styled-components";
-import { AppHeader } from "./components/app-header";
+import AppHeader from "./components/app-header";
 import { styles } from "./constants/styles";
-import { LangsContextProvider } from "./contexts/translationContext";
+import { LangsContextProvider } from "./contexts/langsContext";
+import { userIdContext, useUserId } from "./contexts/userIdContext";
+import { getUserId } from "./utils/session.server";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -37,7 +42,34 @@ const Body = styled.body`
   }
 `;
 
+export const loader: LoaderFunction = async ({ request }) => {
+  return { userId: await getUserId(request), url: request.url };
+}
+
+interface AppHeaderLoaderData {
+  userId: string | null;
+}
+
+const Main: React.FC = () => {
+
+  const { userId } = useUserId();
+
+  return <>
+    <AppHeader userId={ userId }>Reserveroo</AppHeader>
+    <Outlet />
+  </>
+}
+
 export default function App() {
+
+  const loaderData = useLoaderData<AppHeaderLoaderData>();
+
+  React.useEffect(() => {
+    setUserId(loaderData.userId);
+  }, [loaderData]);
+
+  const [ userId, setUserId ] = useState<string | null>(loaderData.userId);
+
   return (
     <html lang="en" className="h-full">
       <head>
@@ -46,10 +78,12 @@ export default function App() {
         {typeof document === "undefined" ? "__STYLES__" : null}
       </head>
       <Body className="h-full">
-        <LangsContextProvider>
-          <AppHeader>Reserveroo</AppHeader>
-          <Outlet />
-        </LangsContextProvider>
+        
+        <userIdContext.Provider value={{ userId, setUserId }}>
+          <LangsContextProvider>
+            <Main />
+          </LangsContextProvider>
+        </userIdContext.Provider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

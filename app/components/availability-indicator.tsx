@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { styles } from "~/constants/styles";
-import { useLangs } from "~/contexts/translationContext";
+import { useLangs } from "~/contexts/langsContext";
 import { FreeOrBusy } from "~/types/types";
 
 const Wrap = styled.div`

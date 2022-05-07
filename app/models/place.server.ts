@@ -1,5 +1,4 @@
 import type { Place } from "@prisma/client";
-import { Note } from "esbuild";
 
 import { prisma } from "~/db.server";
 
@@ -30,6 +29,6 @@ export const updatePlace = ({ id, name }: Pick<Place, 'id' | 'name'>) => (prisma
   }
 }));
 
-export const deleteNote = ({ id }: Pick<Place, 'id'>) => (prisma.place.deleteMany({
+export const deletePlace = ({ id }: Pick<Place, 'id'>) => (prisma.place.deleteMany({
     where: { id },
 }));
