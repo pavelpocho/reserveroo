@@ -11,7 +11,7 @@ export const loader: LoaderFunction = () => {
   return json({});
 }
 
-export const Details: React.FC = ({ children }) => {
+export default function PlaceDetails({}) {
   return <Wrap>
     <p>Details about the business</p>
     <p>Opening hours</p>

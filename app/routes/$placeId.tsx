@@ -1,5 +1,6 @@
-import { Outlet, useLoaderData, useParams } from "@remix-run/react"
+import { Link, Outlet, useLoaderData, useParams } from "@remix-run/react"
 import { LoaderFunction } from "@remix-run/server-runtime";
+import { useRoutes } from "react-router";
 import styled from "styled-components";
 import { AvailabilityIndicator } from "~/components/availability-indicator";
 import { FacilitiesIndicator } from "~/components/place/facilities-indicator";
@@ -32,6 +33,8 @@ export default function PlaceDetail() {
         <FacilitiesIndicator />
       </PlaceInfoWrap>
     </Banner>
-    {/* <Outlet /> */}
+    <Link to={`/${place.id}/`}>Details</Link>
+    <Link to={`/${place.id}/reserve`}>Reserve</Link>
+    <Outlet />
   </>
 }
