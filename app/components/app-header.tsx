@@ -1,5 +1,4 @@
-import { Form, useLoaderData } from "@remix-run/react";
-import { ActionFunction } from "@remix-run/server-runtime";
+import { Form } from "@remix-run/react";
 import styled from 'styled-components';
 import { styles } from "~/constants/styles";
 import { UnstyledLink } from "~/root";
@@ -46,8 +45,9 @@ export default function AppHeader({ children, userId }: AppHeaderProps) {
     { userId && <>
       <Form action='/logout' method='post'>
         <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
-        <input type='submit' />
+        <label><input type='submit' hidden={true} />Logout</label>
       </Form>
+      <UnstyledLink to={'/profile'}>Profile</UnstyledLink>
     </>}
     <p>{userId ?? 'No user id'}</p>
   </Wrap>

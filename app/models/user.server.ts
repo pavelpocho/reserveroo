@@ -4,21 +4,34 @@ import { prisma } from "~/db.server";
 
 export type { User } from "@prisma/client";
 
-export const getUser = ({ id }: Pick<User, 'id'>) => (prisma.user.findUnique({
+export const getUser = async ({ id }: Pick<User, 'id'>) => (await prisma.user.findUnique({
   where: { id },
 }));
 
-export const getUserByName = ({ username }: Pick<User, 'username'>) => (prisma.user.findUnique({
+export const getUserByName = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
   where: { username },
   select: { id: true, passwordHash: true }
 }));
 
-export const createUser = ({ username, passwordHash, email }: Pick<User, 'username' | 'passwordHash' | 'email'>) => (prisma.user.create({
+export const getUserById = async ({ id }: Pick<User, 'id'>) => (await prisma.user.findUnique({
+  where: { id },
+  include: { reservations: {
+    include: {
+      Place: {
+        include: {
+          Company: true
+        }
+      }
+    }
+  } }
+}));
+
+export const createUser = async ({ username, passwordHash, email }: Pick<User, 'username' | 'passwordHash' | 'email'>) => (await prisma.user.create({
   data: { username, passwordHash, email },
   select: { id: true, passwordHash: true }
 }));
 
-export const updateUser = ({ id, username, email, passwordHash }: Pick<User, 'id' | 'email' | 'username' | 'passwordHash'>) => (prisma.user.update({
+export const updateUser = async ({ id, username, email, passwordHash }: Pick<User, 'id' | 'email' | 'username' | 'passwordHash'>) => (await prisma.user.update({
   where: {
     id
   },
@@ -27,6 +40,6 @@ export const updateUser = ({ id, username, email, passwordHash }: Pick<User, 'id
   }
 }));
 
-export const deleteUser = ({ id }: Pick<User, 'id'>) => (prisma.user.deleteMany({
+export const deleteUser = async ({ id }: Pick<User, 'id'>) => (await prisma.user.deleteMany({
     where: { id },
 }));

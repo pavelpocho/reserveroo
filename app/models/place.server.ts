@@ -4,23 +4,23 @@ import { prisma } from "~/db.server";
 
 export type { Place } from "@prisma/client";
 
-export const getPlace = ({ id }: Pick<Place, 'id'>) => (prisma.place.findFirst({
+export const getPlace = async ({ id }: Pick<Place, 'id'>) => (await prisma.place.findFirst({
   where: { id },
 }));
 
-export const getPlaceList = async ({ name: nameFragment }: Pick<Place, 'name'>) => {return await prisma.place.findMany({
+export const getPlaceList = async ({ name: nameFragment }: Pick<Place, 'name'>) => (await prisma.place.findMany({
   where: { name: { contains: nameFragment, mode: 'insensitive' } },
   select: { id: true, name: true },
   orderBy: { name: 'desc' },
-})};
+}));
 
-export const createPlace = ({ name }: Pick<Place, 'name'>) => (prisma.place.create({
+export const createPlace = async ({ name }: Pick<Place, 'name'>) => (await prisma.place.create({
   data: {
     name
   },
 }));
 
-export const updatePlace = ({ id, name }: Pick<Place, 'id' | 'name'>) => (prisma.place.update({
+export const updatePlace = async ({ id, name }: Pick<Place, 'id' | 'name'>) => (await prisma.place.update({
   where: {
     id
   },
