@@ -9,7 +9,8 @@ export const getPlace = ({ id }: Pick<Place, 'id'>) => (prisma.place.findFirst({
   where: { id },
 }));
 
-export const getPlaceList = async () => {return await prisma.place.findMany({
+export const getPlaceList = async ({ name: nameFragment }: Pick<Place, 'name'>) => {return await prisma.place.findMany({
+  where: { name: { contains: nameFragment, mode: 'insensitive' } },
   select: { id: true, name: true },
   orderBy: { name: 'desc' },
 })};
