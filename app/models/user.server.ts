@@ -10,7 +10,7 @@ export const getUser = async ({ id }: Pick<User, 'id'>) => (await prisma.user.fi
 
 export const getUserByName = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
   where: { username },
-  select: { id: true, passwordHash: true }
+  select: { id: true, passwordHash: true, admin: true }
 }));
 
 export const getUserById = async ({ id }: Pick<User, 'id'>) => (await prisma.user.findUnique({

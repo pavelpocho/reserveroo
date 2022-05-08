@@ -20,7 +20,7 @@ export const login = async ({ username, password }: LoginType) => {
 
   if (!passwordMatch) return null;
 
-  return user.id;
+  return { userId: user.id, admin: user.admin };
 
 }
 
@@ -32,7 +32,7 @@ export const register = async ({ username, password }: LoginType) => {
 
   const newUser = await createUser({ username, passwordHash: await generateHashAndSalt(password), email: username });
 
-  return newUser.id;
+  return { userId: newUser.id, admin: false } 
 
 }
 
@@ -53,9 +53,10 @@ const storage = createCookieSessionStorage({
   },
 })
 
-export const createUserSession = async (userId: string, redirectTo: string) => {
+export const createUserSession = async (userId: string, admin: boolean = false, redirectTo: string) => {
   const session = await storage.getSession();
   session.set('userId', userId);
+  session.set('admin', admin);
   return redirect(redirectTo, {
     headers: {
       'Set-Cookie': await storage.commitSession(session)
@@ -67,26 +68,29 @@ const getUserSession = (request: Request) => {
   return storage.getSession(request.headers.get('Cookie'));
 }
 
-export const requireUserId = async (
+export const requireUserIdAndAdmin = async (
   request: Request,
   redirectTo: string = new URL(request.url).pathname
 ) => {
   const session = await getUserSession(request);
   const userId = session.get('userId');
-  if (!userId || typeof userId !== 'string') {
+  const admin = session.get('admin');
+  if (!userId || admin === null || typeof userId !== 'string') {
     const searchParams = new URLSearchParams([
       ['redirectTo', redirectTo]
     ]);
     throw redirect(`/authenticate/login?${searchParams}`);
   } 
-  return userId;
+  console.log("SESSION");
+  console.log(admin);
+  return { userId, admin: admin == 'true' || admin == '1' };
 }
 
-export const getUserId = async (
+export const getUserIdAndAdmin = async (
   request: Request
 ) => {
   const session = await getUserSession(request);
-  return session.get('userId') as string | null;
+  return { userId: session.get('userId') as string | null, admin: session.get('admin') as boolean | null };
 }
 
 export const logout = async (request: Request, redirectUrl: string) => {

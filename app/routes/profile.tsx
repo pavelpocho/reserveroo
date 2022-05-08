@@ -1,7 +1,7 @@
 import { useLoaderData } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime';
 import { getUserById } from '~/models/user.server';
-import { requireUserId } from '~/utils/session.server';
+import { requireUserIdAndAdmin } from '~/utils/session.server';
 import { Company, Place, Reservation, User } from '@prisma/client';
 
 interface ProfileLoaderData {
@@ -13,7 +13,10 @@ interface ProfileLoaderData {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return { user: await getUserById({ id: await requireUserId(request) })};
+  console.log("User id for profile");
+  console.log((await requireUserIdAndAdmin(request)).userId);
+  console.log("eh?");
+  return { user: await getUserById({ id: (await requireUserIdAndAdmin(request)).userId })};
 }
 
 export default function Profile() {

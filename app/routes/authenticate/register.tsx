@@ -14,10 +14,10 @@ export const action: ActionFunction = async ({ request }) => {
   // Should validate this
   const redirectTo = form.get('redirectTo')?.toString();
 
-  const userId = await register({
+  const { userId, admin } = await register({
     username: username ?? '',
     password: password ?? ''
-  });
+  }) ?? { userId: null, admin: false };
 
   if (userId == null) {
     return badRequest({
@@ -26,7 +26,12 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  return createUserSession(userId, redirectTo ?? '/');
+  console.log("Redirect to for registration");
+  console.log(redirectTo);
+  console.log(userId);
+  console.log(admin);
+
+  return createUserSession(userId, admin, redirectTo ?? '/');
 }
 
 export default function Register() {

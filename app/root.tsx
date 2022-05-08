@@ -21,7 +21,7 @@ import AppHeader from "./components/app-header";
 import { styles } from "./constants/styles";
 import { LangsContextProvider } from "./contexts/langsContext";
 import { userIdContext, useUserId } from "./contexts/userIdContext";
-import { getUserId } from "./utils/session.server";
+import { getUserIdAndAdmin } from "./utils/session.server";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -43,19 +43,19 @@ const Body = styled.body`
 `;
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return { userId: await getUserId(request), url: request.url };
+  const { userId, admin } = await getUserIdAndAdmin(request)
+  return { userId: userId, admin: admin, url: request.url };
 }
 
 interface AppHeaderLoaderData {
   userId: string | null;
+  admin: boolean | null;
 }
 
 const Main: React.FC = () => {
 
-  const { userId } = useUserId();
-
   return <>
-    <AppHeader userId={ userId }>Reserveroo</AppHeader>
+    <AppHeader>Reserveroo</AppHeader>
     <Outlet />
   </>
 }
@@ -66,9 +66,11 @@ export default function App() {
 
   React.useEffect(() => {
     setUserId(loaderData.userId);
+    setAdmin(loaderData.admin);
   }, [loaderData]);
 
   const [ userId, setUserId ] = useState<string | null>(loaderData.userId);
+  const [ admin, setAdmin ] = useState<boolean | null>(loaderData.admin);
 
   return (
     <html lang="en" className="h-full">
@@ -79,7 +81,7 @@ export default function App() {
       </head>
       <Body className="h-full">
         
-        <userIdContext.Provider value={{ userId, setUserId }}>
+        <userIdContext.Provider value={{ userId, setUserId, admin, setAdmin }}>
           <LangsContextProvider>
             <Main />
           </LangsContextProvider>

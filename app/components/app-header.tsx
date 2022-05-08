@@ -1,6 +1,7 @@
 import { Form } from "@remix-run/react";
 import styled from 'styled-components';
 import { styles } from "~/constants/styles";
+import { useUserId } from "~/contexts/userIdContext";
 import { UnstyledLink } from "~/root";
 
 const Wrap = styled.header`
@@ -30,10 +31,11 @@ const MenuItem = styled.p`
 
 interface AppHeaderProps {
   children: React.ReactNode;
-  userId: string | null;
 }
 
-export default function AppHeader({ children, userId }: AppHeaderProps) {
+export default function AppHeader({ children }: AppHeaderProps) {
+
+  const { userId, admin } = useUserId();
 
   return <Wrap>
     <UnstyledLink to='/'><Title>{children}</Title></UnstyledLink>
@@ -50,5 +52,6 @@ export default function AppHeader({ children, userId }: AppHeaderProps) {
       <UnstyledLink to={'/profile'}>Profile</UnstyledLink>
     </>}
     <p>{userId ?? 'No user id'}</p>
+    {admin ? <UnstyledLink to={'/admin/reservations'}>Admin</UnstyledLink> : <></>}
   </Wrap>
 }

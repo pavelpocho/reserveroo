@@ -8,7 +8,16 @@ export const getReservation = async ({ id }: Pick<Reservation, 'id'>) => (await 
   where: { id },
 }));
 
-export const getReservationList = async () => (await prisma.reservation.findMany());
+export const getReservationList = async () => (await prisma.reservation.findMany({
+  include: {
+    User: true,
+    Place: {
+      include: {
+        Company: true
+      }
+    }
+  }
+}));
 
 export const createReservation = async ({ note, placeId, userId }: Pick<Reservation, 'note' | 'placeId' | 'userId'>) => (await prisma.reservation.create({
   data: {

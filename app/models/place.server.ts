@@ -10,8 +10,15 @@ export const getPlace = async ({ id }: Pick<Place, 'id'>) => (await prisma.place
 
 export const getPlaceList = async ({ name: nameFragment }: Pick<Place, 'name'>) => (await prisma.place.findMany({
   where: { name: { contains: nameFragment, mode: 'insensitive' } },
-  select: { id: true, name: true },
-  orderBy: { name: 'desc' },
+  include: {
+    Company: true
+  }
+}));
+
+export const getAllPlaces = async () => (await prisma.place.findMany({
+  include: {
+    Company: true
+  }
 }));
 
 export const createPlace = async ({ name }: Pick<Place, 'name'>) => (await prisma.place.create({

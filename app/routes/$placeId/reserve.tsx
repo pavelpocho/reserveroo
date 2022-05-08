@@ -2,7 +2,7 @@ import { Form, useActionData, useLoaderData, useMatches, useParams } from '@remi
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime'
 import { useUserId } from '~/contexts/userIdContext';
 import { createReservation } from '~/models/reservation.server';
-import { requireUserId } from '~/utils/session.server'
+import { requireUserIdAndAdmin } from '~/utils/session.server'
 
 interface ReserveLoaderData {
   userId: string
@@ -21,7 +21,7 @@ const badRequest = (data: ReserveActionData) => json(data, { status: 400 });
 
 export const loader: LoaderFunction = async ({ request }) => {
   // Return availability data
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserIdAndAdmin(request);
   return json({ userId })
 }
 
