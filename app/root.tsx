@@ -13,11 +13,13 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useTransition,
 } from "@remix-run/react";
 import React from "react";
 import { useState } from "react";
 import styled from "styled-components";
 import AppHeader from "./components/app-header";
+import { Loader } from "./components/Loader";
 import { styles } from "./constants/styles";
 import { LangsContextProvider } from "./contexts/langsContext";
 import { userIdContext, useUserId } from "./contexts/userIdContext";
@@ -64,13 +66,21 @@ export default function App() {
 
   const loaderData = useLoaderData<AppHeaderLoaderData>();
 
+  const [ userId, setUserId ] = useState<string | null>(loaderData.userId);
+  const [ admin, setAdmin ] = useState<boolean | null>(loaderData.admin);
+
+  const [ loading, setLoading ] = useState<boolean | null>(false);
+
   React.useEffect(() => {
     setUserId(loaderData.userId);
     setAdmin(loaderData.admin);
   }, [loaderData]);
 
-  const [ userId, setUserId ] = useState<string | null>(loaderData.userId);
-  const [ admin, setAdmin ] = useState<boolean | null>(loaderData.admin);
+  const t = useTransition();
+
+  React.useEffect(() => {
+    setLoading(t.state === 'loading' || t.state === 'submitting');
+  }, [t]);
 
   return (
     <html lang="en" className="h-full">
@@ -84,6 +94,7 @@ export default function App() {
         <userIdContext.Provider value={{ userId, setUserId, admin, setAdmin }}>
           <LangsContextProvider>
             <Main />
+            <Loader show={loading ?? false}></Loader>
           </LangsContextProvider>
         </userIdContext.Provider>
         <ScrollRestoration />

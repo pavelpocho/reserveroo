@@ -1,6 +1,7 @@
 import { Company } from '@prisma/client';
 import { useLoaderData } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime'
+import React from 'react';
 import { getAllPlaces, getPlaceList, Place } from '~/models/place.server'
 
 interface PlacesAdminLoaderData {
@@ -15,7 +16,9 @@ export const loader: LoaderFunction = async () => {
 }
 
 export default function PlacesAdmin() {
+
   const { places } = useLoaderData<PlacesAdminLoaderData>();
+
   return <>
     <div>PLACE ADMIN</div>
     <div>

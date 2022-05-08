@@ -5,7 +5,15 @@ export const translations = {
     mostlyFree: 'Mostly free',
     fairlyBusy: 'Fairly busy'
   },
-  searchPlaceholder: 'Search'
+  searchPlaceholder: 'Search',
+  loadingText: [
+    'Loading',
+    'Almost there',
+    'Crunching',
+    'Working',
+    'Just a second',
+    'Transporting'
+  ]
 };
 
 const Context = React.createContext<typeof translations | null>(null);

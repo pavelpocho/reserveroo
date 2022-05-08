@@ -1,4 +1,5 @@
 import { Link, useLoaderData } from "@remix-run/react";
+// import { LinkWithLoader } from "~/components/LinkWithLoader";
 
 export default function About() {
   return (

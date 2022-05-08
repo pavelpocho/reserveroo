@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet, useLoaderData } from '@remix-run/react'
 import { json, LoaderFunction } from '@remix-run/server-runtime'
+// import { LinkWithLoader } from '~/components/LinkWithLoader';
 import { requireUserIdAndAdmin } from '~/utils/session.server'
 
 interface AdminLoaderData {
