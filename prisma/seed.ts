@@ -1,4 +1,4 @@
-import { Company, CompanyIdentity, Place, PrismaClient, Reservation } from "@prisma/client";
+import { Company, CompanyIdentity, OpeningTime, Place, PrismaClient, Reservation, ReservationGroup } from "@prisma/client";
 import { checkPassword, generateHashAndSalt } from "~/utils/pwd_helper.server";
 
 const prisma = new PrismaClient();
@@ -41,12 +41,50 @@ const seed = async () => {
     })
   )
 
-  const createdReservations = await Promise.all(
-    reservations.map((p, i) => {
-      return prisma.reservation.create({ data: {
-        userId: createdUsers[i].id,
+  let openingTimePromises: Promise<OpeningTime>[] = [];
+
+  createdPlaces.forEach(p => {
+    openingTimePromises.push(...[...Array(7).keys()].map(d => {
+      const open = new Date();
+      open.setHours(8, 30);
+      const close = new Date();
+      close.setHours(17);
+      return prisma.openingTime.create({
+        data: {
+          day: d,
+          open: open,
+          close: close,
+          placeId: p.id
+        }
+      })
+    }))
+  })
+
+  await Promise.all(openingTimePromises);
+
+  const createdReservables = await Promise.all(
+    reservables.map((r, i) => {
+      return prisma.reservable.create({ data: {
         placeId: createdPlaces[i].id,
-        ...p
+        ...r
+      } })
+    })
+  )
+
+  const createdReservationGroups = await Promise.all(
+    reservationGroups.map((r, i) => {
+      return prisma.reservationGroup.create({ data: {
+        userId: createdUsers[i].id,
+        ...r
+      }})
+    })
+  )
+
+  const createdReservations = await Promise.all(
+    Array(3).fill(0).map((p, i) => {
+      return prisma.reservation.create({ data: {
+        reservableId: createdReservables[i].id,
+        reservationGroupId: createdReservationGroups[i].id
       } })
     })
   )
@@ -84,16 +122,24 @@ const generateCompanyIdentities = async () => {
 
 const generateUsers = async () => {
   return [{
+    email: 'admin@admin.com',
+    username: 'admin',
+    admin: true,
+    passwordHash: await generateHashAndSalt('reserveroo')
+  }, {
     email: 'john@person.com',
     username: 'john123',
+    admin: false,
     passwordHash: await generateHashAndSalt('johnspwd')
   }, {
     email: 'peter@person.com',
     username: 'peter123',
+    admin: false,
     passwordHash: await generateHashAndSalt('peterspwd')
   }, {
     email: 'louis@person.com',
     username: 'louis123',
+    admin: false,
     passwordHash: await generateHashAndSalt('louisspwd')
   }]
 }
@@ -114,7 +160,15 @@ const places: Pick<Place, 'name'>[] = [{
   name: 'Badminton'
 }]
 
-const reservations: Pick<Reservation, 'note'>[] = [{
+const reservables: Pick<Place, 'name'>[] = [{
+  name: 'Tennis court'
+}, {
+  name: 'Biliard table'
+}, {
+  name: 'Badminton court'
+}]
+
+const reservationGroups: Pick<ReservationGroup, 'note'>[] = [{
   note: 'pls i want'
 }, {
   note: 'yeeeeeeet'

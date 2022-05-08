@@ -15,15 +15,21 @@ export const getUserByName = async ({ username }: Pick<User, 'username'>) => (aw
 
 export const getUserById = async ({ id }: Pick<User, 'id'>) => (await prisma.user.findUnique({
   where: { id },
-  include: { reservations: {
-    include: {
-      Place: {
-        include: {
-          Company: true
+  include: {
+    reservationGroups: {
+      include: {
+        reservations: {
+          include: {
+            reservable: {
+              include: {
+                place: true
+              }
+            }
+          }
         }
       }
     }
-  } }
+  }
 }));
 
 export const createUser = async ({ username, passwordHash, email }: Pick<User, 'username' | 'passwordHash' | 'email'>) => (await prisma.user.create({

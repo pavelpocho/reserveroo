@@ -52,6 +52,6 @@ export default function AppHeader({ children }: AppHeaderProps) {
       <UnstyledLink to={'/profile'}>Profile</UnstyledLink>
     </>}
     <p>{userId ?? 'No user id'}</p>
-    {admin ? <UnstyledLink to={'/admin/reservations'}>Admin</UnstyledLink> : <></>}
+    {admin ? <UnstyledLink to={'/admin/reservationGroups'}>Admin</UnstyledLink> : <></>}
   </Wrap>
 }

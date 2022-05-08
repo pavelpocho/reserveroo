@@ -2,14 +2,18 @@ import { useLoaderData } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime';
 import { getUserById } from '~/models/user.server';
 import { requireUserIdAndAdmin } from '~/utils/session.server';
-import { Company, Place, Reservation, User } from '@prisma/client';
+import { Company, Place, Reservable, Reservation, ReservationGroup, User } from '@prisma/client';
 
 interface ProfileLoaderData {
-  user: User & { reservations: (Reservation & {
-    Place: (Place & {
-      Company: Company | null;
-  }) | null;
-  })[] }
+  user: User & {
+    reservationGroups: (ReservationGroup & {
+      reservations: (Reservation & {
+        reservable: (Reservable & {
+          place: Place
+        }) | null;
+      })[];
+    })[];
+  } | null
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -25,15 +29,18 @@ export default function Profile() {
 
   return (
     <div>
-      <p>{user.id}</p>
-      <p>{user.email}</p>
-      <p>{user.username}</p>
-      <p>{user.createdAt}</p>
-      { user.reservations.map(r => <div key={r.id}>
-        <p>Reservation with id {r.id}</p>
-        <p>At place {r.Place?.name}</p>
-        <p>Which is managed by company {r.Place?.Company?.name}</p>
-        <p>Note you put in: {r.note}</p>
+      <p>{user?.id}</p>
+      <p>{user?.email}</p>
+      <p>{user?.username}</p>
+      <p>{user?.createdAt}</p>
+      { user?.reservationGroups.map(rg => <div key={rg.id}>
+        <p>ReservationGroup with id {rg.id}</p>
+        { rg.reservations.map(r => <div key={r.id}>
+          <p>Reservation {r.id}</p>
+          <p>For reservable {r.reservable?.name}</p>
+          <p>At place {r.reservable?.place.name}</p>
+        </div>) }
+        <p>Note you put in: {rg.note}</p>
       </div>) }
     </div>
   )

@@ -9,25 +9,44 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  username     String        @unique
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now()) @updatedAt
-  passwordHash String
-  admin        Boolean       @default(false)
-  reservations Reservation[]
+  id                String             @id @default(uuid())
+  email             String             @unique
+  username          String             @unique
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @default(now()) @updatedAt
+  passwordHash      String
+  admin             Boolean            @default(false)
+  reservationGroups ReservationGroup[]
 }
 
 model Reservation {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  note      String
-  User      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String?
-  Place     Place?   @relation(fields: [placeId], references: [id])
-  placeId   String?
+  id                 String            @id @default(uuid())
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @default(now()) @updatedAt
+  reservable         Reservable?       @relation(fields: [reservableId], references: [id], onDelete: Restrict)
+  reservableId       String?
+  reservationGroup   ReservationGroup? @relation(fields: [reservationGroupId], references: [id], onDelete: Cascade)
+  reservationGroupId String?
+}
+
+model ReservationGroup {
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
+  note         String
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reservations Reservation[]
+  userId       String?
+}
+
+model Reservable {
+  id           String        @id @default(uuid())
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
+  place        Place?        @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  reservations Reservation[]
+  placeId      String?
 }
 
 model Place {
@@ -35,9 +54,22 @@ model Place {
   name         String        @unique
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @default(now()) @updatedAt
-  Company      Company?      @relation(fields: [companyId], references: [id], onDelete: Restrict)
-  Reservations Reservation[]
+  company      Company?      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  reservables  Reservable[]
   companyId    String?
+  openingTimes OpeningTime[]
+}
+
+model OpeningTime {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  open      DateTime @db.Time()
+  close     DateTime @db.Time()
+  place     Place?   @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId   String?
+  day       Int
+
 }
 
 model Company {
@@ -56,6 +88,6 @@ model CompanyIdentity {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
   passwordHash String
-  Company      Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company      Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId    String?
 }

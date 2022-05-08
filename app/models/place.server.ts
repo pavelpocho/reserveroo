@@ -6,18 +6,24 @@ export type { Place } from "@prisma/client";
 
 export const getPlace = async ({ id }: Pick<Place, 'id'>) => (await prisma.place.findFirst({
   where: { id },
+  include: {
+    reservables: true,
+    openingTimes: true
+  }
 }));
 
 export const getPlaceList = async ({ name: nameFragment }: Pick<Place, 'name'>) => (await prisma.place.findMany({
   where: { name: { contains: nameFragment, mode: 'insensitive' } },
   include: {
-    Company: true
+    company: true,
+    reservables: true
   }
 }));
 
 export const getAllPlaces = async () => (await prisma.place.findMany({
   include: {
-    Company: true
+    company: true,
+    reservables: true
   }
 }));
 

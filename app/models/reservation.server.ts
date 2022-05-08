@@ -9,28 +9,20 @@ export const getReservation = async ({ id }: Pick<Reservation, 'id'>) => (await 
 }));
 
 export const getReservationList = async () => (await prisma.reservation.findMany({
-  include: {
-    User: true,
-    Place: {
-      include: {
-        Company: true
-      }
-    }
-  }
 }));
 
-export const createReservation = async ({ note, placeId, userId }: Pick<Reservation, 'note' | 'placeId' | 'userId'>) => (await prisma.reservation.create({
+export const createReservation = async ({ reservationGroupId, reservableId }: Pick<Reservation, 'reservationGroupId' | 'reservableId'>) => (await prisma.reservation.create({
   data: {
-    note, placeId, userId
+    reservableId, reservationGroupId
   },
 }));
 
-export const updateReservation = async ({ id, note, placeId, userId }: Pick<Reservation, 'id' | 'note' | 'placeId' | 'userId'>) => (await prisma.reservation.update({
+export const updateReservation = async ({ id, reservationGroupId, reservableId }: Pick<Reservation, 'id' | 'reservationGroupId' | 'reservableId'>) => (await prisma.reservation.update({
   where: {
     id
   },
   data: {
-    note, placeId, userId
+    reservableId, reservationGroupId
   }
 }));
 

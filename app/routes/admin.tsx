@@ -21,7 +21,7 @@ export default function Admin() {
   return useLoaderData<AdminLoaderData>().forbidden ? 
     <div>Iiii dont think ur an admin m8</div> : <>
     <div>
-      <Link to='/admin/reservations'>Reservations</Link>
+      <Link to='/admin/reservationGroups'>Reservation groups</Link>
       <Link to='/admin/places'>Places</Link>
     </div>
     <div>
