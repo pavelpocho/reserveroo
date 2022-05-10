@@ -81,8 +81,9 @@ const seed = async () => {
   )
 
   const createdReservations = await Promise.all(
-    Array(3).fill(0).map((p, i) => {
+    reservations.map((r, i) => {
       return prisma.reservation.create({ data: {
+        ...r,
         reservableId: createdReservables[i].id,
         reservationGroupId: createdReservationGroups[i].id
       } })
@@ -158,6 +159,17 @@ const places: Pick<Place, 'name'>[] = [{
   name: 'Biliard bar'
 }, {
   name: 'Badminton'
+}]
+
+const reservations: Pick<Reservation, 'start' | 'end'>[] = [{
+  start: new Date(2022, 4, 10, 10, 30),
+  end: new Date(2022, 4, 10, 11, 30)
+}, {
+  start: new Date(2022, 4, 10, 9, 0),
+  end: new Date(2022, 4, 10, 11, 0)
+}, {
+  start: new Date(2022, 4, 10, 10, 0),
+  end: new Date(2022, 4, 10, 10, 30)
 }]
 
 const reservables: Pick<Place, 'name'>[] = [{

@@ -35,6 +35,8 @@ export default function ReservationsAdmin() {
       <p>Note: {rg.note}</p>
       { rg.reservations.map(r => <div key={r.id}>
         <p>Reservation: {r.id}</p>
+        <p>From: {new Date(r.start).getHours()}:{new Date(r.start).getMinutes()}</p>
+        <p>To: {new Date(r.end).getHours()}:{new Date(r.end).getMinutes()}</p>
         <p>Reservable: {r.reservable?.name}</p>
         <p>Place (Company): {r.reservable?.place?.name} ({r.reservable?.place?.company?.name})</p>
       </div>) }

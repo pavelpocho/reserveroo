@@ -38,6 +38,8 @@ export default function Profile() {
         { rg.reservations.map(r => <div key={r.id}>
           <p>Reservation {r.id}</p>
           <p>For reservable {r.reservable?.name}</p>
+          <p>From: {new Date(r.start).getHours()}:{new Date(r.start).getMinutes()}</p>
+          <p>To: {new Date(r.end).getHours()}:{new Date(r.end).getMinutes()}</p>
           <p>At place {r.reservable?.place.name}</p>
         </div>) }
         <p>Note you put in: {rg.note}</p>

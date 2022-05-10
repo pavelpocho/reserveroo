@@ -27,6 +27,8 @@ model Reservation {
   reservableId       String?
   reservationGroup   ReservationGroup? @relation(fields: [reservationGroupId], references: [id], onDelete: Cascade)
   reservationGroupId String?
+  start              DateTime          
+  end                DateTime          
 }
 
 model ReservationGroup {
@@ -47,6 +49,7 @@ model Reservable {
   place        Place?        @relation(fields: [placeId], references: [id], onDelete: Cascade)
   reservations Reservation[]
   placeId      String?
+  minimumReservationTime  Int @default(30)
 }
 
 model Place {
