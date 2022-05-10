@@ -39,11 +39,12 @@ export const action: ActionFunction = async ({ request }) => {
     hidden: getFormItem('hidden') == '1'
   }
 
-  const reservables: Pick<Reservable, 'id' | 'name' | 'placeId' | 'minimumReservationTime'>[] = getFormItems('reservableId[]').map((id, i) => {
+  const reservables: Pick<Reservable, 'id' | 'name' | 'placeId' | 'minimumReservationTime' | 'reservationsPerSlot'>[] = getFormItems('reservableId[]').map((id, i) => {
     return {
       id,
       name: getFormItems('reservableName[]')[i],
       minimumReservationTime: parseInt(getFormItems('minimumReservationTime[]')[i]),
+      reservationsPerSlot: parseInt(getFormItems('reservationsPerSlot[]')[i]),
       placeId: place.id
     }
   });
@@ -108,7 +109,8 @@ export default function AdminPlaceDetail() {
           createdAt: new Date(),
           updatedAt: new Date(),
           placeId: place.id,
-          minimumReservationTime: 30
+          minimumReservationTime: 30,
+          reservationsPerSlot: 1
         }
       ]
     });
@@ -139,6 +141,7 @@ export default function AdminPlaceDetail() {
             <IdInput name='reservableId[]' value={r.id} />
             <TextInput title='Reservable name' name='reservableName[]' defaultValue={r.name} />
             <NumberInput title='Minimum reservation interval (minutes)' name='minimumReservationTime[]' defaultValue={r.minimumReservationTime} />
+            <NumberInput title='Reservations per slot' name='reservationsPerSlot[]' defaultValue={r.minimumReservationTime} />
             <Button onClick={(e) => { deleteReservable(e, r.id); }}>Delete</Button>
           </ArrayInputWrap>) }
         </ArrayInput>

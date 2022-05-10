@@ -27,7 +27,7 @@ model Reservation {
   reservableId       String?
   reservationGroup   ReservationGroup? @relation(fields: [reservationGroupId], references: [id], onDelete: Cascade)
   reservationGroupId String?
-  start              DateTime          
+  start              DateTime
   end                DateTime
   status             Int               @default(0)
 }
@@ -43,14 +43,15 @@ model ReservationGroup {
 }
 
 model Reservable {
-  id           String        @id @default(uuid())
-  name         String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now()) @updatedAt
-  place        Place?        @relation(fields: [placeId], references: [id], onDelete: Cascade)
-  reservations Reservation[]
-  placeId      String?
-  minimumReservationTime  Int @default(30)
+  id                     String        @id @default(uuid())
+  name                   String
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @default(now()) @updatedAt
+  place                  Place?        @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  reservations           Reservation[]
+  placeId                String?
+  minimumReservationTime Int           @default(30)
+  reservationsPerSlot    Int           @default(1)
 }
 
 model Place {

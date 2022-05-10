@@ -82,6 +82,8 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ reservableIdName,
   const openMinutes = getDiffBetweenTwoDates(openingTime.close, openingTime.open);
   const openSinceMinutes = new Date(openingTime.open).getMinutes() + new Date(openingTime.open).getHours() * 60;
   const minMin = reservable.minimumReservationTime;
+  // Not used right now, might be in the future
+  const slotCapacity = reservable.reservationsPerSlot;
   const sections = Math.floor(openMinutes / Math.max(1, minMin));
   const timeSections = [...Array(sections).keys()].map(s => ({
     start: { minute: Math.round((s * minMin + openSinceMinutes) % 60), hour: Math.floor((s * minMin + openSinceMinutes) / 60) },
