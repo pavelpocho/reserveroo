@@ -12,6 +12,18 @@ export const getPlace = async ({ id }: Pick<Place, 'id'>) => (await prisma.place
   }
 }));
 
+export const getPlaceWithReservations = async ({ id }: Pick<Place, 'id'>) => (await prisma.place.findFirst({
+  where: { id },
+  include: {
+    reservables: {
+      include: {
+        reservations: true
+      }
+    },
+    openingTimes: true
+  }
+}));
+
 export const getPlaceList = async ({ name: nameFragment }: Pick<Place, 'name'>) => (await prisma.place.findMany({
   where: { name: { contains: nameFragment, mode: 'insensitive' } },
   include: {
