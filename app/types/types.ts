@@ -18,3 +18,12 @@ export type TimeSection = {
   start: Time,
   end: Time
 }
+
+export enum ReservationStatus {
+  AwaitingConfirmation,
+  Confirmed,
+  Rejected,
+  Cancelled,
+  Paid,
+  Past
+}

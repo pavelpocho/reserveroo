@@ -101,26 +101,23 @@ export const DateInput: React.FC<DateInputProps> = ({ name, defaultValue, title,
   const days = [...Array(getMaxDayOfMonth(year, month)).keys()];
   const endPadding = 7 - (days.length + startPadding) % 7;
 
-  console.log([...Array(startPadding).keys()]);
-
   return <div>
     <label>{title}</label>
     <Calendar>
       <Header>
-        <button onClick={(e) => {
-          e.preventDefault();
+        <Button onClick={(e) => {
           setYearMonth({
             year,
             month: month - 1
           });
-        }}>Prev month</button>
-        <button onClick={(e) => {
+        }}>Prev month</Button>
+        <Button onClick={(e) => {
           e.preventDefault();
           setYearMonth({
             year,
             month: month + 1
           });
-        }}>Next month</button>
+        }}>Next month</Button>
       </Header>
       <Body>
         { [...Array(startPadding).keys()].map((_, i) => maxDayOfPreviousMonth - i).reverse().map(d => <DayButton

@@ -116,7 +116,7 @@ export default function ReservationElement() {
         reservableIdName='reservableId'
         reservables={reservables}
         date={date}
-        openingTime={place.openingTimes[getDayOfWeek(date)]}
+        openingTime={place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]}
       /> }
       <input type='submit'></input>
       {

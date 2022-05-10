@@ -25,7 +25,6 @@ export const loader: LoaderFunction = async ({ params }) => {
 export default function PlaceDetails({}) {
 
   const { place } = useLoaderData<PlaceDetailsLoaderData>();
-  console.log(place);
 
   const timeStr = (date: Date) => {
     return `${new Date(date).getHours()}:${new Date(date).getMinutes()}`;
@@ -36,7 +35,7 @@ export default function PlaceDetails({}) {
   return <Wrap>
     <p>Details about the business</p>
     <p>Opening hours</p>
-    { place.openingTimes ? place.openingTimes.map(o => <div key={o.id} >
+    { place.openingTimes ? place.openingTimes.sort((a, b) => a.day - b.day).map(o => <div key={o.id} >
       <p>{daysOfWeek[o.day]}: {timeStr(o.open)} - {timeStr(o.close)}</p>
     </div>) : null }
     <p>Details about whats there and whatnot</p>

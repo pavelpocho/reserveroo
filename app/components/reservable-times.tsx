@@ -80,7 +80,7 @@ interface ReservableSectionProps {
 const ReservableSection: React.FC<ReservableSectionProps> = ({ reservableIdName, reservable, date, openingTime, startName, endName }: ReservableSectionProps) => {
 
   const openMinutes = getDiffBetweenTwoDates(openingTime.close, openingTime.open);
-  const openSinceMinutes = new Date(openingTime.open).getTime() / 1000 / 60;
+  const openSinceMinutes = new Date(openingTime.open).getMinutes() + new Date(openingTime.open).getHours() * 60;
   const minMin = reservable.minimumReservationTime;
   const sections = Math.floor(openMinutes / Math.max(1, minMin));
   const timeSections = [...Array(sections).keys()].map(s => ({
@@ -91,13 +91,6 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ reservableIdName,
   const [ selectedRange, setSelectedRange ] = React.useState<TimeSection | null>(null);
   const [ selectedDate, setSelectedDate ] = React.useState<Date>(date);
 
-  console.log(selectedDate);
-
-  if (selectedRange) {
-    console.log(new Date(new Date(1970, 0, 1, selectedRange?.start.hour, selectedRange?.start.minute).getTime() + selectedDate.getTime()).toISOString().slice(0, 16));
-    console.log(new Date(new Date(1970, 0, 1, selectedRange?.end.hour, selectedRange?.end.minute).getTime() + selectedDate.getTime()).toISOString().slice(0, 16));
-  }
-
   return <div>
     <p>{reservable.name}</p>
     <SectionWrap key={reservable.id}>
@@ -107,7 +100,6 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ reservableIdName,
           key={getTotalMinutes(s.start)}
           selected={selectedRange != null && areDatesEqual(date, selectedDate) && getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.start) && getTotalMinutes(s.start) < getTotalMinutes(selectedRange.end)}
           onClick={(e) => {
-            console.log("click");
             let newRange: TimeSection | null = null;
             if (selectedRange == null) {
               newRange = s;
@@ -134,10 +126,10 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ reservableIdName,
     </SectionWrap>
     {/* Combine these into just start and end dateTime inputs*/}
     {selectedRange && <input readOnly={true} name={startName} type='datetime-local' value={selectedRange ?
-      new Date(new Date(1970, 0, 1, selectedRange?.start.hour, selectedRange?.start.minute).getTime() + selectedDate.getTime()).toISOString().slice(0, 16) : ''
+      new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.start.hour, selectedRange.start.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ''
     } /> }
     {selectedRange && <input readOnly={true} name={endName} type='datetime-local' value={selectedRange ?
-      new Date(new Date(1970, 0, 1, selectedRange?.end.hour, selectedRange?.end.minute).getTime() + selectedDate.getTime()).toISOString().slice(0, 16) : ''
+      new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.end.hour, selectedRange.end.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ''
     } /> }
     {selectedRange && <input readOnly={true} name={reservableIdName} type='text' value={reservable.id} />}
     {/* <input readOnly={true} name={startName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.start.hour, selectedRange?.start.minute))} />

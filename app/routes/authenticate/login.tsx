@@ -38,11 +38,6 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  console.log("Redirect to for registration");
-  console.log(redirectTo);
-  console.log(userId);
-  console.log(admin);
-
   return createUserSession(userId, admin, redirectTo ?? '/');
 }
 

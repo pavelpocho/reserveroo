@@ -23,6 +23,7 @@ export default function Admin() {
     <div>
       <Link to='/admin/reservationGroups'>Reservation groups</Link>
       <Link to='/admin/places'>Places</Link>
+      <Link to='/admin/companies'>Companies</Link>
     </div>
     <div>
       <Outlet />

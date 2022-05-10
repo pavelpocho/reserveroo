@@ -81,8 +81,6 @@ export const requireUserIdAndAdmin = async (
     ]);
     throw redirect(`/authenticate/login?${searchParams}`);
   } 
-  console.log("SESSION");
-  console.log(admin);
   return { userId, admin: admin == 'true' || admin == '1' };
 }
 

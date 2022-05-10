@@ -26,6 +26,15 @@ export const updateReservation = async ({ id, reservationGroupId, reservableId }
   }
 }));
 
+export const changeReservationStatus = async ({ id, status }: Pick<Reservation, 'id' | 'status'>) => (await prisma.reservation.update({
+  where: {
+    id
+  },
+  data: {
+    status
+  }
+}));
+
 export const deleteReservation = ({ id }: Pick<Reservation, 'id'>) => (prisma.reservation.deleteMany({
     where: { id },
 }));

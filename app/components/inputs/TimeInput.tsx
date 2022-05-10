@@ -37,7 +37,6 @@ export const TimeInput: React.FC<TimeInputProps> = ({ name, defaultValue, title 
 
   React.useEffect(() => {
     setIsValid(isTimeValid(value));
-    console.log(isTimeValid(value));
   }, [value]);
 
   return <div>

@@ -2,25 +2,23 @@ import { Company, Reservable } from '@prisma/client';
 import { Link, Outlet, useLoaderData } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime';
 import React from 'react';
+import { getCompanyList } from '~/models/company.server';
 import { getAllPlaces, getPlaceList, Place } from '~/models/place.server';
 
 interface PlacesAdminLoaderData {
-  places: (Place & {
-    reservables: Reservable[];
-    company: Company | null;
-})[]
+  companies: Company[];
 }
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request, params }) => {
   return {}
 }
 
-export default function PlacesAdmin() {
+export default function CompaniesAdmin() {
 
-  const { places } = useLoaderData<PlacesAdminLoaderData>();
+  const { companies } = useLoaderData<PlacesAdminLoaderData>();
 
   return <>
-    <div>PLACE ADMIN</div>
+    <div>COMPANY ADMIN</div>
     <Outlet />
   </>
 }

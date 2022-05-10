@@ -28,7 +28,8 @@ model Reservation {
   reservationGroup   ReservationGroup? @relation(fields: [reservationGroupId], references: [id], onDelete: Cascade)
   reservationGroupId String?
   start              DateTime          
-  end                DateTime          
+  end                DateTime
+  status             Int               @default(0)
 }
 
 model ReservationGroup {
@@ -61,6 +62,7 @@ model Place {
   reservables  Reservable[]
   companyId    String?
   openingTimes OpeningTime[]
+  hidden       Boolean       @default(false)
 }
 
 model OpeningTime {

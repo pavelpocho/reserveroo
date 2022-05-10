@@ -1,3 +1,5 @@
+import { json } from "@remix-run/node";
+
 export const getDateObjectFromTimeString = (s: string) => {
   return new Date(1, 1, 1, parseInt(s.split(':')[0]) - 1, parseInt(s.split(':')[1]));
 }
@@ -19,3 +21,12 @@ export const getInputDateFromString = (date: Date | null) => (date ?
 export const areDatesEqual = (date1: Date, date2: Date) => (
   date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear()
 )
+
+export const getFormEssentials = async (request: Request) => {
+  const form = await request.formData();
+  const getFormItem = (key: string) => form.get(key)?.toString() ?? '';
+  const getFormItems = (key: string) => form.getAll(key).map(r => r.toString());
+  return { form, getFormItem, getFormItems };
+}
+
+export const badRequest = <T>(data: T) => json(data, { status: 400 });
