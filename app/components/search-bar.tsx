@@ -10,15 +10,23 @@ interface SearchBarProps {
 }
 
 const SearchBarWrap = styled.div`
-  height: 2.5rem;
-  width: 80%;
+  height: 1.8rem;
   max-width: 1000px;
-  background-color: ${styles.colors.gray[10]};
-  border: 2px solid ${styles.colors.gray[20]};
-  border-radius: 8px;
+  background-color: ${styles.colors.white};
+  border: 1px solid ${styles.colors.gray[30]};
+  border-radius: 0.6rem;
   display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  gap: 0.9rem;
   align-items: center;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
+  & input {
+    border: none;
+    outline: none;
+    width: 50ch;
+    font-size: 1.2rem;
+  }
 `;
 
 export const SearchBar: React.FC<SearchBarProps> = ({ defaultValue }: SearchBarProps) => {
@@ -27,7 +35,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ defaultValue }: SearchBarP
   const l = useLangs();
 
   return <SearchBarWrap>
-    <SearchIcon height={'1.5rem'} fill={styles.colors.gray[90]} />
+    <SearchIcon height={'1rem'} fill={styles.colors.gray[90]} />
     <Form method='get' onChange={(e) => submit(e.currentTarget)} >
       <input placeholder={l.searchPlaceholder} name='searchTerm' type='text' defaultValue={defaultValue} />
     </Form>

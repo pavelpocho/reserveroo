@@ -1,5 +1,6 @@
+import { Reservable } from "@prisma/client";
 import { Link, Outlet, useLoaderData, useParams } from "@remix-run/react"
-import { LoaderFunction } from "@remix-run/server-runtime";
+import { json, LoaderFunction } from "@remix-run/server-runtime";
 import { useRoutes } from "react-router";
 import styled from "styled-components";
 import { AvailabilityIndicator } from "~/components/availability-indicator";
@@ -9,8 +10,14 @@ import { PlaceInfoWrap, PlaceName } from "~/components/place/place-summary";
 import { styles } from "~/constants/styles";
 import { getPlace, Place } from "~/models/place.server";
 
+interface LoaderData {
+  place: Place & {
+    reservables: Reservable[]
+  }
+}
+
 export const loader: LoaderFunction = async ({ params }) => {
-  return getPlace({ id: params.placeId ?? '' })
+  return json({ place: await getPlace({ id: params.placeId ?? '' }) });
 }
 
 const Banner = styled.div`
@@ -22,7 +29,7 @@ const Banner = styled.div`
 
 export default function PlaceDetail() {
 
-  const place = useLoaderData<Place>();
+  const { place } = useLoaderData<LoaderData>();
 
   return <>
     <Banner>
@@ -30,7 +37,7 @@ export default function PlaceDetail() {
       <PlaceInfoWrap>
         <PlaceName to={`/${place.id}`}>{place.name}</PlaceName>
         <AvailabilityIndicator color='free' />
-        <FacilitiesIndicator />
+        <FacilitiesIndicator reservables={place.reservables} />
       </PlaceInfoWrap>
     </Banner>
     <Link to={`/${place.id}/`}>Details</Link>

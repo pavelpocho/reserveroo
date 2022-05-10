@@ -1,6 +1,7 @@
 import type { Reservation } from "@prisma/client";
 
 import { prisma } from "~/db.server";
+import { ReservationStatus } from "~/types/types";
 
 export type { Reservation } from "@prisma/client";
 
@@ -23,6 +24,15 @@ export const updateReservation = async ({ id, reservationGroupId, reservableId }
   },
   data: {
     reservableId, reservationGroupId
+  }
+}));
+
+export const setStatusOfReservationsInGroup = async ({ reservationGroupId, status }: Pick<Reservation, 'reservationGroupId' | 'status'>) => (await prisma.reservation.updateMany({
+  where: {
+    reservationGroupId
+  },
+  data: {
+    status
   }
 }));
 

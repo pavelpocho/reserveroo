@@ -1,9 +1,14 @@
-import { useLoaderData } from '@remix-run/react';
+import { Form, useLoaderData, useSubmit } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime';
 import { getUserById } from '~/models/user.server';
 import { requireUserIdAndAdmin } from '~/utils/session.server';
 import { Company, Place, Reservable, Reservation, ReservationGroup, User } from '@prisma/client';
 import { ReservationStatus } from '~/types/types';
+import { ReservationGroupSummary } from '~/components/profile/reservation-group-summary';
+import { AccountSummary } from '~/components/profile/account-summary';
+import styled from 'styled-components';
+import { styles } from '~/constants/styles';
+import { IdInput } from '~/components/inputs/ObjectInput';
 
 interface ProfileLoaderData {
   user: User & {
@@ -21,35 +26,39 @@ export const loader: LoaderFunction = async ({ request }) => {
   return { user: await getUserById({ id: (await requireUserIdAndAdmin(request)).userId })};
 }
 
+const ReservationsWrap = styled.div`
+  padding: 2rem;
+  background-color: ${styles.colors.gray[5]};
+`;
+
+const ReservationsTitle = styled.h4`
+  margin-top: 0;
+`;
+
 export default function Profile() {
 
   const { user } = useLoaderData<ProfileLoaderData>();
+  const submit = useSubmit();
+
+  const cancelRg = (form: HTMLFormElement) => {
+    submit(form, { replace: true })
+  }
 
   return (
     <div>
-      <p>{user?.id}</p>
-      <p>{user?.email}</p>
-      <p>{user?.username}</p>
-      <p>{user?.createdAt}</p>
-      { user?.reservationGroups.map(rg => <div key={rg.id}>
-        <p>ReservationGroup with id {rg.id}</p>
-        { rg.reservations.map(r => <div key={r.id}>
-          <p>Reservation {r.id}</p>
-          <p>For reservable {r.reservable?.name}</p>
-          <p>From: {new Date(r.start).getHours()}:{new Date(r.start).getMinutes()}</p>
-          <p>To: {new Date(r.end).getHours()}:{new Date(r.end).getMinutes()}</p>
-          <p>At place {r.reservable?.place.name}</p>
-          <p>Status {
-            (r.status as ReservationStatus) == ReservationStatus.AwaitingConfirmation ? 'Awaiting confirmation' : 
-            (r.status as ReservationStatus) == ReservationStatus.Confirmed ? 'Confirmed' : 
-            (r.status as ReservationStatus) == ReservationStatus.Rejected ? 'Rejected' : 
-            (r.status as ReservationStatus) == ReservationStatus.Cancelled ? 'Cancelled' : 
-            (r.status as ReservationStatus) == ReservationStatus.Paid ? 'Paid' :
-            (r.status as ReservationStatus) == ReservationStatus.Past ? 'Past' : '' 
-          }</p>
+      <AccountSummary user={user ? { username: user?.username, email: user?.email, createdAt: user?.createdAt } : null} />
+      <ReservationsWrap>
+        <ReservationsTitle>Your Reservations</ReservationsTitle>
+        { user?.reservationGroups.filter(rg => !rg.reservations.find(r => r.status == ReservationStatus.Cancelled)).map(rg => <div key={rg.id}>
+          <>
+            <ReservationGroupSummary onCancel={(rgId, formRef) => {
+              setTimeout(() => {
+                cancelRg(formRef);
+              }, 450);
+            }} reservationGroup={rg} />
+          </>
         </div>) }
-        <p>Note you put in: {rg.note}</p>
-      </div>) }
+      </ReservationsWrap>
     </div>
   )
 }

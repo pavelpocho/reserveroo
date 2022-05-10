@@ -7,6 +7,7 @@ export const styles = {
     free: '#74D06C',
     busy: '#D06C6C',
     gray: {
+      5: '#F8F8F8',
       10: '#F1F1F1',
       20: '#E1E1E1',
       30: '#D1D1D1',

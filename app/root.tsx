@@ -54,11 +54,28 @@ interface AppHeaderLoaderData {
   admin: boolean | null;
 }
 
+const WidthRestrictor = styled.div`
+  width: 100%;
+  max-width: 1368px;
+  margin: 0px auto;
+`;
+
+const Footer = styled.footer`
+  max-width: 1368px;
+  padding: 2rem;
+  margin: 0 auto;
+`;
+
 const Main: React.FC = () => {
 
   return <>
     <AppHeader>Reserveroo</AppHeader>
-    <Outlet />
+    <WidthRestrictor>
+      <Outlet />
+    </WidthRestrictor>
+    <Footer>
+      <Link to={'/about'}>About us</Link>
+    </Footer>
   </>
 }
 

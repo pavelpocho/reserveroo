@@ -4,8 +4,8 @@ import { ImageShape } from "~/types/types";
 
 const ImagePlaceholder = styled.div<{ shape: ImageShape }>`
   border-radius: ${props => props.shape == 'circle' ? '100%' : '8px'};
-  height: 5rem;
-  width: 5rem;
+  aspect-ratio: 1;
+  height: 8rem;
   background-color: ${styles.colors.gray[30]};
 `;
 

@@ -15,6 +15,7 @@ const Indicator = styled.div<{ color: FreeOrBusy }>`
 
 const Text = styled.p<{ color: FreeOrBusy }>`
   color: ${props => styles.colors[props.color]};
+  margin: 0;
 `;
 
 interface AvailabilityIndicatorProps {

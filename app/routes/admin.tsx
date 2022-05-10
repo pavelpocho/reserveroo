@@ -1,5 +1,8 @@
 import { Link, NavLink, Outlet, useLoaderData } from '@remix-run/react'
 import { json, LoaderFunction } from '@remix-run/server-runtime'
+import styled from 'styled-components';
+import { styles } from '~/constants/styles';
+import { UnstyledLink } from '~/root';
 // import { LinkWithLoader } from '~/components/LinkWithLoader';
 import { requireUserIdAndAdmin } from '~/utils/session.server'
 
@@ -17,14 +20,27 @@ export const loader: LoaderFunction = async ({ request }) => {
   return forbidden({ forbidden: true });
 }
 
+const AdminHeader = styled.div`
+  background-color: ${styles.colors.gray[10]};
+  display: flex;
+  gap: 2rem;
+`;
+
+const TabButton = styled(UnstyledLink)`
+  color: ${styles.colors.black};
+  display: block;
+  padding: 1rem 1.5rem;
+  font-size: 1.2rem;
+`;
+
 export default function Admin() {
   return useLoaderData<AdminLoaderData>().forbidden ? 
     <div>Iiii dont think ur an admin m8</div> : <>
-    <div>
-      <Link to='/admin/reservationGroups'>Reservation groups</Link>
-      <Link to='/admin/places'>Places</Link>
-      <Link to='/admin/companies'>Companies</Link>
-    </div>
+    <AdminHeader>
+      <TabButton to='/admin/reservationGroups'>Reservation groups</TabButton>
+      <TabButton to='/admin/places'>Places</TabButton>
+      <TabButton to='/admin/companies'>Companies</TabButton>
+    </AdminHeader>
     <div>
       <Outlet />
     </div>

@@ -103,7 +103,7 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ reservableIdName,
           selected={selectedRange != null && areDatesEqual(date, selectedDate) && getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.start) && getTotalMinutes(s.start) < getTotalMinutes(selectedRange.end)}
           onClick={(e) => {
             let newRange: TimeSection | null = null;
-            if (selectedRange == null) {
+            if (selectedRange == null || date != selectedDate) {
               newRange = s;
             }
             else if (getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.end)) {
