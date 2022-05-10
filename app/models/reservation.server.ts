@@ -12,18 +12,18 @@ export const getReservation = async ({ id }: Pick<Reservation, 'id'>) => (await 
 export const getReservationList = async () => (await prisma.reservation.findMany({
 }));
 
-export const createReservation = async ({ reservationGroupId, reservableId, start, end }: Pick<Reservation, 'reservationGroupId' | 'reservableId' | 'start' | 'end'>) => (await prisma.reservation.create({
+export const createReservation = async ({ backup, reservationGroupId, reservableId, start, end }: Pick<Reservation, 'backup' | 'reservationGroupId' | 'reservableId' | 'start' | 'end'>) => (await prisma.reservation.create({
   data: {
-    reservableId, reservationGroupId, start, end
+    reservableId, reservationGroupId, start, end, backup
   },
 }));
 
-export const updateReservation = async ({ id, reservationGroupId, reservableId }: Pick<Reservation, 'id' | 'reservationGroupId' | 'reservableId'>) => (await prisma.reservation.update({
+export const updateReservation = async ({ id, backup, reservationGroupId, reservableId, start, end }: Pick<Reservation, 'id' | 'backup' | 'reservationGroupId' | 'reservableId' | 'start' | 'end'>) => (await prisma.reservation.update({
   where: {
     id
   },
   data: {
-    reservableId, reservationGroupId
+    reservableId, reservationGroupId, start, end, backup
   }
 }));
 

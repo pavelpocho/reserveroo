@@ -44,12 +44,14 @@ export default function Profile() {
     submit(form, { replace: true })
   }
 
+  console.log(user?.reservationGroups.filter(rg => !rg.reservations.find(r => r.status == ReservationStatus.Cancelled)));
+
   return (
     <div>
       <AccountSummary user={user ? { username: user?.username, email: user?.email, createdAt: user?.createdAt } : null} />
       <ReservationsWrap>
         <ReservationsTitle>Your Reservations</ReservationsTitle>
-        { user?.reservationGroups.filter(rg => !rg.reservations.find(r => r.status == ReservationStatus.Cancelled)).map(rg => <div key={rg.id}>
+        { user?.reservationGroups.filter(rg => rg.reservations.length > 0 && !rg.reservations.find(r => r.status == ReservationStatus.Cancelled)).map(rg => <div key={rg.id}>
           <>
             <ReservationGroupSummary onCancel={(rgId, formRef) => {
               setTimeout(() => {

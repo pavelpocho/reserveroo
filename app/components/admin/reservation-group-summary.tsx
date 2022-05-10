@@ -1,5 +1,5 @@
 import { Company, Place, Reservable, Reservation, ReservationGroup, User } from "@prisma/client"
-import { Form } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 import React from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
@@ -93,18 +93,24 @@ export const AdminReservationGroupSummary: React.FC<ReservationGroupSummaryProps
           </div>
         </SummaryInfoWrap>
       </InnerWrap>
-      <Form method='post' ref={formRef} onChange={(e) => {
-        onChangeStatus(rg.id, e.currentTarget);
-      }}>
-        <IdInput name={'rgId'} value={rg.id} />
-        <select name='status' defaultValue={rg.reservations[0].status.toString()}>
-          <option value='0'>Awaiting confirmation</option>
-          <option value='1'>Confirmed</option>
-          <option value='2'>Rejected</option>
-          <option value='3'>Cancelled</option>
-          <option value='4'>Paid</option>
-        </select>
-      </Form>
+      <InnerWrap>
+        {(rg.reservations.length > 0 ? rg.reservations[0].status : ReservationStatus.Cancelled) != ReservationStatus.Cancelled && <>
+          <Form method='post' ref={formRef} onChange={(e) => {
+            onChangeStatus(rg.id, e.currentTarget);
+          }}>
+            <IdInput name={'rgId'} value={rg.id} />
+            <select name='status' defaultValue={rg.reservations.length > 0 ? rg.reservations[0].status.toString() : '5'}>
+              <option value='0'>Awaiting confirmation</option>
+              <option value='1'>Confirmed</option>
+              <option value='2'>Rejected</option>
+              <option value='3'>Cancelled</option>
+              <option value='4'>Paid</option>
+              <option value='5'>Nothing Reserved</option>
+            </select>
+          </Form>
+          <Link to={`/admin/reservations/${rg.id}`}>Edit</Link>
+        </>}
+      </InnerWrap>
     </Wrap>
   </>
 }

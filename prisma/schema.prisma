@@ -30,6 +30,7 @@ model Reservation {
   start              DateTime
   end                DateTime
   status             Int               @default(0)
+  backup             Boolean           @default(false)
 }
 
 model ReservationGroup {

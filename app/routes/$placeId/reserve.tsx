@@ -2,6 +2,7 @@ import { Form, useActionData, useLoaderData, useMatches, useParams } from '@remi
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime'
 import React from 'react';
 import styled from 'styled-components';
+import { Button } from '~/components/button';
 import { DateInput } from '~/components/inputs/DateInput';
 import { IdInput } from '~/components/inputs/ObjectInput';
 import { RadioInput } from '~/components/inputs/RadioInput';
@@ -50,13 +51,16 @@ export const action: ActionFunction = async ({ request }) => {
   const placeId = form.get('placeId')?.toString();
   const userId = form.get('userId')?.toString();
 
-  const reservableId = form.getAll('reservableId').map(r => r.toString());
+  const reservationBackup = form.getAll('reservationBackup[]').map(r => r.toString());
+  const reservableId = form.getAll('reservableId[]').map(r => r.toString());
   const dateTimeStart = form.getAll('start[]').map(r => r.toString());
   const dateTimeEnd = form.getAll('end[]').map(r => r.toString());
 
   // You need to repeat the validation here!!!!!!
 
-  if (!dateTimeEnd || !dateTimeStart || !note || !placeId || !userId || !reservableId || note == '') {
+  const datesInPast = dateTimeStart.find(s => new Date(s).getTime() < new Date().getTime());
+
+  if (!dateTimeEnd || !dateTimeStart || !note || datesInPast || !placeId || !userId || !reservableId || note == '') {
     return badRequest({
       fields: {
         note: note ?? '', placeId: placeId ?? '', userId: userId ?? ''
@@ -68,7 +72,7 @@ export const action: ActionFunction = async ({ request }) => {
   const resGroup = await createReservationGroup({ note, userId });
   const promises: Promise<object>[] = []
   dateTimeStart.forEach((d, i) => {
-    promises.push(createReservation({ start: new Date(dateTimeStart[i]), end: new Date(dateTimeEnd[i]), reservableId: reservableId[i] ?? null, reservationGroupId: resGroup.id ?? null }));
+    promises.push(createReservation({ backup: reservationBackup[i] == '1', start: new Date(dateTimeStart[i]), end: new Date(dateTimeEnd[i]), reservableId: reservableId[i] ?? null, reservationGroupId: resGroup.id ?? null }));
   });
   await Promise.all(promises);
 
@@ -103,17 +107,40 @@ export default function ReservationElement() {
   const actionData = useActionData<ReserveActionData>();
 
   const [ date, setDate ] = React.useState<Date | null>(null);
+  const [ backup, setBackup ] = React.useState(false);
 
   return (
     <Form method='post'>
       <IdInput name={'userId'} value={userId} /> 
       <IdInput name={'placeId'} value={params.placeId ?? ''} />
       <TextInput name={'note'} title={'Note'} defaultValue={actionData?.fields?.note ?? ''} />
-      <DateInput name={'date'} defaultValue={date} title={'Date'} onChange={setDate} />
+      <DateInput disablePast={true} name={'date'} defaultValue={date} title={'Date'} onChange={setDate} />
       { date && <ReservableTimes
         startName='start[]'
         endName='end[]'
-        reservableIdName='reservableId'
+        reservationBackupName='reservationBackup[]'
+        reservationIdName='reservationId[]'
+        reservableIdName='reservableId[]'
+        reservables={reservables}
+        date={date}
+        openingTime={place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]}
+      /> }
+      <p>
+        We don't yet have real-time availability data for this business.
+        If you wish, you can provide us with a backup timeslot, to maximize
+        your chances of encountering a free place.
+        By booking with us, you can help us remove this limitation as soon as possible.
+      </p>
+      <Button onClick={() => {
+        setBackup(true);
+      }}>Choose a backup timeslot</Button>
+      { backup && date && <ReservableTimes
+        backup={true}
+        startName='start[]'
+        endName='end[]'
+        reservationBackupName='reservationBackup[]'
+        reservationIdName='reservationId[]'
+        reservableIdName='reservableId[]'
         reservables={reservables}
         date={date}
         openingTime={place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]}

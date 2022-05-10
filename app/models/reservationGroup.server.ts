@@ -6,6 +6,26 @@ export type { ReservationGroup } from "@prisma/client";
 
 export const getReservationGroup = async ({ id }: Pick<ReservationGroup, 'id'>) => (await prisma.reservationGroup.findFirst({
   where: { id },
+  include: {
+    reservations: {
+      include: {
+        reservable: {
+          include: {
+            place: {
+              include: {
+                openingTimes: true,
+                reservables: {
+                  include: {
+                    reservations: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }));
 
 export const getReservationGroupList = async () => (await prisma.reservationGroup.findMany({
@@ -39,6 +59,9 @@ export const updateReservationGroup = async ({ id, note, userId }: Pick<Reservat
   },
   data: {
     note, userId
+  },
+  include: {
+    reservations: true
   }
 }));
 

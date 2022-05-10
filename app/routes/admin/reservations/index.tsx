@@ -1,5 +1,5 @@
 import { Company, Reservable, Reservation } from '@prisma/client';
-import { Form, useLoaderData, useSubmit } from '@remix-run/react';
+import { useLoaderData, useSubmit } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction } from '@remix-run/server-runtime'
 import styled from 'styled-components';
 import { AdminReservationGroupSummary } from '~/components/admin/reservation-group-summary';
@@ -21,13 +21,15 @@ interface ReservationsAdminLoaderData {
             });
         }) | null;
     })[];
-})[]
+  })[]
 }
+
 
 export const loader: LoaderFunction = async () => {
   const reservationGroups = await getReservationGroupList();
   return json({ reservationGroups });
 }
+
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -48,15 +50,11 @@ export const action: ActionFunction = async ({ request }) => {
   return {}
 }
 
-const Wrap = styled.div`
-  
-`;
-
 const Title = styled.h4`
   
 `;
 
-export default function ReservationsAdmin() {
+export default function ReservationAdminList() {
 
   const { reservationGroups } = useLoaderData<ReservationsAdminLoaderData>();
   const submit = useSubmit();
@@ -65,10 +63,10 @@ export default function ReservationsAdmin() {
     submit(form, { replace: true });
   }
 
-  return <Wrap>
+  return <>
     <Title>Reservations</Title>
     { reservationGroups.map(rg => <AdminReservationGroupSummary key={rg.id} reservationGroup={rg} onChangeStatus={(rgId, form) => {
         handleChange(rgId, form);
     }} />) }
-  </Wrap>
+  </>
 }

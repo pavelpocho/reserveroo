@@ -37,7 +37,7 @@ export default function Admin() {
   return useLoaderData<AdminLoaderData>().forbidden ? 
     <div>Iiii dont think ur an admin m8</div> : <>
     <AdminHeader>
-      <TabButton to='/admin/reservationGroups'>Reservation groups</TabButton>
+      <TabButton to='/admin/reservations'>Reservations</TabButton>
       <TabButton to='/admin/places'>Places</TabButton>
       <TabButton to='/admin/companies'>Companies</TabButton>
     </AdminHeader>

@@ -7,7 +7,8 @@ interface DateInputProps {
   name: string,
   defaultValue: Date | null,
   title: string,
-  onChange: React.Dispatch<React.SetStateAction<Date | null>>
+  onChange: React.Dispatch<React.SetStateAction<Date | null>>,
+  disablePast?: boolean
 }
 
 const DateInputField = styled.input`
@@ -84,7 +85,7 @@ const DayButton: React.FC<DayButtonProps> = ({ disabled, date, selected, onClick
   onClick();
 }}>{date.toString()}</Button>
 
-export const DateInput: React.FC<DateInputProps> = ({ name, defaultValue, title, onChange }: DateInputProps) => {
+export const DateInput: React.FC<DateInputProps> = ({ disablePast, name, defaultValue, title, onChange }: DateInputProps) => {
 
   const [ value, setValue ] = React.useState<string>(getInputDateFromString(defaultValue));
   const [ { year, month }, setYearMonth ] = React.useState<YearMonth>({ year: (new Date()).getFullYear(), month: (new Date().getMonth()) });
@@ -134,6 +135,7 @@ export const DateInput: React.FC<DateInputProps> = ({ name, defaultValue, title,
         />) }
         { days.map(d => <DayButton
           key={d + 32}
+          disabled={disablePast && new Date().getDate() > d + 1}
           selected={d + 1 == date && getYearMonthFromValue(value).month == month && getYearMonthFromValue(value).year == year}
           date={d + 1}
           onClick={() => {

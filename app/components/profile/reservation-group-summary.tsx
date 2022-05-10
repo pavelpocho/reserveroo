@@ -69,7 +69,7 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
   return <>
     <Wrap key={rg.id} ref={ref}>
       <InnerWrap>
-        <Title>{rg.reservations[0].reservable?.place.name}</Title>
+        <Title>{rg.reservations.length > 0 ? rg.reservations[0].reservable?.place.name : 'Reservation'}</Title>
         { rg.reservations.map(r => <div key={r.id}>
           <ReservationSummary reservation={r} />
         </div>) }

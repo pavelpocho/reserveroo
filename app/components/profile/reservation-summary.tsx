@@ -56,5 +56,9 @@ export const ReservationSummary: React.FC<ReservationSummaryProps> = ({ reservat
         (r.status) == ReservationStatus.Past ? 'Past' : '' 
       }</Value>
     </div>
+    { r.backup && <div>
+      <Title>Backup</Title>
+      <Value>This slot is a backup.</Value>
+    </div> }
   </Wrap>
 }
