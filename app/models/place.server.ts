@@ -49,12 +49,28 @@ export const createPlace = async ({ name, companyId }: Pick<Place, 'name' | 'com
   },
 }));
 
-export const updatePlace = async ({ id, name, companyId, hidden }: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden'>) => (await prisma.place.update({
+export const updatePlace = async ({
+  id, name, companyId, hidden, addedTagIds, removedTagIds, addedCategoryIds, removedCategoryIds, locationId
+}: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden'> & {
+  addedTagIds: string[],
+  removedTagIds: string[],
+  addedCategoryIds: string[],
+  removedCategoryIds: string[],
+  locationId: string
+}) => (await prisma.place.update({
   where: {
     id
   },
   data: {
-    name, companyId, hidden
+    tags: {
+      connect: addedTagIds.map(t => ({ id: t })),
+      disconnect: removedTagIds.map(t => ({ id: t }))
+    },
+    categories: {
+      connect: addedCategoryIds.map(c => ({ id: c })),
+      disconnect: removedCategoryIds.map(c => ({ id: c }))
+    },
+    locationId, name, companyId, hidden
   }
 }));
 

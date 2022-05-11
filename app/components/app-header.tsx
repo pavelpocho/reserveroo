@@ -113,7 +113,7 @@ export default function AppHeader({ children }: AppHeaderProps) {
       <StretchForm action='/logout' method='post'>
         <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
         {admin ? <BarLink to={'/admin/reservations'}>Admin Tools</BarLink> : <></>}
-        <BarButton>Logout</BarButton>
+        {username && <BarButton>Logout</BarButton> }
       </StretchForm>
     </Side>
   </Wrap>

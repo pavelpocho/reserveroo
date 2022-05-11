@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { styles } from "~/constants/styles";
 
 interface IdInput {
-  name: string,
+  name?: string,
   value: string
 }
 

@@ -1,40 +1,65 @@
-import { Category, Company, OpeningTime, Prisma, PrismaPromise, Reservable, Tag } from '@prisma/client';
+import { Category, Company, Location, OpeningTime, Prisma, PrismaPromise, Reservable, Tag } from '@prisma/client';
 import { Form, useLoaderData } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '~/components/button';
 import { ArrayInput } from '~/components/inputs/ArrayInput';
+import { MultiSelectorInput } from '~/components/inputs/MultiSelectorInput';
 import { NumberInput } from '~/components/inputs/NumberInput';
 import { IdInput } from '~/components/inputs/ObjectInput';
+import { SingleSelectorInput } from '~/components/inputs/SingleSelectorInput';
 import { TextInput } from '~/components/inputs/TextInput';
 import { TimeInput } from '~/components/inputs/TimeInput';
+import { getCategoryList } from '~/models/category.server';
 import { getCompanyList } from '~/models/company.server';
+import { getLocationList } from '~/models/location.server';
 import { updateOpeningTime } from '~/models/openingTime.server';
-import { getPlace, Place, updatePlace } from '~/models/place.server';
+import { getPlace, getPlaceList, Place, updatePlace } from '~/models/place.server';
 import { createReservable, deleteReservable, updateReservable } from '~/models/reservable.server';
+import { getTagList } from '~/models/tag.server';
 import { PlaceForEdit } from '~/types/types';
 import { getDateObjectFromTimeString, getFormEssentials } from '~/utils/forms';
 
 interface AdminPlaceDetailLoaderData {
   place: PlaceForEdit;
-  companies: Company[]
+  companies: Company[];
+  tags: Tag[];
+  categories: Category[];
+  locations: Location[];
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.placeId) return json({})
-  return json({ place: await getPlace({ id: params.placeId }), companies: await getCompanyList({ name: '' }) });
+  return json({
+    place: await getPlace({ id: params.placeId }),
+    companies: await getCompanyList({ name: '' }),
+    tags: await getTagList({ name: '' }),
+    categories: await getCategoryList({ name: '' }),
+    locations: await getLocationList({ cityCountry: '' })
+  });
 }
 
 export const action: ActionFunction = async ({ request }) => {
 
   const { getFormItem, getFormItems } = await getFormEssentials(request);
 
-  const place: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden'> = {
+  const place: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden'> & {
+    addedTagIds: string[],
+    removedTagIds: string[],
+    addedCategoryIds: string[],
+    removedCategoryIds: string[],
+    locationId: string
+  } = {
     id: getFormItem('id'),
     name: getFormItem('name'),
     companyId: getFormItem('companyId'),
-    hidden: getFormItem('hidden') == '1'
+    hidden: getFormItem('hidden') == '1',
+    addedTagIds: getFormItems('addedTagIds[]'),
+    removedTagIds: getFormItems('removedTagIds[]'),
+    addedCategoryIds: getFormItems('addedCategoryIds[]'),
+    removedCategoryIds: getFormItems('removedCategoryIds[]'),
+    locationId: getFormItem('locationId'),
   }
 
   const reservables: Pick<Reservable, 'id' | 'name' | 'placeId' | 'minimumReservationTime' | 'reservationsPerSlot'>[] = getFormItems('reservableId[]').map((id, i) => {
@@ -74,7 +99,9 @@ const ArrayInputWrap = styled.div`
 
 export default function AdminPlaceDetail() {
 
-  const { place: defaultPlace, companies } = useLoaderData<AdminPlaceDetailLoaderData>();
+  const { place: defaultPlace, companies, tags, locations, categories } = useLoaderData<AdminPlaceDetailLoaderData>();
+
+  console.log(defaultPlace.categories);
 
   const [ place, setPlace ] = useState<PlaceForEdit>(defaultPlace);
 
@@ -111,54 +138,68 @@ export default function AdminPlaceDetail() {
     });
   }
 
-  return (
-    <div>
-      <Form method='post'>
+  return <div>
+    <Form method='post'>
 
-        <IdInput name='id' value={place?.id} />        
-        <TextInput name='name' title='Name' defaultValue={place?.name} />
-        <select name='hidden' defaultValue={place.hidden ? '1' : '0'}>
-          <option value='1'>Hidden</option>
-          <option value='0'>Not hidden</option>
-        </select>
-        <select name='companyId' defaultValue={place?.companyId ?? ''}>
-          { companies.map(c => <option key={c.id} value={c.id} >{c.name}</option>) }
-        </select>
+      <IdInput name='id' value={place?.id} />        
+      <TextInput name='name' title='Name' defaultValue={place?.name} />
+      <select name='hidden' defaultValue={place.hidden ? '1' : '0'}>
+        <option value='1'>Hidden</option>
+        <option value='0'>Not hidden</option>
+      </select>
+      <select name='companyId' defaultValue={place?.companyId ?? ''}>
+        { companies.map(c => <option key={c.id} value={c.id} >{c.name}</option>) }
+      </select>
 
-        <ArrayInput
-          arrayTitle={'Reservables'}
-          deletedIdsName={'deletedReservable[]'}
-          deletedIds={deletedReservables}
-          onAdd={(e) => { addReservable(e); }}
-          addButtonText='Add new reservable'
-        >
-          { place.reservables.map(r => <ArrayInputWrap key={r.id + r.createdAt}>
-            <IdInput name='reservableId[]' value={r.id} />
-            <TextInput title='Reservable name' name='reservableName[]' defaultValue={r.name} />
-            <NumberInput title='Minimum reservation interval (minutes)' name='minimumReservationTime[]' defaultValue={r.minimumReservationTime} />
-            <NumberInput title='Reservations per slot' name='reservationsPerSlot[]' defaultValue={r.minimumReservationTime} />
-            <Button onClick={(e) => { deleteReservable(e, r.id); }}>Delete</Button>
-          </ArrayInputWrap>) }
-        </ArrayInput>
+      <ArrayInput
+        arrayTitle={'Reservables'}
+        deletedIdsName={'deletedReservable[]'}
+        deletedIds={deletedReservables}
+        onAdd={(e) => { addReservable(e); }}
+        addButtonText='Add new reservable'
+      >
+        { place.reservables.map(r => <ArrayInputWrap key={r.id + r.createdAt}>
+          <IdInput name='reservableId[]' value={r.id} />
+          <TextInput title='Reservable name' name='reservableName[]' defaultValue={r.name} />
+          <NumberInput title='Minimum reservation interval (minutes)' name='minimumReservationTime[]' defaultValue={r.minimumReservationTime} />
+          <NumberInput title='Reservations per slot' name='reservationsPerSlot[]' defaultValue={r.minimumReservationTime} />
+          <Button onClick={(e) => { deleteReservable(e, r.id); }}>Delete</Button>
+        </ArrayInputWrap>) }
+      </ArrayInput>
 
-        <ArrayInput arrayTitle='Opening times'>
-          { place.openingTimes.sort((a, b) => a.day - b.day).map(t => <ArrayInputWrap key={t.id}>
-            <p>{daysOfWeek[t.day]}</p>
-            <IdInput name='openingTime[]' value={`${t.id}`} />
-            <IdInput name='day[]' value={`${t.day}`} />
-            <TimeInput title='Open:' name='open[]' defaultValue={new Date(t.open)} />
-            <TimeInput title='Close:' name='close[]' defaultValue={new Date(t.close)} />
-          </ArrayInputWrap>) }
-        </ArrayInput>
+      <ArrayInput arrayTitle='Opening times'>
+        { place.openingTimes.sort((a, b) => a.day - b.day).map(t => <ArrayInputWrap key={t.id}>
+          <p>{daysOfWeek[t.day]}</p>
+          <IdInput name='openingTime[]' value={`${t.id}`} />
+          <IdInput name='day[]' value={`${t.day}`} />
+          <TimeInput title='Open:' name='open[]' defaultValue={new Date(t.open)} />
+          <TimeInput title='Close:' name='close[]' defaultValue={new Date(t.close)} />
+        </ArrayInputWrap>) }
+      </ArrayInput>
 
-        {/* <ArrayInput arrayTitle='Tags'>
-          { place.tags.map(t => <ArrayInputWrap key={t.id + t.createdAt}>
-            <IdInput name='tagId[]' value={t.id}
-          </ArrayInputWrap>) }
-        </ArrayInput> */}
+      <MultiSelectorInput
+        possibleValuesAndTexts={tags.map(t => ({ value: t.id, text: t.name }))}
+        defaultValuesAndTexts={place.tags.map(t => ({ value: t.id, text: t.name }))}
+        removedName={'removedTagIds[]'}
+        addedName={'addedTagIds[]'}
+      />
 
-        <input type='submit'/>
-      </Form>
-    </div>
-  )
+      <MultiSelectorInput
+        possibleValuesAndTexts={categories.map(c => ({ value: c.id, text: c.name }))}
+        defaultValuesAndTexts={place.categories.map(c => ({ value: c.id, text: c.name }))}
+        removedName={'removedCategoryIds[]'}
+        addedName={'addedCategoryIds[]'}
+      />
+
+      <SingleSelectorInput
+        possibleValuesAndTexts={locations.map(l => ({ value: l.id, text: `${l.city}, ${l.country}` }))}
+        name={'locationId'}
+        defaultValueAndText={{
+          value: place.Location?.id ?? '',
+          text: place.Location ? `${place.Location?.city}, ${place.Location?.country}` : ''
+      }} />
+
+      <input type='submit'/>
+    </Form>
+  </div>
 }

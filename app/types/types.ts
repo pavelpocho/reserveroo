@@ -1,3 +1,4 @@
+import { Location } from "@prisma/client";
 import { Category } from "~/models/category.server";
 import { OpeningTime } from "~/models/openingTime.server";
 import { Place } from "~/models/place.server";

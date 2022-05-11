@@ -3,10 +3,12 @@ import styled from "styled-components";
 import { styles } from "~/constants/styles";
 
 interface TextInputProps {
-  name: string,
+  name?: string,
   title?: string,
-  defaultValue: string,
-  password?: boolean
+  defaultValue?: string,
+  value?: string,
+  password?: boolean,
+  readOnly?: boolean
 }
 
 const TextInputField = styled.input`
@@ -31,13 +33,13 @@ const Label = styled.label`
   font-weight: bold;
 `;
 
-export const TextInput: React.FC<TextInputProps> = ({ name, title, defaultValue, password }: TextInputProps) => {
+export const TextInput: React.FC<TextInputProps> = ({ name, title, defaultValue, password, readOnly, value: forcedValue }: TextInputProps) => {
 
-  const [ value, setValue ] = React.useState<string>(defaultValue);
+  const [ value, setValue ] = React.useState<string>(defaultValue ?? '');
 
   return <Wrap>
     { title && <Label>{title}</Label> }
-    <TextInputField name={name} type={password ? 'password' : 'text'} value={value} onChange={(e) => { setValue(e.currentTarget.value); }} />
+    <TextInputField readOnly={readOnly} name={name} type={password ? 'password' : 'text'} value={forcedValue ?? value} onChange={(e) => { setValue(e.currentTarget.value); }} />
   </Wrap>
 
 }
