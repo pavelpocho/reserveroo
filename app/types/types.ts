@@ -1,8 +1,10 @@
+import { Category } from "~/models/category.server";
 import { OpeningTime } from "~/models/openingTime.server";
 import { Place } from "~/models/place.server";
 import { Reservable } from "~/models/reservable.server";
 import { Reservation } from "~/models/reservation.server";
 import { ReservationGroup } from "~/models/reservationGroup.server";
+import { Tag } from "~/models/tag.server";
 
 export type FreeOrBusy = 'free' | 'busy';
 export type ImageShape = 'square' | 'circle';
@@ -21,6 +23,14 @@ export type TimeSection = {
   start: Time,
   end: Time
 }
+
+export type PlaceForEdit = (Place & {
+  reservables: Reservable[];
+  openingTimes: OpeningTime[];
+  tags: Tag[];
+  categories: Category[];
+  Location: Location | null;
+})
 
 export type ReservationGroupForEdit = (ReservationGroup & {
   reservations: (Reservation & {

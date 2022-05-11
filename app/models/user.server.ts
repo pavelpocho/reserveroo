@@ -8,13 +8,25 @@ export const getUser = async ({ id }: Pick<User, 'id'>) => (await prisma.user.fi
   where: { id },
 }));
 
-export const getUserByName = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
+export const getUserId = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
+  where: { username },
+  select: {
+    id: true
+  }
+}));
+
+export const checkForUserByUsername = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
   where: { username },
   select: { id: true, passwordHash: true, admin: true }
 }));
 
-export const getUserById = async ({ id }: Pick<User, 'id'>) => (await prisma.user.findUnique({
-  where: { id },
+export const checkForUserByEmail = async ({ email }: Pick<User, 'email'>) => (await prisma.user.findUnique({
+  where: { email },
+  select: { id: true, passwordHash: true, admin: true }
+}));
+
+export const getUserByUsername = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
+  where: { username },
   include: {
     reservationGroups: {
       include: {
@@ -32,17 +44,21 @@ export const getUserById = async ({ id }: Pick<User, 'id'>) => (await prisma.use
   }
 }));
 
-export const createUser = async ({ username, passwordHash, email }: Pick<User, 'username' | 'passwordHash' | 'email'>) => (await prisma.user.create({
-  data: { username, passwordHash, email },
+export const createUser = async ({
+  username, passwordHash, email, phone, firstName, lastName
+}: Pick<User, 
+  'username' | 'passwordHash' | 'email' | 'firstName' | 'lastName' | 'phone'
+>) => (await prisma.user.create({
+  data: { username, passwordHash, email, phone, firstName, lastName },
   select: { id: true, passwordHash: true }
 }));
 
-export const updateUser = async ({ id, username, email, passwordHash }: Pick<User, 'id' | 'email' | 'username' | 'passwordHash'>) => (await prisma.user.update({
+export const updateUser = async ({ id, firstName, lastName, /*username,*/ email, phone }: Pick<User, 'id' | 'firstName' | 'lastName' | 'phone' | 'email'/* | 'username'*/>) => (await prisma.user.update({
   where: {
     id
   },
   data: {
-    username, email, passwordHash
+    /*username, */email, firstName, lastName, phone
   }
 }));
 

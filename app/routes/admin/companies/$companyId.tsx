@@ -1,18 +1,12 @@
-import { Company, OpeningTime, Prisma, PrismaPromise, Reservable } from '@prisma/client';
+import { Company } from '@prisma/client';
 import { Form, useLoaderData } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { Button } from '~/components/button';
-import { ArrayInput } from '~/components/inputs/ArrayInput';
-import { NumberInput } from '~/components/inputs/NumberInput';
 import { IdInput } from '~/components/inputs/ObjectInput';
 import { TextInput } from '~/components/inputs/TextInput';
-import { TimeInput } from '~/components/inputs/TimeInput';
 import { getCompany, updateCompany } from '~/models/company.server';
-import { updateOpeningTime } from '~/models/openingTime.server';
-import { createReservable, deleteReservable, updateReservable } from '~/models/reservable.server';
-import { getDateObjectFromTimeString, getFormEssentials } from '~/utils/forms';
+import { getFormEssentials } from '~/utils/forms';
 
 interface AdminPlaceDetailLoaderData {
   company: Company;

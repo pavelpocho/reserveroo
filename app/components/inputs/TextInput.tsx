@@ -4,8 +4,9 @@ import { styles } from "~/constants/styles";
 
 interface TextInputProps {
   name: string,
-  title: string,
-  defaultValue: string
+  title?: string,
+  defaultValue: string,
+  password?: boolean
 }
 
 const TextInputField = styled.input`
@@ -20,14 +21,23 @@ const TextInputField = styled.input`
   }
 `;
 
-export const TextInput: React.FC<TextInputProps> = ({ name, title, defaultValue }: TextInputProps) => {
+const Wrap = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Label = styled.label`
+  font-size: 0.8rem;
+  font-weight: bold;
+`;
+
+export const TextInput: React.FC<TextInputProps> = ({ name, title, defaultValue, password }: TextInputProps) => {
 
   const [ value, setValue ] = React.useState<string>(defaultValue);
 
-  return <div>
-    <label>{title}</label>
-    <TextInputField type='text' value={value} onChange={(e) => { setValue(e.currentTarget.value); }} />
-    <input name={name} type='text' readOnly={true} value={value} hidden={true} />
-  </div>
+  return <Wrap>
+    { title && <Label>{title}</Label> }
+    <TextInputField name={name} type={password ? 'password' : 'text'} value={value} onChange={(e) => { setValue(e.currentTarget.value); }} />
+  </Wrap>
 
 }

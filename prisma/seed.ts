@@ -125,21 +125,33 @@ const generateUsers = async () => {
   return [{
     email: 'admin@admin.com',
     username: 'admin',
+    phone: '+123456789123',
+    firstName: 'Admin',
+    lastName: 'Administrator',
     admin: true,
     passwordHash: await generateHashAndSalt('reserveroo')
   }, {
     email: 'john@person.com',
     username: 'john123',
+    phone: '+234567891234',
+    firstName: 'John',
+    lastName: 'Newman',
     admin: false,
     passwordHash: await generateHashAndSalt('johnspwd')
   }, {
     email: 'peter@person.com',
     username: 'peter123',
+    phone: '+345678912345',
+    firstName: 'Peter',
+    lastName: 'Parker',
     admin: false,
     passwordHash: await generateHashAndSalt('peterspwd')
   }, {
     email: 'louis@person.com',
     username: 'louis123',
+    phone: '+456789123456',
+    firstName: 'Louis',
+    lastName: 'Litt',
     admin: false,
     passwordHash: await generateHashAndSalt('louisspwd')
   }]

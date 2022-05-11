@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { styles } from '~/constants/styles';
 import { UnstyledLink } from '~/root';
 // import { LinkWithLoader } from '~/components/LinkWithLoader';
-import { requireUserIdAndAdmin } from '~/utils/session.server'
+import { requireUsernameAndAdmin } from '~/utils/session.server'
 
 interface AdminLoaderData {
   forbidden: boolean
@@ -13,7 +13,7 @@ interface AdminLoaderData {
 const forbidden = (data: AdminLoaderData) => json(data, { status: 403 });
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const { admin } = await requireUserIdAndAdmin(request);
+  const { admin } = await requireUsernameAndAdmin(request);
   if (admin === true) {
     return {}
   }
@@ -40,6 +40,9 @@ export default function Admin() {
       <TabButton to='/admin/reservations'>Reservations</TabButton>
       <TabButton to='/admin/places'>Places</TabButton>
       <TabButton to='/admin/companies'>Companies</TabButton>
+      <TabButton to='/admin/tags'>Tags</TabButton>
+      <TabButton to='/admin/categories'>Categories</TabButton>
+      <TabButton to='/admin/locations'>Locations</TabButton>
     </AdminHeader>
     <div>
       <Outlet />

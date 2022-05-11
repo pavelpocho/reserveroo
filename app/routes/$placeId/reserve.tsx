@@ -9,18 +9,19 @@ import { RadioInput } from '~/components/inputs/RadioInput';
 import { TextInput } from '~/components/inputs/TextInput';
 import { TimeInput } from '~/components/inputs/TimeInput';
 import { ReservableTimes } from '~/components/reservable-times';
-import { useUserId } from '~/contexts/userIdContext';
+import { useUsername } from '~/contexts/usernameContext';
 import { OpeningTime } from '~/models/openingTime.server';
 import { getPlace, getPlaceWithReservations, Place } from '~/models/place.server';
 import { getReservableList, Reservable } from '~/models/reservable.server';
 import { createReservation, Reservation } from '~/models/reservation.server';
 import { createReservationGroup } from '~/models/reservationGroup.server';
+import { getUserId } from '~/models/user.server';
 import { ReservableWithReservations, TimeSection } from '~/types/types';
 import { getDayOfWeek } from '~/utils/forms';
-import { requireUserIdAndAdmin } from '~/utils/session.server'
+import { requireUsernameAndAdmin } from '~/utils/session.server'
 
 interface ReserveLoaderData {
-  userId: string,
+  username: string,
   place: (Place & {
     reservables: ReservableWithReservations[];
     openingTimes: OpeningTime[];
@@ -31,7 +32,7 @@ export type ReserveActionData = {
   formError?: string;
   fields?: {
     note: string;
-    userId: string;
+    username: string;
     placeId: string;
   };
 };
@@ -40,16 +41,16 @@ const badRequest = (data: ReserveActionData) => json(data, { status: 400 });
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   // Return availability data
-  const { userId } = await requireUserIdAndAdmin(request);
+  const { username } = await requireUsernameAndAdmin(request);
   const place = await getPlaceWithReservations({ id: params.placeId ?? '' });
-  return json({ userId, place })
+  return json({ username, place })
 }
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const note = form.get('note')?.toString();
   const placeId = form.get('placeId')?.toString();
-  const userId = form.get('userId')?.toString();
+  const username = form.get('username')?.toString();
 
   const reservationBackup = form.getAll('reservationBackup[]').map(r => r.toString());
   const reservableId = form.getAll('reservableId[]').map(r => r.toString());
@@ -60,16 +61,25 @@ export const action: ActionFunction = async ({ request }) => {
 
   const datesInPast = dateTimeStart.find(s => new Date(s).getTime() < new Date().getTime());
 
-  if (!dateTimeEnd || !dateTimeStart || !note || datesInPast || !placeId || !userId || !reservableId || note == '') {
+  if (!dateTimeEnd || !dateTimeStart || !note || datesInPast || !placeId || !username || !reservableId || note == '') {
     return badRequest({
       fields: {
-        note: note ?? '', placeId: placeId ?? '', userId: userId ?? ''
+        note: note ?? '', placeId: placeId ?? '', username: username ?? ''
       },
       formError: 'Fill everything in pls.'
     })
   }
 
-  const resGroup = await createReservationGroup({ note, userId });
+  const user = await getUserId({ username });
+  const resGroup = user ? await createReservationGroup({ note, userId: user.id }) : null;
+  if (resGroup == null) {
+    return badRequest({
+      fields: {
+        note: note ?? '', placeId: placeId ?? '', username: username ?? ''
+      },
+      formError: 'Cannot find who you are :(.'
+    })
+  }
   const promises: Promise<object>[] = []
   dateTimeStart.forEach((d, i) => {
     promises.push(createReservation({ backup: reservationBackup[i] == '1', start: new Date(dateTimeStart[i]), end: new Date(dateTimeEnd[i]), reservableId: reservableId[i] ?? null, reservationGroupId: resGroup.id ?? null }));
@@ -102,7 +112,7 @@ const getTimeSectionOfReservation = (reservation: Reservation) => {
 export default function ReservationElement() {
 
   const params = useParams();
-  const { userId, place } = useLoaderData<ReserveLoaderData>();
+  const { username, place } = useLoaderData<ReserveLoaderData>();
   const reservables = place.reservables;
   const actionData = useActionData<ReserveActionData>();
 
@@ -111,7 +121,7 @@ export default function ReservationElement() {
 
   return (
     <Form method='post'>
-      <IdInput name={'userId'} value={userId} /> 
+      <IdInput name={'username'} value={username} /> 
       <IdInput name={'placeId'} value={params.placeId ?? ''} />
       <TextInput name={'note'} title={'Note'} defaultValue={actionData?.fields?.note ?? ''} />
       <DateInput disablePast={true} name={'date'} defaultValue={date} title={'Date'} onChange={setDate} />

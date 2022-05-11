@@ -1,16 +1,14 @@
-import { Form, useLoaderData, useSubmit } from '@remix-run/react';
-import type { LoaderFunction } from '@remix-run/server-runtime';
-import { getUserById } from '~/models/user.server';
-import { requireUserIdAndAdmin } from '~/utils/session.server';
-import { Company, Place, Reservable, Reservation, ReservationGroup, User } from '@prisma/client';
+import { Outlet, useActionData, useLoaderData, useSubmit } from '@remix-run/react';
+import { LoaderFunction } from '@remix-run/server-runtime';
+import { getUserByUsername } from '~/models/user.server';
+import { requireUsernameAndAdmin } from '~/utils/session.server';
+import { Place, Reservable, Reservation, ReservationGroup, User } from '@prisma/client';
 import { ReservationStatus } from '~/types/types';
 import { ReservationGroupSummary } from '~/components/profile/reservation-group-summary';
-import { AccountSummary } from '~/components/profile/account-summary';
 import styled from 'styled-components';
 import { styles } from '~/constants/styles';
-import { IdInput } from '~/components/inputs/ObjectInput';
 
-interface ProfileLoaderData {
+export interface ProfileLoaderData {
   user: User & {
     reservationGroups: (ReservationGroup & {
       reservations: (Reservation & {
@@ -23,7 +21,11 @@ interface ProfileLoaderData {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return { user: await getUserById({ id: (await requireUserIdAndAdmin(request)).userId })};
+  const user = await getUserByUsername({ username: (await requireUsernameAndAdmin(request)).username });
+  if (user) {
+    user.passwordHash = '';
+  }
+  return { user: user };
 }
 
 const ReservationsWrap = styled.div`
@@ -35,6 +37,10 @@ const ReservationsTitle = styled.h4`
   margin-top: 0;
 `;
 
+const NoReservations = styled.p`
+
+`;
+
 export default function Profile() {
 
   const { user } = useLoaderData<ProfileLoaderData>();
@@ -44,14 +50,15 @@ export default function Profile() {
     submit(form, { replace: true })
   }
 
-  console.log(user?.reservationGroups.filter(rg => !rg.reservations.find(r => r.status == ReservationStatus.Cancelled)));
+  const reservationGroups = user?.reservationGroups.filter(rg => rg.reservations.length > 0 && !rg.reservations.find(r => r.status == ReservationStatus.Cancelled));
 
   return (
     <div>
-      <AccountSummary user={user ? { username: user?.username, email: user?.email, createdAt: user?.createdAt } : null} />
+      <Outlet />
       <ReservationsWrap>
         <ReservationsTitle>Your Reservations</ReservationsTitle>
-        { user?.reservationGroups.filter(rg => rg.reservations.length > 0 && !rg.reservations.find(r => r.status == ReservationStatus.Cancelled)).map(rg => <div key={rg.id}>
+        { reservationGroups?.length == 0 && <NoReservations>Nothing here right now.</NoReservations> }
+        { reservationGroups?.map(rg => <div key={rg.id}>
           <>
             <ReservationGroupSummary onCancel={(rgId, formRef) => {
               setTimeout(() => {

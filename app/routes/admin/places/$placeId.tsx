@@ -1,4 +1,4 @@
-import { Company, OpeningTime, Prisma, PrismaPromise, Reservable } from '@prisma/client';
+import { Category, Company, OpeningTime, Prisma, PrismaPromise, Reservable, Tag } from '@prisma/client';
 import { Form, useLoaderData } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime';
 import { useState } from 'react';
@@ -13,13 +13,11 @@ import { getCompanyList } from '~/models/company.server';
 import { updateOpeningTime } from '~/models/openingTime.server';
 import { getPlace, Place, updatePlace } from '~/models/place.server';
 import { createReservable, deleteReservable, updateReservable } from '~/models/reservable.server';
+import { PlaceForEdit } from '~/types/types';
 import { getDateObjectFromTimeString, getFormEssentials } from '~/utils/forms';
 
 interface AdminPlaceDetailLoaderData {
-  place: (Place & {
-    reservables: Reservable[];
-    openingTimes: OpeningTime[];
-  });
+  place: PlaceForEdit;
   companies: Company[]
 }
 
@@ -78,10 +76,7 @@ export default function AdminPlaceDetail() {
 
   const { place: defaultPlace, companies } = useLoaderData<AdminPlaceDetailLoaderData>();
 
-  const [ place, setPlace ] = useState<(Place & {
-    reservables: Reservable[];
-    openingTimes: OpeningTime[];
-  })>(defaultPlace);
+  const [ place, setPlace ] = useState<PlaceForEdit>(defaultPlace);
 
   const [ deletedReservables, setDeletedReservables ] = useState<string[]>([]);
 
@@ -155,6 +150,12 @@ export default function AdminPlaceDetail() {
             <TimeInput title='Close:' name='close[]' defaultValue={new Date(t.close)} />
           </ArrayInputWrap>) }
         </ArrayInput>
+
+        {/* <ArrayInput arrayTitle='Tags'>
+          { place.tags.map(t => <ArrayInputWrap key={t.id + t.createdAt}>
+            <IdInput name='tagId[]' value={t.id}
+          </ArrayInputWrap>) }
+        </ArrayInput> */}
 
         <input type='submit'/>
       </Form>

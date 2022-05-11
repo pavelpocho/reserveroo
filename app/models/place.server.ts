@@ -8,7 +8,10 @@ export const getPlace = async ({ id }: Pick<Place, 'id'>) => (await prisma.place
   where: { id },
   include: {
     reservables: true,
-    openingTimes: true
+    openingTimes: true,
+    tags: true,
+    categories: true,
+    Location: true
   }
 }));
 

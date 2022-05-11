@@ -1,6 +1,9 @@
 import { Form, useActionData, useSearchParams, useTransition } from '@remix-run/react';
 import { ActionFunction, json } from '@remix-run/server-runtime';
 import React from 'react';
+import styled from 'styled-components';
+import { TextInput } from '~/components/inputs/TextInput';
+import { styles } from '~/constants/styles';
 import { createUserSession, login } from '~/utils/session.server';
 
 export type AuthActionData = {
@@ -13,6 +16,10 @@ export type AuthActionData = {
     username: string;
     password: string;
     redirectTo: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
   };
 };
 
@@ -31,15 +38,43 @@ export const action: ActionFunction = async ({ request }) => {
     password: password ?? ''
   }) ?? { userId: null, admin: false };
 
-  if (userId == null) {
+  if (userId == null || username == null) {
     return badRequest({
       fields: { username: username ?? '', password: password ?? '', redirectTo: redirectTo ?? '' },
       formError: 'Something is wrong.'
     });
   }
 
-  return createUserSession(userId, admin, redirectTo ?? '/');
+  return createUserSession(username, admin, redirectTo ?? '/');
 }
+
+export const AuthWrap = styled.div`
+  width: 90%;
+  max-width: 500px;
+  margin: 0px auto;
+  border-radius: 1rem;
+  margin-top: 2rem;
+  box-shadow: ${styles.shadows[0]};
+  border: 1px solid ${styles.colors.gray[10]};
+  box-sizing: border-box;
+  padding: 1.5rem;
+`;
+
+export const FieldSet = styled.fieldset`
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+export const SubmitButton = styled.button`
+  padding: 0.8rem 0rem;
+  border: 1.5px solid ${styles.colors.gray[20]};
+  border-radius: 0.4rem;
+  background-color: ${styles.colors.white};
+  cursor: pointer;
+  font-size: 0.9rem;
+`;
 
 export default function Login() {
 
@@ -54,16 +89,15 @@ export default function Login() {
     }
   }, [a?.fields?.redirectTo]);
 
-  return (<>
-    <div>LOGIN</div>
+  return (<AuthWrap>
     <Form method='post'>
-      <fieldset disabled={t.state === 'submitting'}>
+      <FieldSet disabled={t.state === 'submitting'}>
         <input hidden={true} name='redirectTo' defaultValue={searchParams.get('redirectTo') ?? undefined} />
-        <input type='text' name='username' defaultValue={a?.fields?.username} />
-        <input type='password' name='password' defaultValue={a?.fields?.password} />
-        <button type='submit'>Submit</button>
-      </fieldset>
+        <TextInput name='username' defaultValue={a?.fields?.username ?? ''} title={'Username'} />
+        <TextInput password={true} name='password' defaultValue={a?.fields?.password ?? ''} title={'Password'} />
+        <SubmitButton type='submit'>Sign In</SubmitButton>
+      </FieldSet>
     </Form>
-    </>
+    </AuthWrap>
   )
 }

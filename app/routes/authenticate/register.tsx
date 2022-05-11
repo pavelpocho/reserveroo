@@ -1,32 +1,43 @@
 import { Form, useActionData, useSearchParams, useTransition } from '@remix-run/react';
 import { ActionFunction, json } from '@remix-run/server-runtime';
 import React from 'react';
+import { TextInput } from '~/components/inputs/TextInput';
+import { getFormEssentials } from '~/utils/forms';
 import { createUserSession, login, register } from '~/utils/session.server';
-import { AuthActionData } from './login';
+import { AuthActionData, AuthWrap, FieldSet, SubmitButton } from './login';
 
 const badRequest = (data: AuthActionData) => json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request }) => {
-  const form = await request.formData();
-  const username = form.get('username')?.toString();
-  const password = form.get('password')?.toString();
+  
+  const { getFormItem } = await getFormEssentials(request);
 
   // Should validate this
-  const redirectTo = form.get('redirectTo')?.toString();
+  const redirectTo = getFormItem('redirectTo');
+  const username = getFormItem('username');
+  const password = getFormItem('password');
+  const phone = getFormItem('phone');
+  const email = getFormItem('email');
+  const firstName = getFormItem('firstName');
+  const lastName = getFormItem('lastName');
 
   const { userId, admin } = await register({
-    username: username ?? '',
-    password: password ?? ''
+    username,
+    password,
+    phone,
+    email,
+    firstName,
+    lastName,
   }) ?? { userId: null, admin: false };
 
-  if (userId == null) {
+  if (userId == null || username) {
     return badRequest({
       fields: { username: username ?? '', password: password ?? '', redirectTo: redirectTo ?? '' },
       formError: 'Something is wrong.'
     });
   }
 
-  return createUserSession(userId, admin, redirectTo ?? '/');
+  return createUserSession(username, admin, redirectTo ?? '/');
 }
 
 export default function Register() {
@@ -42,16 +53,21 @@ export default function Register() {
     }
   }, [a?.fields?.redirectTo]);
 
-  return (<>
-    <div>REGISTER</div>
+  return <AuthWrap>
     <Form method='post'>
-      <fieldset disabled={t.state === 'submitting'}>
+      <FieldSet disabled={t.state === 'submitting'}>
         <input hidden={true} name='redirectTo' defaultValue={searchParams.get('redirectTo') ?? undefined} />
-        <input type='text' name='username' defaultValue={a?.fields?.username} />
-        <input type='password' name='password' defaultValue={a?.fields?.password} />
-        <button type='submit'>Submit</button>
-      </fieldset>
+        <TextInput title={'Username'} name='username' defaultValue={a?.fields?.username ?? ''} />
+        <TextInput title={'First name'} name='firstName' defaultValue={a?.fields?.firstName ?? ''} />
+        <TextInput title={'Last name'} name='lastName' defaultValue={a?.fields?.lastName ?? ''} />
+        <TextInput title={'Email address'} name='email' defaultValue={a?.fields?.email ?? ''} />
+        <TextInput title={'Phone number'} name='phone' defaultValue={a?.fields?.phone ?? ''} />
+        <TextInput title={'Password'} password={true} name='password' defaultValue={a?.fields?.password ?? ''} />
+        <SubmitButton type='submit'>Submit</SubmitButton>
+        { a && a.formError && <p>
+          {a.formError}
+        </p> }
+      </FieldSet>
     </Form>
-    </>
-  )
+  </AuthWrap>
 }

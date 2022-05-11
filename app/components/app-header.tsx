@@ -1,16 +1,22 @@
-import { Form } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
+import React from "react";
 import styled from 'styled-components';
 import { styles } from "~/constants/styles";
-import { useUserId } from "~/contexts/userIdContext";
+import { useSigningIn } from "~/contexts/signingInContext";
+import { useUsername } from "~/contexts/usernameContext";
 import { UnstyledLink } from "~/root";
 
-const Wrap = styled.header`
+const Wrap = styled.header<{ signingIn: boolean }>`
   background-color: ${styles.colors.primary};
+  transform: ${props => props.signingIn ? 'translateY(-4rem)' : ''};
+  opacity: ${props => props.signingIn ? '0' : '1'};
+  transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.2s ease-out;
   height: 4rem;
   display: flex;
+  justify-content: space-between;
+  align-items: stretch;
   gap: 2rem;
-  align-items: center;
-  padding: 0px 2rem;
+  padding: 0px;
 `;
 
 const Title = styled.h6`
@@ -24,34 +30,91 @@ const MenuItem = styled.p`
   box-sizing: border-box;
   border-top: 2px solid transparent;
   border-bottom: 2px solid transparent;
-  &:hover {
-    border-bottom: 2px solid ${styles.colors.white};
-  }
 `;
 
 interface AppHeaderProps {
   children: React.ReactNode;
 }
 
+const ProfileImage = styled.div`
+  height: 2rem;
+  width: 2rem;
+  border-radius: 100%;
+  background-color: ${styles.colors.white};
+`;
+
+const Side = styled.div`
+  display: flex;
+  align-items: stretch;
+`;
+
+const BarLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: ${styles.colors.white};
+  text-decoration: none;
+  padding: 0 1.5rem;
+  &:hover {
+    background-color: ${styles.colors.gray[10]}20;
+  }
+`;
+
+const UserLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: ${styles.colors.white};
+  text-decoration: none;
+  padding: 0 1.5rem;
+  &:hover {
+    background-color: ${styles.colors.gray[10]}20;
+  }
+`;
+
+const StretchForm = styled.form`
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+`;
+
+const BarButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  margin: 0px;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0 1.5rem;
+  color: ${styles.colors.white};
+  &:hover {
+    background-color: ${styles.colors.gray[10]}20;
+  }
+  border: none;
+`;
+
 export default function AppHeader({ children }: AppHeaderProps) {
 
-  const { userId, admin } = useUserId();
+  const { username, admin } = useUsername();
 
-  return <Wrap>
-    <UnstyledLink to='/'><Title>{children}</Title></UnstyledLink>
-    <UnstyledLink to='/about'><MenuItem>About us</MenuItem></UnstyledLink>
-    { !userId && <>
-      <UnstyledLink to='/authenticate/login'><MenuItem>Sign In</MenuItem></UnstyledLink>
-      <UnstyledLink to='/authenticate/register'><MenuItem>Create Account</MenuItem></UnstyledLink>
-    </> }
-    { userId && <>
-      <Form action='/logout' method='post'>
+  const { signingIn } = useSigningIn();
+
+  return <Wrap signingIn={signingIn ?? false}>
+    <Side>
+      <BarLink to='/'><Title>{children}</Title></BarLink>
+      <BarLink to='/about'><MenuItem>About us</MenuItem></BarLink>
+    </Side>
+    <Side>
+      <UserLink to={'/profile'}>
+        <ProfileImage />
+        {username ?? 'Sign In'}
+      </UserLink>
+      <StretchForm action='/logout' method='post'>
         <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
-        <label><input type='submit' hidden={true} />Logout</label>
-      </Form>
-      <UnstyledLink to={'/profile'}>Profile</UnstyledLink>
-    </>}
-    <p>{userId ?? 'No user id'}</p>
-    {admin ? <UnstyledLink to={'/admin/reservations'}>Admin</UnstyledLink> : <></>}
+        {admin ? <BarLink to={'/admin/reservations'}>Admin Tools</BarLink> : <></>}
+        <BarButton>Logout</BarButton>
+      </StretchForm>
+    </Side>
   </Wrap>
 }

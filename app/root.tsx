@@ -22,8 +22,9 @@ import AppHeader from "./components/app-header";
 import { Loader } from "./components/Loader";
 import { styles } from "./constants/styles";
 import { LangsContextProvider } from "./contexts/langsContext";
-import { userIdContext, useUserId } from "./contexts/userIdContext";
-import { getUserIdAndAdmin } from "./utils/session.server";
+import { signingInContext } from "./contexts/signingInContext";
+import { usernameContext } from "./contexts/usernameContext";
+import { getUsernameAndAdmin } from "./utils/session.server";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -39,18 +40,19 @@ export const UnstyledLink = styled(Link)`
 const Body = styled.body`
   margin: 0px;
   padding: 0px;
+  overflow-y: scroll;
   &>* {
     font-family: Source Sans Pro, Roboto, sans-serif;
   }
 `;
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const { userId, admin } = await getUserIdAndAdmin(request)
-  return { userId: userId, admin: admin, url: request.url };
+  const { username, admin } = await getUsernameAndAdmin(request)
+  return { username, admin, url: request.url };
 }
 
 interface AppHeaderLoaderData {
-  userId: string | null;
+  username: string | null;
   admin: boolean | null;
 }
 
@@ -83,17 +85,18 @@ export default function App() {
 
   const loaderData = useLoaderData<AppHeaderLoaderData>();
 
-  const [ userId, setUserId ] = useState<string | null>(loaderData.userId);
+  const [ username, setUsername ] = useState<string | null>(loaderData.username);
   const [ admin, setAdmin ] = useState<boolean | null>(loaderData.admin);
 
   const [ loading, setLoading ] = useState<boolean | null>(false);
+  const [ signingIn, setSigningIn ] = useState<boolean>(false);
 
   React.useEffect(() => {
-    setUserId(loaderData.userId);
+    setUsername(loaderData.username);
     setAdmin(loaderData.admin);
   }, [loaderData]);
 
-  const t = useTransition();
+  const t = useTransition(); 
 
   React.useEffect(() => {
     setLoading(t.state === 'loading' || t.state === 'submitting');
@@ -108,12 +111,14 @@ export default function App() {
       </head>
       <Body className="h-full">
         
-        <userIdContext.Provider value={{ userId, setUserId, admin, setAdmin }}>
-          <LangsContextProvider>
-            <Main />
-            <Loader show={loading ?? false}></Loader>
-          </LangsContextProvider>
-        </userIdContext.Provider>
+        <signingInContext.Provider value={{ signingIn, setSigningIn }}>
+          <usernameContext.Provider value={{ username, setUsername, admin, setAdmin }}>
+            <LangsContextProvider>
+              <Main />
+              <Loader show={loading ?? false}></Loader>
+            </LangsContextProvider>
+          </usernameContext.Provider>
+        </signingInContext.Provider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
