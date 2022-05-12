@@ -101,8 +101,6 @@ export default function AdminPlaceDetail() {
 
   const { place: defaultPlace, companies, tags, locations, categories } = useLoaderData<AdminPlaceDetailLoaderData>();
 
-  console.log(defaultPlace.categories);
-
   const [ place, setPlace ] = useState<PlaceForEdit>(defaultPlace);
 
   const [ deletedReservables, setDeletedReservables ] = useState<string[]>([]);

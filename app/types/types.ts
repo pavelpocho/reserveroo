@@ -1,4 +1,4 @@
-import { Location } from "@prisma/client";
+import { Location, User } from "@prisma/client";
 import { Category } from "~/models/category.server";
 import { OpeningTime } from "~/models/openingTime.server";
 import { Place } from "~/models/place.server";
@@ -43,6 +43,15 @@ export type ReservationGroupForEdit = (ReservationGroup & {
       }) | null;
   })[];
 }) | null;
+
+export type ReservationGroupForEmail = (ReservationGroup & {
+  user: User | null;
+  reservations: (Reservation & {
+      reservable: (Reservable & {
+          place: Place | null;
+      }) | null;
+  })[];
+}) | null
 
 export enum ReservationStatus {
   AwaitingConfirmation,

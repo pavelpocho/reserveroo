@@ -15,7 +15,6 @@ interface AdminTagDetailLoaderData {
 export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.tagId) return json({})
   const x = { tag: await getTag({ id: params.tagId }) };
-  console.log(x.tag);
   return json({ tag: await getTag({ id: params.tagId }) });
 }
 
@@ -40,8 +39,6 @@ const ArrayInputWrap = styled.div`
 `;
 
 export default function AdminTagDetail() {
-
-  console.log("Rendering tag detail in admin");
 
   const { tag: defaultTag } = useLoaderData<AdminTagDetailLoaderData>();
 

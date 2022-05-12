@@ -1,10 +1,11 @@
-import { Form, useActionData, useSearchParams, useTransition } from '@remix-run/react';
+import { Form, Link, useActionData, useSearchParams, useTransition } from '@remix-run/react';
 import { ActionFunction, json } from '@remix-run/server-runtime';
 import React from 'react';
 import styled from 'styled-components';
 import { TextInput } from '~/components/inputs/TextInput';
 import { styles } from '~/constants/styles';
-import { sendEmail } from '~/utils/emails.server';
+import { sendEmailConfirmationEmail } from '~/utils/emails.server';
+import { getBaseUrl } from '~/utils/forms';
 import { createUserSession, login } from '~/utils/session.server';
 import { signMessage } from '~/utils/signing.server';
 
@@ -32,6 +33,8 @@ export const action: ActionFunction = async ({ request }) => {
   const username = form.get('username')?.toString();
   const password = form.get('password')?.toString();
 
+  const baseUrl = getBaseUrl(request);
+
   // Should validate this
   const redirectTo = form.get('redirectTo')?.toString();
 
@@ -48,11 +51,10 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   if (!verifiedEmail) {
-    // console.log(signMessage("Hello world"));
-    // await sendEmail(email);
+    await sendEmailConfirmationEmail(email, baseUrl);
   }
 
-  return createUserSession(username, admin, /*verifiedEmail*/true, redirectTo ?? '/');
+  return createUserSession(username, admin, verifiedEmail, redirectTo ?? '/');
 }
 
 export const AuthWrap = styled.div`
@@ -102,6 +104,7 @@ export default function Login() {
         <input hidden={true} name='redirectTo' defaultValue={searchParams.get('redirectTo') ?? undefined} />
         <TextInput name='username' defaultValue={a?.fields?.username ?? ''} title={'Username'} />
         <TextInput password={true} name='password' defaultValue={a?.fields?.password ?? ''} title={'Password'} />
+        <Link to='/authenticate/forgotPassword'>Forgot password</Link>
         <SubmitButton type='submit'>Sign In</SubmitButton>
       </FieldSet>
     </Form>

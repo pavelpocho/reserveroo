@@ -2,8 +2,8 @@ import { Form, useActionData, useSearchParams, useTransition } from '@remix-run/
 import { ActionFunction, json } from '@remix-run/server-runtime';
 import React from 'react';
 import { TextInput } from '~/components/inputs/TextInput';
-import { sendEmail } from '~/utils/emails.server';
-import { getFormEssentials } from '~/utils/forms';
+import { sendEmailConfirmationEmail } from '~/utils/emails.server';
+import { getBaseUrl, getFormEssentials } from '~/utils/forms';
 import { createUserSession, login, register } from '~/utils/session.server';
 import { AuthActionData, AuthWrap, FieldSet, SubmitButton } from './login';
 
@@ -31,8 +31,6 @@ export const action: ActionFunction = async ({ request }) => {
     lastName,
   }) ?? { userId: null, admin: false };
 
-  console.log(userId);
-
   if (userId == null || username == null) {
     return badRequest({
       fields: { username: username ?? '', password: password ?? '', redirectTo: redirectTo ?? '' },
@@ -40,9 +38,11 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  await sendEmail(email);
+  const baseUrl = getBaseUrl(request);
 
-  return createUserSession(username, admin, /*false*/true, '/authenticate/verifyEmail');
+  await sendEmailConfirmationEmail(email, baseUrl);
+
+  return createUserSession(username, admin, false, '/authenticate/verifyEmail');
 }
 
 export default function Register() {

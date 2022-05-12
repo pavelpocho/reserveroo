@@ -17,6 +17,7 @@ import { createReservation, Reservation } from '~/models/reservation.server';
 import { createReservationGroup } from '~/models/reservationGroup.server';
 import { getUserId } from '~/models/user.server';
 import { ReservableWithReservations, TimeSection } from '~/types/types';
+import { sendCreationEmail } from '~/utils/emails.server';
 import { getDayOfWeek } from '~/utils/forms';
 import { requireUsernameAndAdmin } from '~/utils/session.server'
 
@@ -71,6 +72,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const user = await getUserId({ username });
+  await sendCreationEmail(username);
   const resGroup = user ? await createReservationGroup({ note, userId: user.id }) : null;
   if (resGroup == null) {
     return badRequest({

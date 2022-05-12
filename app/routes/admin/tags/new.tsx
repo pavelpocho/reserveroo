@@ -45,8 +45,6 @@ const ArrayInputWrap = styled.div`
 
 export default function AdminTagNew() {
 
-  console.log("Rendering tag detail in admin");
-
   const a = useActionData<TagActionData>();
 
   const tag = { id: '-1', name: a?.field?.name, description: a?.field?.description };

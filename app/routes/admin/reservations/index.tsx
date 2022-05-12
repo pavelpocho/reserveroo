@@ -7,9 +7,10 @@ import { IdInput } from '~/components/inputs/ObjectInput';
 import { ReservationGroupSummary } from '~/components/profile/reservation-group-summary';
 import { Place } from '~/models/place.server';
 import { changeReservationStatus, setStatusOfReservationsInGroup, updateReservation } from '~/models/reservation.server';
-import { getReservationGroupList, ReservationGroup } from '~/models/reservationGroup.server'
+import { getReservationGroup, getReservationGroupForConfirmationEmail, getReservationGroupList, ReservationGroup } from '~/models/reservationGroup.server'
 import { User } from '~/models/user.server';
 import { ReservationStatus } from '~/types/types';
+import { sendStatusUpdateEmail } from '~/utils/emails.server';
 
 interface ReservationsAdminLoaderData {
   reservationGroups: (ReservationGroup & {
@@ -42,10 +43,22 @@ export const action: ActionFunction = async ({ request }) => {
     return {}
   }
 
-  console.log(reservationGroupId);
-  console.log(status);
-
+  const reservationGroup = await getReservationGroupForConfirmationEmail({ id: reservationGroupId });
+  
   await setStatusOfReservationsInGroup({ reservationGroupId, status });
+  if (
+    reservationGroup?.reservations[0].reservable?.place && 
+    reservationGroup?.user?.email &&
+    reservationGroup?.reservations.length > 0 &&
+    (status == ReservationStatus.Confirmed || status == ReservationStatus.Rejected)
+  ) {
+    await sendStatusUpdateEmail(
+      reservationGroup?.user?.email,
+      status,
+      reservationGroup?.reservations[0].reservable?.place,
+      reservationGroup.reservations[0].start
+    );
+  }
 
   return {}
 }

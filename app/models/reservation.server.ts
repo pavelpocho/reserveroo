@@ -27,14 +27,27 @@ export const updateReservation = async ({ id, backup, reservationGroupId, reserv
   }
 }));
 
-export const setStatusOfReservationsInGroup = async ({ reservationGroupId, status }: Pick<Reservation, 'reservationGroupId' | 'status'>) => (await prisma.reservation.updateMany({
+const getStatusOfReservation = async({ reservationGroupId }: Pick<Reservation, 'reservationGroupId'>) => (await prisma.reservation.findFirst({
   where: {
     reservationGroupId
   },
-  data: {
-    status
+  select: {
+    status: true
   }
-}));
+}))
+
+export const setStatusOfReservationsInGroup = async ({ reservationGroupId, status }: Pick<Reservation, 'reservationGroupId' | 'status'>) => {
+  const r = await getStatusOfReservation({ reservationGroupId });
+  return await prisma.reservation.updateMany({
+    where: {
+      reservationGroupId
+    },
+    data: {
+      status,
+      previousStatus: r?.status
+    }
+  })
+};
 
 export const changeReservationStatus = async ({ id, status }: Pick<Reservation, 'id' | 'status'>) => (await prisma.reservation.update({
   where: {

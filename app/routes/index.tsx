@@ -28,8 +28,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   const tags = url.searchParams.getAll('tags[]');
   const categories = url.searchParams.getAll('categories[]');
 
-  console.log(categories);
-
   return json({
     places: await getPlaceList({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagNames: tags, catNames: categories }),
     locations: await getAllLocations(),

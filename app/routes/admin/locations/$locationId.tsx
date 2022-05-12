@@ -15,7 +15,6 @@ interface AdminLocationDetailLoaderData {
 export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.locationId) return json({})
   const x = { location: await getLocation({ id: params.locationId }) };
-  console.log(x.location);
   return json({ location: await getLocation({ id: params.locationId }) });
 }
 
@@ -40,8 +39,6 @@ const ArrayInputWrap = styled.div`
 `;
 
 export default function AdminLocationDetail() {
-
-  console.log("Rendering location detail in admin");
 
   const { location: defaultLocation } = useLoaderData<AdminLocationDetailLoaderData>();
 

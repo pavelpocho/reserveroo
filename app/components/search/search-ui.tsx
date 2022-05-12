@@ -62,8 +62,6 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
   const [ selectedCategories, setSelectedCategories ] = React.useState<Category[]>([]);
   const [ selectedTags, setSelectedTags ] = React.useState<Category[]>([]);
 
-  console.log(selectedCategories);
-
   const [ searchBarActive, setSearchBarActive ] = React.useState(false);
   const submit = useSubmit();
 

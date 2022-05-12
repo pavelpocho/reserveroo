@@ -12,11 +12,11 @@ export const signMessage = (message: string) => {
   throw Error("No public or private key for signing");
 }
 
-export const verifyMessage = (message: string) => {
+export const verifyMessage = (message: string, signature: string) => {
   if (privateKey && publicKey) {
     const verifier = createVerify('rsa-sha256');
     verifier.update(message);
-    return verifier.verify(publicKey, 'hex');
+    return verifier.verify(publicKey, signature, 'hex');
   }
   throw Error("No public or private key for signing");
 }

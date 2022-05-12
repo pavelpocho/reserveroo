@@ -66,6 +66,17 @@ export const AdminReservationSummary: React.FC<ReservationSummaryProps> = ({ res
         (r.status) == ReservationStatus.Past ? 'Past' : '' 
       }</Value>
     </div>
+    <div>
+      <Title>Previous Status</Title>
+      <Value>{
+        (r.previousStatus) == ReservationStatus.AwaitingConfirmation ? 'Awaiting confirmation' : 
+        (r.previousStatus) == ReservationStatus.Confirmed ? 'Confirmed' : 
+        (r.previousStatus) == ReservationStatus.Rejected ? 'Rejected' : 
+        (r.previousStatus) == ReservationStatus.Cancelled ? 'Cancelled' : 
+        (r.previousStatus) == ReservationStatus.Paid ? 'Paid' :
+        (r.previousStatus) == ReservationStatus.Past ? 'Past' : '' 
+      }</Value>
+    </div>
     { r.backup && <div>
       <Title>Backup</Title>
       <Value>This slot is a backup.</Value>

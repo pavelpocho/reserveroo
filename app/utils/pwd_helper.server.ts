@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 
 export const generateHashAndSalt = async (pwd: string) => {
+  // TODO: Password validation
   return await bcrypt.hash(pwd, 10);
 };
 

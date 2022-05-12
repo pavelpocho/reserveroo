@@ -28,6 +28,22 @@ export const getReservationGroup = async ({ id }: Pick<ReservationGroup, 'id'>) 
   }
 }));
 
+export const getReservationGroupForConfirmationEmail = async ({ id }: Pick<ReservationGroup, 'id'>) => (await prisma.reservationGroup.findFirst({
+  where: { id },
+  include: {
+    user: true,
+    reservations: {
+      include: {
+        reservable: {
+          include: {
+            place: true
+          }
+        }
+      }
+    }
+  }
+}));
+
 export const getReservationGroupList = async () => (await prisma.reservationGroup.findMany({
   include: {
     user: true,

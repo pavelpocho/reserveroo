@@ -15,7 +15,6 @@ interface AdminPlaceDetailLoaderData {
 export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.companyId) return json({})
   const x = { company: await getCompany({ id: params.companyId }) };
-  console.log(x.company);
   return json({ company: await getCompany({ id: params.companyId }) });
 }
 
@@ -39,8 +38,6 @@ const ArrayInputWrap = styled.div`
 `;
 
 export default function AdminCompanyDetail() {
-
-  console.log("Rendering company detail in admin");
 
   const { company: defaultPlace } = useLoaderData<AdminPlaceDetailLoaderData>();
 

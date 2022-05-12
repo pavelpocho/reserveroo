@@ -47,12 +47,13 @@ const Body = styled.body`
 `;
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const { username, admin } = await getUsernameAndAdmin(request)
-  return { username, admin, url: request.url };
+  const { username, admin, usernameToVerify } = await getUsernameAndAdmin(request)
+  return json({ username, admin, usernameToVerify });
 }
 
 interface AppHeaderLoaderData {
   username: string | null;
+  usernameToVerify: string | null;
   admin: boolean | null;
 }
 
@@ -86,6 +87,7 @@ export default function App() {
   const loaderData = useLoaderData<AppHeaderLoaderData>();
 
   const [ username, setUsername ] = useState<string | null>(loaderData.username);
+  const [ usernameToVerify, setUsernameToVerify ] = useState<string | null>(loaderData.usernameToVerify);
   const [ admin, setAdmin ] = useState<boolean | null>(loaderData.admin);
 
   const [ loading, setLoading ] = useState<boolean | null>(false);
@@ -96,7 +98,7 @@ export default function App() {
     setAdmin(loaderData.admin);
   }, [loaderData]);
 
-  const t = useTransition(); 
+  const t = useTransition();
 
   React.useEffect(() => {
     setLoading(t.state === 'loading' || t.state === 'submitting');
@@ -111,7 +113,7 @@ export default function App() {
       </head>
       <Body className="h-full">
         <signingInContext.Provider value={{ signingIn, setSigningIn }}>
-          <usernameContext.Provider value={{ username, setUsername, admin, setAdmin }}>
+          <usernameContext.Provider value={{ username, setUsername, admin, setAdmin, usernameToVerify, setUsernameToVerify }}>
             <LangsContextProvider>
               <Main />
               <Loader show={loading ?? false}></Loader>

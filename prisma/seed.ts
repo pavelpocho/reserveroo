@@ -90,17 +90,6 @@ const seed = async () => {
     })
   )
 
-  console.log('Companies:');
-  console.log(createdCompanies);
-  console.log('Company identities:');
-  console.log(createdCompanyIdentities);
-  console.log('Users:');
-  console.log(createdUsers);
-  console.log('Places:');
-  console.log(createdPlaces);
-  console.log('Reservations:');
-  console.log(createdReservations);
-
   console.log(`Database has been seeded. 🌱`);
 
 }

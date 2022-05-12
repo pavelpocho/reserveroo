@@ -15,7 +15,6 @@ interface AdminPlaceDetailLoaderData {
 export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.categoryId) return json({})
   const x = { category: await getCategory({ id: params.categoryId }) };
-  console.log(x.category);
   return json({ category: await getCategory({ id: params.categoryId }) });
 }
 
@@ -39,8 +38,6 @@ const ArrayInputWrap = styled.div`
 `;
 
 export default function AdminCategoryDetail() {
-
-  console.log("Rendering category detail in admin");
 
   const { category: defaultPlace } = useLoaderData<AdminPlaceDetailLoaderData>();
 

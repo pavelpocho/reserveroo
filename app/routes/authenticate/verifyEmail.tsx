@@ -1,11 +1,12 @@
 import { Form, useActionData, useLoaderData, useSearchParams, useSubmit } from '@remix-run/react'
-import { ActionFunction, json, LoaderFunction } from '@remix-run/server-runtime'
+import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime'
 import React from 'react'
 import { IdInput } from '~/components/inputs/ObjectInput'
-import { getUserByUsername, getUserEmailToResend } from '~/models/user.server'
-import { sendEmail } from '~/utils/emails.server'
-import { badRequest, getFormEssentials } from '~/utils/forms'
-import { requireUsernameToVerify } from '~/utils/session.server'
+import { getUserByUsername, getUserEmailToResend, verifyUserEmail } from '~/models/user.server'
+import { sendEmailConfirmationEmail } from '~/utils/emails.server'
+import { badRequest, getBaseUrl, getFormEssentials } from '~/utils/forms'
+import { createUserSession, requireUsernameToVerify } from '~/utils/session.server'
+import { verifyMessage } from '~/utils/signing.server'
 
 interface LoaderData {
   usernameToVerify: string
@@ -27,10 +28,16 @@ export const action: ActionFunction = async ({ request }) => {
   const token = getFormItem('token');
 
   if (token) {
-
+    const goodEmail = verifyMessage(token.split(':')[0], token.split(':')[1]);
+    if (!goodEmail) {
+      return badRequest({ msg: "Email verification failed." });
+    }
+    const user = await verifyUserEmail(token.split(':')[0]);
+    return createUserSession(user.username, user.admin, true, '/');
   }
   else if (!!usernameToVerify && !!user && user.verifyEmailTriesLeft > 0) {
-    await sendEmail(user.email);
+    const baseUrl = getBaseUrl(request);
+    await sendEmailConfirmationEmail(user.email, baseUrl);
     return json({ msg: "Another email sent." });
   }
   else {
@@ -46,8 +53,6 @@ export default function ComponentName() {
   const { usernameToVerify } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
   const formRef = React.useRef<HTMLFormElement>(null);
-
-  console.log(token);
 
   React.useEffect(() => {
     if (formRef.current) {

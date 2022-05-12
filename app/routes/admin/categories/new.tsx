@@ -42,8 +42,6 @@ const ArrayInputWrap = styled.div`
 
 export default function AdminCompanyDetail() {
 
-  console.log("Rendering category detail in admin");
-
   const a = useActionData<CategoryActionData>();
 
   const category = { id: '-1', name: a?.field?.name };

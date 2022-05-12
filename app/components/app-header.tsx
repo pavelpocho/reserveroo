@@ -96,7 +96,7 @@ const BarButton = styled.button`
 
 export default function AppHeader({ children }: AppHeaderProps) {
 
-  const { username, admin } = useUsername();
+  const { username, admin, usernameToVerify } = useUsername();
 
   const { signingIn } = useSigningIn();
 
@@ -108,12 +108,12 @@ export default function AppHeader({ children }: AppHeaderProps) {
     <Side>
       <UserLink to={'/profile'}>
         <ProfileImage />
-        {username ?? 'Sign In'}
+        {usernameToVerify ? 'Verify your email' : (username ?? 'Sign In')}
       </UserLink>
       <StretchForm action='/logout' method='post'>
         <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
         {admin ? <BarLink to={'/admin/reservations'}>Admin Tools</BarLink> : <></>}
-        {username && <BarButton>Logout</BarButton> }
+        {(username || usernameToVerify) && <BarButton>Logout</BarButton> }
       </StretchForm>
     </Side>
   </Wrap>

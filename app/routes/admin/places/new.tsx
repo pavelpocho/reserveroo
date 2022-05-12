@@ -59,8 +59,6 @@ const ArrayInputWrap = styled.div`
 
 export default function AdminPlaceDetail() {
 
-  console.log("Rendering company detail in admin");
-
   const a = useActionData<PlaceActionData>();
   const { companies } = useLoaderData<LoaderData>();
 

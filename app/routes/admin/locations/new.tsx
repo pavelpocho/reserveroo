@@ -45,8 +45,6 @@ const ArrayInputWrap = styled.div`
 
 export default function AdminLocationNew() {
 
-  console.log("Rendering location detail in admin");
-
   const a = useActionData<LocationActionData>();
 
   const location = { id: '-1', city: a?.field?.city, country: a?.field?.country };

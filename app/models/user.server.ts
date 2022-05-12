@@ -20,6 +20,11 @@ export const checkForUserByUsername = async ({ username }: Pick<User, 'username'
   select: { id: true, passwordHash: true, admin: true, verifiedEmail: true, email: true }
 }));
 
+export const getEmailFromUsername = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
+  where: { username },
+  select: { email: true }
+}));
+
 export const checkForUserByEmail = async ({ email }: Pick<User, 'email'>) => (await prisma.user.findUnique({
   where: { email },
   select: { id: true, passwordHash: true, admin: true }
@@ -32,14 +37,34 @@ export const getUserEmailToResend = async ({ username }: Pick<User, 'username'>)
   select: { email: true, verifyEmailTriesLeft: true }
 }));
 
-export const subtractResendTries = async ({ email }: Pick<User, 'email'>) => ({
+export const subtractResendTries = async ({ email }: Pick<User, 'email'>) => (await prisma.user.update({
   where: { email },
   data: {
     verifyEmailTriesLeft: {
       decrement: 1
     }
   }
-});
+}));
+
+export const verifyUserEmail = async (email: string) => (await prisma.user.update({
+  where: {
+    email
+  }, data: {
+    verifiedEmail: true
+  },
+  select: {
+    username: true, admin: true
+  }
+}));
+
+export const changeUserPassword = async({ username, passwordHash }: Pick<User, 'username' | 'passwordHash'>) => (await prisma.user.update({
+  where: {
+    username
+  },
+  data: {
+    passwordHash
+  }
+}));
 
 export const getUserByUsername = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
   where: { username },

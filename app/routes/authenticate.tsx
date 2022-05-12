@@ -72,7 +72,6 @@ export default function Authenticate() {
   const { setSigningIn } = useSigningIn();
 
   React.useEffect(() => {
-    console.log("Setting to true");
     setSigningIn(true);
     return () => {
       setSigningIn(false);

@@ -30,3 +30,5 @@ export const getFormEssentials = async (request: Request) => {
 }
 
 export const badRequest = <T>(data: T) => json(data, { status: 400 });
+
+export const getBaseUrl = (request: Request) => request.url.split('/').slice(0, 3).join('/');

@@ -39,8 +39,6 @@ export const register = async ({ username, password, email, phone, firstName, la
 
   if (await checkForUserByUsername({ username }) != null || await checkForUserByEmail({ email })) return null;
 
-  console.log("Passed duplicate check");
-
   const newUser = await createUser({ username, email, phone, firstName, lastName, passwordHash: await generateHashAndSalt(password) });
 
   return { userId: newUser.id, admin: false } 
@@ -66,13 +64,14 @@ const storage = createCookieSessionStorage({
 
 export const createUserSession = async (username: string, admin: boolean = false, verifiedEmail: boolean = false, redirectTo: string) => {
   const session = await storage.getSession();
-  // if (!verifiedEmail) {
-  //   session.set('usernameToVerify', username);
-  // }
-  // else {
+  if (!verifiedEmail) {
+    session.set('usernameToVerify', username);
+  }
+  else {
     session.set('username', username);
+    session.set('usernameToVerify', null);
     session.set('admin', admin);
-  // }
+  }
   return redirect(!verifiedEmail ? '/authenticate/verifyEmail' : redirectTo, {
     headers: {
       'Set-Cookie': await storage.commitSession(session)
@@ -111,7 +110,7 @@ export const getUsernameAndAdmin = async (
   request: Request
 ) => {
   const session = await getUserSession(request);
-  return { username: session.get('username') as string | null, admin: session.get('admin') as boolean | null };
+  return { username: session.get('username') as string | null, admin: session.get('admin') as boolean | null, usernameToVerify: session.get('usernameToVerify') };
 }
 
 export const requireUsernameToVerify = async (

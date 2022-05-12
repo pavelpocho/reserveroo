@@ -43,8 +43,6 @@ const ArrayInputWrap = styled.div`
 
 export default function AdminCompanyDetail() {
 
-  console.log("Rendering company detail in admin");
-
   const a = useActionData<CompanyActionData>();
 
   const company = { id: '-1', name: a?.field?.name };
