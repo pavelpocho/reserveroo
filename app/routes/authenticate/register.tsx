@@ -42,7 +42,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   await sendEmail(email);
 
-  return createUserSession(username, admin, false, '/authenticate/verifyEmail');
+  return createUserSession(username, admin, /*false*/true, '/authenticate/verifyEmail');
 }
 
 export default function Register() {

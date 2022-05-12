@@ -52,7 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
     // await sendEmail(email);
   }
 
-  return createUserSession(username, admin, verifiedEmail, redirectTo ?? '/');
+  return createUserSession(username, admin, /*verifiedEmail*/true, redirectTo ?? '/');
 }
 
 export const AuthWrap = styled.div`
