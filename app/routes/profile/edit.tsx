@@ -22,17 +22,17 @@ export const action: ActionFunction = async ({ request }) => {
   const firstName = getFormItem('firstName');
   const lastName = getFormItem('lastName');
   // const username = getFormItem('username');
-  const email = getFormItem('email');
+  // const email = getFormItem('email');
   const phone = getFormItem('phone');
 
-  const dcCheck = [await checkForUserByEmail({ email })];
-  for (let i = 0; i < dcCheck.length; i++) {
-    if (dcCheck[i] != null && dcCheck[i]?.id != id) return {};
-  }
+  // const dcCheck = [await checkForUserByEmail({ email }), await checkForUserByEmail({ username })];
+  // for (let i = 0; i < dcCheck.length; i++) {
+  //   if (dcCheck[i] != null && dcCheck[i]?.id != id) return {};
+  // }
 
-  if (id && firstName && lastName && /*username &&*/ email && phone) {
+  if (id && firstName && lastName && /*username && email &&*/ phone) {
     await updateUser({
-      id, firstName, lastName, /*username,*/ email, phone
+      id, firstName, lastName, /*username, email,*/ phone
     });
     return redirect('/profile');
   }

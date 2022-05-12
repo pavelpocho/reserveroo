@@ -9,17 +9,19 @@ datasource db {
 }
 
 model User {
-  id                String             @id @default(uuid())
-  email             String             @unique
-  username          String             @unique
-  firstName         String
-  lastName          String
-  phone             String             @unique
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @default(now()) @updatedAt
-  passwordHash      String
-  admin             Boolean            @default(false)
-  reservationGroups ReservationGroup[]
+  id                   String             @id @default(uuid())
+  email                String             @unique
+  username             String             @unique
+  firstName            String
+  lastName             String
+  phone                String             @unique
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @default(now()) @updatedAt
+  passwordHash         String
+  admin                Boolean            @default(false)
+  verifiedEmail        Boolean            @default(false)
+  verifyEmailTriesLeft Int                @default(3)
+  reservationGroups    ReservationGroup[]
 }
 
 model Reservation {

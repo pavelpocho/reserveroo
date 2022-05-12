@@ -110,7 +110,6 @@ export default function App() {
         {typeof document === "undefined" ? "__STYLES__" : null}
       </head>
       <Body className="h-full">
-        
         <signingInContext.Provider value={{ signingIn, setSigningIn }}>
           <usernameContext.Provider value={{ username, setUsername, admin, setAdmin }}>
             <LangsContextProvider>

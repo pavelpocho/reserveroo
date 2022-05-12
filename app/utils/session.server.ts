@@ -1,4 +1,5 @@
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
+import { useResolvedPath } from "@remix-run/react";
 import { createUser, getUser, checkForUserByUsername, checkForUserByEmail } from "~/models/user.server";
 import { checkPassword, generateHashAndSalt } from "./pwd_helper.server";
 
@@ -6,6 +7,7 @@ import { checkPassword, generateHashAndSalt } from "./pwd_helper.server";
 interface LoginType {
   username: string;
   password: string;
+  verifiedEmail?: boolean;
 }
 
 type RegisterType = LoginType & {
@@ -27,7 +29,7 @@ export const login = async ({ username, password }: LoginType) => {
 
   if (!passwordMatch) return null;
 
-  return { userId: user.id, admin: user.admin };
+  return { userId: user.id, admin: user.admin, verifiedEmail: user.verifiedEmail, email: user.email };
 
 }
 
@@ -36,6 +38,8 @@ export const register = async ({ username, password, email, phone, firstName, la
   if (username == '' || password == '' || email == '' || phone == '' || firstName == '' || lastName == '') return null;
 
   if (await checkForUserByUsername({ username }) != null || await checkForUserByEmail({ email })) return null;
+
+  console.log("Passed duplicate check");
 
   const newUser = await createUser({ username, email, phone, firstName, lastName, passwordHash: await generateHashAndSalt(password) });
 
@@ -60,11 +64,16 @@ const storage = createCookieSessionStorage({
   },
 })
 
-export const createUserSession = async (username: string, admin: boolean = false, redirectTo: string) => {
+export const createUserSession = async (username: string, admin: boolean = false, verifiedEmail: boolean = false, redirectTo: string) => {
   const session = await storage.getSession();
-  session.set('username', username);
-  session.set('admin', admin);
-  return redirect(redirectTo, {
+  if (!verifiedEmail) {
+    session.set('usernameToVerify', username);
+  }
+  else {
+    session.set('username', username);
+    session.set('admin', admin);
+  }
+  return redirect(!verifiedEmail ? '/authenticate/verifyEmail' : redirectTo, {
     headers: {
       'Set-Cookie': await storage.commitSession(session)
     }
@@ -82,6 +91,13 @@ export const requireUsernameAndAdmin = async (
   const session = await getUserSession(request);
   const username = session.get('username');
   const admin = session.get('admin');
+  const usernameToVerify = session.get('usernameToVerify');
+  if (usernameToVerify) {
+    const searchParams = new URLSearchParams([
+      ['redirectTo', redirectTo]
+    ]);
+    throw redirect(`/authenticate/verifyEmail?${searchParams}`);
+  }
   if (!username || admin === null || typeof username !== 'string') {
     const searchParams = new URLSearchParams([
       ['redirectTo', redirectTo]
@@ -96,6 +112,17 @@ export const getUsernameAndAdmin = async (
 ) => {
   const session = await getUserSession(request);
   return { username: session.get('username') as string | null, admin: session.get('admin') as boolean | null };
+}
+
+export const requireUsernameToVerify = async (
+  request: Request
+) => {
+  const session = await getUserSession(request);
+  const usernameToVerify = session.get('usernameToVerify');
+  if (!usernameToVerify) {
+    throw redirect(`/authenticate/login`);
+  }
+  return { usernameToVerify: usernameToVerify as string };
 }
 
 export const logout = async (request: Request, redirectUrl: string) => {

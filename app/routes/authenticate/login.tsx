@@ -4,6 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextInput } from '~/components/inputs/TextInput';
 import { styles } from '~/constants/styles';
+import { sendEmail } from '~/utils/emails.server';
 import { createUserSession, login } from '~/utils/session.server';
 
 export type AuthActionData = {
@@ -33,7 +34,7 @@ export const action: ActionFunction = async ({ request }) => {
   // Should validate this
   const redirectTo = form.get('redirectTo')?.toString();
 
-  const { userId, admin } = await login({
+  const { userId, admin, verifiedEmail, email } = await login({
     username: username ?? '',
     password: password ?? ''
   }) ?? { userId: null, admin: false };
@@ -45,7 +46,11 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  return createUserSession(username, admin, redirectTo ?? '/');
+  if (!verifiedEmail) {
+    await sendEmail(email);
+  }
+
+  return createUserSession(username, admin, verifiedEmail, redirectTo ?? '/');
 }
 
 export const AuthWrap = styled.div`
