@@ -27,11 +27,42 @@ export const getPlaceWithReservations = async ({ id }: Pick<Place, 'id'>) => (aw
   }
 }));
 
-export const getPlaceList = async ({ name: nameFragment }: Pick<Place, 'name'>) => (await prisma.place.findMany({
-  where: { name: { contains: nameFragment, mode: 'insensitive' }, hidden: false },
+export const getPlaceList = async ({ name: nameFragment, cityCountry, tagNames, catNames }: Pick<Place, 'name'> & { cityCountry: string | undefined, tagNames: string[], catNames: string[] }) => (await prisma.place.findMany({
+  where: { 
+    AND: [{
+      name: {
+        contains: nameFragment, mode: 'insensitive',
+      }
+    }, {
+      hidden: false,
+    }, {
+      Location: {
+        cityCountry
+      }
+    }, {
+      OR: tagNames?.map(t => ({
+        tags: {
+          some: {
+            name: t
+          }
+        }
+      }))
+    }, {
+      OR: catNames?.map(c => ({
+        categories: {
+          some: {
+            name: c
+          }
+        }
+      }))
+    }]
+  },
   include: {
     company: true,
-    reservables: true
+    reservables: true,
+    tags: true,
+    categories: true,
+    Location: true
   }
 }));
 

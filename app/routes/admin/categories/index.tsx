@@ -1,9 +1,7 @@
-import { Category, Reservable } from '@prisma/client';
+import { Category } from '@prisma/client';
 import { Link, useLoaderData } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime';
-import React from 'react';
 import { getCategoryList } from '~/models/category.server';
-import { getAllPlaces, getPlaceList, Place } from '~/models/place.server';
 
 interface CategoriesAdminLoaderData {
   categories: Category[];

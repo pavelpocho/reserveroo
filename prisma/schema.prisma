@@ -61,6 +61,7 @@ model Reservable {
 model Place {
   id           String        @id @default(uuid())
   name         String        @unique
+  description  String        @default("")
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @default(now()) @updatedAt
   company      Company?      @relation(fields: [companyId], references: [id], onDelete: Cascade)

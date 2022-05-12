@@ -1,4 +1,4 @@
-import { Category, Company, Location, OpeningTime, Prisma, PrismaPromise, Reservable, Tag } from '@prisma/client';
+import { Category, Company, Location, OpeningTime, Reservable, Tag } from '@prisma/client';
 import { Form, useLoaderData } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ import { getCategoryList } from '~/models/category.server';
 import { getCompanyList } from '~/models/company.server';
 import { getLocationList } from '~/models/location.server';
 import { updateOpeningTime } from '~/models/openingTime.server';
-import { getPlace, getPlaceList, Place, updatePlace } from '~/models/place.server';
+import { getPlace, Place, updatePlace } from '~/models/place.server';
 import { createReservable, deleteReservable, updateReservable } from '~/models/reservable.server';
 import { getTagList } from '~/models/tag.server';
 import { PlaceForEdit } from '~/types/types';

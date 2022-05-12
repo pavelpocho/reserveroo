@@ -1,8 +1,7 @@
 import { Company, Reservable } from '@prisma/client';
-import { Link, Outlet, useLoaderData } from '@remix-run/react';
+import { Outlet, useLoaderData } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime';
-import React from 'react';
-import { getAllPlaces, getPlaceList, Place } from '~/models/place.server';
+import { Place } from '~/models/place.server';
 
 interface PlacesAdminLoaderData {
   places: (Place & {

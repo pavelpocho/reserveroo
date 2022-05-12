@@ -1,9 +1,6 @@
-import { Company, Reservable, Tag } from '@prisma/client';
+import { Tag } from '@prisma/client';
 import { Link, useLoaderData } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime';
-import React from 'react';
-import { getCompanyList } from '~/models/company.server';
-import { getAllPlaces, getPlaceList, Place } from '~/models/place.server';
 import { getAllTags } from '~/models/tag.server';
 
 interface TagsAdminLoaderData {
