@@ -1,20 +1,8 @@
-import { SendEmailRequest, SES } from "@aws-sdk/client-ses";
+import { SendEmailRequest } from "@aws-sdk/client-ses";
+import { ses } from "~/db.server";
 
 
 export const sendEmail = async (sendToAddress: string) => {
-
-  if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-    throw Error("No email credentials");
-  }
-
-  const ses = new SES({
-    region: 'eu-west-2',
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-    }
-  });
-
   const emailParams: SendEmailRequest = {
     Source: 'reserveroo@reserveroo.com',
     Destination: {
@@ -41,5 +29,4 @@ export const sendEmail = async (sendToAddress: string) => {
   console.log(sendToAddress);
   const response = await ses.sendEmail(emailParams);
   console.log(response);
-
 }

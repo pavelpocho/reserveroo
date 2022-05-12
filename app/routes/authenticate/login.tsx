@@ -6,6 +6,7 @@ import { TextInput } from '~/components/inputs/TextInput';
 import { styles } from '~/constants/styles';
 import { sendEmail } from '~/utils/emails.server';
 import { createUserSession, login } from '~/utils/session.server';
+import { signMessage } from '~/utils/signing.server';
 
 export type AuthActionData = {
   formError?: string;
@@ -47,7 +48,8 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   if (!verifiedEmail) {
-    await sendEmail(email);
+    // console.log(signMessage("Hello world"));
+    // await sendEmail(email);
   }
 
   return createUserSession(username, admin, verifiedEmail, redirectTo ?? '/');

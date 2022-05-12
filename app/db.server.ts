@@ -1,3 +1,4 @@
+import { SES } from "@aws-sdk/client-ses";
 import { PrismaClient } from "@prisma/client";
 import invariant from "tiny-invariant";
 
@@ -5,7 +6,14 @@ let prisma: PrismaClient;
 
 declare global {
   var __db__: PrismaClient;
+  var __ses__: SES;
 }
+
+if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+  throw Error("No email credentials");
+}
+
+let ses: SES;
 
 // this is needed because in development we don't want to restart
 // the server with every change, but we want to make sure we don't
@@ -13,11 +21,26 @@ declare global {
 // in production we'll have a single connection to the DB.
 if (process.env.NODE_ENV === "production") {
   prisma = getClient();
+  ses = new SES({
+    region: 'eu-west-2',
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    }
+  });
 } else {
   if (!global.__db__) {
     global.__db__ = getClient();
+    global.__ses__ = new SES({
+      region: 'eu-west-2',
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+      }
+    });
   }
   prisma = global.__db__;
+  ses = global.__ses__;
 }
 
 function getClient() {
@@ -59,4 +82,4 @@ function getClient() {
   return client;
 }
 
-export { prisma };
+export { prisma, ses };

@@ -66,13 +66,13 @@ const storage = createCookieSessionStorage({
 
 export const createUserSession = async (username: string, admin: boolean = false, verifiedEmail: boolean = false, redirectTo: string) => {
   const session = await storage.getSession();
-  if (!verifiedEmail) {
-    session.set('usernameToVerify', username);
-  }
-  else {
+  // if (!verifiedEmail) {
+  //   session.set('usernameToVerify', username);
+  // }
+  // else {
     session.set('username', username);
     session.set('admin', admin);
-  }
+  // }
   return redirect(!verifiedEmail ? '/authenticate/verifyEmail' : redirectTo, {
     headers: {
       'Set-Cookie': await storage.commitSession(session)
