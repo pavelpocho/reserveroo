@@ -19,12 +19,13 @@ import { getCategoryList } from '~/models/category.server';
 import { getCompanyList } from '~/models/company.server';
 import { getLocationList } from '~/models/location.server';
 import { updateOpeningTime } from '~/models/openingTime.server';
-import { getPlace, Place, updatePlace } from '~/models/place.server';
+import { addToPlaceGalleryPics, getPlace, Place, removeFromPlaceGalleryPics, updatePlace, updatePlaceProfilePic } from '~/models/place.server';
 import { createReservable, deleteReservable, updateReservable } from '~/models/reservable.server';
 import { getTagList } from '~/models/tag.server';
 import { CategoryWithTexts, LocationWithTexts, PlaceForEdit, TagWithTexts } from '~/types/types';
 import { getDateObjectFromTimeString, getFormEssentials } from '~/utils/forms';
-import { uploadImageToS3 } from '~/utils/s3.server';
+import { deleteImageFromS3, uploadImageToS3 } from '~/utils/s3.server';
+import crypto from 'crypto'
 
 interface AdminPlaceDetailLoaderData {
   place: PlaceForEdit;
@@ -47,13 +48,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const action: ActionFunction = async ({ request }) => {
 
-  const { getFormItem: getFileType } = await getFormEssentials(request);
+  const { form, getFormItem: getFileType } = await getFormEssentials(request);
 
   const getFormItem = (name: string) => imgForm.get(name)?.toString() ?? '';
   const getFormItems = (key: string) => imgForm.getAll(key).map(r => r.toString());
 
-  const uploadHandler: UploadHandler = async ({ name, stream }) => {
-    if (name !== 'image') {
+  const uploadHandler: UploadHandler = async ({ name, stream, filename }) => {
+    console.log(name);
+    if (name !== 'profilePic' && name !== 'galleryPic[]') {
       stream.resume();
       return;
     }
@@ -67,17 +69,17 @@ export const action: ActionFunction = async ({ request }) => {
 
     });
 
-    if (stream2buffer.byteLength > 500_000) {
+    if (stream2buffer.byteLength > 500_000 || stream2buffer.byteLength == 0) {
       return '';
     }
 
-    const extension = getFileType('imageType').split('.')[getFileType('imageType').split('.').length - 1].toLowerCase();
+    const extension = filename.split('.')[filename.split('.').length - 1];
     const acceptableTypes = ['jpeg', 'jpg', 'png', 'webp', 'gif'];
     if (!acceptableTypes.includes(extension)) {
       return '';
     }
     
-    return await uploadImageToS3(stream2buffer, `${getFileType('id')}.${getFileType('imageType').split('.')[getFileType('imageType').split('.').length - 1]}`);
+    return await uploadImageToS3(stream2buffer, `${crypto.randomUUID()}.${extension}`);
   }
 
   const imgForm = await unstable_parseMultipartFormData(
@@ -85,9 +87,11 @@ export const action: ActionFunction = async ({ request }) => {
     uploadHandler
   )
 
-  const imageUrl = imgForm.get('image')?.toString() ?? '';
+  const profilePicUrl = imgForm.get('profilePic')?.toString() ?? '';
+  const galleryPicUrls = imgForm.getAll('galleryPic[]').map(v => v.toString() ?? '').filter(g => g != '');
+  console.log(galleryPicUrls);
 
-  const place: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'profilePicUrl'> & {
+  const place: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'description'> & {
     addedTagIds: string[],
     removedTagIds: string[],
     addedCategoryIds: string[],
@@ -96,14 +100,14 @@ export const action: ActionFunction = async ({ request }) => {
   } = {
     id: getFormItem('id'),
     name: getFormItem('name'),
+    description: getFormItem('description'),
     companyId: getFormItem('companyId'),
     hidden: getFormItem('hidden') == '1',
     addedTagIds: getFormItems('addedTagIds[]'),
     removedTagIds: getFormItems('removedTagIds[]'),
     addedCategoryIds: getFormItems('addedCategoryIds[]'),
     removedCategoryIds: getFormItems('removedCategoryIds[]'),
-    locationId: getFormItem('locationId'),
-    profilePicUrl: imageUrl
+    locationId: getFormItem('locationId')
   }
 
   const reservables: Pick<Reservable, 'id' | 'name' | 'placeId' | 'minimumReservationTime' | 'reservationsPerSlot'>[] = getFormItems('reservableId[]').map((id, i) => {
@@ -126,13 +130,25 @@ export const action: ActionFunction = async ({ request }) => {
   });
 
   const deletedReservableIds = getFormItems('deletedReservable[]');
+  const deletedGalleryPicUrls = getFormItems('deletedGalleryPicUrls[]');
+  const keysToDelete = deletedGalleryPicUrls.map(u => u.split('/')[u.split('/').length - 1]);
+  console.log(deletedGalleryPicUrls);
+  console.log(keysToDelete);
 
-  await Promise.all([
+  const promises: Promise<object>[] = [
     ...reservables.map(r => r.id == '-1' ? createReservable(r) : updateReservable(r)),
     ...openingTimes.sort((a, b) => a.day - b.day).map(ot => updateOpeningTime(ot)),
     ...deletedReservableIds.map(id => deleteReservable({ id })),
     updatePlace(place)
-  ]);
+  ];
+
+  if (profilePicUrl && profilePicUrl != '') promises.push(updatePlaceProfilePic({ id: place.id, profilePicUrl }));
+  if (galleryPicUrls && galleryPicUrls.length > 0) promises.push(addToPlaceGalleryPics({ id: place.id, galleryPicUrls }));
+  if (deletedGalleryPicUrls && deletedGalleryPicUrls.length > 0) promises.push(removeFromPlaceGalleryPics({ id: place.id, galleryPicUrls: deletedGalleryPicUrls }));
+
+  if (keysToDelete && keysToDelete.length > 0) keysToDelete.forEach(k => {console.log(k); promises.push(deleteImageFromS3(k))});
+
+  await Promise.all(promises);
 
   return redirect('/admin/places');
 }
@@ -146,12 +162,11 @@ export default function AdminPlaceDetail() {
   const { place: defaultPlace, companies, tags, locations, categories } = useLoaderData<AdminPlaceDetailLoaderData>();
 
   const [ place, setPlace ] = useState<PlaceForEdit>(defaultPlace);
-
   const [ deletedReservables, setDeletedReservables ] = useState<string[]>([]);
+  const [ deletedGalleryImages, setDeletedGalleryImages ] = useState<string[]>([]);
+  const [ addedImages, setAddedImages ] = useState<number>(1);
 
   const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-  const [ imgExtension, setImgExtension ] = React.useState<string | null>(null);
 
   const deleteReservable = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
     if (id != '-1') {
@@ -189,6 +204,7 @@ export default function AdminPlaceDetail() {
 
       <IdInput name='id' value={place?.id} />        
       <TextInput name='name' title='Name' defaultValue={place?.name} />
+      <TextInput name='description' title='Description' defaultValue={place?.description} />
       <select name='hidden' defaultValue={place.hidden ? '1' : '0'}>
         <option value='1'>Hidden</option>
         <option value='0'>Not hidden</option>
@@ -245,10 +261,22 @@ export default function AdminPlaceDetail() {
           text: place.Location ? `${place.Location?.multiLangCity ? place.Location?.multiLangCity[lang] : ''}, ${place.Location?.multiLangCountry ? place.Location?.multiLangCountry[lang] : ''}` : ''
       }} />
 
-      <input type='file' name='image' accept='.png,.jpg,.jpeg,.webp,.gif' onChange={(e) => {
-        setImgExtension(e.currentTarget.value);
-      }} />
-      <IdInput name='imageType' value={imgExtension ?? ''} />
+      <p>Profile picture</p>
+      {place.profilePicUrl && <img style={{ height: '120px', width: '120px' }} src={place.profilePicUrl} /> }
+      <p>Replace:</p>
+      <ImageInput name='profilePic' />
+
+      <p>Gallery pictures</p>
+      { place.galleryPicUrls.map((g, i) => (!deletedGalleryImages.includes(g) && <div key={i}>
+        <img style={{ height: '120px', width: '120px' }} src={g ?? ''} />
+        <Button onClick={() => { setDeletedGalleryImages([...deletedGalleryImages, g]) }}>Delete</Button>
+      </div>)) }
+      { deletedGalleryImages.map((d, i) => <IdInput key={i} name='deletedGalleryPicUrls[]' value={d} />) }
+      { [...Array(addedImages).keys()].map(i => (
+        <ImageInput onChange={(value) => {
+          if (value != '') setAddedImages(addedImages + 1);
+        }} key={i} name='galleryPic[]' /*hidden={i == [...Array(addedImages).keys()].length - 1}*/ />
+      )) }
 
       <input type='submit'/>
     </Form>

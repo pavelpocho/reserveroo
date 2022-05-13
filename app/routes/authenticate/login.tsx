@@ -1,11 +1,15 @@
-import { Form, Link, useActionData, useSearchParams, useTransition } from '@remix-run/react';
+import { Form, Link, useActionData, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
 import { ActionFunction, json } from '@remix-run/server-runtime';
-import React from 'react';
+import React, { useState } from 'react';
+import { GoogleLoginResponse, useGoogleLogin } from 'react-google-login';
 import styled from 'styled-components';
+import { Button } from '~/components/button';
+import { IdInput } from '~/components/inputs/ObjectInput';
 import { TextInput } from '~/components/inputs/TextInput';
 import { styles } from '~/constants/styles';
 import { sendEmailConfirmationEmail } from '~/utils/emails.server';
 import { getBaseUrl } from '~/utils/forms';
+import { googleAuth } from '~/utils/googleauth.server';
 import { createUserSession, login } from '~/utils/session.server';
 import { signMessage } from '~/utils/signing.server';
 
@@ -30,6 +34,22 @@ const badRequest = (data: AuthActionData) => json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
+
+  const googleTokenId = form.get('googleTokenId')?.toString();
+
+  console.log(googleTokenId);
+
+  if (googleTokenId != null && googleTokenId != '') {
+
+    const payload = await googleAuth(googleTokenId);
+
+    console.log(payload?.given_name);
+    console.log(payload?.family_name);
+    console.log(payload?.email);
+
+    return badRequest({});
+  }
+
   const username = form.get('username')?.toString();
   const password = form.get('password')?.toString();
 
@@ -88,7 +108,10 @@ export const SubmitButton = styled.button`
 export default function Login() {
 
   const t = useTransition();
+  const s = useSubmit();
   const [searchParams, setSearchParams ] = useSearchParams();
+  const [ googleTokenId, setGoogleTokenId ] = useState<string | null>(null);
+  const googleForm = React.useRef<HTMLFormElement>(null);
 
   const a = useActionData<AuthActionData>();
 
@@ -97,6 +120,28 @@ export default function Login() {
       setSearchParams(a?.fields?.redirectTo);
     }
   }, [a?.fields?.redirectTo]);
+
+  React.useEffect(() => {
+    if (googleForm.current) {
+      console.log("Submitting");
+      s(googleForm.current);
+    }
+  }, [ googleTokenId, googleForm.current ]);
+
+  const clientId = "391028282360-8l4uf1lu3r7qiqqi27a1a5urvth0b5ju.apps.googleusercontent.com";
+
+  const { signIn } = useGoogleLogin({
+    onSuccess: (res) => {
+      const r = res as GoogleLoginResponse;
+      console.log("succss");
+      setGoogleTokenId(r.tokenId);
+    },
+    onFailure: (err) => {
+      console.log("failed");
+      console.log(err);
+    },
+    clientId: clientId ?? ''
+  })
 
   return (<AuthWrap>
     <Form method='post'>
@@ -108,6 +153,9 @@ export default function Login() {
         <SubmitButton type='submit'>Sign In</SubmitButton>
       </FieldSet>
     </Form>
-    </AuthWrap>
-  )
+    <Form method='post' ref={googleForm}>
+      <IdInput name='googleTokenId' value={googleTokenId ?? ''} />
+    </Form>
+    <Button onClick={() => {signIn()}}>Log in with Gooooooogle</Button>
+  </AuthWrap>)
 }

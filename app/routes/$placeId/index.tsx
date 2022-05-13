@@ -22,6 +22,12 @@ export const loader: LoaderFunction = async ({ params }) => {
   return json({ place: await getPlace({ id: params.placeId ?? '' }) });
 }
 
+const GalleryImage = styled.img`
+  object-fit: cover;
+  width: 20rem;
+  height: 20rem;
+`;
+
 export default function PlaceDetails({}) {
 
   const { place } = useLoaderData<PlaceDetailsLoaderData>();
@@ -39,5 +45,7 @@ export default function PlaceDetails({}) {
       <p>{daysOfWeek[o.day]}: {timeStr(o.open)} - {timeStr(o.close)}</p>
     </div>) : null }
     <p>Details about whats there and whatnot</p>
+    <p>{place.description}</p>
+    {place.galleryPicUrls.map((p, i) => <GalleryImage key={i} src={p} />)}
   </Wrap>
 }

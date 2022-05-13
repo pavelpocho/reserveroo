@@ -109,8 +109,8 @@ export const createPlace = async ({ name, companyId }: Pick<Place, 'name' | 'com
 }));
 
 export const updatePlace = async ({
-  id, name, companyId, hidden, addedTagIds, removedTagIds, addedCategoryIds, removedCategoryIds, locationId, profilePicUrl
-}: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'profilePicUrl'> & {
+  id, name, companyId, hidden, addedTagIds, removedTagIds, addedCategoryIds, removedCategoryIds, locationId, description
+}: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'description'> & {
   addedTagIds: string[],
   removedTagIds: string[],
   addedCategoryIds: string[],
@@ -129,9 +129,42 @@ export const updatePlace = async ({
       connect: addedCategoryIds.map(c => ({ id: c })),
       disconnect: removedCategoryIds.map(c => ({ id: c }))
     },
-    locationId, name, companyId, hidden, profilePicUrl
+    locationId, name, companyId, hidden, description
   }
 }));
+
+export const updatePlaceProfilePic = async ({ id, profilePicUrl }: Pick<Place, 'profilePicUrl' | 'id'>) => await prisma.place.update({
+  where: {
+    id
+  },
+  data: {
+    profilePicUrl
+  }
+});
+
+export const addToPlaceGalleryPics = async ({ id, galleryPicUrls }: Pick<Place, 'galleryPicUrls' | 'id'>) => {
+  const place = await prisma.place.findUnique({ where: { id } });
+  return await prisma.place.update({
+    where: {
+      id
+    },
+    data: {
+      galleryPicUrls: place?.galleryPicUrls.concat(galleryPicUrls)
+    }
+  })
+};
+
+export const removeFromPlaceGalleryPics = async ({ id, galleryPicUrls }: Pick<Place, 'galleryPicUrls' | 'id'>) => {
+  const place = await prisma.place.findUnique({ where: { id } });
+  return await prisma.place.update({
+    where: {
+      id
+    },
+    data: {
+      galleryPicUrls: place?.galleryPicUrls.filter(p1 => !galleryPicUrls.find(p2 => p1 == p2))
+    }
+  })
+};
 
 export const deletePlace = ({ id }: Pick<Place, 'id'>) => (prisma.place.deleteMany({
     where: { id },
