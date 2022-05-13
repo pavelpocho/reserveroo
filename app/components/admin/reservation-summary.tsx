@@ -35,10 +35,10 @@ const Value = styled.p`
 
 export const AdminReservationSummary: React.FC<ReservationSummaryProps> = ({ reservation: r }) => {
   return <Wrap>
-    <div>
+    {/* <div>
       <Title>Company</Title>
       <Value>{r.reservable?.place.company?.name ?? ''}</Value>
-    </div>
+    </div> */}
     <div>
       <Title>Place</Title>
       <Value>{r.reservable?.place.name}</Value>
@@ -49,11 +49,11 @@ export const AdminReservationSummary: React.FC<ReservationSummaryProps> = ({ res
     </div>
     <div>
       <Title>Start</Title>
-      <Value>{getStringTimeValue(new Date(r.start))}</Value>
+      <Value>{new Date(r.start).toLocaleDateString()} - {getStringTimeValue(new Date(r.start))}</Value>
     </div>
     <div>
       <Title>End</Title>
-      <Value>{getStringTimeValue(new Date(r.end))}</Value>
+      <Value>{new Date(r.end).toLocaleDateString()} - {getStringTimeValue(new Date(r.end))}</Value>
     </div>
     <div>
       <Title>Status</Title>

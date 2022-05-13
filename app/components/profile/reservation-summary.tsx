@@ -39,11 +39,11 @@ export const ReservationSummary: React.FC<ReservationSummaryProps> = ({ reservat
     </div>
     <div>
       <Title>Start</Title>
-      <Value>{getStringTimeValue(new Date(r.start))}</Value>
+      <Value>{new Date(r.start).toLocaleDateString()} - {getStringTimeValue(new Date(r.start))}</Value>
     </div>
     <div>
       <Title>End</Title>
-      <Value>{getStringTimeValue(new Date(r.end))}</Value>
+      <Value>{new Date(r.end).toLocaleDateString()} - {getStringTimeValue(new Date(r.end))}</Value>
     </div>
     <div>
       <Title>Status</Title>
