@@ -9,7 +9,7 @@ declare global {
   var __ses__: SES;
 }
 
-if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+if (!process.env.AWS_EMAIL_ACCESS_KEY_ID || !process.env.AWS_EMAIL_SECRET_ACCESS_KEY) {
   throw Error("No email credentials");
 }
 
@@ -24,8 +24,8 @@ if (process.env.NODE_ENV === "production") {
   ses = new SES({
     region: 'eu-west-2',
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+      accessKeyId: process.env.AWS_EMAIL_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_EMAIL_SECRET_ACCESS_KEY
     }
   });
 } else {
@@ -34,8 +34,8 @@ if (process.env.NODE_ENV === "production") {
     global.__ses__ = new SES({
       region: 'eu-west-2',
       credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+        accessKeyId: process.env.AWS_EMAIL_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_EMAIL_SECRET_ACCESS_KEY
       }
     });
   }
