@@ -1,4 +1,4 @@
-import { Location, User } from "@prisma/client";
+import { Location, MultilingualDesc, MultilingualName, User } from "@prisma/client";
 import { Category } from "~/models/category.server";
 import { OpeningTime } from "~/models/openingTime.server";
 import { Place } from "~/models/place.server";
@@ -28,9 +28,9 @@ export type TimeSection = {
 export type PlaceForEdit = (Place & {
   reservables: Reservable[];
   openingTimes: OpeningTime[];
-  tags: Tag[];
-  categories: Category[];
-  Location: Location | null;
+  tags: TagWithTexts[];
+  categories: CategoryWithTexts[];
+  Location: LocationWithTexts | null;
 })
 
 export type ReservationGroupForEdit = (ReservationGroup & {
@@ -62,3 +62,22 @@ export enum ReservationStatus {
   NothingReserved,
   Past
 }
+
+export type TagWithTexts = Pick<Tag, 'id'> & {
+  multiLangName: MultilingualName | null;
+  multiLangDesc: MultilingualDesc | null;
+};
+
+export type CategoryWithTexts = Pick<Category, 'id'> & {
+  multiLangName: MultilingualName | null;
+};
+
+export type LocationWithTexts = Pick<Location, 'id'> & {
+  multiLangCountry: MultilingualName | null;
+  multiLangCity: MultilingualDesc | null;
+};
+
+export type LocationWithEverything = Location & {
+  multiLangCountry: MultilingualName | null;
+  multiLangCity: MultilingualDesc | null;
+};

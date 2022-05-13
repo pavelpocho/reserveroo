@@ -206,6 +206,24 @@ const cleanUp = async () => {
   await prisma.company.deleteMany().catch(() => {
     // no worries if it doesn't exist yet
   });
+  await prisma.category.deleteMany().catch(() => {
+    // no worries if it doesn't exist yet
+  });
+  await prisma.tag.deleteMany().catch(() => {
+    // no worries if it doesn't exist yet
+  });
+  await prisma.location.deleteMany().catch(() => {
+    // no worries if it doesn't exist yet
+  });
+  await prisma.openingTime.deleteMany().catch(() => {
+    // no worries if it doesn't exist yet
+  });
+  await prisma.reservable.deleteMany().catch(() => {
+    // no worries if it doesn't exist yet
+  });
+  await prisma.reservationGroup.deleteMany().catch(() => {
+    // no worries if it doesn't exist yet
+  });
 }
 
 seed()

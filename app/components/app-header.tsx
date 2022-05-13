@@ -2,9 +2,11 @@ import { Form, Link } from "@remix-run/react";
 import React from "react";
 import styled from 'styled-components';
 import { styles } from "~/constants/styles";
+import { useLangs } from "~/contexts/langsContext";
 import { useSigningIn } from "~/contexts/signingInContext";
 import { useUsername } from "~/contexts/usernameContext";
-import { UnstyledLink } from "~/root";
+import * as cs_texts from '~/assets/langs/cs.texts.json';
+import * as en_texts from '~/assets/langs/en.texts.json';
 
 const Wrap = styled.header<{ signingIn: boolean }>`
   background-color: ${styles.colors.primary};
@@ -98,6 +100,8 @@ export default function AppHeader({ children }: AppHeaderProps) {
 
   const { username, admin, usernameToVerify } = useUsername();
 
+  const { setTranslations: setL, translations: l, lang, setLang } = useLangs();
+
   const { signingIn } = useSigningIn();
 
   return <Wrap signingIn={signingIn ?? false}>
@@ -106,6 +110,10 @@ export default function AppHeader({ children }: AppHeaderProps) {
       <BarLink to='/about'><MenuItem>About us</MenuItem></BarLink>
     </Side>
     <Side>
+      <BarButton onClick={() => {
+        setL(lang == 'czech' ? en_texts : cs_texts);
+        setLang(lang == 'czech' ? 'english' : 'czech');
+      }}>{l.name == 'cs' ? 'English' : 'Čeština'}</BarButton>
       <UserLink to={'/profile'}>
         <ProfileImage />
         {usernameToVerify ? 'Verify your email' : (username ?? 'Sign In')}

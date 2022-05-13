@@ -11,11 +11,12 @@ import { SearchUI } from "~/components/search/search-ui";
 import { getAllLocations } from "~/models/location.server";
 import { getTagList } from "~/models/tag.server";
 import { getCategoryList } from "~/models/category.server";
+import { CategoryWithTexts, LocationWithEverything, LocationWithTexts, TagWithTexts } from "~/types/types";
 
 interface LoaderData {
-  locations: Location[],
-  tags: Tag[],
-  categories: Category[],
+  locations: LocationWithEverything[],
+  tags: TagWithTexts[],
+  categories: CategoryWithTexts[],
   places: (Place & {
     reservables: Reservable[]
   })[]
@@ -29,10 +30,10 @@ export const loader: LoaderFunction = async ({ request }) => {
   const categories = url.searchParams.getAll('categories[]');
 
   return json({
-    places: await getPlaceList({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagNames: tags, catNames: categories }),
+    places: await getPlaceList({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories }),
     locations: await getAllLocations(),
-    tags: await getTagList({ name: '' }),
-    categories: await getCategoryList({ name: '' }),
+    tags: await getTagList({ nameFragment: '' }),
+    categories: await getCategoryList({ nameFragment: '' }),
   });
 };
 

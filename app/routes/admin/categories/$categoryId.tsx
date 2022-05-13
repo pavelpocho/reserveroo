@@ -1,15 +1,17 @@
-import { Category } from '@prisma/client';
+import { Category, MultilingualName } from '@prisma/client';
 import { Form, useLoaderData } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { IdInput } from '~/components/inputs/ObjectInput';
 import { TextInput } from '~/components/inputs/TextInput';
+import { useLangs } from '~/contexts/langsContext';
 import { getCategory, updateCategory } from '~/models/category.server';
+import { CategoryWithTexts } from '~/types/types';
 import { getFormEssentials } from '~/utils/forms';
 
 interface AdminPlaceDetailLoaderData {
-  category: Category;
+  category: CategoryWithTexts | null;
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -22,12 +24,14 @@ export const action: ActionFunction = async ({ request }) => {
 
   const { getFormItem, getFormItems } = await getFormEssentials(request);
 
-  const category: Pick<Category, 'id' | 'name'> = {
-    id: getFormItem('id'),
-    name: getFormItem('name')
+  const category: MultilingualName = {
+    // this is not the categoryid, dont worry
+    id: '-1',
+    czech: getFormItem('nameCzech'),
+    english: getFormItem('nameEnglish'),
   }
 
-  await updateCategory(category);
+  await updateCategory({ multiLangName: category, id: getFormItem('id') });
 
   return redirect('/admin/categories');
 
@@ -39,17 +43,18 @@ const ArrayInputWrap = styled.div`
 
 export default function AdminCategoryDetail() {
 
-  const { category: defaultPlace } = useLoaderData<AdminPlaceDetailLoaderData>();
+  const { category } = useLoaderData<AdminPlaceDetailLoaderData>();
 
-  const [ category, setCategory ] = useState<Category>(defaultPlace);
+  const { lang } = useLangs();
 
   return (
     <div>
-      <p>CATEGORY {category.name}</p>
+      <p>CATEGORY {category?.multiLangName && category?.multiLangName[lang]}</p>
       <Form method='post'>
 
-        <IdInput name='id' value={category?.id} />        
-        <TextInput name='name' title='Name' defaultValue={category?.name} />
+        <IdInput name='id' value={category?.id ?? ''} />        
+        <TextInput name='nameEnglish' title='Name (English)' defaultValue={category?.multiLangName?.english ?? ''} />
+        <TextInput name='nameCzech' title='Name (Czech)' defaultValue={category?.multiLangName?.czech ?? ''} />
 
         <input type='submit'/>
       </Form>

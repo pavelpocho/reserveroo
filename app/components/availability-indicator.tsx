@@ -23,7 +23,7 @@ interface AvailabilityIndicatorProps {
 }
 
 export const AvailabilityIndicator: React.FC<AvailabilityIndicatorProps> = ({ color }: AvailabilityIndicatorProps) => {
-  const l = useLangs();
+  const { translations: l } = useLangs();
   return <Wrap>
     <Indicator color={color} />
     <Text color={color}>{color == 'free' ? l.availability.mostlyFree : l.availability.fairlyBusy}</Text>

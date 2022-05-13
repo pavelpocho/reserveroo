@@ -3,6 +3,8 @@ import { Form, useSubmit } from "@remix-run/react";
 import React from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
+import { useLangs } from "~/contexts/langsContext";
+import { CategoryWithTexts, LocationWithEverything, LocationWithTexts, TagWithTexts } from "~/types/types";
 import { Button } from "../button";
 import { TextInput } from "../inputs/TextInput";
 import { LocationPicker } from "./location-picker";
@@ -10,9 +12,9 @@ import { SearchBar } from "./search-bar";
 
 interface SearchUIProps {
   searchParams: URLSearchParams,
-  locations: Location[],
-  tags: Tag[],
-  categories: Category[]
+  locations: LocationWithEverything[],
+  tags: TagWithTexts[],
+  categories: CategoryWithTexts[]
 }
 
 const Wrap = styled.div`
@@ -59,11 +61,13 @@ const FlyoutSectionHeader = styled.h5`
 export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tags, categories }) => {
 
   const [ selectedLocation, setSelectedLocation ] = React.useState<Location | null>(null);
-  const [ selectedCategories, setSelectedCategories ] = React.useState<Category[]>([]);
-  const [ selectedTags, setSelectedTags ] = React.useState<Category[]>([]);
+  const [ selectedCategories, setSelectedCategories ] = React.useState<CategoryWithTexts[]>([]);
+  const [ selectedTags, setSelectedTags ] = React.useState<TagWithTexts[]>([]);
 
   const [ searchBarActive, setSearchBarActive ] = React.useState(false);
   const submit = useSubmit();
+
+  const { lang } = useLangs();
 
   return <Wrap>
     <Form method='get' onChange={(e) => submit(e.currentTarget)} >
@@ -71,8 +75,8 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
       <LocationPicker selectedLocation={selectedLocation} locations={locations} setLocation={setSelectedLocation} />
       <Title>What are you looking for?</Title>
       <SearchBar setSearchBarActive={setSearchBarActive} defaultValue={searchParams.get('searchTerm') ?? ''}></SearchBar>
-      { selectedCategories.map(c => <input key={c.id} hidden={true} type={'text'} name='categories[]' value={c.name} />)  }
-      { selectedTags.map(t => <input key={t.id} hidden={true} type={'text'} name='tags[]' value={t.name} />)  }
+      { selectedCategories.map(c => <input key={c.id} hidden={true} type={'text'} name='categories[]' value={c.id} />)  }
+      { selectedTags.map(t => <input key={t.id} hidden={true} type={'text'} name='tags[]' value={t.id} />)  }
       { <input key={selectedLocation?.id} hidden={true} type={'text'} name='selectedLocation' value={selectedLocation?.cityCountry} /> }
       <SearchFlyout>
         <FlyoutSectionHeader>Categories</FlyoutSectionHeader>
@@ -86,7 +90,7 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
                 return [...selectedCategories, c];
               }
             })
-          }} key={c.id}>{c.name}</TagCategoryButton>)
+          }} key={c.id}>{c.multiLangName && c.multiLangName[lang]}</TagCategoryButton>)
         }</FlyoutSection>
         <FlyoutSectionHeader>Tags</FlyoutSectionHeader>
         <FlyoutSection>{
@@ -99,7 +103,7 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
                 return [...selectedTags, t];
               }
             })
-          }} key={t.id}>{t.name}</TagCategoryButton>)
+          }} key={t.id}>{t.multiLangName && t.multiLangName[lang]}</TagCategoryButton>)
         }</FlyoutSection>
       </SearchFlyout>
     </Form>

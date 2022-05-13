@@ -9,9 +9,23 @@ export const getPlace = async ({ id }: Pick<Place, 'id'>) => (await prisma.place
   include: {
     reservables: true,
     openingTimes: true,
-    tags: true,
-    categories: true,
-    Location: true
+    tags: {
+      include: {
+        multiLangName: true,
+        multiLangDesc: true
+      }
+    },
+    categories: {
+      include: {
+        multiLangName: true
+      }
+    },
+    Location: {
+      include: {
+        multiLangCountry: true,
+        multiLangCity: true
+      }
+    }
   }
 }));
 
@@ -27,7 +41,7 @@ export const getPlaceWithReservations = async ({ id }: Pick<Place, 'id'>) => (aw
   }
 }));
 
-export const getPlaceList = async ({ name: nameFragment, cityCountry, tagNames, catNames }: Pick<Place, 'name'> & { cityCountry: string | undefined, tagNames: string[], catNames: string[] }) => (await prisma.place.findMany({
+export const getPlaceList = async ({ name: nameFragment, cityCountry, tagIds, catIds }: Pick<Place, 'name'> & { cityCountry: string | undefined, tagIds: string[], catIds: string[] }) => (await prisma.place.findMany({
   where: { 
     AND: [{
       name: {
@@ -40,18 +54,18 @@ export const getPlaceList = async ({ name: nameFragment, cityCountry, tagNames, 
         cityCountry
       }
     }, {
-      OR: tagNames?.map(t => ({
+      OR: tagIds?.map(t => ({
         tags: {
           some: {
-            name: t
+            id: t
           }
         }
       }))
     }, {
-      OR: catNames?.map(c => ({
+      OR: catIds?.map(c => ({
         categories: {
           some: {
-            name: c
+            id: c
           }
         }
       }))
@@ -60,9 +74,23 @@ export const getPlaceList = async ({ name: nameFragment, cityCountry, tagNames, 
   include: {
     company: true,
     reservables: true,
-    tags: true,
-    categories: true,
-    Location: true
+    tags: {
+      include: {
+        multiLangDesc: true,
+        multiLangName: true
+      }
+    },
+    categories: {
+      include: {
+        multiLangName: true
+      }
+    },
+    Location: {
+      include: {
+        multiLangCountry: true,
+        multiLangCity: true
+      }
+    }
   }
 }));
 

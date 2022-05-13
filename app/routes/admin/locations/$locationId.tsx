@@ -1,20 +1,21 @@
-import { Location } from '@prisma/client';
+import { Location, MultilingualDesc, MultilingualName } from '@prisma/client';
 import { Form, useLoaderData } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { IdInput } from '~/components/inputs/ObjectInput';
 import { TextInput } from '~/components/inputs/TextInput';
+import { useLangs } from '~/contexts/langsContext';
 import { getLocation, updateLocation } from '~/models/location.server';
+import { LocationWithTexts } from '~/types/types';
 import { getFormEssentials } from '~/utils/forms';
 
 interface AdminLocationDetailLoaderData {
-  location: Location;
+  location: LocationWithTexts | null;
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.locationId) return json({})
-  const x = { location: await getLocation({ id: params.locationId }) };
   return json({ location: await getLocation({ id: params.locationId }) });
 }
 
@@ -22,12 +23,25 @@ export const action: ActionFunction = async ({ request }) => {
 
   const { getFormItem, getFormItems } = await getFormEssentials(request);
 
-  const location: Pick<Location, 'id' | 'city' | 'country'> = {
+  const location: Pick<Location, 'id'> & {
+    multiLangCountry: MultilingualName
+    multiLangCity: MultilingualDesc
+  } = {
     id: getFormItem('id'),
-    city: getFormItem('city'),
-    country: getFormItem('country'),
+    multiLangCity: {
+      id: '-1',
+      czech: getFormItem('cityCzech'),
+      english: getFormItem('cityEnglish'),
+    },
+    multiLangCountry: {
+      id: '-1',
+      czech: getFormItem('countryCzech'),
+      english: getFormItem('countryEnglish'),
+    },
   }
 
+  console.log("just before update");
+  console.log(location)
   await updateLocation(location);
 
   return redirect('/admin/locations');
@@ -40,18 +54,20 @@ const ArrayInputWrap = styled.div`
 
 export default function AdminLocationDetail() {
 
-  const { location: defaultLocation } = useLoaderData<AdminLocationDetailLoaderData>();
+  const { location } = useLoaderData<AdminLocationDetailLoaderData>();
 
-  const [ location, setLocation ] = useState<Location>(defaultLocation);
+  const { lang } = useLangs();
 
   return (
-    <div>
-      <p>LOCATION: {location.city} in {location.country}</p>
+    location && <div>
+      <p>LOCATION: {location?.multiLangCity && location?.multiLangCity[lang]} in {location?.multiLangCountry && location?.multiLangCountry[lang]}</p>
       <Form method='post'>
 
         <IdInput name='id' value={location?.id} />        
-        <TextInput name='city' title='City' defaultValue={location?.city} />
-        <TextInput name='country' title='Country' defaultValue={location?.country} />
+        <TextInput name='cityCzech' title='City (Czech)' defaultValue={location?.multiLangCity?.czech ?? ''} />
+        <TextInput name='countryCzech' title='Country (Czech)' defaultValue={location?.multiLangCountry?.czech ?? ''} />
+        <TextInput name='cityEnglish' title='City (English)' defaultValue={location?.multiLangCity?.english ?? ''} />
+        <TextInput name='countryEnglish' title='Country (English)' defaultValue={location?.multiLangCountry?.english ?? ''} />
 
         <input type='submit'/>
       </Form>

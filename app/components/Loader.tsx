@@ -49,7 +49,7 @@ const Symbol = styled.div`
 export const Loader: React.FC<LoaderProps> = ({ show }: LoaderProps) => {
 
   const ref = useRef<HTMLDivElement>(null);
-  const l = useLangs();
+  const { translations: l } = useLangs();
   const [textIndex, setTextIndex] = React.useState(0);
 
   React.useEffect(() => {

@@ -1,33 +1,19 @@
-import React, { useContext } from 'react';
+import React, { Dispatch, SetStateAction, useContext } from 'react';
+import * as texts from '~/assets/langs/en.texts.json';
 
-export const translations = {
-  availability: {
-    mostlyFree: 'Mostly free',
-    fairlyBusy: 'Fairly busy'
-  },
-  searchPlaceholder: 'Search',
-  loadingText: [
-    'Loading',
-    'Almost there',
-    'Crunching',
-    'Working',
-    'Just a second',
-    'Transporting'
-  ]
-};
+interface LangsContextType {
+  translations: typeof texts,
+  setTranslations: Dispatch<SetStateAction<typeof texts>>,
+  lang: 'english' | 'czech',
+  setLang: Dispatch<SetStateAction<'english' | 'czech'>>,
+}
 
-const Context = React.createContext<typeof translations | null>(null);
+export const langsContext = React.createContext<LangsContextType | null>(null);
 
 export const useLangs = () => {
-  const value = useContext(Context);
+  const value = useContext(langsContext);
   if (!value)
     throw new Error('Ilegal use of context');
 
   return value;
 };
-
-export const LangsContextProvider = ({ children }: React.PropsWithChildren<any>) => (
-  <Context.Provider value={translations}>
-    {children}
-  </Context.Provider>
-);

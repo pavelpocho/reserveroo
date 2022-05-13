@@ -34,7 +34,7 @@ const SearchBarWrap = styled.div`
 
 export const SearchBar: React.FC<SearchBarProps> = ({ defaultValue, setSearchBarActive }: SearchBarProps) => {
 
-  const l = useLangs();
+  const { translations: l } = useLangs();
 
   return <SearchBarWrap>
     <SearchIcon height={'1rem'} fill={styles.colors.gray[90]} />

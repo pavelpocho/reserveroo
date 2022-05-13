@@ -1,4 +1,4 @@
-import { Location } from '@prisma/client';
+import { Location, MultilingualDesc, MultilingualName } from '@prisma/client';
 import { Form, useActionData, useLoaderData } from '@remix-run/react';
 import { ActionFunction, LoaderFunction, redirect } from '@remix-run/server-runtime';
 import { useState } from 'react';
@@ -10,9 +10,16 @@ import { badRequest, getFormEssentials } from '~/utils/forms';
 
 interface LocationActionData {
   field?: {
-    city: string | null,
-    country: string | null
+    cityCzech: string | null,
+    countryCzech: string | null,
+    cityEnglish: string | null,
+    countryEnglish: string | null
   }
+}
+
+interface LocationToCreate {
+  multiLangCity: MultilingualDesc,
+  multiLangCountry: MultilingualName,
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -23,14 +30,26 @@ export const action: ActionFunction = async ({ request }) => {
 
   const { getFormItem, getFormItems } = await getFormEssentials(request);
 
-  const location: Pick<Location, 'id' | 'city' | 'country'> = {
-    id: getFormItem('id'),
-    city: getFormItem('city'),
-    country: getFormItem('country'),
+  const location: LocationToCreate = {
+    multiLangCity: {
+      id: '-1',
+      czech: getFormItem('cityCzech'),
+      english: getFormItem('cityEnglish'),
+    },
+    multiLangCountry: {
+      id: '-1',
+      czech: getFormItem('countryCzech'),
+      english: getFormItem('countryEnglish'),
+    }
   }
 
-  if (!location.id || !location.city || !location.country) {
-    return badRequest<LocationActionData>({ field: { city: location.city, country: location.country } });
+  if (!location.multiLangCity.czech || !location.multiLangCity.english || !location.multiLangCountry.czech || !location.multiLangCountry.english) {
+    return badRequest<LocationActionData>({ field: {
+      cityCzech: location.multiLangCity.czech,
+      countryCzech: location.multiLangCountry.czech,
+      cityEnglish: location.multiLangCity.english,
+      countryEnglish: location.multiLangCountry.english, 
+    } });
   }
 
   await createLocation(location);
@@ -47,16 +66,16 @@ export default function AdminLocationNew() {
 
   const a = useActionData<LocationActionData>();
 
-  const location = { id: '-1', city: a?.field?.city, country: a?.field?.country };
-
   return (
     <div>
-      <p>TAG {location.city}</p>
+      <p>TAG {a?.field?.cityEnglish}</p>
       <Form method='post'>
 
         <IdInput name='id' value={'-1'} />        
-        <TextInput name='city' title='City' defaultValue={location.city ?? ''} />
-        <TextInput name='country' title='Country' defaultValue={location.country ?? ''} />
+        <TextInput name='cityCzech' title='City (Czech)' defaultValue={a?.field?.cityCzech ?? ''} />
+        <TextInput name='countryCzech' title='Country (Czech)' defaultValue={a?.field?.countryCzech ?? ''} />
+        <TextInput name='cityEnglish' title='City (English)' defaultValue={a?.field?.cityEnglish ?? ''} />
+        <TextInput name='countryEnglish' title='Country (English)' defaultValue={a?.field?.countryEnglish ?? ''} />
 
         <input type='submit'/>
       </Form>

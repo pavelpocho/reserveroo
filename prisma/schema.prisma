@@ -79,30 +79,52 @@ model Place {
 }
 
 model Tag {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-  places      Place[]
+  id              String           @id @default(uuid())
+  multiLangName   MultilingualName @relation(fields: [multiLangNameId], references: [id], onDelete: Cascade)
+  multiLangDesc   MultilingualDesc @relation(fields: [multiLangDescId], references: [id], onDelete: Cascade)
+  multiLangNameId String
+  multiLangDescId String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @default(now()) @updatedAt
+  places          Place[]
+}
+
+model MultilingualName {
+  id       String     @id @default(uuid())
+  czech    String
+  english  String
+  Tag      Tag[]
+  Category Category[]
+  Location Location[]
+}
+
+model MultilingualDesc {
+  id       String     @id @default(uuid())
+  czech    String
+  english  String
+  Tag      Tag[]
+  Location Location[]
 }
 
 model Category {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  places    Place[]
+  id                 String           @id @default(uuid())
+  multiLangName      MultilingualName @relation(fields: [multilingualNameId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now()) @updatedAt
+  places             Place[]
+  multilingualNameId String
 }
 
 model Location {
-  id          String   @id @default(uuid())
-  city        String
-  country     String
-  places      Place[]
-  cityCountry String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  id                    String            @id @default(uuid())
+  multiLangCountry      MultilingualName? @relation(fields: [multilingualCountryId], references: [id], onDelete: Cascade)
+  multiLangCity         MultilingualDesc? @relation(fields: [multilingualCityId], references: [id], onDelete: Cascade)
+  places                Place[]
+  cityCountry           String            @unique
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @default(now()) @updatedAt
+  multilingualCountryId String?
+  multilingualCityId    String?
 }
 
 model OpeningTime {
@@ -114,7 +136,6 @@ model OpeningTime {
   place     Place?   @relation(fields: [placeId], references: [id], onDelete: Cascade)
   placeId   String?
   day       Int
-
 }
 
 model Company {

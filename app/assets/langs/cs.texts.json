@@ -1,0 +1,16 @@
+{
+  "name": "cs",
+  "availability": {
+    "mostlyFree": "Poměrně prázdno",
+    "fairlyBusy": "Poměrně plno"
+  },
+  "searchPlaceholder": "Hledat",
+  "loadingText": [
+    "Načítání",
+    "Skoro tam",
+    "Zpracovávání",
+    "Děláme na tom",
+    "Vteřinu",
+    "Přesouváme"
+  ]
+}

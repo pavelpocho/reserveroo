@@ -21,10 +21,12 @@ import styled from "styled-components";
 import AppHeader from "./components/app-header";
 import { Loader } from "./components/Loader";
 import { styles } from "./constants/styles";
-import { LangsContextProvider } from "./contexts/langsContext";
+import { langsContext } from "./contexts/langsContext";
 import { signingInContext } from "./contexts/signingInContext";
 import { usernameContext } from "./contexts/usernameContext";
 import { getUsernameAndAdmin } from "./utils/session.server";
+import * as cs_texts from '~/assets/langs/cs.texts.json';
+import * as en_texts from '~/assets/langs/en.texts.json';
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -47,14 +49,17 @@ const Body = styled.body`
 `;
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const { username, admin, usernameToVerify } = await getUsernameAndAdmin(request)
-  return json({ username, admin, usernameToVerify });
+  const { username, admin, usernameToVerify } = await getUsernameAndAdmin(request);
+  const langs = request.headers.get('Accept-Language');
+  console.log(langs);
+  return json({ username, admin, usernameToVerify, langs: langs?.split(',')[0] ?? '' });
 }
 
 interface AppHeaderLoaderData {
   username: string | null;
   usernameToVerify: string | null;
   admin: boolean | null;
+  langs: string;
 }
 
 const WidthRestrictor = styled.div`
@@ -87,6 +92,8 @@ export default function App() {
   const loaderData = useLoaderData<AppHeaderLoaderData>();
 
   const [ username, setUsername ] = useState<string | null>(loaderData.username);
+  const [ translations, setTranslations ] = useState<typeof en_texts>(loaderData.langs.includes('cs') ? cs_texts : en_texts);
+  const [ lang, setLang ] = useState<'english' | 'czech'>(loaderData.langs.includes('cs') ? 'czech' : 'english');
   const [ usernameToVerify, setUsernameToVerify ] = useState<string | null>(loaderData.usernameToVerify);
   const [ admin, setAdmin ] = useState<boolean | null>(loaderData.admin);
 
@@ -114,10 +121,10 @@ export default function App() {
       <Body className="h-full">
         <signingInContext.Provider value={{ signingIn, setSigningIn }}>
           <usernameContext.Provider value={{ username, setUsername, admin, setAdmin, usernameToVerify, setUsernameToVerify }}>
-            <LangsContextProvider>
+            <langsContext.Provider value={{ translations, setTranslations, lang, setLang }}>
               <Main />
               <Loader show={loading ?? false}></Loader>
-            </LangsContextProvider>
+            </langsContext.Provider>
           </usernameContext.Provider>
         </signingInContext.Provider>
         <ScrollRestoration />

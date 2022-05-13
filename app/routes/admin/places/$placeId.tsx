@@ -11,6 +11,7 @@ import { IdInput } from '~/components/inputs/ObjectInput';
 import { SingleSelectorInput } from '~/components/inputs/SingleSelectorInput';
 import { TextInput } from '~/components/inputs/TextInput';
 import { TimeInput } from '~/components/inputs/TimeInput';
+import { useLangs } from '~/contexts/langsContext';
 import { getCategoryList } from '~/models/category.server';
 import { getCompanyList } from '~/models/company.server';
 import { getLocationList } from '~/models/location.server';
@@ -18,15 +19,15 @@ import { updateOpeningTime } from '~/models/openingTime.server';
 import { getPlace, Place, updatePlace } from '~/models/place.server';
 import { createReservable, deleteReservable, updateReservable } from '~/models/reservable.server';
 import { getTagList } from '~/models/tag.server';
-import { PlaceForEdit } from '~/types/types';
+import { CategoryWithTexts, LocationWithTexts, PlaceForEdit, TagWithTexts } from '~/types/types';
 import { getDateObjectFromTimeString, getFormEssentials } from '~/utils/forms';
 
 interface AdminPlaceDetailLoaderData {
   place: PlaceForEdit;
   companies: Company[];
-  tags: Tag[];
-  categories: Category[];
-  locations: Location[];
+  tags: TagWithTexts[];
+  categories: CategoryWithTexts[];
+  locations: LocationWithTexts[];
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -34,8 +35,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   return json({
     place: await getPlace({ id: params.placeId }),
     companies: await getCompanyList({ name: '' }),
-    tags: await getTagList({ name: '' }),
-    categories: await getCategoryList({ name: '' }),
+    tags: await getTagList({ nameFragment: '' }),
+    categories: await getCategoryList({ nameFragment: '' }),
     locations: await getLocationList({ cityCountry: '' })
   });
 }
@@ -136,6 +137,8 @@ export default function AdminPlaceDetail() {
     });
   }
 
+  const { lang } = useLangs();
+
   return <div>
     <Form method='post'>
 
@@ -176,25 +179,25 @@ export default function AdminPlaceDetail() {
       </ArrayInput>
 
       <MultiSelectorInput
-        possibleValuesAndTexts={tags.map(t => ({ value: t.id, text: t.name }))}
-        defaultValuesAndTexts={place.tags.map(t => ({ value: t.id, text: t.name }))}
+        possibleValuesAndTexts={tags.map(t => ({ value: t.id, text: t.multiLangName ? t.multiLangName[lang] : '' }))}
+        defaultValuesAndTexts={place.tags.map(t => ({ value: t.id, text: t.multiLangName ? t.multiLangName[lang] : '' }))}
         removedName={'removedTagIds[]'}
         addedName={'addedTagIds[]'}
       />
 
       <MultiSelectorInput
-        possibleValuesAndTexts={categories.map(c => ({ value: c.id, text: c.name }))}
-        defaultValuesAndTexts={place.categories.map(c => ({ value: c.id, text: c.name }))}
+        possibleValuesAndTexts={categories.map(c => ({ value: c.id, text: c.multiLangName ? c.multiLangName[lang] : '' }))}
+        defaultValuesAndTexts={place.categories.map(c => ({ value: c.id, text: c.multiLangName ? c.multiLangName[lang] : '' }))}
         removedName={'removedCategoryIds[]'}
         addedName={'addedCategoryIds[]'}
       />
 
       <SingleSelectorInput
-        possibleValuesAndTexts={locations.map(l => ({ value: l.id, text: `${l.city}, ${l.country}` }))}
+        possibleValuesAndTexts={locations.map(l => ({ value: l.id, text: `${l.multiLangCity ? l.multiLangCity[lang] : ''}, ${l.multiLangCountry ? l.multiLangCountry[lang] : ''}` }))}
         name={'locationId'}
         defaultValueAndText={{
           value: place.Location?.id ?? '',
-          text: place.Location ? `${place.Location?.city}, ${place.Location?.country}` : ''
+          text: place.Location ? `${place.Location?.multiLangCity ? place.Location?.multiLangCity[lang] : ''}, ${place.Location?.multiLangCountry ? place.Location?.multiLangCountry[lang] : ''}` : ''
       }} />
 
       <input type='submit'/>
