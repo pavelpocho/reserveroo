@@ -42,7 +42,7 @@ interface PlaceProps {
 
 export const PlaceSummary: React.FC<PlaceProps> = ({ place }: PlaceProps) => {
   return <PlaceWrap>
-    <PlaceImage shape='square' />
+    <PlaceImage shape='square' imageUrl={place.profilePicUrl} />
     <PlaceInfoWrap>
       <PlaceName to={`/${place.id}`}>{place.name}</PlaceName>
       <AvailabilityIndicator color='free' />

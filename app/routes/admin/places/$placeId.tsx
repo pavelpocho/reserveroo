@@ -1,10 +1,13 @@
 import { Category, Company, Location, OpeningTime, Reservable, Tag } from '@prisma/client';
+import { unstable_parseMultipartFormData, UploadHandler } from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime';
+import React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '~/components/button';
 import { ArrayInput } from '~/components/inputs/ArrayInput';
+import { ImageInput } from '~/components/inputs/ImageInput';
 import { MultiSelectorInput } from '~/components/inputs/MultiSelectorInput';
 import { NumberInput } from '~/components/inputs/NumberInput';
 import { IdInput } from '~/components/inputs/ObjectInput';
@@ -21,6 +24,7 @@ import { createReservable, deleteReservable, updateReservable } from '~/models/r
 import { getTagList } from '~/models/tag.server';
 import { CategoryWithTexts, LocationWithTexts, PlaceForEdit, TagWithTexts } from '~/types/types';
 import { getDateObjectFromTimeString, getFormEssentials } from '~/utils/forms';
+import { uploadImageToS3 } from '~/utils/s3.server';
 
 interface AdminPlaceDetailLoaderData {
   place: PlaceForEdit;
@@ -43,9 +47,47 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const action: ActionFunction = async ({ request }) => {
 
-  const { getFormItem, getFormItems } = await getFormEssentials(request);
+  const { getFormItem: getFileType } = await getFormEssentials(request);
 
-  const place: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden'> & {
+  const getFormItem = (name: string) => imgForm.get(name)?.toString() ?? '';
+  const getFormItems = (key: string) => imgForm.getAll(key).map(r => r.toString());
+
+  const uploadHandler: UploadHandler = async ({ name, stream }) => {
+    if (name !== 'image') {
+      stream.resume();
+      return;
+    }
+
+    const stream2buffer: Buffer = await new Promise((resolve, reject) => {
+      const _buf: any[] = [];
+  
+      stream.on('data', (chunk) => _buf.push(chunk));
+      stream.on('end', () => resolve(Buffer.concat(_buf)));
+      stream.on('error', (err) => reject(err));
+
+    });
+
+    if (stream2buffer.byteLength > 500_000) {
+      return '';
+    }
+
+    const extension = getFileType('imageType').split('.')[getFileType('imageType').split('.').length - 1].toLowerCase();
+    const acceptableTypes = ['jpeg', 'jpg', 'png', 'webp', 'gif'];
+    if (!acceptableTypes.includes(extension)) {
+      return '';
+    }
+    
+    return await uploadImageToS3(stream2buffer, `${getFileType('id')}.${getFileType('imageType').split('.')[getFileType('imageType').split('.').length - 1]}`);
+  }
+
+  const imgForm = await unstable_parseMultipartFormData(
+    request,
+    uploadHandler
+  )
+
+  const imageUrl = imgForm.get('image')?.toString() ?? '';
+
+  const place: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'profilePicUrl'> & {
     addedTagIds: string[],
     removedTagIds: string[],
     addedCategoryIds: string[],
@@ -61,6 +103,7 @@ export const action: ActionFunction = async ({ request }) => {
     addedCategoryIds: getFormItems('addedCategoryIds[]'),
     removedCategoryIds: getFormItems('removedCategoryIds[]'),
     locationId: getFormItem('locationId'),
+    profilePicUrl: imageUrl
   }
 
   const reservables: Pick<Reservable, 'id' | 'name' | 'placeId' | 'minimumReservationTime' | 'reservationsPerSlot'>[] = getFormItems('reservableId[]').map((id, i) => {
@@ -108,6 +151,8 @@ export default function AdminPlaceDetail() {
 
   const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
+  const [ imgExtension, setImgExtension ] = React.useState<string | null>(null);
+
   const deleteReservable = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
     if (id != '-1') {
       setDeletedReservables([...deletedReservables, id])
@@ -140,7 +185,7 @@ export default function AdminPlaceDetail() {
   const { lang } = useLangs();
 
   return <div>
-    <Form method='post'>
+    <Form method='post' encType='multipart/form-data'>
 
       <IdInput name='id' value={place?.id} />        
       <TextInput name='name' title='Name' defaultValue={place?.name} />
@@ -199,6 +244,11 @@ export default function AdminPlaceDetail() {
           value: place.Location?.id ?? '',
           text: place.Location ? `${place.Location?.multiLangCity ? place.Location?.multiLangCity[lang] : ''}, ${place.Location?.multiLangCountry ? place.Location?.multiLangCountry[lang] : ''}` : ''
       }} />
+
+      <input type='file' name='image' accept='.png,.jpg,.jpeg,.webp,.gif' onChange={(e) => {
+        setImgExtension(e.currentTarget.value);
+      }} />
+      <IdInput name='imageType' value={imgExtension ?? ''} />
 
       <input type='submit'/>
     </Form>

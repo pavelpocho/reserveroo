@@ -9,15 +9,18 @@ import { PlaceImage } from "~/components/place/place-image";
 import { PlaceInfoWrap, PlaceName } from "~/components/place/place-summary";
 import { styles } from "~/constants/styles";
 import { getPlace, Place } from "~/models/place.server";
+import { getImageFromS3 } from "~/utils/s3.server";
 
 interface LoaderData {
   place: Place & {
     reservables: Reservable[]
-  }
+  },
+  imageUrl: string | undefined
 }
 
 export const loader: LoaderFunction = async ({ params }) => {
-  return json({ place: await getPlace({ id: params.placeId ?? '' }) });
+  const place = await getPlace({ id: params.placeId ?? '' });
+  return json({ place, imageUrl: place?.profilePicUrl });
 }
 
 const Banner = styled.div`
@@ -29,11 +32,11 @@ const Banner = styled.div`
 
 export default function PlaceDetail() {
 
-  const { place } = useLoaderData<LoaderData>();
+  const { place, imageUrl } = useLoaderData<LoaderData>();
 
   return <>
     <Banner>
-      <PlaceImage shape='circle' />
+      <PlaceImage shape='circle' imageUrl={imageUrl} />
       <PlaceInfoWrap>
         <PlaceName to={`/${place.id}`}>{place.name}</PlaceName>
         <AvailabilityIndicator color='free' />
