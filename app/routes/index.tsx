@@ -76,7 +76,7 @@ export default function Index() {
         />
       </TopSegment>
       <MainSegment>
-        {places.map((place) => (
+        {places.filter(p => !p.hidden).map((place) => (
           <PlaceSummary place={place} key={place.id} />
         ))}
       </MainSegment>

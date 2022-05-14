@@ -1,8 +1,9 @@
-import { Form, useActionData, useLoaderData, useMatches, useParams } from '@remix-run/react';
+import { Form, useActionData, useLoaderData, useMatches, useParams, useSubmit } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime'
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '~/components/button';
+import { ConfirmationDialog } from '~/components/confirmation-dialog';
 import { DateInput } from '~/components/inputs/DateInput';
 import { IdInput } from '~/components/inputs/ObjectInput';
 import { RadioInput } from '~/components/inputs/RadioInput';
@@ -114,6 +115,9 @@ const getTimeSectionOfReservation = (reservation: Reservation) => {
 export default function ReservationElement() {
 
   const params = useParams();
+  const s = useSubmit();
+  const formRef = React.useRef<HTMLFormElement>(null);
+  const [ confirmationDialog, setConfirmationDialog ] = React.useState<boolean>(false);
   const { username, place } = useLoaderData<ReserveLoaderData>();
   const reservables = place.reservables;
   const actionData = useActionData<ReserveActionData>();
@@ -121,8 +125,20 @@ export default function ReservationElement() {
   const [ date, setDate ] = React.useState<Date | null>(null);
   const [ backup, setBackup ] = React.useState(false);
 
-  return (
-    <Form method='post'>
+  return (<>
+    <ConfirmationDialog 
+      hidden={!confirmationDialog}
+      onConfirm={() => {
+        if (formRef.current) s(formRef.current);
+      }}
+      title={'Create reservation?'}
+      text={'Is all the information correct?'}
+      confirmText={'Yes, create reservation'}
+      cancelText={'No, go back'}
+      close={() => {
+        setConfirmationDialog(false);
+      }} />
+    <Form method='post' ref={formRef}>
       <IdInput name={'username'} value={username} /> 
       <IdInput name={'placeId'} value={params.placeId ?? ''} />
       <TextInput name={'note'} title={'Note'} defaultValue={actionData?.fields?.note ?? ''} />
@@ -157,10 +173,12 @@ export default function ReservationElement() {
         date={date}
         openingTime={place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]}
       /> }
-      <input type='submit'></input>
+      <Button onClick={() => {
+        setConfirmationDialog(true);
+      }}>Create reservation</Button>
       {
         actionData?.formError && <p>{actionData.formError ?? ''}</p>
       }
     </Form>
-  )
+  </>)
 }

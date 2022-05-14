@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { styles } from "~/constants/styles";
 import { ReservationStatus } from "~/types/types"
 import { Button } from "../button";
+import { ConfirmationDialog } from "../confirmation-dialog";
 import { IdInput } from "../inputs/ObjectInput";
 import { ReservationSummary } from "./reservation-summary"
 
@@ -66,7 +67,38 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
   const ref = React.useRef<HTMLDivElement>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
 
+  const [ showConfirmation, setShowConfirmation ] = React.useState<boolean>(false);
+
+  const cancelReservation = () => {
+    if (ref.current) {
+      ref.current.style.height = `${ref.current.clientHeight - parseFloat(window.getComputedStyle(ref.current).paddingTop) - parseFloat(window.getComputedStyle(ref.current).paddingBottom)}px`;
+      setTimeout(() => {
+        if (ref.current) {
+          ref.current.style.height = '0px';
+          ref.current.style.paddingTop = '0px';
+          ref.current.style.marginTop = '0px';
+          ref.current.style.opacity = '0';
+          ref.current.style.paddingBottom = '0px';
+        }
+      }, 100);
+    }
+    if (formRef.current) onCancel(rg.id, formRef.current);
+  }
+
   return <>
+    <ConfirmationDialog
+      title='Confirm cancellation' 
+      text='Are you sure you want to cancel your reservation? (This cannot be undone!)'
+      hidden={!showConfirmation}
+      onConfirm={() => {
+        cancelReservation();
+      }}
+      close={() => {
+        setShowConfirmation(false);
+      }}
+      confirmText={'Cancel my reservation'}
+      cancelText={'Keep my reservation'}
+    />
     <Wrap key={rg.id} ref={ref}>
       <InnerWrap>
         <Title>{rg.reservations.length > 0 ? rg.reservations[0].reservable?.place.name : 'Reservation'}</Title>
@@ -79,19 +111,7 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
         </div>
       </InnerWrap>
       <Button onClick={(e) => {
-        if (ref.current) {
-          ref.current.style.height = `${ref.current.clientHeight - parseFloat(window.getComputedStyle(ref.current).paddingTop) - parseFloat(window.getComputedStyle(ref.current).paddingBottom)}px`;
-          setTimeout(() => {
-            if (ref.current) {
-              ref.current.style.height = '0px';
-              ref.current.style.paddingTop = '0px';
-              ref.current.style.marginTop = '0px';
-              ref.current.style.opacity = '0';
-              ref.current.style.paddingBottom = '0px';
-            }
-          }, 100);
-        }
-        if (formRef.current) onCancel(rg.id, formRef.current);
+        setShowConfirmation(true);
       }}>Cancel reservation</Button>
     </Wrap>
     <Form ref={formRef} method='post' action='/profile/cancelReservation'>

@@ -2,8 +2,8 @@ export const styles = {
   colors: {
     primary: '#244BA2',
     action: '#F3AD21',
-    white: '#FFF',
-    black: '#000',
+    white: '#FFFFFF',
+    black: '#000000',
     free: '#74D06C',
     busy: '#D06C6C',
     gray: {

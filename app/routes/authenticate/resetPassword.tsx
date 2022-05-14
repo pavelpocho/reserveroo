@@ -45,7 +45,7 @@ export default function ForgotPassword() {
 
   const token = searchParams.get('token');
 
-  const formRef = React.createRef<HTMLFormElement>();
+  const formRef = React.useRef<HTMLFormElement>(null);
 
   return <div>
     <p>Enter your new password.</p>

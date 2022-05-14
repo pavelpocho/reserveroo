@@ -129,7 +129,7 @@ export const updatePlace = async ({
       connect: addedCategoryIds.map(c => ({ id: c })),
       disconnect: removedCategoryIds.map(c => ({ id: c }))
     },
-    locationId, name, companyId, hidden, description
+    locationId: locationId == '' ? null : locationId, name, companyId, hidden, description
   }
 }));
 

@@ -75,7 +75,7 @@ model Place {
   openingTimes   OpeningTime[]
   tags           Tag[]
   categories     Category[]
-  hidden         Boolean       @default(false)
+  hidden         Boolean       @default(true)
   Location       Location?     @relation(fields: [locationId], references: [id], onDelete: Restrict)
   locationId     String?
 }

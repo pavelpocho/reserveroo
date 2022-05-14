@@ -7,6 +7,7 @@ import { useSigningIn } from "~/contexts/signingInContext";
 import { useUsername } from "~/contexts/usernameContext";
 import * as cs_texts from '~/assets/langs/cs.texts.json';
 import * as en_texts from '~/assets/langs/en.texts.json';
+import { createCookie } from "@remix-run/node";
 
 const Wrap = styled.header<{ signingIn: boolean }>`
   background-color: ${styles.colors.primary};
@@ -95,6 +96,8 @@ const BarButton = styled.button`
   }
   border: none;
 `;
+
+
 
 export default function AppHeader({ children }: AppHeaderProps) {
 
