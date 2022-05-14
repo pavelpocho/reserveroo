@@ -1,6 +1,10 @@
 import React from "react";
 import styled from "styled-components";
+import AngleLeftIcon from "~/assets/icons/AngleLeft";
+import AngleRightIcon from "~/assets/icons/AngleRight";
+import CalendarIcon from "~/assets/icons/Calendar";
 import { styles } from "~/constants/styles";
+import { useLangs } from "~/contexts/langsContext";
 import { getInputDateFromString } from "~/utils/forms";
 
 interface DateInputProps {
@@ -27,10 +31,19 @@ const DateInputField = styled.input`
 const Calendar = styled.div`
   width: 15rem;
   height: 15rem;
+  position: absolute;
+  background-color: ${styles.colors.white};
+  border: 1px solid ${styles.colors.gray[10]};
+  box-shadow: ${styles.shadows[0]};
+  border-radius: 0.5rem;
 `;
 
 const Header = styled.div`
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0rem 0.1rem;
+  gap: 0.4rem;
 `;
 
 const Body = styled.div`
@@ -80,6 +93,43 @@ interface DayButtonProps {
   disabled?: boolean
 }
 
+const Wrap = styled.button`
+  padding: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  border: 1px solid ${styles.colors.gray[20]};
+  border-radius: 0.5rem;
+  background-color: ${styles.colors.white};
+`;
+
+const DateDisplay = styled.p`
+  margin: 0;
+  font-size: 0.8rem;
+`;
+
+const Month = styled.p`
+  margin: 0;
+  font-size: 0.8rem;
+`;
+
+const HeaderButton = styled.button`
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.2rem;
+  border-radius: 0.3rem;
+  &>svg {
+    height: 1.1rem;
+  }
+  &:hover {
+    background-color: ${styles.colors.gray[20]};
+  }
+`;
+
 const DayButton: React.FC<DayButtonProps> = ({ disabled, date, selected, onClick }: DayButtonProps) => <Button disabled={disabled} selected={selected} onClick={(e) => {
   e.preventDefault();
   onClick();
@@ -90,6 +140,9 @@ export const DateInput: React.FC<DateInputProps> = ({ disablePast, name, default
   const [ value, setValue ] = React.useState<string>(getInputDateFromString(defaultValue));
   const [ { year, month }, setYearMonth ] = React.useState<YearMonth>({ year: (new Date()).getFullYear(), month: (new Date().getMonth()) });
   const [ date, setDate ] = React.useState<number | null>((new Date()).getDate());
+  const [ showCalendar, setShowCalendar ] = React.useState(false);
+
+  const { translations: l } = useLangs();
 
   React.useEffect(() => {
     setValue(date ? getDateFromParts(year, month, date) : '');
@@ -104,21 +157,29 @@ export const DateInput: React.FC<DateInputProps> = ({ disablePast, name, default
 
   return <div>
     <label>{title}</label>
-    <Calendar>
+    <Wrap onClick={(e) => {
+      e.preventDefault();
+      setShowCalendar(!showCalendar);
+    }}>
+      <CalendarIcon height={'1.4rem'} />
+      <DateDisplay>{value}</DateDisplay>
+    </Wrap>
+    { showCalendar && <Calendar>
       <Header>
-        <Button onClick={(e) => {
+        <HeaderButton onClick={(e) => {
           setYearMonth({
-            year,
-            month: month - 1
+            year: month == 0 ? year - 1 : year,
+            month: month == 0 ? 11 : month - 1
           });
-        }}>Prev month</Button>
-        <Button onClick={(e) => {
+        }}><AngleLeftIcon /></HeaderButton>
+        <Month>{l.months[month]}</Month>
+        <HeaderButton onClick={(e) => {
           e.preventDefault();
           setYearMonth({
-            year,
-            month: month + 1
+            year: month == 11 ? year + 1 : year,
+            month: month == 11 ? 0 : month + 1
           });
-        }}>Next month</Button>
+        }}><AngleRightIcon /></HeaderButton>
       </Header>
       <Body>
         { [...Array(startPadding).keys()].map((_, i) => maxDayOfPreviousMonth - i).reverse().map(d => <DayButton
@@ -135,7 +196,7 @@ export const DateInput: React.FC<DateInputProps> = ({ disablePast, name, default
         />) }
         { days.map(d => <DayButton
           key={d + 32}
-          disabled={disablePast && new Date().getDate() > d + 1}
+          disabled={disablePast && (new Date().getDate() > d + 1 && new Date().getMonth() == month) || (new Date().getMonth() > month && new Date().getFullYear() == year) || new Date().getFullYear() > year}
           selected={d + 1 == date && getYearMonthFromValue(value).month == month && getYearMonthFromValue(value).year == year}
           date={d + 1}
           onClick={() => {
@@ -155,8 +216,8 @@ export const DateInput: React.FC<DateInputProps> = ({ disablePast, name, default
           }}
         />) }
       </Body>
-    </Calendar>
-    <input name={name} type='date' value={value} readOnly={true} />
+    </Calendar> }
+    <input name={name} type='date' value={value} readOnly={true} hidden={true} />
   </div>
 
 }

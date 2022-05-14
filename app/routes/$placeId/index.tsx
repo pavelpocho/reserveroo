@@ -8,7 +8,26 @@ import { getPlace, Place } from "~/models/place.server";
 import { Reservable } from "~/models/reservable.server";
 
 const Wrap = styled.div`
-  background-color: ${styles.colors.gray[10]};
+  background-color: ${styles.colors.gray[5]};
+  padding: 2rem;
+  border-radius: 1.5rem;
+  margin-top: 2rem;
+`;
+
+const Title = styled.h4`
+  font-size: 1.4rem;
+`;
+
+const Desc = styled.p`
+
+`;
+
+const OpeningTime = styled.p`
+  font-size: 0.95rem;
+  margin: 0.9rem;
+  &::first-letter {
+    text-transform:capitalize;
+  }
 `;
 
 interface PlaceDetailsLoaderData {
@@ -28,6 +47,12 @@ const GalleryImage = styled.img`
   height: 20rem;
 `;
 
+const Gallery = styled.div`
+  overflow-x: scroll;
+  width: 100%;
+  white-space: nowrap;
+`;
+
 export default function PlaceDetails({}) {
 
   const { place } = useLoaderData<PlaceDetailsLoaderData>();
@@ -39,13 +64,17 @@ export default function PlaceDetails({}) {
   const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
   return <Wrap>
-    <p>Details about the business</p>
-    <p>Opening hours</p>
+    <Title>Description</Title>
+    <Desc>{place.description}</Desc>
+    <Title>Opening hours</Title>
     { place.openingTimes ? place.openingTimes.sort((a, b) => a.day - b.day).map(o => <div key={o.id} >
-      <p>{daysOfWeek[o.day]}: {timeStr(o.open)} - {timeStr(o.close)}</p>
+      <OpeningTime><strong>{daysOfWeek[o.day]}:</strong> {timeStr(o.open)} - {timeStr(o.close)}</OpeningTime>
     </div>) : null }
-    <p>Details about whats there and whatnot</p>
-    <p>{place.description}</p>
-    {place.galleryPicUrls.map((p, i) => <GalleryImage key={i} src={p} />)}
+    <Title>How do I get there?</Title>
+    <Desc>{place.howToGetThere}</Desc>
+    <Title>Photos</Title>
+    <Gallery>
+      {place.galleryPicUrls.map((p, i) => <GalleryImage key={i} src={p} />)}
+    </Gallery>
   </Wrap>
 }

@@ -91,7 +91,7 @@ export const action: ActionFunction = async ({ request }) => {
   const galleryPicUrls = imgForm.getAll('galleryPic[]').map(v => v.toString() ?? '').filter(g => g != '');
   console.log(galleryPicUrls);
 
-  const place: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'description'> & {
+  const place: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'description' | 'street' | 'city' | 'postCode' | 'howToGetThere'> & {
     addedTagIds: string[],
     removedTagIds: string[],
     addedCategoryIds: string[],
@@ -107,7 +107,12 @@ export const action: ActionFunction = async ({ request }) => {
     removedTagIds: getFormItems('removedTagIds[]'),
     addedCategoryIds: getFormItems('addedCategoryIds[]'),
     removedCategoryIds: getFormItems('removedCategoryIds[]'),
-    locationId: getFormItem('locationId')
+    locationId: getFormItem('locationId'),
+    street: getFormItem('street'),
+    city: getFormItem('city'),
+    postCode: getFormItem('postCode'),
+    howToGetThere: getFormItem('howToGetThere'),
+
   }
 
   const reservables: Pick<Reservable, 'id' | 'name' | 'placeId' | 'minimumReservationTime' | 'reservationsPerSlot'>[] = getFormItems('reservableId[]').map((id, i) => {
@@ -205,6 +210,12 @@ export default function AdminPlaceDetail() {
       <IdInput name='id' value={place?.id} />        
       <TextInput name='name' title='Name' defaultValue={place?.name} />
       <TextInput name='description' title='Description' defaultValue={place?.description} />
+
+      <TextInput name='street' title='Street' defaultValue={place?.street ?? ''} />
+      <TextInput name='city' title='City' defaultValue={place?.city ?? ''} />
+      <TextInput name='postCode' title='Postcode' defaultValue={place?.postCode ?? ''} />
+      <TextInput name='howToGetThere' title='How to get here?' defaultValue={place?.howToGetThere ?? ''} />
+
       <select name='hidden' defaultValue={place.hidden ? '1' : '0'}>
         <option value='1'>Hidden</option>
         <option value='0'>Not hidden</option>

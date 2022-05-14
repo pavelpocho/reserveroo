@@ -78,6 +78,10 @@ model Place {
   hidden         Boolean       @default(true)
   Location       Location?     @relation(fields: [locationId], references: [id], onDelete: Restrict)
   locationId     String?
+  street         String?
+  city           String?
+  postCode       String?
+  howToGetThere  String?
 }
 
 model Tag {

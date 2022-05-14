@@ -20,7 +20,7 @@ const SubHeader = styled.h4`
   text-align: center;
 `;
 
-const TabBar = styled.div`
+export const TabBar = styled.div`
   margin: 0 auto;
   width: 25rem;
   justify-content: center;
@@ -34,12 +34,12 @@ const TabBar = styled.div`
   overflow: hidden;
 `;
 
-const Separator = styled.div`
+export const Separator = styled.div`
   width: 1px;
   background-color: ${styles.colors.gray[50]};
 `;
 
-const AuthTabLink = styled(Link)`
+export const AuthTabLink = styled(Link)`
   width: 50%;
   display: flex;
   justify-content: center;
@@ -49,7 +49,7 @@ const AuthTabLink = styled(Link)`
   text-decoration: none;
 `;
 
-const ActiveHighlighter = styled.div<{ position: number }>`
+export const ActiveHighlighter = styled.div<{ position: number }>`
   position: absolute;
   height: calc(100% - 0.4rem);
   border-radius: 0.4rem;

@@ -34,6 +34,10 @@ export const PlaceInfoWrap = styled.div`
   grid-template-rows: 2rem 1.5rem 1fr;
 `;
 
+const Address = styled.div`
+  display: flex;
+`;
+
 interface PlaceProps {
   place: Place & {
     reservables: Reservable[]
@@ -47,6 +51,7 @@ export const PlaceSummary: React.FC<PlaceProps> = ({ place }: PlaceProps) => {
       <PlaceName to={`/${place.id}`}>{place.name}</PlaceName>
       <AvailabilityIndicator color='free' />
       <FacilitiesIndicator reservables={place.reservables} />
+      <Address><p>{place.street}</p><p>{place.city}</p></Address>
     </PlaceInfoWrap>
   </PlaceWrap>
 }

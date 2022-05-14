@@ -109,8 +109,9 @@ export const createPlace = async ({ name, companyId }: Pick<Place, 'name' | 'com
 }));
 
 export const updatePlace = async ({
-  id, name, companyId, hidden, addedTagIds, removedTagIds, addedCategoryIds, removedCategoryIds, locationId, description
-}: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'description'> & {
+  id, name, companyId, hidden, addedTagIds, removedTagIds, addedCategoryIds, removedCategoryIds, locationId, description,
+  street, city, postCode, howToGetThere
+}: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'description' | 'street' | 'city' | 'postCode' | 'howToGetThere'> & {
   addedTagIds: string[],
   removedTagIds: string[],
   addedCategoryIds: string[],
@@ -129,7 +130,8 @@ export const updatePlace = async ({
       connect: addedCategoryIds.map(c => ({ id: c })),
       disconnect: removedCategoryIds.map(c => ({ id: c }))
     },
-    locationId: locationId == '' ? null : locationId, name, companyId, hidden, description
+    locationId: locationId == '' ? null : locationId, name, companyId, hidden, description,
+    street, city, postCode, howToGetThere
   }
 }));
 

@@ -141,7 +141,6 @@ export default function ReservationElement() {
     <Form method='post' ref={formRef}>
       <IdInput name={'username'} value={username} /> 
       <IdInput name={'placeId'} value={params.placeId ?? ''} />
-      <TextInput name={'note'} title={'Note'} defaultValue={actionData?.fields?.note ?? ''} />
       <DateInput disablePast={true} name={'date'} defaultValue={date} title={'Date'} onChange={setDate} />
       { date && <ReservableTimes
         startName='start[]'
@@ -160,8 +159,8 @@ export default function ReservationElement() {
         By booking with us, you can help us remove this limitation as soon as possible.
       </p>
       <Button onClick={() => {
-        setBackup(true);
-      }}>Choose a backup timeslot</Button>
+        setBackup(!backup);
+      }}>{ !backup ? 'Choose a' : 'Remove the'} backup timeslot</Button>
       { backup && date && <ReservableTimes
         backup={true}
         startName='start[]'
@@ -173,6 +172,7 @@ export default function ReservationElement() {
         date={date}
         openingTime={place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]}
       /> }
+      <TextInput name={'note'} title={'Note'} defaultValue={actionData?.fields?.note ?? ''} />
       <Button onClick={() => {
         setConfirmationDialog(true);
       }}>Create reservation</Button>

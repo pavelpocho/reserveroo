@@ -73,11 +73,26 @@ const Section = styled.button<{taken: boolean, selected: boolean}>`
   height: 20px;
   width: 20px;
   border: 1px solid black;
+  border-radius: 0.25rem;
+  height: 2.6rem;
+  flex-shrink: 0;
+  width: 4.6rem;
   background-color: ${props => props.selected ? 'green' : props.taken ? 'red' : 'blue'};
 `;
 
 const SectionWrap = styled.div`
   display: flex;
+  gap: 0.4rem;
+`;
+
+const Wrap = styled.div`
+  overflow-x: scroll;
+  white-space: nowrap;
+  position: relative;
+`;
+
+const Title = styled.p`
+  
 `;
 
 
@@ -118,8 +133,8 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
   const [ selectedRange, setSelectedRange ] = React.useState<TimeSection | null>(defaultReservation ? getTimeSectionOfReservation(defaultReservation) : null);
   const [ selectedDate, setSelectedDate ] = React.useState<Date>(date);
 
-  return <div>
-    <p>{reservable.name}</p>
+  return <Wrap>
+    <Title>{reservable.name}</Title>
     <SectionWrap key={reservable.id}>
       { timeSections.map(s => (
         <Section
@@ -164,5 +179,5 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
     {/* <input readOnly={true} name={startName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.start.hour, selectedRange?.start.minute))} />
     <input readOnly={true} name={endName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.end.hour, selectedRange?.end.minute))} />
     <input readOnly={true} type='date' value={getInputDateFromString(selectedDate)} /> */}
-  </div>
+  </Wrap>
 }

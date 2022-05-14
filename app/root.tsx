@@ -69,9 +69,17 @@ const WidthRestrictor = styled.div`
 `;
 
 const Footer = styled.footer`
-  max-width: 1368px;
+  width: 100%;
   padding: 2rem;
-  margin: 0 auto;
+  box-sizing: border-box;
+  margin: 5rem auto 0;
+  background-color: ${styles.colors.primary};
+  &>a {
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none;
+  }
 `;
 
 const Main: React.FC = () => {

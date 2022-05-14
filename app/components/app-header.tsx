@@ -18,6 +18,8 @@ const Wrap = styled.header<{ signingIn: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: stretch;
+  top: 0px;
+  position: sticky;
   gap: 2rem;
   padding: 0px;
 `;
