@@ -20,12 +20,18 @@ interface SearchUIProps {
 const Wrap = styled.div`
   max-width: 800px;
   width: 100%;
+  margin-top: 4rem;
   position: relative;
+  padding: 1.25rem 2.75rem;
+  background-color: ${styles.colors.action};
+  border-radius: 0.5rem;
 `;
 
 const Title = styled.h4`
   margin: 0.8rem 0 0.5rem;
   color: ${styles.colors.primary};
+  font-weight: 800;
+  font-size: 1rem;
 `;
 
 const SearchFlyout = styled.div`

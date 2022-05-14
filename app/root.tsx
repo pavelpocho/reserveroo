@@ -44,7 +44,7 @@ const Body = styled.body`
   padding: 0px;
   overflow-y: scroll;
   &>* {
-    font-family: Source Sans Pro, Roboto, sans-serif;
+    font-family: Inter, Source Sans Pro, Roboto, sans-serif;
   }
 `;
 
@@ -62,10 +62,9 @@ interface AppHeaderLoaderData {
   langs: string;
 }
 
-const WidthRestrictor = styled.div`
+export const WidthRestrictor = styled.div`
   width: 100%;
-  max-width: 1368px;
-  margin: 0px auto;
+  max-width: 968px;
 `;
 
 const Footer = styled.footer`
@@ -86,9 +85,7 @@ const Main: React.FC = () => {
 
   return <>
     <AppHeader>Reserveroo</AppHeader>
-    <WidthRestrictor>
-      <Outlet />
-    </WidthRestrictor>
+    <Outlet />
     <Footer>
       <Link to={'/about'}>About us</Link>
     </Footer>

@@ -12,6 +12,8 @@ import { getAllLocations } from "~/models/location.server";
 import { getTagList } from "~/models/tag.server";
 import { getCategoryList } from "~/models/category.server";
 import { CategoryWithTexts, LocationWithEverything, LocationWithTexts, TagWithTexts } from "~/types/types";
+import { WidthRestrictor } from "~/root";
+import { IconRow } from "~/components/icon-row";
 
 interface LoaderData {
   locations: LocationWithEverything[],
@@ -38,17 +40,19 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 const Title = styled.h6`
-  font-size: 3.5rem;
-  margin: 0 0 3rem 0;
-  color: ${styles.colors.gray[90]};
+  font-size: 2.625rem;
+  text-align: center;
+  margin: 0 0 1.625rem 0;
+  color: ${styles.colors.white};
 `;
 
 const TopSegment = styled.div`
-  padding: 3rem 0;
+  padding: 3.75rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: ${styles.colors.gray[10]};
+  justify-content: center;
+  background-color: ${styles.colors.primary};
 `;
 
 const MainSegment = styled.div`
@@ -67,13 +71,16 @@ export default function Places() {
   return (
     <div>
       <TopSegment>
-        <Title>What will you try next?</Title>
-        <SearchUI
-          searchParams={searchParams}
-          locations={locations}
-          tags={tags}
-          categories={categories}
-        />
+        <WidthRestrictor> 
+          <Title>Book a spot anywhere. Right here.</Title>
+          <IconRow />
+          <SearchUI
+            searchParams={searchParams}
+            locations={locations}
+            tags={tags}
+            categories={categories}
+          />
+        </WidthRestrictor>
       </TopSegment>
       <MainSegment>
         {places.filter(p => !p.hidden).map((place) => (

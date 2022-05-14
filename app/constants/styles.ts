@@ -1,7 +1,7 @@
 export const styles = {
   colors: {
-    primary: '#244BA2',
-    action: '#F3AD21',
+    primary: '#2E294E',
+    action: '#ACC196',
     white: '#FFFFFF',
     black: '#000000',
     free: '#74D06C',
