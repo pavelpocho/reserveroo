@@ -159,6 +159,15 @@ const Circle = styled.div`
   }
 `;
 
+const In = styled.div`
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 
 export default function AppHeader({ children }: AppHeaderProps) {
 
@@ -180,7 +189,7 @@ export default function AppHeader({ children }: AppHeaderProps) {
         <BarButton onClick={() => {
           setL(lang == 'czech' ? en_texts : cs_texts);
           setLang(lang == 'czech' ? 'english' : 'czech');
-        }}>{l.name == 'cs' ? <Circle><CzIcon height={'2rem'} /></Circle> : <Circle><GbIcon height={'2rem'} /></Circle>}</BarButton>
+        }}>{l.name == 'cs' ? <Circle><In><CzIcon height={'2.5rem'} /></In></Circle> : <Circle><In><GbIcon height={'2.5rem'} /></In></Circle>}</BarButton>
         <BarLink to={'/profile'} style={{ fontWeight: 'bold' }}>
           <MenuItem>
             {usernameToVerify ? 'Verify your email' : (username ?? 'Sign In')}
