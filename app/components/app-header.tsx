@@ -111,8 +111,8 @@ export default function AppHeader({ children }: AppHeaderProps) {
 
   return <Wrap signingIn={signingIn ?? false}>
     <Side>
-      <BarLink to='/'><Title>{children}</Title></BarLink>
-      <BarLink to='/about'><MenuItem>About us</MenuItem></BarLink>
+      <BarLink to='/places'><Title>{children}</Title></BarLink>
+      <BarLink to='/'><MenuItem>Who are we?</MenuItem></BarLink>
     </Side>
     <Side>
       <BarButton onClick={() => {

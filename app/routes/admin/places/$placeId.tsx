@@ -235,7 +235,7 @@ export default function AdminPlaceDetail() {
           <IdInput name='reservableId[]' value={r.id} />
           <TextInput title='Reservable name' name='reservableName[]' defaultValue={r.name} />
           <NumberInput title='Minimum reservation interval (minutes)' name='minimumReservationTime[]' defaultValue={r.minimumReservationTime} />
-          <NumberInput title='Reservations per slot' name='reservationsPerSlot[]' defaultValue={r.minimumReservationTime} />
+          <NumberInput title='Reservations per slot' name='reservationsPerSlot[]' defaultValue={r.reservationsPerSlot} />
           <Button onClick={(e) => { deleteReservable(e, r.id); }}>Delete</Button>
         </ArrayInputWrap>) }
       </ArrayInput>

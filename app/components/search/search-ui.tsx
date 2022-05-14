@@ -70,7 +70,7 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
   const { lang } = useLangs();
 
   return <Wrap>
-    <Form method='get' onChange={(e) => submit(e.currentTarget)} >
+    <Form method='get' action='/search' onChange={(e) => submit(e.currentTarget)} >
       <Title>Where are you?</Title>
       <LocationPicker selectedLocation={selectedLocation} locations={locations} setLocation={setSelectedLocation} />
       <Title>What are you looking for?</Title>
