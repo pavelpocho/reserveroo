@@ -53,6 +53,7 @@ const TopSegment = styled.div`
   align-items: center;
   justify-content: center;
   background-color: ${styles.colors.primary};
+  overflow-x: hidden;
 `;
 
 const MainSegment = styled.div`

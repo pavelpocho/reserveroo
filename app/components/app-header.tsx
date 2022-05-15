@@ -1,24 +1,26 @@
-import { Form, Link } from "@remix-run/react";
-import React from "react";
-import styled from 'styled-components';
+import { Form, Link, useLocation } from "@remix-run/react";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import { styles } from "~/constants/styles";
 import { useLangs } from "~/contexts/langsContext";
 import { useSigningIn } from "~/contexts/signingInContext";
 import { useUsername } from "~/contexts/usernameContext";
-import * as cs_texts from '~/assets/langs/cs.texts.json';
-import * as en_texts from '~/assets/langs/en.texts.json';
+import * as cs_texts from "~/assets/langs/cs.texts.json";
+import * as en_texts from "~/assets/langs/en.texts.json";
 import { createCookie } from "@remix-run/node";
 import GbIcon from "~/assets/icons/gb";
 import CzIcon from "~/assets/icons/cz";
 
 const Wrap = styled.header<{ signingIn: boolean }>`
   background-color: ${styles.colors.primary};
-  transform: ${props => props.signingIn ? 'translateY(-4rem)' : ''};
-  opacity: ${props => props.signingIn ? '0' : '1'};
-  transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.2s ease-out;
+  transform: ${(props) => (props.signingIn ? "translateY(-4rem)" : "")};
+  opacity: ${(props) => (props.signingIn ? "0" : "1")};
+  transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1),
+    opacity 0.2s ease-out;
   height: 4rem;
   top: 0px;
   position: sticky;
+  z-index: 10000;
   gap: 2rem;
   padding: 0px;
 `;
@@ -51,12 +53,13 @@ const Title = styled.h6`
   }
 `;
 
-const MenuItem = styled.p<{border?: boolean}>`
+const MenuItem = styled.p<{ border?: boolean }>`
   margin: 0px;
   font-size: 0.875rem;
   color: ${styles.colors.white};
   box-sizing: border-box;
-  border: ${props => props.border ? `1px solid ${styles.colors.white}` : ''};
+  border: ${(props) =>
+    props.border ? `1px solid ${styles.colors.white}` : ""};
   background-color: transparent;
   transition: background-color 0.15s;
   padding: 0.5rem 0.8rem;
@@ -168,8 +171,9 @@ const In = styled.div`
   align-items: center;
 `;
 
-
 export default function AppHeader({ children }: AppHeaderProps) {
+  const location = useLocation();
+  const [isLandingPage, setIsLandingPage] = useState(false);
 
   const { username, admin, usernameToVerify } = useUsername();
 
@@ -177,30 +181,64 @@ export default function AppHeader({ children }: AppHeaderProps) {
 
   const { signingIn } = useSigningIn();
 
-  return <Wrap signingIn={signingIn ?? false}>
-    <InnerWrap>
-      <Side>
-        <BarLink to='/places'><Title>{children}</Title></BarLink>
-        <BarLink to='/'><MenuItem>Who are we?</MenuItem></BarLink>
-        {admin ? <BarLink to={'/admin/reservations'}><MenuItem>Admin</MenuItem></BarLink> : <></>}
-      </Side>
-      <Side>
-        <BarLink style={{ marginRight: '0.6rem' }} to={'/admin/reservations'}><MenuItem border={true}>List a business</MenuItem></BarLink>
-        <BarButton onClick={() => {
-          setL(lang == 'czech' ? en_texts : cs_texts);
-          setLang(lang == 'czech' ? 'english' : 'czech');
-        }}>{l.name == 'cs' ? <Circle><In><CzIcon height={'2.5rem'} /></In></Circle> : <Circle><In><GbIcon height={'2.5rem'} /></In></Circle>}</BarButton>
-        <BarLink to={'/profile'} style={{ fontWeight: 'bold' }}>
-          <MenuItem>
-            {usernameToVerify ? 'Verify your email' : (username ?? 'Sign In')}
-            <ProfileImage>{username ? username[0] : ''}</ProfileImage>
-          </MenuItem>
-        </BarLink>
-        {/*<StretchForm action='/logout' method='post'>
+  useEffect(() => {
+    setIsLandingPage(location.pathname === "/");    
+  }, [location]);
+
+  return (
+    <Wrap signingIn={signingIn ?? false}>
+      <InnerWrap>
+        <Side>
+          <BarLink to='/places'>
+            <Title>{children}</Title>
+          </BarLink>
+          <BarLink to={isLandingPage ? "/places" : "/"}>
+            <MenuItem>{isLandingPage ? "Places" : "Who are we?"}</MenuItem>
+          </BarLink>
+          {admin ? (
+            <BarLink to={"/admin/reservations"}>
+              <MenuItem>Admin</MenuItem>
+            </BarLink>
+          ) : (
+            <></>
+          )}
+        </Side>
+        <Side>
+          <BarLink style={{ marginRight: "0.6rem" }} to={"/admin/reservations"}>
+            <MenuItem border={true}>List a business</MenuItem>
+          </BarLink>
+          <BarButton
+            onClick={() => {
+              setL(lang == "czech" ? en_texts : cs_texts);
+              setLang(lang == "czech" ? "english" : "czech");
+            }}
+          >
+            {l.name == "cs" ? (
+              <Circle>
+                <In>
+                  <CzIcon height={"2.5rem"} />
+                </In>
+              </Circle>
+            ) : (
+              <Circle>
+                <In>
+                  <GbIcon height={"2.5rem"} />
+                </In>
+              </Circle>
+            )}
+          </BarButton>
+          <BarLink to={"/profile"} style={{ fontWeight: "bold" }}>
+            <MenuItem>
+              {usernameToVerify ? "Verify your email" : username ?? "Sign In"}
+              <ProfileImage>{username ? username[0] : ""}</ProfileImage>
+            </MenuItem>
+          </BarLink>
+          {/*<StretchForm action='/logout' method='post'>
           <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
           {(username || usernameToVerify) && <BarButton>Logout</BarButton> }
       </StretchForm>*/}
-      </Side>
-    </InnerWrap>
-  </Wrap>
+        </Side>
+      </InnerWrap>
+    </Wrap>
+  );
 }

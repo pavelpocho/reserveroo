@@ -86,9 +86,9 @@ const Main: React.FC = () => {
   return <>
     <AppHeader>Reserveroo</AppHeader>
     <Outlet />
-    <Footer>
+    {/* <Footer>
       <Link to={'/about'}>About us</Link>
-    </Footer>
+    </Footer> */}
   </>
 }
 
