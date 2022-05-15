@@ -11,8 +11,9 @@ type ValueAndText = {
 
 interface SingleSelectorProps {
   possibleValuesAndTexts: ValueAndText[],
-  defaultValueAndText: ValueAndText,
-  name?: string
+  defaultValueAndText: ValueAndText | null,
+  name?: string,
+  title?: string
 }
 
 const Wrap = styled.div`
@@ -20,15 +21,15 @@ const Wrap = styled.div`
   margin-bottom: 5rem;
 `;
 
-export const SingleSelectorInput: React.FC<SingleSelectorProps> = ({ name, possibleValuesAndTexts, defaultValueAndText }) => {
+export const SingleSelectorInput: React.FC<SingleSelectorProps> = ({ title, name, possibleValuesAndTexts, defaultValueAndText }) => {
 
-  const [ valueAndText, setValueAndText ] = React.useState<ValueAndText>(defaultValueAndText);
+  const [ valueAndText, setValueAndText ] = React.useState<ValueAndText | null>(defaultValueAndText);
 
   return <Wrap>
-    <TextInput title='Location' value={valueAndText.text} readOnly={true} />
+    <TextInput title={title ?? ''} value={valueAndText?.text ?? ''} readOnly={true} />
     { possibleValuesAndTexts.map(pv => <Button key={pv.value} onClick={() => {
       setValueAndText(pv);
     }}>{pv.text}</Button>) }
-    { name && <IdInput key={valueAndText.value} name={name} value={valueAndText.value} /> }
+    { name && valueAndText?.value && <IdInput key={valueAndText.value} name={name} value={valueAndText.value} /> }
   </Wrap>
 }
