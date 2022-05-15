@@ -20,5 +20,6 @@ function deleteFolderRecursive(path) {
 console.log("Cleaning build destination...");
 
 deleteFolderRecursive("./public/build");
+deleteFolderRecursive("./.cache");
 
 console.log("Successfully cleaned build destination!");
