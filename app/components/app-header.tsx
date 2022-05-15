@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
 import { useLangs } from "~/contexts/langsContext";
-import { useSigningIn } from "~/contexts/signingInContext";
+import { useWhereAreWe } from "~/contexts/whereAreWeContext";
 import { useUsername } from "~/contexts/usernameContext";
 import * as cs_texts from "~/assets/langs/cs.texts.json";
 import * as en_texts from "~/assets/langs/en.texts.json";
@@ -180,7 +180,7 @@ export default function AppHeader({ children }: AppHeaderProps) {
 
   const { setTranslations: setL, translations: l, lang, setLang } = useLangs();
 
-  const { signingIn } = useSigningIn();
+  const { signingIn } = useWhereAreWe();
 
   useEffect(() => {
     setIsLandingPage(location.pathname === "/");

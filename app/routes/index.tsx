@@ -1,7 +1,9 @@
 import { Parallax, ParallaxLayer } from "@react-spring/parallax";
 import { Link } from "@remix-run/react";
+import React from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
+import { useWhereAreWe } from "~/contexts/whereAreWeContext";
 
 const H1 = styled.h1`
   margin-top: 4rem;
@@ -25,6 +27,17 @@ const ALink = styled(Link)`
 `;
 
 export default function About() {
+
+  const { setLandingPage } = useWhereAreWe();
+
+  React.useEffect(() => {
+    setLandingPage(true);
+    return () => {
+      setLandingPage(false);
+    }
+  }, []);
+
+
   return (
     <>
       <Parallax pages={2}>
