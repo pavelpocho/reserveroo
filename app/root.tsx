@@ -63,9 +63,10 @@ interface AppHeaderLoaderData {
   langs: string;
 }
 
-export const WidthRestrictor = styled.div`
+export const WidthRestrictor = styled.div<{ width?: string }>`
   width: 100%;
-  max-width: 968px;
+  margin: 0 auto;
+  max-width: ${props => props.width ?? '968px'};
 `;
 
 const Footer = styled.footer`
@@ -73,11 +74,12 @@ const Footer = styled.footer`
   padding: 2rem;
   box-sizing: border-box;
   margin: 5rem auto 0;
-  background-color: ${styles.colors.primary};
-  &>a {
-    color: white;
-    font-weight: bold;
-    font-size: 1rem;
+  text-align: center;
+  background-color: ${styles.colors.primary_background};
+  &>p {
+    color: ${styles.colors.black};
+    margin: 0.6rem;
+    font-size: 0.8rem;
     text-decoration: none;
   }
 `;
@@ -87,9 +89,9 @@ const Main: React.FC = () => {
   return <>
     <AppHeader>Reserveroo</AppHeader>
     <Outlet />
-    {/* <Footer>
-      <Link to={'/about'}>About us</Link>
-    </Footer> */}
+    <Footer>
+      <p>© Reserveroo, 2022</p>
+    </Footer>
   </>
 }
 

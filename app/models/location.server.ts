@@ -52,6 +52,15 @@ export const getLocation = async ({ id }: Pick<Location, 'id'>) => (await prisma
   }
 }));
 
+export const getLocationByName = async ({ cityCountry }: Pick<Location, 'cityCountry'>) => (await prisma.location.findFirst({
+  where: { cityCountry },
+  include: {
+    places: true,
+    multiLangCity: true,
+    multiLangCountry: true
+  }
+}));
+
 export const getLocationList = async ({ cityCountry: nameFragment }: Pick<Location, 'cityCountry'>) => (await prisma.location.findMany({
   // TODO: Get this to work in multiple languages
   // (not needed for now because there will be like 1 location)

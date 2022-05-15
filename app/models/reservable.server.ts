@@ -15,10 +15,11 @@ export const createReservable = async ({
   placeId,
   name,
   minimumReservationTime,
-  reservationsPerSlot
-}: Pick<Reservable, 'placeId' | 'name' | 'minimumReservationTime' | 'reservationsPerSlot'>) => (await prisma.reservable.create({
+  reservationsPerSlot,
+  reservableTypeId,
+}: Pick<Reservable, 'placeId' | 'name' | 'minimumReservationTime' | 'reservationsPerSlot' | 'reservableTypeId'>) => (await prisma.reservable.create({
   data: {
-    placeId, name, minimumReservationTime, reservationsPerSlot
+    placeId, name, minimumReservationTime, reservationsPerSlot, reservableTypeId
   },
 }));
 
@@ -27,13 +28,14 @@ export const updateReservable = async ({
   placeId,
   name,
   minimumReservationTime,
-  reservationsPerSlot
-}: Pick<Reservable, 'id' | 'placeId' | 'name' | 'minimumReservationTime' | 'reservationsPerSlot'>) => (await prisma.reservable.update({
+  reservationsPerSlot,
+  reservableTypeId
+}: Pick<Reservable, 'id' | 'placeId' | 'name' | 'minimumReservationTime' | 'reservationsPerSlot' | 'reservableTypeId'>) => (await prisma.reservable.update({
   where: {
     id
   },
   data: {
-    placeId, name, minimumReservationTime, reservationsPerSlot
+    placeId, name, minimumReservationTime, reservationsPerSlot, reservableTypeId
   }
 }));
 
