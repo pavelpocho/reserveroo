@@ -3,7 +3,7 @@ import type { LoaderFunction } from '@remix-run/server-runtime'
 import React from 'react';
 import styled from 'styled-components';
 import { styles } from '~/constants/styles';
-import { useSigningIn } from '~/contexts/signingInContext';
+import { useWhereAreWe } from '~/contexts/whereAreWeContext';
 
 export const loader: LoaderFunction = () => {
   return {}
@@ -69,7 +69,7 @@ export default function Authenticate() {
 
   const [ position, setPosition ] = React.useState(0);
 
-  const { setSigningIn } = useSigningIn();
+  const { setSigningIn } = useWhereAreWe();
 
   React.useEffect(() => {
     setSigningIn(true);

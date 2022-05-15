@@ -23,7 +23,7 @@ import AppHeader from "./components/app-header";
 import { Loader } from "./components/Loader";
 import { styles } from "./constants/styles";
 import { langsContext } from "./contexts/langsContext";
-import { signingInContext } from "./contexts/signingInContext";
+import { signingInContext } from "./contexts/whereAreWeContext";
 import { usernameContext } from "./contexts/usernameContext";
 import { getUsernameAndAdmin } from "./utils/session.server";
 import * as cs_texts from '~/assets/langs/cs.texts.json';
@@ -84,14 +84,18 @@ const Footer = styled.footer`
   }
 `;
 
-const Main: React.FC = () => {
+interface MainProps {
+  isLandingPage: boolean
+}
+
+const Main: React.FC<MainProps> = ({ isLandingPage }) => {
 
   return <>
     <AppHeader>Reserveroo</AppHeader>
     <Outlet />
-    <Footer>
+    {!isLandingPage && <Footer>
       <p>© Reserveroo, 2022</p>
-    </Footer>
+    </Footer>}
   </>
 }
 
@@ -100,7 +104,6 @@ export default function App() {
   const loaderData = useLoaderData<AppHeaderLoaderData>();
 
   const location = useLocation();
-  const [isLandingPage, setIsLandingPage] = useState(false);
   const [ username, setUsername ] = useState<string | null>(loaderData.username);
   const [ translations, setTranslations ] = useState<typeof en_texts>(loaderData.langs.includes('cs') ? cs_texts : en_texts);
   const [ lang, setLang ] = useState<'english' | 'czech'>(loaderData.langs.includes('cs') ? 'czech' : 'english');
@@ -109,11 +112,11 @@ export default function App() {
 
   const [ loading, setLoading ] = useState<boolean | null>(false);
   const [ signingIn, setSigningIn ] = useState<boolean>(false);
+  const [ landingPage, setLandingPage ] = useState<boolean>(false);
 
   React.useEffect(() => {
     setUsername(loaderData.username);
     setAdmin(loaderData.admin);
-     setIsLandingPage(location.pathname === "/");
   }, [loaderData]);
 
   const t = useTransition();
@@ -129,11 +132,11 @@ export default function App() {
         <Links />
         {typeof document === "undefined" ? "__STYLES__" : null}
       </head>
-      <Body className="h-full" isLandingPage={isLandingPage}>
-        <signingInContext.Provider value={{ signingIn, setSigningIn }}>
+      <Body className="h-full" isLandingPage={landingPage}>
+        <signingInContext.Provider value={{ signingIn, setSigningIn, landingPage, setLandingPage }}>
           <usernameContext.Provider value={{ username, setUsername, admin, setAdmin, usernameToVerify, setUsernameToVerify }}>
             <langsContext.Provider value={{ translations, setTranslations, lang, setLang }}>
-              <Main />
+              <Main isLandingPage={landingPage} />
               <Loader show={loading ?? false}></Loader>
             </langsContext.Provider>
           </usernameContext.Provider>
