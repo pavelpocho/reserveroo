@@ -13,6 +13,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useLocation,
   useTransition,
 } from "@remix-run/react";
 import React from "react";
@@ -39,11 +40,11 @@ export const UnstyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-const Body = styled.body`
+const Body = styled.body<{ isLandingPage: boolean }>`
   margin: 0px;
   padding: 0px;
-  overflow-y: scroll;
-  &>* {
+  overflow-y: ${(props) => (props.isLandingPage ? "hidden" : "scroll")};
+  & > * {
     font-family: Inter, Source Sans Pro, Roboto, sans-serif;
   }
 `;
@@ -96,6 +97,8 @@ export default function App() {
 
   const loaderData = useLoaderData<AppHeaderLoaderData>();
 
+  const location = useLocation();
+  const [isLandingPage, setIsLandingPage] = useState(false);
   const [ username, setUsername ] = useState<string | null>(loaderData.username);
   const [ translations, setTranslations ] = useState<typeof en_texts>(loaderData.langs.includes('cs') ? cs_texts : en_texts);
   const [ lang, setLang ] = useState<'english' | 'czech'>(loaderData.langs.includes('cs') ? 'czech' : 'english');
@@ -108,6 +111,7 @@ export default function App() {
   React.useEffect(() => {
     setUsername(loaderData.username);
     setAdmin(loaderData.admin);
+     setIsLandingPage(location.pathname === "/");
   }, [loaderData]);
 
   const t = useTransition();
@@ -123,7 +127,7 @@ export default function App() {
         <Links />
         {typeof document === "undefined" ? "__STYLES__" : null}
       </head>
-      <Body className="h-full">
+      <Body className="h-full" isLandingPage={isLandingPage}>
         <signingInContext.Provider value={{ signingIn, setSigningIn }}>
           <usernameContext.Provider value={{ username, setUsername, admin, setAdmin, usernameToVerify, setUsernameToVerify }}>
             <langsContext.Provider value={{ translations, setTranslations, lang, setLang }}>

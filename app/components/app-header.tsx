@@ -182,7 +182,7 @@ export default function AppHeader({ children }: AppHeaderProps) {
   const { signingIn } = useSigningIn();
 
   useEffect(() => {
-    setIsLandingPage(location.pathname === "/");    
+    setIsLandingPage(location.pathname === "/");
   }, [location]);
 
   return (

@@ -1,3 +1,4 @@
+import { Parallax, ParallaxLayer } from "@react-spring/parallax";
 import { Link } from "@remix-run/react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
@@ -26,15 +27,70 @@ const ALink = styled(Link)`
 export default function About() {
   return (
     <>
-      <H1>
-        All the <span style={{ color: styles.colors.busy }}>activities </span>
-        you love in
-        <span style={{ color: styles.colors.busy }}> one place</span>
-      </H1>
-      <ALink to='/places'>
-        <Button>CHECK OUT ACTIVITIES</Button>
-      </ALink>
-      <H1>Why was Reserveroo created?</H1>
+      <Parallax pages={2}>
+        <ParallaxLayer 
+        // offset={0} speed={0.5} factor={1}
+        >
+          <H1>
+            All the
+            <span style={{ color: styles.colors.busy }}> activities </span>
+            you love in
+            <span style={{ color: styles.colors.busy }}> one place</span>
+          </H1>
+          <ALink to='/places'>
+            <Button>Check out activities</Button>
+          </ALink>
+          <H1>Why was Reserveroo created?</H1>
+        </ParallaxLayer>
+        <ParallaxLayer
+          offset={0.5}
+          factor={0.5}
+          speed={0.75}
+          style={{
+            // display: "flex",
+            // justifyContent: "center",
+            // alignItems: "center",
+            backgroundColor: styles.colors.busy,
+          }}
+        >
+          <h2>
+            Imagine you are in a new city and you want to have some fun with
+            your friend.
+            <br />
+            What do you do?
+          </h2>
+        </ParallaxLayer>
+
+        <ParallaxLayer
+          offset={1}
+          // speed={0.9}
+          factor={0.5}
+          style={{
+            // display: "flex",
+            // justifyContent: "center",
+            // alignItems: "center",
+            backgroundColor: "red",
+          }}
+        >
+          <p>Scroll up</p>
+        </ParallaxLayer>
+
+        <ParallaxLayer
+          offset={1.5}
+          factor={0.5}
+          // speed={1}
+          style={{
+            // display: "flex",
+            // justifyContent: "center",
+            // alignItems: "center",
+            backgroundColor: styles.colors.busy,
+          }}
+        >
+          <h2>
+         work pls
+          </h2>
+        </ParallaxLayer>
+      </Parallax>
     </>
   );
 }
