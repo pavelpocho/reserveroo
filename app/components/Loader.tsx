@@ -12,18 +12,19 @@ const Wrap = styled.div<{ show: boolean }>`
   transition: opacity 0.1s ease-out, transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
   opacity: ${props => props.show ? '1' : '0'};
   transform: translateY(${props => props.show ? '0' : '4.5'}rem);
-  bottom: 1rem;
-  right: 1rem;
+  bottom: 2.5rem;
+  background-color: ${styles.colors.primary};
+  right: 2.5rem;
   border-radius: 0.6rem;
   box-shadow: ${styles.shadows[0]};
   display: flex;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 1rem 1.5rem;
   gap: 1.5rem;
 `;
 
 const Text = styled.p`
-  color: ${styles.colors.gray[120]};
+  color: ${styles.colors.white};
   font-weight: bold;
   font-size: 1.1rem;
   margin: 0px;

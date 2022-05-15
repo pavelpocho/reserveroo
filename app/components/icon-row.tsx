@@ -18,12 +18,17 @@ const Wrap = styled.div`
   gap: 0.25rem;
   justify-content: center;
   position: relative;
+  background-color: ${styles.colors.primary};
+  padding: 1rem 0rem;
+  max-width: 968px;
+  margin: 0 auto;
 `;
 
 const Overlay = styled.div`
   position: absolute;
   width: 150%;
   height: 100%;
+  top: 0;
   background-image: linear-gradient(to right, ${styles.colors.primary}FF, ${styles.colors.primary}00, ${styles.colors.primary}FF);
 `;
 

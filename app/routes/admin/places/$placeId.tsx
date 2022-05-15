@@ -22,10 +22,11 @@ import { updateOpeningTime } from '~/models/openingTime.server';
 import { addToPlaceGalleryPics, getPlace, Place, removeFromPlaceGalleryPics, updatePlace, updatePlaceProfilePic } from '~/models/place.server';
 import { createReservable, deleteReservable, updateReservable } from '~/models/reservable.server';
 import { getTagList } from '~/models/tag.server';
-import { CategoryWithTexts, LocationWithTexts, PlaceForEdit, TagWithTexts } from '~/types/types';
+import { CategoryWithTexts, LocationWithTexts, PlaceForEdit, ReservableTypeWithTexts, TagWithTexts } from '~/types/types';
 import { getDateObjectFromTimeString, getFormEssentials } from '~/utils/forms';
 import { deleteImageFromS3, uploadImageToS3 } from '~/utils/s3.server';
 import crypto from 'crypto'
+import { getReservableTypeList } from '~/models/reservableType.server';
 
 interface AdminPlaceDetailLoaderData {
   place: PlaceForEdit;
@@ -33,6 +34,7 @@ interface AdminPlaceDetailLoaderData {
   tags: TagWithTexts[];
   categories: CategoryWithTexts[];
   locations: LocationWithTexts[];
+  reservableTypes: ReservableTypeWithTexts[];
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -42,6 +44,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     companies: await getCompanyList({ name: '' }),
     tags: await getTagList({ nameFragment: '' }),
     categories: await getCategoryList({ nameFragment: '' }),
+    reservableTypes: await getReservableTypeList({ nameFragment: '' }),
     locations: await getLocationList({ cityCountry: '' })
   });
 }
@@ -115,10 +118,11 @@ export const action: ActionFunction = async ({ request }) => {
 
   }
 
-  const reservables: Pick<Reservable, 'id' | 'name' | 'placeId' | 'minimumReservationTime' | 'reservationsPerSlot'>[] = getFormItems('reservableId[]').map((id, i) => {
+  const reservables: Pick<Reservable, 'id' | 'name' | 'placeId' | 'minimumReservationTime' | 'reservationsPerSlot' | 'reservableTypeId'>[] = getFormItems('reservableId[]').map((id, i) => {
     return {
       id,
       name: getFormItems('reservableName[]')[i],
+      reservableTypeId: getFormItems('reservableTypeId[]')[i],
       minimumReservationTime: parseInt(getFormItems('minimumReservationTime[]')[i]),
       reservationsPerSlot: parseInt(getFormItems('reservationsPerSlot[]')[i]),
       placeId: place.id
@@ -164,7 +168,7 @@ const ArrayInputWrap = styled.div`
 
 export default function AdminPlaceDetail() {
 
-  const { place: defaultPlace, companies, tags, locations, categories } = useLoaderData<AdminPlaceDetailLoaderData>();
+  const { place: defaultPlace, companies, tags, locations, categories, reservableTypes } = useLoaderData<AdminPlaceDetailLoaderData>();
 
   const [ place, setPlace ] = useState<PlaceForEdit>(defaultPlace);
   const [ deletedReservables, setDeletedReservables ] = useState<string[]>([]);
@@ -196,13 +200,22 @@ export default function AdminPlaceDetail() {
           updatedAt: new Date(),
           placeId: place.id,
           minimumReservationTime: 30,
-          reservationsPerSlot: 1
+          reservationsPerSlot: 1,
+          reservableTypeId: null
         }
       ]
     });
   }
 
   const { lang } = useLangs();
+
+  const findReservableTypeName = (id: string) => {
+    let s = reservableTypes.find(rp => rp.id == id);
+    if (s?.multiLangName) {
+      return s.multiLangName[lang];
+    }
+    return '';
+  }
 
   return <div>
     <Form method='post' encType='multipart/form-data'>
@@ -236,6 +249,11 @@ export default function AdminPlaceDetail() {
           <TextInput title='Reservable name' name='reservableName[]' defaultValue={r.name} />
           <NumberInput title='Minimum reservation interval (minutes)' name='minimumReservationTime[]' defaultValue={r.minimumReservationTime} />
           <NumberInput title='Reservations per slot' name='reservationsPerSlot[]' defaultValue={r.reservationsPerSlot} />
+          <SingleSelectorInput defaultValueAndText={
+            r.reservableTypeId ? { value: r.reservableTypeId, text: findReservableTypeName(r.reservableTypeId) } : null
+          } title='Reservable type' name='reservableTypeId[]' possibleValuesAndTexts={
+            reservableTypes.map(rt => ({ value: rt.id, text: rt.multiLangName ? rt.multiLangName[lang] : '' }))
+          } />
           <Button onClick={(e) => { deleteReservable(e, r.id); }}>Delete</Button>
         </ArrayInputWrap>) }
       </ArrayInput>

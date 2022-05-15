@@ -8,21 +8,20 @@ import { useLangs } from "~/contexts/langsContext";
 
 interface SearchBarProps {
   defaultValue?: string,
-  setSearchBarActive: (searchBarActive: boolean) => void
 }
 
 const SearchBarWrap = styled.div`
-  height: 1.8rem;
-  z-index: 2;
+  height: 3.25rem;
+  box-shadow: ${styles.shadows[1]};
   background-color: ${styles.colors.white};
-  border: 1px solid ${styles.colors.gray[30]};
-  border-radius: 0.6rem;
+  border-radius: 0.375rem;
   display: flex;
   position: relative;
   align-items: stretch;
   justify-content: stretch;
   gap: 0.9rem;
   align-items: center;
+  box-sizing: border-box;
   padding: 0.5rem 1rem;
   & input {
     border: none;
@@ -32,16 +31,12 @@ const SearchBarWrap = styled.div`
   }
 `;
 
-export const SearchBar: React.FC<SearchBarProps> = ({ defaultValue, setSearchBarActive }: SearchBarProps) => {
+export const SearchBar: React.FC<SearchBarProps> = ({ defaultValue }: SearchBarProps) => {
 
   const { translations: l } = useLangs();
 
   return <SearchBarWrap>
     <SearchIcon height={'1rem'} fill={styles.colors.gray[90]} />
-    <input onSelect={() => {
-      setSearchBarActive(true);
-    }} onBlur={() => {
-      setSearchBarActive(false);
-    }} placeholder={l.searchPlaceholder} name='searchTerm' type='text' defaultValue={defaultValue} />
+    <input placeholder={l.searchPlaceholder} name='searchTerm' type='text' defaultValue={defaultValue} />
   </SearchBarWrap>
 }

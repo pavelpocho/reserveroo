@@ -6,7 +6,7 @@ const ImageWrap = styled.div<{ shape: ImageShape }>`
   border-radius: ${props => props.shape == 'circle' ? '100%' : '8px'};
   aspect-ratio: 1;
   overflow: hidden;
-  height: 8rem;
+  height: 100%;
   background-color: ${styles.colors.gray[30]};
 `;
 

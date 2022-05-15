@@ -1,13 +1,15 @@
 export const styles = {
   colors: {
     primary: '#2E294E',
+    primary_background: '#F2F2F8',
     action: '#ACC196',
+    action_light: '#D7E1CC',
     white: '#FFFFFF',
     black: '#000000',
     free: '#74D06C',
     busy: '#D06C6C',
     gray: {
-      5: '#F8F8F8',
+      5: '#F7F7F7',
       10: '#F1F1F1',
       20: '#E1E1E1',
       30: '#D1D1D1',
@@ -26,6 +28,8 @@ export const styles = {
     }
   },
   shadows: [
-    '0 4px 8px 0 rgb(0 0 0 / 8%)'
+    '0 4px 8px 0 rgb(0 0 0 / 8%)',
+    '0px 1px 4px rgba(0, 0, 0, 0.25)',
+    '0px 1px 1px rgba(0, 0, 0, 0.25)'
   ]
 }

@@ -20,9 +20,10 @@ interface SearchUIProps {
 const Wrap = styled.div`
   max-width: 800px;
   width: 100%;
-  margin: 3rem auto 0;
+  flex: 0.5;
+  margin-right: 1.75rem;
   position: relative;
-  padding: 1.25rem 2.75rem;
+  padding: 1.25rem 1.625rem;
   background-color: ${styles.colors.action};
   border-radius: 0.5rem;
 `;
@@ -53,15 +54,22 @@ const Flex = styled.div`
   align-items: center;
   height: 2.25rem;
   grid-template-rows: 2.375xrem;
-  grid-template-columns: minmax(0, auto) 2.2rem 1fr 1.5rem minmax(0, auto) 2.2rem 1fr;
+  grid-template-columns: minmax(0, auto) 2.2rem 1fr;
   gap: 0.4rem;
 `;
 
 const TagFlex = styled.div`
   display: flex;
   align-items: center;
-  height: 2.25rem;
+  flex-wrap: wrap;
   gap: 0.4rem;
+`;
+
+const TagTitle = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 const InfoButton = styled.button`
@@ -105,7 +113,7 @@ const SearchButton = styled.button`
   box-shadow: ${styles.shadows[0]};
 `;
 
-export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tags, categories }) => {
+export const ResultSearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tags, categories }) => {
 
   const locationCityCountry = searchParams.get('selectedLocation');
   const tagIds = searchParams.getAll('tags[]');
@@ -141,7 +149,8 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
             text: defaultLocationName
           } : null} 
         />
-        <div></div>
+      </Flex>
+      <Flex>
         <Title>Categories</Title>
         <InfoButton onClick={(e) => {
           e.preventDefault();
@@ -155,10 +164,12 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
       </Flex>
       { selectedTags.map(t => <input key={t.id} hidden={true} type={'text'} name='tags[]' value={t.id} readOnly={true} />)  }
       <TagFlex>
-        <Title>Tags</Title>
-        <InfoButton onClick={(e) => {
-          e.preventDefault();
-        }}><CircleInfoIcon height={'0.75rem'} /></InfoButton>
+        <TagTitle>
+          <Title>Tags</Title>
+          <InfoButton onClick={(e) => {
+            e.preventDefault();
+          }}><CircleInfoIcon height={'0.75rem'} /></InfoButton>
+        </TagTitle>
         {
           tags.map(t => <TagCategoryButton selected={!!selectedTags.find(st => st.id == t.id)} onClick={(e) => {
             e.preventDefault();
