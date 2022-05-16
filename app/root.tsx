@@ -43,7 +43,7 @@ export const UnstyledLink = styled(Link)`
 const Body = styled.body<{ isLandingPage: boolean }>`
   margin: 0px;
   padding: 0px;
-  overflow-y: ${(props) => (props.isLandingPage ? "hidden" : "scroll")};
+  overflow-y: ${(props) => (props.isLandingPage ? "hidden" : "inherit")};
   & > * {
     font-family: Inter, Source Sans Pro, Roboto, sans-serif;
   }
