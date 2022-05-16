@@ -35,6 +35,7 @@ const Wrap = styled.div`
 
 const Label = styled.label`
   font-size: 0.8rem;
+  margin-bottom: 0.2rem;
   font-weight: bold;
 `;
 

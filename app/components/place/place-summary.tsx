@@ -7,11 +7,12 @@ import ClockIcon from "~/assets/icons/Clock";
 import LocationIcon from "~/assets/icons/Location";
 import { styles } from "~/constants/styles";
 import { UnstyledLink } from "~/root";
-import { ReservableTypeWithTexts } from "~/types/types";
+import { ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
 import { getDayOfWeek } from "~/utils/forms";
 import { AvailabilityIndicator } from "../availability-indicator";
 import { FacilitiesIndicator } from "./facilities-indicator";
 import { PlaceImage } from "./place-image";
+import { TagList } from "./tag-list";
 
 export const PlaceWrap = styled.div`
   background-color: ${styles.colors.gray[5]};
@@ -19,9 +20,9 @@ export const PlaceWrap = styled.div`
   border-radius: 0.5rem;
   display: grid;
   grid-template-columns: 11rem 1fr;
-  padding: 1.875rem;
-  height: 11rem;
-  align-items: stretch;
+  padding: 0.6rem 1.475rem;
+  min-height: 11rem;
+  align-items: center;
   position: relative;
 `;
 
@@ -36,7 +37,7 @@ export const PlaceInfoWrap = styled.div`
   border-radius: 4px;
   display: grid;
   gap: 0.8rem;
-  grid-template-rows: 2.2rem 2.7rem 1fr;
+  grid-template-rows: 2rem 2rem 2rem 1fr;
   justify-self: stretch;
 `;
 
@@ -61,7 +62,7 @@ const BaseButton = styled(Link)`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.7rem 1.8rem;
+  padding: 0.6rem 1.6rem;
   font-size: 1rem;
   font-weight: bold;
   gap: 1.3rem;
@@ -76,12 +77,43 @@ const BaseButton = styled(Link)`
   }
 `;
 
-const SecondaryButton = styled(BaseButton)`
+export const SecondaryButton = styled(BaseButton)`
   border: 1.5px solid #22222240;
   color: ${styles.colors.gray[140]};
 `;
 
-const MainButton = styled(BaseButton)`
+export const MainButton = styled(BaseButton)`
+  border: 1.5px solid ${styles.colors.action};
+  background-color: ${styles.colors.action};
+`;
+
+const BaseButtonBtn = styled.button`
+  background-color: transparent;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.6rem 1.6rem;
+  font-size: 1rem;
+  font-weight: bold;
+  gap: 1.3rem;
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+  text-decoration: none;
+  color: ${styles.colors.black};
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.08);
+  }
+`;
+
+export const SecondaryButtonBtn = styled(BaseButtonBtn)`
+  border: 1.5px solid #22222240;
+  color: ${styles.colors.gray[140]};
+`;
+
+export const MainButtonBtn = styled(BaseButtonBtn)`
   border: 1.5px solid ${styles.colors.action};
   background-color: ${styles.colors.action};
 `;
@@ -92,6 +124,7 @@ const Time = styled.p`
 
 interface PlaceProps {
   place: Place & {
+    tags: TagWithTexts[];
     openingTimes: OpeningTime[];
     reservables: Reservable & {
       ReservableType: ReservableTypeWithTexts
@@ -99,24 +132,24 @@ interface PlaceProps {
   };
 }
 
-export const PlaceSummary: React.FC<PlaceProps> = ({ place }: PlaceProps) => {
-
-  const getNextImportantTime = (place: Place & {
-    openingTimes: OpeningTime[];
-    reservables: Reservable & {
-      ReservableType: ReservableTypeWithTexts
-    }[];
-  }) => {
-    let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const closeToday = new Date(place.openingTimes.find(o => o.day == getDayOfWeek(new Date()))?.close ?? '');
-    const openTomorrow = new Date(place.openingTimes.find(o => o.day == getDayOfWeek(tomorrow))?.open ?? '');
-    
-    if (new Date().getTime() > closeToday.getTime()) {
-      return `Opens at ${openTomorrow.toLocaleTimeString()} tomorrow.`;
-    }
-    return `Closes at ${closeToday.toLocaleDateString()} today.`;
+export const getNextImportantTime = (place: Place & {
+  openingTimes: OpeningTime[];
+  reservables: Reservable & {
+    ReservableType: ReservableTypeWithTexts
+  }[];
+}) => {
+  let tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const closeToday = new Date(place.openingTimes.find(o => o.day == getDayOfWeek(new Date()))?.close ?? '');
+  const openTomorrow = new Date(place.openingTimes.find(o => o.day == getDayOfWeek(tomorrow))?.open ?? '');
+  
+  if (new Date().getHours() * 60 + new Date().getMinutes() > closeToday.getHours() * 60 + closeToday.getMinutes()) {
+    return `Opens at ${openTomorrow.toLocaleTimeString()} tomorrow.`;
   }
+  return `Closes at ${closeToday.toLocaleTimeString()} today.`;
+}
+
+export const PlaceSummary: React.FC<PlaceProps> = ({ place }: PlaceProps) => {
 
   return <PlaceWrap>
     <PlaceImage shape='square' imageUrl={place.profilePicUrl} />
@@ -131,6 +164,7 @@ export const PlaceSummary: React.FC<PlaceProps> = ({ place }: PlaceProps) => {
         </Flex>
       </FlexApart>
       <FacilitiesIndicator reservables={place.reservables} />
+      <TagList tags={place.tags} />
       <FlexApart>
         <Flex>
           <ClockIcon height='1.25rem' />

@@ -14,6 +14,10 @@ export const getStringTimeValue = (date: Date): string => {
   return `${hPrefix}${date.getHours()}:${mPrefix}${date.getMinutes()}`;
 }
 
+export const getStringDateValue = (date: Date): string => {
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+}
+
 export const getInputDateFromString = (date: Date | null) => (date ?
   `${date.getFullYear()}-${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}-${date.getDate() < 10 ? '0' : ''}${date.getDate()}` : ''
 );

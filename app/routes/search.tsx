@@ -22,6 +22,7 @@ interface LoaderData {
   tags: TagWithTexts[],
   categories: CategoryWithTexts[],
   places: (Place & {
+    tags: TagWithTexts[];
     openingTimes: OpeningTime[];
     reservables: Reservable & {
       ReservableType: ReservableTypeWithTexts
@@ -41,7 +42,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (usernameAndAdmin.username != null && dontSave != '1') await addToSearchHistory({
     username: usernameAndAdmin.username,
     phrase: searchTerm ?? '',
-    locationId: (await getLocationByName({ cityCountry: location ?? '' }))?.id ?? '',
+    locationId: location ? (await getLocationByName({ cityCountry: location }))?.id ?? null : null,
     tagIds: tags,
     categoryIds: categories
   })
@@ -55,9 +56,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 const Title = styled.h6`
-  font-size: 3.5rem;
-  margin: 0 0 3rem 0;
-  color: ${styles.colors.gray[90]};
+  font-size: 1.7rem;
+  margin: 0 0 1.5rem 0;
 `;
 
 const TopSegment = styled.div`
@@ -81,6 +81,8 @@ export default function Search() {
   
   const { places, locations, tags, categories } = useLoaderData<LoaderData>();
 
+  console.log(places);
+
   const searchParams = useSearchParams()[0];
   return (
     <div>
@@ -96,6 +98,7 @@ export default function Search() {
             categories={categories}
           />
           <PlacesColumn>
+            <Title>Search Results</Title>
             {places.filter(p => !p.hidden).map((place) => (
               <PlaceSummary place={place} key={place.id} />
             ))}

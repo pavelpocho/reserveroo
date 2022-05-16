@@ -141,8 +141,6 @@ export const action: ActionFunction = async ({ request }) => {
   const deletedReservableIds = getFormItems('deletedReservable[]');
   const deletedGalleryPicUrls = getFormItems('deletedGalleryPicUrls[]');
   const keysToDelete = deletedGalleryPicUrls.map(u => u.split('/')[u.split('/').length - 1]);
-  console.log(deletedGalleryPicUrls);
-  console.log(keysToDelete);
 
   const promises: Promise<object>[] = [
     ...reservables.map(r => r.id == '-1' ? createReservable(r) : updateReservable(r)),
