@@ -27,10 +27,8 @@ const ALink = styled(Link)`
 export default function About() {
   return (
     <>
-      <Parallax pages={2}>
-        <ParallaxLayer 
-        // offset={0} speed={0.5} factor={1}
-        >
+      <Parallax pages={3}>
+        <ParallaxLayer factor={0.5} speed={0.3}>
           <H1>
             All the
             <span style={{ color: styles.colors.busy }}> activities </span>
@@ -45,12 +43,12 @@ export default function About() {
         <ParallaxLayer
           offset={0.5}
           factor={0.5}
-          speed={0.75}
+          speed={0.4}
           style={{
-            // display: "flex",
-            // justifyContent: "center",
-            // alignItems: "center",
-            backgroundColor: styles.colors.busy,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            // backgroundColor: styles.colors.busy,
           }}
         >
           <h2>
@@ -63,32 +61,75 @@ export default function About() {
 
         <ParallaxLayer
           offset={1}
-          // speed={0.9}
+          speed={0.5}
           factor={0.5}
           style={{
-            // display: "flex",
-            // justifyContent: "center",
-            // alignItems: "center",
-            backgroundColor: "red",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            // backgroundColor: "red",
           }}
         >
-          <p>Scroll up</p>
+          <p>
+            How do you find out what activities are available?
+            <br />A Google search perhaps?
+          </p>
         </ParallaxLayer>
 
         <ParallaxLayer
           offset={1.5}
           factor={0.5}
-          // speed={1}
+          speed={0.6}
           style={{
-            // display: "flex",
-            // justifyContent: "center",
-            // alignItems: "center",
-            backgroundColor: styles.colors.busy,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            // backgroundColor: styles.colors.busy,
           }}
         >
-          <h2>
-         work pls
-          </h2>
+          <h2>Do you look at each website that pops up?</h2>
+        </ParallaxLayer>
+
+        <ParallaxLayer
+          offset={2}
+          factor={0.5}
+          speed={0.7}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            // backgroundColor: styles.colors.busy,
+          }}
+        >
+          <h2>How do you know each place is legit and open?</h2>
+        </ParallaxLayer>
+
+        <ParallaxLayer
+          offset={2.5}
+          factor={0.5}
+          speed={0.8}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            // backgroundColor: styles.colors.busy,
+          }}
+        >
+          <h2>Do you have to book a spot? No? Are you sure?</h2>
+        </ParallaxLayer>
+
+        <ParallaxLayer
+          offset={3}
+          factor={0.5}
+          speed={0.9}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            // backgroundColor: styles.colors.busy,
+          }}
+        >
+          <h2>How do you book a spot?</h2>
         </ParallaxLayer>
       </Parallax>
     </>
