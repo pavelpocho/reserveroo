@@ -1,8 +1,8 @@
-import type { User } from "@prisma/client";
+import type { User, Search } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
-export type { User } from "@prisma/client";
+export type { User, Search } from "@prisma/client";
 
 export const getUser = async ({ id }: Pick<User, 'id'>) => (await prisma.user.findUnique({
   where: { id },
@@ -45,6 +45,55 @@ export const subtractResendTries = async ({ email }: Pick<User, 'email'>) => (aw
     }
   }
 }));
+
+export const addToSearchHistory = async ({ username, phrase, locationId, tagIds, categoryIds }: Pick<User, 'username'> & Pick<Search, 'phrase' | 'locationId'> & { tagIds: string[], categoryIds: string[] }) => await prisma.user.update({
+  where: { username },
+  data: {
+    searchHistory: {
+      create: {
+        phrase,
+        locationId,
+        Tags: {
+          connect: tagIds.map(t => ({ id: t }))
+        },
+        Categories: {
+          connect: categoryIds.map(c => ({ id: c }))
+        },
+      }
+    }
+  }
+});
+
+export const getSearchHistory = async ({ username }: Pick<User, 'username'>) => await prisma.user.findUnique({
+  where: { username },
+  include: {
+    searchHistory: {
+      orderBy: [{
+        createdAt: 'desc',
+      }],
+      take: 6,
+      include: {
+        location: {
+          include: {
+            multiLangCity: true,
+            multiLangCountry: true
+          }
+        },
+        Tags: {
+          include: {
+            multiLangDesc: true,
+            multiLangName: true
+          }
+        },
+        Categories: {
+          include: {
+            multiLangName: true
+          }
+        }
+      }
+    }
+  }
+})
 
 export const verifyUserEmail = async (email: string) => (await prisma.user.update({
   where: {

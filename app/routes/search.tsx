@@ -6,19 +6,26 @@ import styled from "styled-components";
 import { SearchBar } from "~/components/search/search-bar";
 import { PlaceSummary } from "~/components/place/place-summary";
 import { styles } from "~/constants/styles";
-import { Category, Location, Reservable, Tag } from "@prisma/client";
-import { SearchUI } from "~/components/search/search-ui";
-import { getAllLocations } from "~/models/location.server";
+import { Category, Location, OpeningTime, Reservable, Tag } from "@prisma/client";
+import { getAllLocations, getLocation, getLocationByName } from "~/models/location.server";
 import { getTagList } from "~/models/tag.server";
 import { getCategoryList } from "~/models/category.server";
-import { CategoryWithTexts, LocationWithEverything, LocationWithTexts, TagWithTexts } from "~/types/types";
+import { CategoryWithTexts, LocationWithEverything, LocationWithTexts, ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
+import { IconRow } from "~/components/icon-row";
+import { addToSearchHistory } from "~/models/user.server";
+import { getUsernameAndAdmin } from "~/utils/session.server";
+import { WidthRestrictor } from "~/root";
+import { ResultSearchUI } from "~/components/search/result-search-ui";
 
 interface LoaderData {
   locations: LocationWithEverything[],
   tags: TagWithTexts[],
   categories: CategoryWithTexts[],
   places: (Place & {
-    reservables: Reservable[]
+    openingTimes: OpeningTime[];
+    reservables: Reservable & {
+      ReservableType: ReservableTypeWithTexts
+    }[]
   })[]
 }
 
@@ -26,8 +33,18 @@ export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const searchTerm = url.searchParams.get('searchTerm');
   const location =  url.searchParams.get('selectedLocation');
+  const dontSave =  url.searchParams.get('dontSave');
   const tags = url.searchParams.getAll('tags[]');
   const categories = url.searchParams.getAll('categories[]');
+  const usernameAndAdmin = await getUsernameAndAdmin(request);
+
+  if (usernameAndAdmin.username != null && dontSave != '1') await addToSearchHistory({
+    username: usernameAndAdmin.username,
+    phrase: searchTerm ?? '',
+    locationId: (await getLocationByName({ cityCountry: location ?? '' }))?.id ?? '',
+    tagIds: tags,
+    categoryIds: categories
+  })
 
   return json({
     places: await getPlaceList({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories }),
@@ -44,19 +61,20 @@ const Title = styled.h6`
 `;
 
 const TopSegment = styled.div`
-  padding: 3rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: ${styles.colors.gray[10]};
+  background-color: ${styles.colors.primary};
 `;
 
 const MainSegment = styled.div`
   padding: 3rem 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: ${styles.colors.gray[5]};
+  align-items: flex-start;
+`;
+
+const PlacesColumn = styled.div`
+  flex-grow: 1;
 `;
 
 export default function Search() {
@@ -67,19 +85,23 @@ export default function Search() {
   return (
     <div>
       <TopSegment>
-        <Title>What will you try next?</Title>
-        <SearchUI
-          searchParams={searchParams}
-          locations={locations}
-          tags={tags}
-          categories={categories}
-        />
+        <IconRow />
       </TopSegment>
-      <MainSegment>
-        {places.filter(p => !p.hidden).map((place) => (
-          <PlaceSummary place={place} key={place.id} />
-        ))}
-      </MainSegment>
+      <WidthRestrictor width={'1368px'}>
+        <MainSegment>
+          <ResultSearchUI
+            searchParams={searchParams}
+            locations={locations}
+            tags={tags}
+            categories={categories}
+          />
+          <PlacesColumn>
+            {places.filter(p => !p.hidden).map((place) => (
+              <PlaceSummary place={place} key={place.id} />
+            ))}
+          </PlacesColumn>
+        </MainSegment>
+      </WidthRestrictor>
     </div>
   );
 }

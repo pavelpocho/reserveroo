@@ -72,8 +72,17 @@ export const getPlaceList = async ({ name: nameFragment, cityCountry, tagIds, ca
     }]
   },
   include: {
+    openingTimes: true,
     company: true,
-    reservables: true,
+    reservables: {
+      include: {
+        ReservableType: {
+          include: {
+            multiLangName: true
+          }
+        }
+      }
+    },
     tags: {
       include: {
         multiLangDesc: true,

@@ -72,6 +72,10 @@ export type CategoryWithTexts = Pick<Category, 'id'> & {
   multiLangName: MultilingualName | null;
 };
 
+export type ReservableTypeWithTexts = Pick<Category, 'id'> & {
+  multiLangName: MultilingualName | null;
+};
+
 export type LocationWithTexts = Pick<Location, 'id'> & {
   multiLangCountry: MultilingualName | null;
   multiLangCity: MultilingualDesc | null;
