@@ -5,9 +5,9 @@ export const styles = {
     action: '#ACC196',
     action_light: '#D7E1CC',
     white: '#FFFFFF',
+    busy: '#D7263D',
     black: '#000000',
     free: '#74D06C',
-    busy: '#D06C6C',
     gray: {
       5: '#F7F7F7',
       10: '#F1F1F1',

@@ -1,12 +1,16 @@
 import { OpeningTime, Place, Reservable, Reservation } from "@prisma/client"
 import React from "react"
 import styled from "styled-components"
-import { ReservableWithReservations, ReservationGroupForEdit, ReservationStatus, Time, TimeSection } from "~/types/types"
+import { styles } from "~/constants/styles"
+import { useLangs } from "~/contexts/langsContext"
+import { ReservableTypeWithTexts, ReservableWithReservations, ReservationGroupForEdit, ReservationStatus, Time, TimeSection } from "~/types/types"
 import { areDatesEqual, getInputDateFromString, getStringTimeValue } from "~/utils/forms"
 import { IdInput } from "./inputs/ObjectInput"
 
 interface ReservableTimesProps {
-  reservables: ReservableWithReservations[],
+  reservables: (ReservableWithReservations & {
+    ReservableType: ReservableTypeWithTexts
+  })[],
   date: Date,
   openingTime: OpeningTime,
   startName: string,
@@ -18,18 +22,156 @@ interface ReservableTimesProps {
   reservationBackupName: string,
 }
 
+type ReservableGroup = {
+  typeId: string
+  typeName: string,
+  reservables: (ReservableWithReservations & {
+    ReservableType: ReservableTypeWithTexts
+  })[]
+}
+
+const ScrollWrapper = styled.div`
+  width: 100%;
+  overflow-x: scroll;
+  border-radius: 0.5rem;
+  background-color: ${styles.colors.gray[5]};
+`;
+
 export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBackupName, backup = false, reservationIdName, defaultReservationGroup, reservableIdName, reservables, date, openingTime, startName, endName }: ReservableTimesProps) => {
 
-  return <>{
-    reservables.map(r => <ReservableSection
-      backup={backup}
+  const { lang } = useLangs();
+
+  const reservableGroups: ReservableGroup[] = [];
+  reservables.forEach(r => {
+    if (!r.ReservableType) return;
+    let rg = reservableGroups.find(rgx => rgx.typeId == r.ReservableType.id);
+    if (rg != null) {
+      rg.reservables.push(r);
+    }
+    else {
+      reservableGroups.push({
+        typeId: r.ReservableType.id,
+        typeName: r.ReservableType.multiLangName ? r.ReservableType.multiLangName[lang] : '',
+        reservables: [ r ]
+      });
+    }
+  });
+
+  return <ScrollWrapper>
+    <GroupWrap>
+      {reservableGroups.map(rg => <ReservableGroupSection
+        key={rg.typeId}
+        reservableGroup={rg}
+        date={date}
+        openingTime={openingTime}
+        startName={startName}
+        endName={endName}
+        reservableIdName={reservableIdName}
+        defaultReservation={undefined}
+        reservationIdName={reservationIdName}
+        reservationBackupName={reservationBackupName} />
+      )}
+    </GroupWrap>
+  </ScrollWrapper>
+
+  // return <>{
+  //   reservables.map(r => <ReservableSection
+  //     backup={backup}
+  //     reservationBackupName={reservationBackupName}
+  //     reservationIdName={reservationIdName}
+  //     defaultReservationGroup={defaultReservationGroup}
+  //     defaultReservation={defaultReservationGroup?.reservations.find(reservation => (
+  //       reservation.reservable?.id == r.id && reservation.backup === backup
+  //   ))} reservableIdName={reservableIdName} startName={startName} endName={endName} key={r.id} reservable={r} date={date} openingTime={openingTime} />)
+  // }</>
+}
+
+interface ReservableGroupSectionProps {
+  reservableGroup: ReservableGroup;
+  date: Date;
+  openingTime: OpeningTime;
+  startName: string;
+  endName: string;
+  reservableIdName: string;
+  defaultReservation: Reservation & {
+    reservable: (Reservable & {
+      place: (Place & {
+        openingTimes: OpeningTime[];
+        reservables: ReservableWithReservations[];
+      }) | null;
+    }) | null;
+  } | undefined,
+  defaultReservationGroup?: ReservationGroupForEdit,
+  reservationIdName: string,
+  backup?: boolean,
+  reservationBackupName: string,
+}
+
+const TypeName = styled.h3`
+  align-self: end;
+  text-align: end;
+  position: sticky;
+  left: 0;
+  font-weight: 600;
+  padding: 1.6rem 1rem 0.5rem;
+  margin-bottom: 0;
+  margin-top: 0;
+  border-top-left-radius: 0.5rem;
+  background-color: ${styles.colors.gray[5]};
+`;
+
+const Times = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 1.6rem 1rem 0.5rem;
+  background-color: ${styles.colors.primary_background};
+  & p {
+    width: 44px;
+    text-align: center;
+    margin: 0;
+  }
+`;
+
+const GroupWrap = styled.div`
+  display: grid;
+  grid-template-columns: max-content 1fr;
+`;
+
+const ReservableGroupSection: React.FC<ReservableGroupSectionProps> = ({
+  reservableGroup, date, openingTime, startName, endName, reservableIdName, defaultReservation,
+  defaultReservationGroup, reservationIdName, backup, reservationBackupName
+}) => {
+
+  const openMinutes = getDiffBetweenTwoDates(openingTime.close, openingTime.open);
+  const openSinceMinutes = new Date(openingTime.open).getMinutes() + new Date(openingTime.open).getHours() * 60;
+  const minMin = reservableGroup.reservables[0].minimumReservationTime;
+  // Not used right now, might be in the future
+  const slotCapacity = reservableGroup.reservables[0].reservationsPerSlot;
+  const sections = Math.floor(openMinutes / Math.max(1, minMin));
+  const timeTitle = [...Array(Math.floor(sections / 2)).keys()].map(s => {
+    const currentMins = openSinceMinutes + openMinutes / sections * s * 2;
+    return getStringTimeValue(new Date(0, 0, 0, Math.floor(currentMins / 60), currentMins % 60));
+  });
+
+  return <>
+    <TypeName>{reservableGroup.typeName}</TypeName>
+    <Times>
+      {timeTitle.map((t, i) => <p key={i}>{t}</p>)}
+    </Times>
+    {reservableGroup.reservables.map(r => <ReservableSection
+      key={r.id}
+      reservable={r}
+      date={date}
+      openingTime={openingTime}
+      startName={startName}
+      endName={endName}
+      reservableIdName={reservableIdName}
+      defaultReservation={defaultReservation}
+      reservationIdName={reservableIdName}
       reservationBackupName={reservationBackupName}
-      reservationIdName={reservationIdName}
-      defaultReservationGroup={defaultReservationGroup}
-      defaultReservation={defaultReservationGroup?.reservations.find(reservation => (
-        reservation.reservable?.id == r.id && reservation.backup === backup
-    ))} reservableIdName={reservableIdName} startName={startName} endName={endName} key={r.id} reservable={r} date={date} openingTime={openingTime} />)
-  }</>
+    />)}
+  </>
 }
 
 const getTotalMinutes = (time: Time) => time.hour * 60 + time.minute;
@@ -70,34 +212,43 @@ const doDaysMatch = (date1: Date | string, date2: Date | string, date3: Date | s
 }
 
 const Section = styled.button<{taken: boolean, selected: boolean}>`
-  height: 20px;
-  width: 20px;
-  border: 1px solid black;
+  border: none;
   border-radius: 0.25rem;
-  height: 2.6rem;
+  height: 1.5rem;
   flex-shrink: 0;
-  width: 4.6rem;
-  background-color: ${props => props.selected ? 'green' : props.taken ? 'red' : 'blue'};
+  width: 36px;
+  cursor: pointer;
+  transition: box-shadow 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  &:hover {
+    box-shadow: ${styles.shadows[2]};
+  }
+  background-color: ${props => props.selected ? styles.colors.action : props.taken ? styles.colors.busy : styles.colors.gray[70]};
 `;
 
 const SectionWrap = styled.div`
   display: flex;
-  gap: 0.4rem;
-`;
-
-const Wrap = styled.div`
-  overflow-x: scroll;
-  white-space: nowrap;
-  position: relative;
+  background-color: ${styles.colors.primary_background};
+  gap: 2px;
+  padding: 0.5rem 2rem 0.5rem 0;
+  padding-left: 2.375rem;
 `;
 
 const Title = styled.p`
-  
+  text-align: end;
+  position: sticky;
+  left: 0;
+  padding: 0.5rem 1rem;
+  align-self: stretch;
+  margin: 0;
+  font-weight: 500;
+  background-color: ${styles.colors.gray[5]};
 `;
 
 
 interface ReservableSectionProps {
-  reservable: ReservableWithReservations;
+  reservable: (ReservableWithReservations & {
+    ReservableType: ReservableTypeWithTexts
+  });
   date: Date;
   openingTime: OpeningTime;
   startName: string;
@@ -133,9 +284,12 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
   const [ selectedRange, setSelectedRange ] = React.useState<TimeSection | null>(defaultReservation ? getTimeSectionOfReservation(defaultReservation) : null);
   const [ selectedDate, setSelectedDate ] = React.useState<Date>(date);
 
-  return <Wrap>
+  console.log("Reservable id");
+  console.log(reservable.id);
+
+  return <>
     <Title>{reservable.name}</Title>
-    <SectionWrap key={reservable.id}>
+    <SectionWrap>
       { timeSections.map(s => (
         <Section
           taken={!!reservable.reservations.find(r => doDaysMatch(date, r.start, r.end) && doSectionsOverlap(getTimeSectionOfReservation(r), s) && !defaultReservationGroup?.reservations.find(dr => dr.id == r.id) && r.status != ReservationStatus.Cancelled)}
@@ -165,19 +319,19 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
           }}
         ></Section>
       )) }
+      {/* Combine these into just start and end dateTime inputs*/}
+      {selectedRange && <IdInput name={reservationBackupName} value={backup ? '1' : '0'} />}
+      {selectedRange && <IdInput name={reservationIdName} value={defaultReservation ? defaultReservation.id : '-1'} /> }
+      {selectedRange && <input hidden={true} readOnly={true} name={startName} type='datetime-local' value={selectedRange ?
+        new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.start.hour, selectedRange.start.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ''
+      } /> }
+      {selectedRange && <input hidden={true} readOnly={true} name={endName} type='datetime-local' value={selectedRange ?
+        new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.end.hour, selectedRange.end.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ''
+      } /> }
+      {selectedRange && <IdInput name={reservableIdName} value={reservable.id} />}
+      {/* <input readOnly={true} name={startName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.start.hour, selectedRange?.start.minute))} />
+      <input readOnly={true} name={endName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.end.hour, selectedRange?.end.minute))} />
+      <input readOnly={true} type='date' value={getInputDateFromString(selectedDate)} /> */}
     </SectionWrap>
-    {/* Combine these into just start and end dateTime inputs*/}
-    {selectedRange && <IdInput name={reservationBackupName} value={backup ? '1' : '0'} />}
-    {selectedRange && <IdInput name={reservationIdName} value={defaultReservation ? defaultReservation.id : '-1'} /> }
-    {selectedRange && <input readOnly={true} name={startName} type='datetime-local' value={selectedRange ?
-      new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.start.hour, selectedRange.start.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ''
-    } /> }
-    {selectedRange && <input readOnly={true} name={endName} type='datetime-local' value={selectedRange ?
-      new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.end.hour, selectedRange.end.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ''
-    } /> }
-    {selectedRange && <IdInput name={reservableIdName} value={reservable.id} />}
-    {/* <input readOnly={true} name={startName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.start.hour, selectedRange?.start.minute))} />
-    <input readOnly={true} name={endName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.end.hour, selectedRange?.end.minute))} />
-    <input readOnly={true} type='date' value={getInputDateFromString(selectedDate)} /> */}
-  </Wrap>
+  </>
 }

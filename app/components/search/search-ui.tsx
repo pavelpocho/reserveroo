@@ -35,7 +35,7 @@ const Title = styled.h4`
   font-size: 1rem;
 `;
 
-const TagCategoryButton = styled.button<{ selected: boolean }>`
+export const TagCategoryButton = styled.button<{ selected: boolean, noCursor?: boolean }>`
   height: 1.875rem;
   padding: 0 1rem;
   font-weight: 600;
@@ -43,9 +43,9 @@ const TagCategoryButton = styled.button<{ selected: boolean }>`
   border-radius: 1rem;
   color: ${props => props.selected ? styles.colors.white : styles.colors.primary};
   background-color: ${props => props.selected ? styles.colors.primary : styles.colors.white};
-  box-shadow: ${styles.shadows[1]};
+  box-shadow: ${styles.shadows[2]};
   border: none;
-  cursor: pointer;
+  cursor: ${props => props.noCursor ? '' : 'pointer'};
 `;
 
 const Flex = styled.div`

@@ -76,11 +76,11 @@ export const RecentSearch: React.FC<RecentSearchProps> = ({ searchPhrase, locati
       <IdInput name='searchTerm' value={searchPhrase} />
       <IdInput name='dontSave' value={'1'} />
     </Form>
-    <Title>{searchPhrase != '' ? `"${searchPhrase}"` : categories.length == 1 ? (categories[0].multiLangName && categories[0].multiLangName[lang]) : 'Activities'} {location?.multiLangCity && `in ${location.multiLangCity[lang]}`}</Title>
+    <Title>{searchPhrase != '' ? `"${searchPhrase}"` : categories.length == 1 ? (categories[0].multiLangName && categories[0].multiLangName[lang]) : 'All Activities'} {location?.multiLangCity && `in ${location.multiLangCity[lang]}`}</Title>
     <Grid>
       <Flex>
         {location?.multiLangCity &&  <LocationIcon fill={styles.colors.white} height={'1.25rem'} />}
-        {location?.multiLangCity && location?.multiLangCity[lang]}, {location?.multiLangCountry && location?.multiLangCountry[lang]}
+        {location?.multiLangCity && location?.multiLangCity[lang]}{(location?.multiLangCity || location?.multiLangCountry) && ','} {location?.multiLangCountry && location?.multiLangCountry[lang]}
       </Flex>
       <Flex>
         {(categories.length > 0) && <TableListIcon fill={styles.colors.white} height={'1.25rem'} />}

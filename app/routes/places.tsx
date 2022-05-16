@@ -27,7 +27,8 @@ interface LoaderData {
     openingTimes: OpeningTime[];
     reservables: Reservable & {
       ReservableType: ReservableTypeWithTexts
-    }[]
+    }[],
+    tags: TagWithTexts[]
   })[],
   searchHistory: (Search & {
     location: LocationWithEverything | null;

@@ -5,12 +5,12 @@ import AngleRightIcon from "~/assets/icons/AngleRight";
 import CalendarIcon from "~/assets/icons/Calendar";
 import { styles } from "~/constants/styles";
 import { useLangs } from "~/contexts/langsContext";
-import { getInputDateFromString } from "~/utils/forms";
+import { getInputDateFromString, getStringDateValue } from "~/utils/forms";
 
 interface DateInputProps {
   name: string,
   defaultValue: Date | null,
-  title: string,
+  title?: string,
   onChange: React.Dispatch<React.SetStateAction<Date | null>>,
   disablePast?: boolean
 }
@@ -31,11 +31,13 @@ const DateInputField = styled.input`
 const Calendar = styled.div`
   width: 15rem;
   height: 15rem;
+  padding: 0.5rem 1rem;
   position: absolute;
   background-color: ${styles.colors.white};
   border: 1px solid ${styles.colors.gray[10]};
   box-shadow: ${styles.shadows[0]};
   border-radius: 0.5rem;
+  z-index: 6;
 `;
 
 const Header = styled.div`
@@ -94,18 +96,20 @@ interface DayButtonProps {
 }
 
 const Wrap = styled.button`
-  padding: 0.5rem;
+  padding: 0.5rem 0.8rem;
   display: flex;
   gap: 1rem;
+  cursor: pointer;
   align-items: center;
-  border: 1px solid ${styles.colors.gray[20]};
+  border: 1.5px solid ${styles.colors.gray[140]}40;
   border-radius: 0.5rem;
   background-color: ${styles.colors.white};
 `;
 
 const DateDisplay = styled.p`
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 500;
 `;
 
 const Month = styled.p`
@@ -128,6 +132,15 @@ const HeaderButton = styled.button`
   &:hover {
     background-color: ${styles.colors.gray[20]};
   }
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5;
 `;
 
 const DayButton: React.FC<DayButtonProps> = ({ disabled, date, selected, onClick }: DayButtonProps) => <Button disabled={disabled} selected={selected} onClick={(e) => {
@@ -156,67 +169,76 @@ export const DateInput: React.FC<DateInputProps> = ({ disablePast, name, default
   const endPadding = 7 - (days.length + startPadding) % 7;
 
   return <div>
-    <label>{title}</label>
+    {title && <label>{title}</label>}
     <Wrap onClick={(e) => {
       e.preventDefault();
       setShowCalendar(!showCalendar);
     }}>
-      <CalendarIcon height={'1.4rem'} />
-      <DateDisplay>{value}</DateDisplay>
+      <CalendarIcon height={'1rem'} />
+      <DateDisplay>{getStringDateValue(new Date(value))}</DateDisplay>
     </Wrap>
-    { showCalendar && <Calendar>
-      <Header>
-        <HeaderButton onClick={(e) => {
-          setYearMonth({
-            year: month == 0 ? year - 1 : year,
-            month: month == 0 ? 11 : month - 1
-          });
-        }}><AngleLeftIcon /></HeaderButton>
-        <Month>{l.months[month]}</Month>
-        <HeaderButton onClick={(e) => {
-          e.preventDefault();
-          setYearMonth({
-            year: month == 11 ? year + 1 : year,
-            month: month == 11 ? 0 : month + 1
-          });
-        }}><AngleRightIcon /></HeaderButton>
-      </Header>
-      <Body>
-        { [...Array(startPadding).keys()].map((_, i) => maxDayOfPreviousMonth - i).reverse().map(d => <DayButton
-          disabled={true}
-          key={d}
-          onClick={() => {
+    { showCalendar && <>
+      <Overlay onClick={() => {
+        setShowCalendar(false);
+      }} />
+      <Calendar>
+        <Header>
+          <HeaderButton onClick={(e) => {
+            e.preventDefault();
             setYearMonth({
-              year,
-              month: month - 1
+              year: month == 0 ? year - 1 : year,
+              month: month == 0 ? 11 : month - 1
             });
-            setDate(d);
-          }}
-          date={d}
-        />) }
-        { days.map(d => <DayButton
-          key={d + 32}
-          disabled={disablePast && (new Date().getDate() > d + 1 && new Date().getMonth() == month) || (new Date().getMonth() > month && new Date().getFullYear() == year) || new Date().getFullYear() > year}
-          selected={d + 1 == date && getYearMonthFromValue(value).month == month && getYearMonthFromValue(value).year == year}
-          date={d + 1}
-          onClick={() => {
-            setDate(d + 1);
-          }}
-        />) }
-        { [...Array(endPadding).keys()].map(d => <DayButton
-          disabled={true}
-          key={d + 64}
-          date={d + 1}
-          onClick={() => {
-            setDate(d + 1);
+          }}><AngleLeftIcon /></HeaderButton>
+          <Month>{l.months[month]}</Month>
+          <HeaderButton onClick={(e) => {
+            e.preventDefault();
             setYearMonth({
-              year,
-              month: month + 1
-            })
-          }}
-        />) }
-      </Body>
-    </Calendar> }
+              year: month == 11 ? year + 1 : year,
+              month: month == 11 ? 0 : month + 1
+            });
+          }}><AngleRightIcon /></HeaderButton>
+        </Header>
+        <Body>
+          { [...Array(startPadding).keys()].map((_, i) => maxDayOfPreviousMonth - i).reverse().map(d => <DayButton
+            disabled={true}
+            key={d}
+            onClick={() => {
+              setYearMonth({
+                year,
+                month: month - 1
+              });
+              setDate(d);
+              setShowCalendar(false);
+            }}
+            date={d}
+          />) }
+          { days.map(d => <DayButton
+            key={d + 32}
+            disabled={disablePast && (new Date().getDate() > d + 1 && new Date().getMonth() == month) || (new Date().getMonth() > month && new Date().getFullYear() == year) || new Date().getFullYear() > year}
+            selected={d + 1 == date && getYearMonthFromValue(value).month == month && getYearMonthFromValue(value).year == year}
+            date={d + 1}
+            onClick={() => {
+              setDate(d + 1);
+              setShowCalendar(false);
+            }}
+          />) }
+          { [...Array(endPadding).keys()].map(d => <DayButton
+            disabled={true}
+            key={d + 64}
+            date={d + 1}
+            onClick={() => {
+              setDate(d + 1);
+              setYearMonth({
+                year,
+                month: month + 1
+              });
+              setShowCalendar(false);
+            }}
+          />) }
+        </Body>
+      </Calendar>
+    </>}
     <input name={name} type='date' value={value} readOnly={true} hidden={true} />
   </div>
 

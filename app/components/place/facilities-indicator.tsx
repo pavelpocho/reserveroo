@@ -31,8 +31,8 @@ const Amount = styled.span`
   background-color: ${styles.colors.gray[5]};
   color: ${styles.colors.primary};
   font-weight: 600;
-  padding: 0.5625rem 1.1875rem;
-  font-size: 1rem;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
   border-radius: 0.25rem;
 `;
 

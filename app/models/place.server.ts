@@ -7,7 +7,15 @@ export type { Place } from "@prisma/client";
 export const getPlace = async ({ id }: Pick<Place, 'id'>) => (await prisma.place.findFirst({
   where: { id },
   include: {
-    reservables: true,
+    reservables: {
+      include: {
+        ReservableType: {
+          include: {
+            multiLangName: true
+          }
+        }
+      }
+    },
     openingTimes: true,
     tags: {
       include: {
@@ -34,7 +42,12 @@ export const getPlaceWithReservations = async ({ id }: Pick<Place, 'id'>) => (aw
   include: {
     reservables: {
       include: {
-        reservations: true
+        reservations: true,
+        ReservableType: {
+          include: {
+            multiLangName: true
+          }
+        }
       }
     },
     openingTimes: true
