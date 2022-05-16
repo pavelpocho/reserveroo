@@ -4,12 +4,17 @@ import React from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
 import { useWhereAreWe } from "~/contexts/whereAreWeContext";
+import {BsQuestionLg} from "react-icons/bs"
 
 const H1 = styled.h1`
   margin-top: 4rem;
   color: ${styles.colors.primary};
   text-align: center;
 `;
+
+const QuestionIcon = styled(BsQuestionLg)`
+  font-size: 8rem;
+`
 
 const Button = styled.button`
   color: ${styles.colors.white};
@@ -22,26 +27,35 @@ const Button = styled.button`
   border: none;
 `;
 
+const Wrapper = styled.h1`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: ${styles.shadows[1]};
+  width: 300px;
+  padding: 2rem;
+  color: ${styles.colors.primary};
+  background-color: ${styles.colors.gray};
+`;
+
 const ALink = styled(Link)`
   text-decoration: none;
 `;
 
 export default function About() {
-
   const { setLandingPage } = useWhereAreWe();
 
   React.useEffect(() => {
     setLandingPage(true);
     return () => {
       setLandingPage(false);
-    }
+    };
   }, []);
-
 
   return (
     <>
-      <Parallax pages={3}>
-        <ParallaxLayer factor={0.5} speed={0.3}>
+      <Parallax pages={6}>
+        <ParallaxLayer factor={1} speed={0.3}>
           <H1>
             All the
             <span style={{ color: styles.colors.busy }}> activities </span>
@@ -54,8 +68,8 @@ export default function About() {
           <H1>Why was Reserveroo created?</H1>
         </ParallaxLayer>
         <ParallaxLayer
-          offset={0.5}
-          factor={0.5}
+          offset={1}
+          factor={1}
           speed={0.4}
           style={{
             display: "flex",
@@ -73,9 +87,9 @@ export default function About() {
         </ParallaxLayer>
 
         <ParallaxLayer
-          offset={1}
+          offset={2}
           speed={0.5}
-          factor={0.5}
+          factor={1}
           style={{
             display: "flex",
             justifyContent: "center",
@@ -83,15 +97,17 @@ export default function About() {
             // backgroundColor: "red",
           }}
         >
-          <p>
+          {/* <QuestionIcon></QuestionIcon> */}
+          <Wrapper>
             How do you find out what activities are available?
             <br />A Google search perhaps?
-          </p>
+          </Wrapper>
+          {/* <QuestionIcon></QuestionIcon> */}
         </ParallaxLayer>
 
         <ParallaxLayer
-          offset={1.5}
-          factor={0.5}
+          offset={3}
+          factor={1}
           speed={0.6}
           style={{
             display: "flex",
@@ -100,12 +116,12 @@ export default function About() {
             // backgroundColor: styles.colors.busy,
           }}
         >
-          <h2>Do you look at each website that pops up?</h2>
+          <Wrapper>Do you look at each website that pops up?</Wrapper>
         </ParallaxLayer>
 
         <ParallaxLayer
-          offset={2}
-          factor={0.5}
+          offset={4}
+          factor={1}
           speed={0.7}
           style={{
             display: "flex",
@@ -114,12 +130,12 @@ export default function About() {
             // backgroundColor: styles.colors.busy,
           }}
         >
-          <h2>How do you know each place is legit and open?</h2>
+          <Wrapper>How do you know each place is legit and open?</Wrapper>
         </ParallaxLayer>
 
         <ParallaxLayer
-          offset={2.5}
-          factor={0.5}
+          offset={5}
+          factor={1}
           speed={0.8}
           style={{
             display: "flex",
@@ -128,13 +144,13 @@ export default function About() {
             // backgroundColor: styles.colors.busy,
           }}
         >
-          <h2>Do you have to book a spot? No? Are you sure?</h2>
+          <Wrapper>Do you have to book a spot? No? Are you sure?</Wrapper>
         </ParallaxLayer>
 
         <ParallaxLayer
-          offset={3}
-          factor={0.5}
-          speed={0.9}
+          offset={6}
+          factor={1}
+          speed={2}
           style={{
             display: "flex",
             justifyContent: "center",
@@ -142,7 +158,7 @@ export default function About() {
             // backgroundColor: styles.colors.busy,
           }}
         >
-          <h2>How do you book a spot?</h2>
+          <Wrapper>How do you book a spot?</Wrapper>
         </ParallaxLayer>
       </Parallax>
     </>
