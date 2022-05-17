@@ -12,6 +12,7 @@ interface FacilitiesIndicatorProps {
 
 const Wrap = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 1.3125rem;
 `;
 
@@ -21,7 +22,7 @@ const Indicator = styled.p`
   margin: 0px;
   display: flex;
   border-radius: 0.375rem;
-  padding: 0 0.2rem 0 0.7rem;
+  padding: 0.3rem 0.2rem 0.3rem 0.7rem;
   font-weight: 500;
   gap: 0.5rem;
   align-items: center;

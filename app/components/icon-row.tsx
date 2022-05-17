@@ -21,12 +21,14 @@ const Wrap = styled.div`
   background-color: ${styles.colors.primary};
   padding: 1rem 0rem;
   max-width: 968px;
+  width: 66vw;
+  overflow: hidden;
   margin: 0 auto;
 `;
 
 const Overlay = styled.div`
   position: absolute;
-  width: 150%;
+  width: 100%;
   height: 100%;
   top: 0;
   background-image: linear-gradient(to right, ${styles.colors.primary}FF, ${styles.colors.primary}00, ${styles.colors.primary}FF);

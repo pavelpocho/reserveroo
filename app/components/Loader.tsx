@@ -21,6 +21,15 @@ const Wrap = styled.div<{ show: boolean }>`
   justify-content: center;
   padding: 1rem 1.5rem;
   gap: 1.5rem;
+  @media (max-width: 500px) {
+    right: 50%;
+    width: 100%;
+    max-width: 400px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    /* transform: translateY(${props => props.show ? '0' : '4.5'}rem); */
+    transform: translate(50%, ${props => props.show ? '2.5' : '4.5'}rem);
+  }
 `;
 
 const Text = styled.p`

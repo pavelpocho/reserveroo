@@ -66,6 +66,10 @@ interface AppHeaderLoaderData {
 export const WidthRestrictor = styled.div<{ width?: string }>`
   width: 100%;
   margin: 0 auto;
+  @media (min-width: 550px) {
+    padding: 0 1rem;
+  }
+  box-sizing: border-box;
   max-width: ${props => props.width ?? '968px'};
 `;
 
@@ -85,10 +89,11 @@ const Footer = styled.footer`
 `;
 
 interface MainProps {
-  isLandingPage: boolean
+  isLandingPage: boolean,
+  admin: boolean
 }
 
-const Main: React.FC<MainProps> = ({ isLandingPage }) => {
+const Main: React.FC<MainProps> = ({ isLandingPage, admin }) => {
 
   return <>
     <div style={{ minHeight: 'calc(100vh - 7rem)' }}>
@@ -96,6 +101,11 @@ const Main: React.FC<MainProps> = ({ isLandingPage }) => {
       <Outlet />
     </div>
     {!isLandingPage && <Footer>
+      {admin ? (
+        <Link to={"/admin/reservations"}>Admin</Link>
+      ) : (
+        <></>
+      )}
       <p>© Reserveroo, 2022</p>
     </Footer>}
   </>
@@ -141,7 +151,7 @@ export default function App() {
         <signingInContext.Provider value={{ signingIn, setSigningIn, landingPage, setLandingPage }}>
           <usernameContext.Provider value={{ username, setUsername, admin, setAdmin, usernameToVerify, setUsernameToVerify }}>
             <langsContext.Provider value={{ translations, setTranslations, lang, setLang }}>
-              <Main isLandingPage={landingPage} />
+              <Main isLandingPage={landingPage} admin={admin ?? false} />
               <Loader show={loading ?? false}></Loader>
             </langsContext.Provider>
           </usernameContext.Provider>

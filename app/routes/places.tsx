@@ -57,13 +57,28 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 const Title = styled.h6`
   font-size: 2.625rem;
+  @media (max-width: 800px) {
+    font-size: 2rem;
+  }
+  @media (max-width: 550px) {
+    padding: 0 1rem;
+  }
+  @media (max-width: 400px) {
+    font-size: 1.5rem;
+  }
   text-align: center;
   margin: 0 0 0.625rem 0;
   color: ${styles.colors.white};
 `;
 
 const TopSegment = styled.div`
-  padding: 3.75rem 0 2.375rem;
+  padding: 2.45rem 0 2.375rem;
+  @media (max-width: 800px) {
+    padding: 1.45rem 0.75rem 2rem;
+  }
+  @media (max-width: 550px) {
+    padding: 1.45rem 0rem 2rem;
+  }
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -81,7 +96,9 @@ const MainSegment = styled.div`
 
 const WelcomeWrap = styled.div`
   background-color: ${styles.colors.primary_background};
-  border-radius: 1rem;
+  @media (min-width: 550px) {
+    border-radius: 1rem;
+  }
   padding: 2rem;
   position: relative;
 `;
@@ -117,7 +134,10 @@ const HeartWrap = styled.div`
 const SearchHistory = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2rem;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+  gap: 1.25rem;
 `;
 
 const It = styled.i`

@@ -10,19 +10,19 @@ import * as en_texts from "~/assets/langs/en.texts.json";
 import { createCookie } from "@remix-run/node";
 import GbIcon from "~/assets/icons/gb";
 import CzIcon from "~/assets/icons/cz";
+import { FaBars } from 'react-icons/fa'
 
 const Wrap = styled.header<{ signingIn: boolean }>`
   background-color: ${styles.colors.primary};
   transform: ${(props) => (props.signingIn ? "translateY(-4rem)" : "")};
   opacity: ${(props) => (props.signingIn ? "0" : "1")};
-  transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1),
-    opacity 0.2s ease-out;
-  height: 4rem;
+  transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.2s ease-out;
   top: 0px;
   position: sticky;
-  z-index: 10000;
+  width: 100%;
+  box-sizing: border-box;
   gap: 2rem;
-  padding: 0px;
+  padding: 1.3rem 0.2rem 1.3rem 1rem;
   z-index: 4;
 `;
 
@@ -35,6 +35,10 @@ const InnerWrap = styled.div`
   width: 100%;
   height: 100%;
   max-width: 938px;
+  @media (max-width: 800px) {
+    display: grid;
+    grid-template-columns: 1fr 4rem;
+  }
 `;
 
 const Title = styled.h6`
@@ -65,6 +69,7 @@ const MenuItem = styled.p<{ border?: boolean }>`
   transition: background-color 0.15s;
   padding: 0.5rem 0.8rem;
   display: flex;
+  font-weight: 500;
   justify-content: center;
   align-items: center;
   gap: 0.8rem;
@@ -111,22 +116,11 @@ const BarLink = styled(Link)`
   display: flex;
   align-items: center;
   gap: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
   color: ${styles.colors.white};
   text-decoration: none;
   padding: 0 0.4rem;
-`;
-
-const UserLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-weight: bold;
-  color: ${styles.colors.white};
-  text-decoration: none;
-  padding: 0 1.5rem;
-  &:hover {
-    background-color: ${styles.colors.gray[10]}20;
-  }
 `;
 
 const StretchForm = styled.form`
@@ -139,13 +133,22 @@ const BarButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1rem;
+  font-size: 0.875rem;
   margin: 0px;
+  font-weight: 500;
   background-color: transparent;
   cursor: pointer;
   padding: 0 1.5rem;
   color: ${styles.colors.white};
   border: none;
+`;
+
+const HoverBarButton = styled(BarButton)`
+  border-radius: 0.4rem;
+  padding: 0.5rem 1.5rem;
+  &:hover {
+    background-color: ${styles.colors.gray[10]}20;
+  }
 `;
 
 const Circle = styled.div`
@@ -172,9 +175,71 @@ const In = styled.div`
   align-items: center;
 `;
 
+const MenuButton = styled(BarButton)`
+  @media (min-width: 800px) {
+    display: none;
+  }
+`;
+
+const RightSide = styled(Side)<{ showMenu: boolean }>`
+  @media (max-width: 800px) {
+    display: ${props => props.showMenu ? 'flex' : 'none'};
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    grid-row: 2;
+    grid-column: 1 / span 2;
+  };
+  
+`;
+
+const BarLinkMoreThan400 = styled(BarLink)`
+  @media (max-width: 400px) {
+    display: none;
+  }
+`;
+
+const BarLinkLessThan400 = styled(BarLink)`
+  @media (min-width: 400px) {
+    display: none;
+  }
+`;
+
+const Separator = styled.div`
+  @media (min-width: 800px) {
+    display: none;
+  }
+  background-color: ${styles.colors.white}40;
+  width: 80%;
+  height: 0.0625rem;
+`;
+
+const Separator400 = styled(Separator)`
+  @media (min-width: 400px) {
+    display: none;
+  }
+`;
+
+const Backdrop = styled.div<{ hidden?: boolean }>`
+  position: fixed;
+  z-index: 3;
+  display: ${props => props.hidden ? 'none' : ''};
+  background-color: ${styles.colors.black}60;
+  top: 0;
+  left: 0;
+  transform-origin: center;
+  transform: scale(150%);
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+`;
+
+
 export default function AppHeader({ children }: AppHeaderProps) {
   const location = useLocation();
-  const [isLandingPage, setIsLandingPage] = useState(false);
+  const [ isLandingPage, setIsLandingPage ] = useState(false);
+  const [ showMenu, setShowMenu ] = useState(false);
 
   const { username, admin, usernameToVerify } = useUsername();
 
@@ -186,28 +251,34 @@ export default function AppHeader({ children }: AppHeaderProps) {
     setIsLandingPage(location.pathname === "/");
   }, [location]);
 
-  return (
+  return (<>
+    <Backdrop hidden={!showMenu} />
     <Wrap signingIn={signingIn ?? false}>
       <InnerWrap>
         <Side>
           <BarLink to='/places'>
             <Title>{children}</Title>
           </BarLink>
-          <BarLink to={isLandingPage ? "/places" : "/"}>
+          <BarLinkMoreThan400 to={isLandingPage ? "/places" : "/"}>
             <MenuItem>{isLandingPage ? "Places" : "Who are we?"}</MenuItem>
-          </BarLink>
-          {admin ? (
-            <BarLink to={"/admin/reservations"}>
-              <MenuItem>Admin</MenuItem>
-            </BarLink>
-          ) : (
-            <></>
-          )}
+          </BarLinkMoreThan400>
         </Side>
-        <Side>
+        <MenuButton onClick={(e) => {
+          console.log('x');
+          e.preventDefault();
+          setShowMenu(!showMenu);
+        }}>
+          <FaBars />
+        </MenuButton>
+        <RightSide showMenu={showMenu} >
+          <BarLinkLessThan400 to={isLandingPage ? "/places" : "/"}>
+            <MenuItem>{isLandingPage ? "Places" : "Who are we?"}</MenuItem>
+          </BarLinkLessThan400>
+          <Separator400 />
           <BarLink style={{ marginRight: "0.6rem" }} to={"/admin/reservations"}>
             <MenuItem border={true}>List a business</MenuItem>
           </BarLink>
+          <Separator />
           <BarButton
             onClick={() => {
               setL(lang == "czech" ? en_texts : cs_texts);
@@ -228,18 +299,20 @@ export default function AppHeader({ children }: AppHeaderProps) {
               </Circle>
             )}
           </BarButton>
+          <Separator />
           <BarLink to={"/profile"} style={{ fontWeight: "bold" }}>
             <MenuItem>
               {usernameToVerify ? "Verify your email" : username ?? "Sign In"}
               <ProfileImage>{username ? username[0] : ""}</ProfileImage>
             </MenuItem>
           </BarLink>
-          {/*<StretchForm action='/logout' method='post'>
-          <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
-          {(username || usernameToVerify) && <BarButton>Logout</BarButton> }
-      </StretchForm>*/}
-        </Side>
+          <Separator />
+          <StretchForm action='/logout' method='post'>
+            <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
+            {(username || usernameToVerify) && <HoverBarButton>Logout</HoverBarButton> }
+          </StretchForm>
+        </RightSide>
       </InnerWrap>
     </Wrap>
-  );
+  </>);
 }

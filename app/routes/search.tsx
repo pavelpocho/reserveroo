@@ -15,7 +15,7 @@ import { IconRow } from "~/components/icon-row";
 import { addToSearchHistory } from "~/models/user.server";
 import { getUsernameAndAdmin } from "~/utils/session.server";
 import { WidthRestrictor } from "~/root";
-import { ResultSearchUI } from "~/components/search/result-search-ui";
+import { SearchUI } from "~/components/search/search-ui";
 
 interface LoaderData {
   locations: LocationWithEverything[],
@@ -58,6 +58,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 const Title = styled.h6`
   font-size: 1.7rem;
   margin: 0 0 1.5rem 0;
+  @media (max-width: 800px) {
+    padding: 0rem 2rem;
+  }
 `;
 
 const TopSegment = styled.div`
@@ -69,8 +72,14 @@ const TopSegment = styled.div`
 
 const MainSegment = styled.div`
   padding: 3rem 0;
-  display: flex;
+  display: grid;
+  gap: 2rem;
   align-items: flex-start;
+  grid-template-columns: 22rem 1fr;
+  @media (max-width: 800px) {
+    grid-template-columns: 100%;
+    grid-template-rows: auto 1fr;
+  }
 `;
 
 const PlacesColumn = styled.div`
@@ -91,16 +100,17 @@ export default function Search() {
       </TopSegment>
       <WidthRestrictor width={'1368px'}>
         <MainSegment>
-          <ResultSearchUI
+          <SearchUI
             searchParams={searchParams}
             locations={locations}
             tags={tags}
             categories={categories}
+            narrowView={true}
           />
           <PlacesColumn>
             <Title>Search Results</Title>
             {places.filter(p => !p.hidden).map((place) => (
-              <PlaceSummary place={place} key={place.id} />
+              <PlaceSummary place={place} key={place.id} inSearch={true} />
             ))}
           </PlacesColumn>
         </MainSegment>

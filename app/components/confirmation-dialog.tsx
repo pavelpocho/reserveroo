@@ -41,9 +41,10 @@ const Window = styled.div`
   z-index: 8;
 `;
 
-const Backdrop = styled.div`
+const Backdrop = styled.div<{ hidden?: boolean }>`
   position: fixed;
   z-index: 7;
+  display: ${props => props.hidden ? 'none' : ''};
   background-color: ${styles.colors.black}40;
   top: 0;
   left: 0;

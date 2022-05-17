@@ -14,17 +14,30 @@ interface SearchUIProps {
   searchParams: URLSearchParams,
   locations: LocationWithEverything[],
   tags: TagWithTexts[],
-  categories: CategoryWithTexts[]
+  categories: CategoryWithTexts[],
+  narrowView?: boolean
 }
 
-const Wrap = styled.div`
+const Wrap = styled.div<{ narrowView: boolean }>`
   max-width: 800px;
-  width: 100%;
   margin: 3rem auto 0;
   position: relative;
   padding: 1.25rem 2.75rem;
+  @media (max-width: 550px) {
+    padding: 1.25rem;
+  }
+  @media (min-width: 550px) {
+    border-radius: 0.5rem;
+  }
+  ${props => props.narrowView ? `
+    padding: 1.25rem;
+    margin-top: 0;
+    @media (max-width: 800px) {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  ` : ''}
   background-color: ${styles.colors.action};
-  border-radius: 0.5rem;
 `;
 
 const Title = styled.h4`
@@ -48,19 +61,30 @@ export const TagCategoryButton = styled.button<{ selected: boolean, noCursor?: b
   cursor: ${props => props.noCursor ? '' : 'pointer'};
 `;
 
-const Flex = styled.div`
+const Flex = styled.div<{ narrowView: boolean }>`
   display: grid;
   align-items: center;
-  height: 2.25rem;
-  grid-template-rows: 2.375xrem;
+  grid-template-rows: 2.375rem;
   grid-template-columns: minmax(0, auto) 2.2rem 1fr 1.5rem minmax(0, auto) 2.2rem 1fr;
+  ${props => !props.narrowView ? `@media (max-width: 800px) {
+    grid-template-columns: minmax(0, auto) 2.2rem 1fr;
+    row-gap: 1.5rem;
+  }` : ''}
+  @media (max-width: 550px) {
+    grid-template-columns: minmax(0, auto) 1fr;
+    row-gap: 0.2rem;
+  }
+  ${props => props.narrowView ? `
+    grid-template-columns: minmax(0, auto) 1fr;
+    row-gap: 0.2rem;
+  ` : ''}
   gap: 0.4rem;
 `;
 
 const TagFlex = styled.div`
   display: flex;
   align-items: center;
-  height: 2.25rem;
+  flex-wrap: wrap;
   gap: 0.4rem;
 `;
 
@@ -79,7 +103,7 @@ const InfoButton = styled.button`
 const StyledForm = styled(Form)`
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 `;
 
 const SearchButton = styled.button`
@@ -105,7 +129,26 @@ const SearchButton = styled.button`
   box-shadow: ${styles.shadows[0]};
 `;
 
-export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tags, categories }) => {
+const LargeSpacer = styled.div<{ narrowView: boolean }>`
+  @media (max-width: 800px) {
+    display: none;
+  }
+  ${props => props.narrowView ? `
+    display: none;
+  ` : ''}
+`;
+
+
+const InputFieldWrap = styled.div<{ narrowView: boolean }>`
+  @media (max-width: 550px) {
+    grid-column: 1 / span 2;
+  }
+  ${props => props.narrowView ? `
+    grid-column: 1 / span 2;
+  ` : ''}
+`;
+
+export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tags, categories, narrowView }) => {
 
   const locationCityCountry = searchParams.get('selectedLocation');
   const tagIds = searchParams.getAll('tags[]');
@@ -125,33 +168,37 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
 
   const getLocationDescription = (l: LocationWithEverything) => `${l.multiLangCity ? l.multiLangCity[lang] : ''}, ${l.multiLangCountry ? l.multiLangCountry[lang] : ''}`;
 
-  return <Wrap>
+  return <Wrap narrowView={narrowView ?? false}>
     <StyledForm method='get' action='/search'>
-      <Flex>
+      <Flex narrowView={narrowView ?? false}>
         <Title>Location</Title>
         <InfoButton onClick={(e) => {
           e.preventDefault();
         }}><CircleInfoIcon height={'0.75rem'} /></InfoButton>
-        <SingleSelectorInput
-          placeholder={'Pick a location'}
-          name='selectedLocation'
-          possibleValuesAndTexts={locations.map(l => ({ value: l.cityCountry, text: getLocationDescription(l) }))}
-          defaultValueAndText={locationCityCountry && defaultLocationName ? {
-            value: locationCityCountry,
-            text: defaultLocationName
-          } : null} 
-        />
-        <div></div>
+        <InputFieldWrap narrowView={narrowView ?? false} >
+          <SingleSelectorInput
+            placeholder={'Pick a location'}
+            name='selectedLocation'
+            possibleValuesAndTexts={locations.map(l => ({ value: l.cityCountry, text: getLocationDescription(l) }))}
+            defaultValueAndText={locationCityCountry && defaultLocationName ? {
+              value: locationCityCountry,
+              text: defaultLocationName
+            } : null} 
+          />
+        </InputFieldWrap>
+        <LargeSpacer narrowView={narrowView ?? false}></LargeSpacer>
         <Title>Categories</Title>
         <InfoButton onClick={(e) => {
           e.preventDefault();
         }}><CircleInfoIcon height={'0.75rem'} /></InfoButton>
-        <MultiSelectorInput
-          placeholder='Pick categories'
-          name='categories[]'
-          possibleValuesAndTexts={categories.map(c => ({ value: c.id, text: c.multiLangName ? c.multiLangName[lang] : '' }))}
-          defaultValuesAndTexts={defaultCategoryNames.length > 0 ? defaultCategoryNames.map((c, i) => ({ value: categoryIds[i], text: c ?? '' })) : []}
-        />
+        <InputFieldWrap narrowView={narrowView ?? false}>
+          <MultiSelectorInput
+            placeholder='Pick categories'
+            name='categories[]'
+            possibleValuesAndTexts={categories.map(c => ({ value: c.id, text: c.multiLangName ? c.multiLangName[lang] : '' }))}
+            defaultValuesAndTexts={defaultCategoryNames.length > 0 ? defaultCategoryNames.map((c, i) => ({ value: categoryIds[i], text: c ?? '' })) : []}
+          />
+        </InputFieldWrap>
       </Flex>
       { selectedTags.map(t => <input key={t.id} hidden={true} type={'text'} name='tags[]' value={t.id} readOnly={true} />)  }
       <TagFlex>

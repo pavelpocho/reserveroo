@@ -1,5 +1,6 @@
 import { OpeningTime, Place, Reservable } from "@prisma/client";
 import { Link } from "@remix-run/react";
+import React from "react";
 import styled from "styled-components"
 import AngleRightIcon from "~/assets/icons/AngleRight";
 import AnglesRightIcon from "~/assets/icons/AnglesRight";
@@ -14,22 +15,29 @@ import { FacilitiesIndicator } from "./facilities-indicator";
 import { PlaceImage } from "./place-image";
 import { TagList } from "./tag-list";
 
-export const PlaceWrap = styled.div`
+export const PlaceWrap = styled.div<{ inSearch: boolean }>`
   background-color: ${styles.colors.gray[5]};
   margin-bottom: 2.125rem;
-  border-radius: 0.5rem;
   display: grid;
   grid-template-columns: 11rem 1fr;
-  padding: 0.6rem 1.475rem;
-  min-height: 11rem;
-  align-items: center;
+  padding: 1.2rem 1.2rem;
   position: relative;
+  @media (max-width: ${props => props.inSearch ? '1100px' : '800px'}) {
+    grid-template-columns: unset;
+    grid-template-rows: 11rem 1fr;
+  }
+  @media (min-width: 550px) {
+    border-radius: 0.5rem;
+  }
 `;
 
-export const PlaceName = styled(UnstyledLink)`
+export const PlaceName = styled(UnstyledLink)<{ inSearch: boolean }>`
   font-size: 1.4rem;
   font-weight: bold;
   color: ${styles.colors.black};
+  @media (max-width: ${props => props.inSearch ? '1100px' : '800px'}) {
+    margin-top: 1rem;
+  }
 `;
 
 export const PlaceInfoWrap = styled.div`
@@ -37,43 +45,59 @@ export const PlaceInfoWrap = styled.div`
   border-radius: 4px;
   display: grid;
   gap: 0.8rem;
-  grid-template-rows: 2rem 2rem 2rem 1fr;
+  grid-template-rows: repeat(5, auto);
   justify-self: stretch;
 `;
 
-const Address = styled.div`
+const Address = styled.p`
   display: flex;
+  font-weight: 500;
+  margin: 0;
 `;
 
-const Flex = styled.div`
+const Flex = styled.div<{ inSearch: boolean }>`
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
+  justify-content: flex-end;
   align-items: center;
+  @media (max-width: ${props => props.inSearch ? '800px' : '500px'}) {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 `;
 
-const FlexApart = styled(Flex)`
+const FlexApart = styled(Flex)<{ inSearch: boolean }>`
   justify-content: space-between;
   align-self: stretch;
+  @media (max-width: ${props => props.inSearch ? '800px' : '500px'}) {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
 `;
 
-const BaseButton = styled(Link)`
+const BaseButton = styled(Link)<{ inSearch: boolean }>`
   background-color: transparent;
   border: none;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.6rem 1.6rem;
+  padding: 0.5rem 1.6rem;
   font-size: 1rem;
   font-weight: bold;
   gap: 1.3rem;
   border-radius: 0.25rem;
   box-sizing: border-box;
   text-decoration: none;
+  flex-shrink: 0;
   color: ${styles.colors.black};
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   cursor: pointer;
   &:hover {
     transform: scale(1.08);
+  }
+  @media (max-width: ${props => props.inSearch ? '800px' : '500px'}) {
+    width: 100%;
   }
 `;
 
@@ -93,7 +117,7 @@ const BaseButtonBtn = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.6rem 1.6rem;
+  padding: 0.5rem 1.6rem;
   font-size: 1rem;
   font-weight: bold;
   gap: 1.3rem;
@@ -119,7 +143,8 @@ export const MainButtonBtn = styled(BaseButtonBtn)`
 `;
 
 const Time = styled.p`
-  font-weight: 600;
+  font-weight: 500;
+  margin: 0px;
 `;
 
 interface PlaceProps {
@@ -130,6 +155,7 @@ interface PlaceProps {
       ReservableType: ReservableTypeWithTexts
     }[];
   };
+  inSearch?: boolean
 }
 
 export const getNextImportantTime = (place: Place & {
@@ -149,30 +175,33 @@ export const getNextImportantTime = (place: Place & {
   return `Closes at ${closeToday.toLocaleTimeString()} today.`;
 }
 
-export const PlaceSummary: React.FC<PlaceProps> = ({ place }: PlaceProps) => {
+export const PlaceSummary: React.FC<PlaceProps> = ({ place, inSearch }) => {
 
-  return <PlaceWrap>
+  return <PlaceWrap inSearch={inSearch ?? false}>
     <PlaceImage shape='square' imageUrl={place.profilePicUrl} />
     <PlaceInfoWrap>
-      <FlexApart>
-        <PlaceName to={`/${place.id}`}>{place.name}</PlaceName>
-        <Flex>
+      <FlexApart inSearch={inSearch ?? false}>
+        <PlaceName inSearch={inSearch ?? false} to={`/${place.id}`}>{place.name}</PlaceName>
+      </FlexApart>
+      <FlexApart inSearch={inSearch ?? false}>
+        <Flex inSearch={inSearch ?? false}>
           {place.street && place.city && <>
             <LocationIcon height='1rem' />
-            <Address>{<p>{place.street}, {place.city}</p>}</Address>
+            <Address>{place.street}, {place.city}</Address>
           </>}
+        </Flex>
+        <Flex inSearch={inSearch ?? false}>
+          <ClockIcon height='1rem' />
+          <Time>{getNextImportantTime(place)}</Time>
         </Flex>
       </FlexApart>
       <FacilitiesIndicator reservables={place.reservables} />
       <TagList tags={place.tags} />
-      <FlexApart>
-        <Flex>
-          <ClockIcon height='1.25rem' />
-          <Time>{getNextImportantTime(place)}</Time>
-        </Flex>
-        <Flex>
-          <SecondaryButton to={`/${place.id}`}>See Details<AngleRightIcon height='1.25rem' /></SecondaryButton>
-          <MainButton to={`/${place.id}/reserve`}>Reserve<AnglesRightIcon height='1.25rem' /></MainButton>
+      <FlexApart inSearch={inSearch ?? false}>
+        <span></span>
+        <Flex inSearch={inSearch ?? false}>
+          <SecondaryButton inSearch={inSearch ?? false} to={`/${place.id}`}>See Details<AngleRightIcon height='1.25rem' /></SecondaryButton>
+          <MainButton inSearch={inSearch ?? false} to={`/${place.id}/reserve`}>Reserve<AnglesRightIcon height='1.25rem' /></MainButton>
         </Flex>
       </FlexApart>
     </PlaceInfoWrap>

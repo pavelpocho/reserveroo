@@ -28,6 +28,8 @@ const SearchBarWrap = styled.div`
     outline: none;
     font-size: 1.2rem;
     flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0px;
   }
 `;
 
