@@ -33,8 +33,10 @@ const Calendar = styled.div`
   height: 15rem;
   padding: 0.5rem 1rem;
   position: absolute;
+  right: 0;
+  margin-top: 0.3rem;
   background-color: ${styles.colors.white};
-  border: 1px solid ${styles.colors.gray[10]};
+  border: 1px solid ${styles.colors.gray[140]}40;
   box-shadow: ${styles.shadows[0]};
   border-radius: 0.5rem;
   z-index: 6;
@@ -99,6 +101,7 @@ const Wrap = styled.button`
   padding: 0.5rem 0.8rem;
   display: flex;
   gap: 1rem;
+  margin: 0;
   cursor: pointer;
   align-items: center;
   border: 1.5px solid ${styles.colors.gray[140]}40;
@@ -143,6 +146,10 @@ const Overlay = styled.div`
   z-index: 5;
 `;
 
+const RelativeWrapper = styled.div`
+  position: relative;
+`;
+
 const DayButton: React.FC<DayButtonProps> = ({ disabled, date, selected, onClick }: DayButtonProps) => <Button disabled={disabled} selected={selected} onClick={(e) => {
   e.preventDefault();
   onClick();
@@ -168,7 +175,7 @@ export const DateInput: React.FC<DateInputProps> = ({ disablePast, name, default
   const days = [...Array(getMaxDayOfMonth(year, month)).keys()];
   const endPadding = 7 - (days.length + startPadding) % 7;
 
-  return <div>
+  return <RelativeWrapper>
     {title && <label>{title}</label>}
     <Wrap onClick={(e) => {
       e.preventDefault();
@@ -240,6 +247,6 @@ export const DateInput: React.FC<DateInputProps> = ({ disablePast, name, default
       </Calendar>
     </>}
     <input name={name} type='date' value={value} readOnly={true} hidden={true} />
-  </div>
+  </RelativeWrapper>
 
 }
