@@ -4,10 +4,10 @@ import { ImageShape } from "~/types/types";
 
 const ImageWrap = styled.div<{ shape: ImageShape }>`
   border-radius: ${props => props.shape == 'circle' ? '100%' : '8px'};
-  aspect-ratio: ${props => props.shape == 'circle' ? '1' : 'unset'};
+  aspect-ratio: ${props => props.shape == 'circle' ? '1' : ''};
   overflow: hidden;
-  width: 100%;
-  height: ${props => props.shape == 'square' ? '100%' : 'unset'};
+  width: ${props => props.shape == 'square' ? '100%' : '9rem'};
+  height: ${props => props.shape == 'square' ? '100%' : '9rem'};
   align-self: center;
   background-color: ${styles.colors.gray[30]};
 `;

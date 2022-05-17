@@ -30,13 +30,6 @@ type ReservableGroup = {
   })[]
 }
 
-const ScrollWrapper = styled.div`
-  width: 100%;
-  overflow-x: scroll;
-  border-radius: 0.5rem;
-  background-color: ${styles.colors.gray[5]};
-`;
-
 export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBackupName, backup = false, reservationIdName, defaultReservationGroup, reservableIdName, reservables, date, openingTime, startName, endName }: ReservableTimesProps) => {
 
   const { lang } = useLangs();
@@ -57,22 +50,20 @@ export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBac
     }
   });
 
-  return <ScrollWrapper>
-    <GroupWrap>
-      {reservableGroups.map(rg => <ReservableGroupSection
-        key={rg.typeId}
-        reservableGroup={rg}
-        date={date}
-        openingTime={openingTime}
-        startName={startName}
-        endName={endName}
-        reservableIdName={reservableIdName}
-        defaultReservation={undefined}
-        reservationIdName={reservationIdName}
-        reservationBackupName={reservationBackupName} />
-      )}
-    </GroupWrap>
-  </ScrollWrapper>
+  return <GroupWrap>
+    {reservableGroups.map(rg => <ReservableGroupSection
+      key={rg.typeId}
+      reservableGroup={rg}
+      date={date}
+      openingTime={openingTime}
+      startName={startName}
+      endName={endName}
+      reservableIdName={reservableIdName}
+      defaultReservation={undefined}
+      reservationIdName={reservationIdName}
+      reservationBackupName={reservationBackupName} />
+    )}
+  </GroupWrap>
 
   // return <>{
   //   reservables.map(r => <ReservableSection
@@ -111,7 +102,7 @@ const TypeName = styled.h3`
   align-self: end;
   text-align: end;
   position: sticky;
-  left: 0;
+  left: -30%;
   font-weight: 600;
   padding: 1.6rem 1rem 0.5rem;
   margin-bottom: 0;
@@ -135,7 +126,10 @@ const Times = styled.div`
 
 const GroupWrap = styled.div`
   display: grid;
+  width: 100%;
+  overflow-x: scroll;
   grid-template-columns: max-content 1fr;
+  position: relative;
 `;
 
 const ReservableGroupSection: React.FC<ReservableGroupSectionProps> = ({
@@ -236,7 +230,7 @@ const SectionWrap = styled.div`
 const Title = styled.p`
   text-align: end;
   position: sticky;
-  left: 0;
+  left: -30%;
   padding: 0.5rem 1rem;
   align-self: stretch;
   margin: 0;

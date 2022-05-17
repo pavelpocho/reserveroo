@@ -34,7 +34,8 @@ export const loader: LoaderFunction = async ({ params }) => {
 }
 
 const Banner = styled.div`
-  padding: 2rem 0rem;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
   width: 100%;
   display: flex;
   align-items: center;
@@ -50,9 +51,12 @@ const PlaceInfoWrap = styled.div`
 
 const PlaceName = styled(Link)`
   color: ${styles.colors.black};
-  font-size: 2rem;
+  font-size: 1.4rem;
   font-weight: bold;
   text-decoration: none;
+  @media (max-width: 600px) {
+    text-align: center;
+  }
 `;
 
 const LocationInfoWrap = styled.div`
@@ -63,15 +67,23 @@ const LocationInfoWrap = styled.div`
 
 const LocationText = styled.p`
   margin: 0px;
+  font-size: 1rem;
+  font-weight: 500;
 `;
 
 const OuterFlex = styled.div`
   display: grid;
   grid-template-columns: 9rem 1fr;
-  height: 9rem;
+  grid-template-rows: auto;
   gap: 2rem;
   max-width: 938px;
   width: 100%;
+  @media (max-width: 600px) {
+    grid-template-columns: auto;
+    justify-items: center;
+    grid-template-rows: repeat(2, auto);
+    gap: 1rem;
+  }
 `;
 
 const Flex = styled.div`
@@ -81,14 +93,25 @@ const Flex = styled.div`
 `;
 
 const Time = styled.p`
-  font-weight: 600;
+  margin: 0px;
+  font-size: 1rem;
+  font-weight: 500;
 `;
 
 const GeneralInfoWrap = styled.div`
   display: grid;
   gap: 0.8rem;
   align-items: stretch;
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-rows: repeat(3, auto);
+`;
+
+const FlexApart = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  row-gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
 `;
 
 export default function PlaceDetail() {
@@ -103,20 +126,20 @@ export default function PlaceDetail() {
         <PlaceInfoWrap>
           <GeneralInfoWrap>
             <PlaceName to={`/${place.id}`}>{place.name}</PlaceName>
+            <FlexApart>
+              <LocationInfoWrap>
+                <LocationIcon height={'1rem'} />
+                <LocationText>{place.street}, {place.city}</LocationText>
+              </LocationInfoWrap>
+              <Flex>
+                <ClockIcon height='1rem' />
+                <Time>{getNextImportantTime(place)}</Time>
+              </Flex>
+            </FlexApart>
             {/* <AvailabilityIndicator color='free' /> */}
             <FacilitiesIndicator reservables={place.reservables} />
             <TagList tags={place.tags} />
           </GeneralInfoWrap>
-          <div style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', gap: '0.5rem', height: '100%', justifyContent: 'flex-end' }}>
-            <LocationInfoWrap>
-              <LocationIcon height={'1.25rem'} />
-              <LocationText>{place.street}, {place.city}</LocationText>
-            </LocationInfoWrap>
-            <Flex>
-              <ClockIcon height='1.25rem' />
-              <Time>{getNextImportantTime(place)}</Time>
-            </Flex>
-          </div>
         </PlaceInfoWrap>
       </OuterFlex>
     </Banner>

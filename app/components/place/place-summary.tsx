@@ -101,12 +101,12 @@ const BaseButton = styled(Link)<{ inSearch: boolean }>`
   }
 `;
 
-export const SecondaryButton = styled(BaseButton)`
+export const SecondaryButton = styled(BaseButton)<{ inSearch: boolean }>`
   border: 1.5px solid #22222240;
   color: ${styles.colors.gray[140]};
 `;
 
-export const MainButton = styled(BaseButton)`
+export const MainButton = styled(BaseButton)<{ inSearch: boolean }>`
   border: 1.5px solid ${styles.colors.action};
   background-color: ${styles.colors.action};
 `;

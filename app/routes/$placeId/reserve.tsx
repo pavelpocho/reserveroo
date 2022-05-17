@@ -102,26 +102,42 @@ export const action: ActionFunction = async ({ request }) => {
 
 const HeaderBar = styled.div<{ color: 'primary' | 'gray' | 'none' }>`
   background-color: ${props => props.color == 'primary' ? styles.colors.primary : props.color == 'gray' ? styles.colors.gray[10] : ''};
-  border-radius: 0.5rem;
+  @media (min-width: 500px) {
+    border-radius: 0.5rem;
+  }
   margin-top: 2rem;
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.9rem 1.6rem 0.9rem 0;
+  padding: 0.9rem 1.6rem 0.9rem 1.6rem;
   & h5 {
     color: ${props => props.color == 'primary' ? styles.colors.white : styles.colors.black};
     font-size: 1.2rem;
   }
+  @media (max-width: 500px) {
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 0.6rem;
+  }
 `;
 
 const Title = styled.h5`
-  margin: 0 0 0 1.6rem;
+  margin: 0;
+`;
+
+const ButtonWrap = styled.div`
+  max-width: 400px;
+  margin: 0 auto;
 `;
 
 const Wrap = styled.div`
   max-width: 938px;
   display: flex;
+  @media (min-width: 500px) {
+    padding: 0rem 2rem;
+  }
   flex-direction: column;
   margin: 2rem auto;
 `;
@@ -166,7 +182,9 @@ export default function ReservationElement() {
         setConfirmationDialog(false);
       }}
     />
-    <SecondaryButton style={{ alignSelf: 'start' }} to={`/${place.id}`}>View Place Details</SecondaryButton>
+    <ButtonWrap>
+      <SecondaryButton inSearch={false} style={{ alignSelf: 'start' }} to={`/${place.id}`}>View Place Details</SecondaryButton>
+    </ButtonWrap>
     <Form method='post' ref={formRef}>
       <IdInput name={'username'} value={username} /> 
       <IdInput name={'placeId'} value={params.placeId ?? ''} />

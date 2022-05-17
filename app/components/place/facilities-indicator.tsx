@@ -14,6 +14,7 @@ const Wrap = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 1.3125rem;
+  row-gap: 0.5rem;
 `;
 
 const Indicator = styled.p`
