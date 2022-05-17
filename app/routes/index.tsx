@@ -1,20 +1,17 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Parallax, ParallaxLayer } from "@react-spring/parallax";
 import { Link } from "@remix-run/react";
 import React from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
 import { useWhereAreWe } from "~/contexts/whereAreWeContext";
-import {BsQuestionLg} from "react-icons/bs"
+import { faCircleArrowDown, faQuestion } from "@fortawesome/free-solid-svg-icons";
 
 const H1 = styled.h1`
   margin-top: 4rem;
   color: ${styles.colors.primary};
   text-align: center;
 `;
-
-const QuestionIcon = styled(BsQuestionLg)`
-  font-size: 8rem;
-`
 
 const Button = styled.button`
   color: ${styles.colors.white};
@@ -42,6 +39,19 @@ const ALink = styled(Link)`
   text-decoration: none;
 `;
 
+const Arrow = styled(FontAwesomeIcon)`
+  display: flex;
+  margin: 0 auto;
+  font-size: 2.5rem;
+  color: ${styles.colors.primary};
+`;
+
+const FirstQuestionMark = styled(FontAwesomeIcon)`
+  margin-left: 2rem;
+  font-size: 2.5rem;
+  transform: rotate(25deg);
+`
+
 export default function About() {
   const { setLandingPage } = useWhereAreWe();
 
@@ -66,10 +76,12 @@ export default function About() {
             <Button>Check out activities</Button>
           </ALink>
           <H1>Why was Reserveroo created?</H1>
+          <Arrow icon={faCircleArrowDown}></Arrow>
+          <p style={{ "text-align": "center" }}>Scroll down</p>
         </ParallaxLayer>
         <ParallaxLayer
           offset={1}
-          factor={1}
+          factor={0.5}
           speed={0.4}
           style={{
             display: "flex",
@@ -78,18 +90,22 @@ export default function About() {
             // backgroundColor: styles.colors.busy,
           }}
         >
-          <h2>
+          <Wrapper>
             Imagine you are in a new city and you want to have some fun with
             your friend.
             <br />
             What do you do?
-          </h2>
+          </Wrapper>
+        </ParallaxLayer>
+
+        <ParallaxLayer sticky={{ start: 1.3 }}>
+          <FirstQuestionMark icon={faQuestion}></FirstQuestionMark>
         </ParallaxLayer>
 
         <ParallaxLayer
           offset={2}
           speed={0.5}
-          factor={1}
+          factor={0.5}
           style={{
             display: "flex",
             justifyContent: "center",
@@ -107,7 +123,7 @@ export default function About() {
 
         <ParallaxLayer
           offset={3}
-          factor={1}
+          factor={0.5}
           speed={0.6}
           style={{
             display: "flex",
@@ -121,7 +137,7 @@ export default function About() {
 
         <ParallaxLayer
           offset={4}
-          factor={1}
+          factor={0.5}
           speed={0.7}
           style={{
             display: "flex",
@@ -135,7 +151,7 @@ export default function About() {
 
         <ParallaxLayer
           offset={5}
-          factor={1}
+          factor={0.5}
           speed={0.8}
           style={{
             display: "flex",
@@ -149,7 +165,7 @@ export default function About() {
 
         <ParallaxLayer
           offset={6}
-          factor={1}
+          factor={0.5}
           speed={2}
           style={{
             display: "flex",
