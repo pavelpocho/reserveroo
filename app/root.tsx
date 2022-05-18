@@ -43,7 +43,7 @@ export const UnstyledLink = styled(Link)`
 const Body = styled.body<{ isLandingPage: boolean }>`
   margin: 0px;
   padding: 0px;
-  overflow-y: ${(props) => (props.isLandingPage ? "hidden" : "inherit")};
+  overflow-y: ${(props) => (props.isLandingPage ? "hidden" : "scroll")};
   & > * {
     font-family: Inter, Source Sans Pro, Roboto, sans-serif;
   }
@@ -96,7 +96,7 @@ interface MainProps {
 const Main: React.FC<MainProps> = ({ isLandingPage, admin }) => {
 
   return <>
-    <div style={{ minHeight: 'calc(100vh - 7rem)' }}>
+    <div style={{ minHeight: 'calc(100vh - 11.2rem)' }}>
       <AppHeader>Reserveroo</AppHeader>
       <Outlet />
     </div>
