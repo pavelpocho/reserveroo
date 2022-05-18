@@ -33,7 +33,7 @@ export const sendEmailConfirmationEmail = async (sendToAddress: string, baseUrl:
   }
 
   console.log("Link that would otherwise be in email:");
-  console.log(`${baseUrl}/authenticate/verifyEmail?verifyToken=${msg}:${signature}`);
+  console.log(`${baseUrl}/verifyEmail?verifyToken=${msg}:${signature}`);
   const response = await ses.sendEmail(emailParams);
 }
 

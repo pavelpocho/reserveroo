@@ -1,9 +1,12 @@
-import { Link, Outlet, useSearchParams } from '@remix-run/react'
+import { Link, Outlet, useActionData, useSearchParams, useTransition } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import React from 'react';
 import styled from 'styled-components';
+import { LoginComponent } from '~/components/auth/login';
+import { RegisterComponent } from '~/components/auth/register';
 import { styles } from '~/constants/styles';
 import { useWhereAreWe } from '~/contexts/whereAreWeContext';
+import { AuthActionData } from './authenticate/login';
 
 export const loader: LoaderFunction = () => {
   return {}
@@ -39,9 +42,15 @@ export const Separator = styled.div`
   background-color: ${styles.colors.gray[50]};
 `;
 
-export const AuthTabLink = styled(Link)`
+export const AuthTabButton = styled.button`
   width: 50%;
   display: flex;
+  background-color: transparent;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem 0;
+  margin: 0;
   justify-content: center;
   align-items: center;
   color: ${styles.colors.gray[110]};
@@ -64,7 +73,10 @@ export const ActiveHighlighter = styled.div<{ position: number }>`
 
 export default function Authenticate() {
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams ] = useSearchParams();
+  const a = useActionData<AuthActionData>();
+  const t = useTransition();
+
   const redirectTo = encodeURI(searchParams.get('redirectTo') ?? '').replace('/', '%2F');
 
   const [ position, setPosition ] = React.useState(0);
@@ -83,12 +95,13 @@ export default function Authenticate() {
     <SubHeader>Let's make online booking easier for everyone. Together.</SubHeader>
     <TabBar>
       <ActiveHighlighter position={position} />
-      <AuthTabLink onClick={() => {setPosition(0)}} to={`/authenticate/login${!!redirectTo ? `?redirectTo=${redirectTo}` : ''}`}>Sign In</AuthTabLink>
+      <AuthTabButton onClick={() => {setPosition(0)}}>Sign In</AuthTabButton>
       <Separator />
-      <AuthTabLink onClick={() => {setPosition(1)}} to={`/authenticate/register${!!redirectTo ? `?redirectTo=${redirectTo}` : ''}`}>Create Account</AuthTabLink>
+      <AuthTabButton onClick={() => {setPosition(1)}}>Create Account</AuthTabButton>
     </TabBar>
     <div>
-      <Outlet />
+      { position == 0 && <LoginComponent a={a} searchParams={searchParams} setSearchParams={(data) => { setSearchParams(data) }} t={t} />}
+      { position == 1 && <RegisterComponent a={a} searchParams={searchParams} setSearchParams={(data) => { setSearchParams(data) }} t={t} />}
     </div>
   </>
 }

@@ -7,7 +7,7 @@ import { IdInput } from '~/components/inputs/ObjectInput';
 import { TextInput } from '~/components/inputs/TextInput';
 import { styles } from '~/constants/styles';
 import { sendEmailConfirmationEmail } from '~/utils/emails.server';
-import { getBaseUrl } from '~/utils/forms';
+import { badRequest, getBaseUrl } from '~/utils/forms';
 import { createUserSession, login } from '~/utils/session.server';
 import { signMessage } from '~/utils/signing.server';
 
@@ -27,8 +27,6 @@ export type AuthActionData = {
     phone?: string;
   };
 };
-
-const badRequest = (data: AuthActionData) => json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
@@ -58,60 +56,4 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   return createUserSession(username, admin, verifiedEmail, redirectTo ?? '/');
-}
-
-export const AuthWrap = styled.div`
-  width: 90%;
-  max-width: 500px;
-  margin: 0px auto;
-  border-radius: 1rem;
-  margin-top: 2rem;
-  box-shadow: ${styles.shadows[0]};
-  border: 1px solid ${styles.colors.gray[10]};
-  box-sizing: border-box;
-  padding: 1.5rem;
-`;
-
-export const FieldSet = styled.fieldset`
-  border: none;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-export const SubmitButton = styled.button`
-  padding: 0.8rem 0rem;
-  border: 1.5px solid ${styles.colors.gray[20]};
-  border-radius: 0.4rem;
-  background-color: ${styles.colors.white};
-  cursor: pointer;
-  font-size: 0.9rem;
-`;
-
-export default function Login() {
-
-  const t = useTransition();
-  const s = useSubmit();
-  const [searchParams, setSearchParams ] = useSearchParams();
-
-  const a = useActionData<AuthActionData>();
-
-  React.useEffect(() => {
-    if (a?.fields?.redirectTo) {
-      setSearchParams(a?.fields?.redirectTo);
-    }
-  }, [a?.fields?.redirectTo]);
-
-
-  return (<AuthWrap>
-    <Form method='post'>
-      <FieldSet disabled={t.state === 'submitting'}>
-        <input hidden={true} name='redirectTo' defaultValue={searchParams.get('redirectTo') ?? undefined} />
-        <TextInput name='username' defaultValue={a?.fields?.username ?? ''} title={'Username'} />
-        <TextInput password={true} name='password' defaultValue={a?.fields?.password ?? ''} title={'Password'} />
-        <Link to='/authenticate/forgotPassword'>Forgot password</Link>
-        <SubmitButton type='submit'>Sign In</SubmitButton>
-      </FieldSet>
-    </Form>
-  </AuthWrap>)
 }

@@ -33,7 +33,7 @@ export const action: ActionFunction = async ({ request }) => {
       return badRequest({ msg: "Email verification failed." });
     }
     const user = await verifyUserEmail(token.split(':')[0]);
-    return createUserSession(user.username, user.admin, true, '/');
+    return createUserSession(user.username, user.admin, true, '/doneVerifyingEmail');
   }
   else if (!!usernameToVerify && !!user && user.verifyEmailTriesLeft > 0) {
     const baseUrl = getBaseUrl(request);

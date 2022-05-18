@@ -72,7 +72,7 @@ export const createUserSession = async (username: string, admin: boolean = false
     session.set('usernameToVerify', null);
     session.set('admin', admin);
   }
-  return redirect(!verifiedEmail ? '/authenticate/verifyEmail' : redirectTo, {
+  return redirect(!verifiedEmail ? '/verifyEmail' : redirectTo, {
     headers: {
       'Set-Cookie': await storage.commitSession(session)
     }
@@ -95,13 +95,13 @@ export const requireUsernameAndAdmin = async (
     const searchParams = new URLSearchParams([
       ['redirectTo', redirectTo]
     ]);
-    throw redirect(`/authenticate/verifyEmail?${searchParams}`);
+    throw redirect(`/verifyEmail?${searchParams}`);
   }
   if (!username || admin === null || typeof username !== 'string') {
     const searchParams = new URLSearchParams([
       ['redirectTo', redirectTo]
     ]);
-    throw redirect(`/authenticate/login?${searchParams}`);
+    throw redirect(`/authenticate?${searchParams}`);
   } 
   return { username, admin: admin == 'true' || admin == '1' };
 }
@@ -119,7 +119,7 @@ export const requireUsernameToVerify = async (
   const session = await getUserSession(request);
   const usernameToVerify = session.get('usernameToVerify');
   if (!usernameToVerify) {
-    throw redirect(`/authenticate/login`);
+    throw redirect(`/authenticate`);
   }
   return { usernameToVerify: usernameToVerify as string };
 }

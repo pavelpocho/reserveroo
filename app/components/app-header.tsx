@@ -12,10 +12,8 @@ import GbIcon from "~/assets/icons/gb";
 import CzIcon from "~/assets/icons/cz";
 import { FaBars } from 'react-icons/fa'
 
-const Wrap = styled.header<{ signingIn: boolean }>`
+const Wrap = styled.header`
   background-color: ${styles.colors.primary};
-  transform: ${(props) => (props.signingIn ? "translateY(-4rem)" : "")};
-  opacity: ${(props) => (props.signingIn ? "0" : "1")};
   transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.2s ease-out;
   top: 0px;
   position: sticky;
@@ -112,8 +110,8 @@ const Side = styled.div`
   align-items: stretch;
 `;
 
-const BarLink = styled(Link)`
-  display: flex;
+const BarLink = styled(Link)<{ hide?: boolean }>`
+  display: ${props => props.hide === true ? 'none' : 'flex'};
   align-items: center;
   gap: 1rem;
   font-size: 0.875rem;
@@ -253,7 +251,7 @@ export default function AppHeader({ children }: AppHeaderProps) {
 
   return (<>
     <Backdrop hidden={!showMenu} />
-    <Wrap signingIn={signingIn ?? false}>
+    <Wrap>
       <InnerWrap>
         <Side>
           <BarLink to='/places'>
@@ -300,7 +298,7 @@ export default function AppHeader({ children }: AppHeaderProps) {
             )}
           </BarButton>
           <Separator />
-          <BarLink to={"/profile"} style={{ fontWeight: "bold" }}>
+          <BarLink hide={signingIn ?? false} to={"/profile"} style={{ fontWeight: "bold" }}>
             <MenuItem>
               {usernameToVerify ? "Verify your email" : username ?? "Sign In"}
               <ProfileImage>{username ? username[0] : ""}</ProfileImage>
@@ -308,7 +306,7 @@ export default function AppHeader({ children }: AppHeaderProps) {
           </BarLink>
           <Separator />
           <StretchForm action='/logout' method='post'>
-            <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
+            <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate'} />
             {(username || usernameToVerify) && <HoverBarButton>Logout</HoverBarButton> }
           </StretchForm>
         </RightSide>
