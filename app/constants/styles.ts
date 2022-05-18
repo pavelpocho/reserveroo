@@ -6,6 +6,7 @@ export const styles = {
     action_light: '#D7E1CC',
     white: '#FFFFFF',
     busy: '#D7263D',
+    warn: '#EEB868',
     black: '#000000',
     free: '#74D06C',
     gray: {

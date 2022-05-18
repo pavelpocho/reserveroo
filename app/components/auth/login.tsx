@@ -2,20 +2,22 @@ import { Form, Link } from "@remix-run/react";
 import { Transition } from "@remix-run/react/transition";
 import React from "react";
 import styled from "styled-components";
+import AnglesRightIcon from "~/assets/icons/AnglesRight";
 import { styles } from "~/constants/styles";
 import { AuthActionData } from "~/routes/authenticate/login";
 import { TextInput } from "../inputs/TextInput";
+import { MainButtonBtn } from "../place/place-summary";
 
 export const AuthWrap = styled.div`
-  width: 90%;
   max-width: 500px;
   margin: 0px auto;
-  border-radius: 1rem;
   margin-top: 2rem;
-  box-shadow: ${styles.shadows[0]};
-  border: 1px solid ${styles.colors.gray[10]};
   box-sizing: border-box;
-  padding: 1.5rem;
+  background-color: ${styles.colors.gray[5]};
+  padding: 0.75rem;
+  @media (min-width: 500px) {
+    border-radius: 0.25rem;
+  }
 `;
 
 export const FieldSet = styled.fieldset`
@@ -55,8 +57,8 @@ export const LoginComponent: React.FC<Props> = ({ a, searchParams, setSearchPara
         <input hidden={true} name='redirectTo' defaultValue={searchParams.get('redirectTo') ?? undefined} />
         <TextInput name='username' defaultValue={a?.fields?.username ?? ''} title={'Username'} />
         <TextInput password={true} name='password' defaultValue={a?.fields?.password ?? ''} title={'Password'} />
-        <Link to='/pwd/forgot'>Forgot password</Link>
-        <SubmitButton type='submit'>Sign In</SubmitButton>
+        <Link style={{ color: styles.colors.black }} to='/pwd/forgot'>Forgot password</Link>
+        <MainButtonBtn>Sign In<AnglesRightIcon height={'1.5rem'} /></MainButtonBtn>
       </FieldSet>
     </Form>
   </AuthWrap>)

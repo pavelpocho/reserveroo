@@ -12,19 +12,20 @@ interface TextInputProps {
   placeholder?: string,
   style?: React.CSSProperties,
   containerStyle?: React.CSSProperties,
-  onClick?: () => void
+  onClick?: () => void,
+  setValue?: React.Dispatch<React.SetStateAction<string>>
 }
 
 const TextInputField = styled.input`
   font-size: 0.875rem;
   line-height: 2rem;
   padding: 0.125rem 1rem;
-  border: 1px solid ${styles.colors.gray[70]};
+  border: 1.5px solid ${styles.colors.gray[140]}40;
   border-radius: 0.375rem;
   outline: none;
   margin: 0;
   &:focus {
-    border: 1px solid ${styles.colors.gray[50]};
+    border: 1.5px solid ${styles.colors.gray[50]};
   }
 `;
 
@@ -39,13 +40,13 @@ const Label = styled.label`
   font-weight: bold;
 `;
 
-export const TextInput: React.FC<TextInputProps> = ({ name, placeholder, onClick, style, containerStyle, title, defaultValue, password, readOnly, value: forcedValue }: TextInputProps) => {
+export const TextInput: React.FC<TextInputProps> = ({ name, setValue: exposeValue, placeholder, onClick, style, containerStyle, title, defaultValue, password, readOnly, value: forcedValue }: TextInputProps) => {
 
   const [ value, setValue ] = React.useState<string>(defaultValue ?? '');
 
   return <Wrap style={containerStyle}>
     { title && <Label>{title}</Label> }
-    <TextInputField placeholder={placeholder} onClick={onClick} style={style} readOnly={readOnly} name={name} type={password ? 'password' : 'text'} value={forcedValue ?? value} onChange={(e) => { setValue(e.currentTarget.value); }} />
+    <TextInputField placeholder={placeholder} onClick={onClick} style={style} readOnly={readOnly} name={name} type={password ? 'password' : 'text'} value={forcedValue ?? value} onChange={(e) => { setValue(e.currentTarget.value); if (exposeValue) exposeValue(e.currentTarget.value) }} />
   </Wrap>
 
 }

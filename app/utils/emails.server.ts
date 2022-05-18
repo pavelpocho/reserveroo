@@ -64,7 +64,7 @@ export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, 
   }
 
   console.log("Link that would otherwise be in email:");
-  console.log(`${baseUrl}/authenticate/resetPassword?token=${msg}:${signature}`);
+  console.log(`${baseUrl}/pwd/reset?token=${msg}:${signature}`);
   const response = await ses.sendEmail(emailParams);
 }
 

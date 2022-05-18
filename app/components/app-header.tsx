@@ -304,7 +304,7 @@ export default function AppHeader({ children }: AppHeaderProps) {
               <ProfileImage>{username ? username[0] : ""}</ProfileImage>
             </MenuItem>
           </BarLink>
-          <Separator />
+          {!signingIn && <Separator />}
           <StretchForm action='/logout' method='post'>
             <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate'} />
             {(username || usernameToVerify) && <HoverBarButton>Logout</HoverBarButton> }
