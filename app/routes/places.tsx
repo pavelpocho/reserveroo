@@ -1,17 +1,16 @@
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
-import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
-import { getPlaceList, Place } from "~/models/place.server";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
+import { getNewPlaces, Place } from "~/models/place.server";
 import styled from "styled-components";
-import { SearchBar } from "~/components/search/search-bar";
 import { PlaceSummary } from "~/components/place/place-summary";
 import { styles } from "~/constants/styles";
-import { Category, Location, OpeningTime, Reservable, Search, Tag } from "@prisma/client";
+import { OpeningTime, Reservable, Search } from "@prisma/client";
 import { SearchUI } from "~/components/search/search-ui";
 import { getAllLocations } from "~/models/location.server";
 import { getTagList } from "~/models/tag.server";
 import { getCategoryList } from "~/models/category.server";
-import { CategoryWithTexts, LocationWithEverything, LocationWithTexts, ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
+import { CategoryWithTexts, LocationWithEverything, ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
 import { WidthRestrictor } from "~/root";
 import { IconRow } from "~/components/icon-row";
 import HeartIcon from "~/assets/icons/Heart";
@@ -47,7 +46,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const usernameAndAdmin = await getUsernameAndAdmin(request);
 
   return json({
-    places: await getPlaceList({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories }),
+    places: await getNewPlaces(),
     locations: await getAllLocations(),
     tags: await getTagList({ nameFragment: '' }),
     categories: await getCategoryList({ nameFragment: '' }),
@@ -57,13 +56,28 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 const Title = styled.h6`
   font-size: 2.625rem;
+  @media (max-width: 800px) {
+    font-size: 2rem;
+  }
+  @media (max-width: 550px) {
+    padding: 0 1rem;
+  }
+  @media (max-width: 400px) {
+    font-size: 1.5rem;
+  }
   text-align: center;
   margin: 0 0 0.625rem 0;
   color: ${styles.colors.white};
 `;
 
 const TopSegment = styled.div`
-  padding: 3.75rem 0 2.375rem;
+  padding: 2.45rem 0 2.375rem;
+  @media (max-width: 800px) {
+    padding: 1.45rem 0.75rem 2rem;
+  }
+  @media (max-width: 550px) {
+    padding: 1.45rem 0rem 2rem;
+  }
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -81,7 +95,9 @@ const MainSegment = styled.div`
 
 const WelcomeWrap = styled.div`
   background-color: ${styles.colors.primary_background};
-  border-radius: 1rem;
+  @media (min-width: 550px) {
+    border-radius: 1rem;
+  }
   padding: 2rem;
   position: relative;
 `;
@@ -117,7 +133,10 @@ const HeartWrap = styled.div`
 const SearchHistory = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2rem;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+  gap: 1.25rem;
 `;
 
 const It = styled.i`

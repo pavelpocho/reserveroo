@@ -30,7 +30,7 @@ export const action: ActionFunction = async ({ request }) => {
   const passwordHash = await generateHashAndSalt(password);
   const user = await changeUserPassword({ username, passwordHash });
 
-  return redirect('/authenticate/login');
+  return redirect('/authenticate');
 
 }
 

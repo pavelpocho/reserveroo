@@ -1,18 +1,23 @@
-import { Link, Outlet, useSearchParams } from '@remix-run/react'
+import { Link, Outlet, useActionData, useSearchParams, useTransition } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import React from 'react';
 import styled from 'styled-components';
+import { LoginComponent } from '~/components/auth/login';
+import { RegisterComponent } from '~/components/auth/register';
+import { IconRow } from '~/components/icon-row';
 import { styles } from '~/constants/styles';
 import { useWhereAreWe } from '~/contexts/whereAreWeContext';
+import { AuthActionData } from './authenticate/login';
 
 export const loader: LoaderFunction = () => {
   return {}
 }
 
 const Title = styled.h2`
-  color: ${styles.colors.primary};
+  color: ${styles.colors.black};
   text-align: center;
-  font-size: 3rem;
+  font-size: 1.375rem;
+  margin: 2rem 0rem 1rem;
 `;
 
 const SubHeader = styled.h4`
@@ -21,15 +26,15 @@ const SubHeader = styled.h4`
 `;
 
 export const TabBar = styled.div`
-  margin: 0 auto;
-  width: 25rem;
+  margin: 1rem auto;
+  width: 95%;
+  max-width: 500px;
   justify-content: center;
   align-items: stretch;
   display: flex;
-  box-shadow: ${styles.shadows[0]};
-  padding: 0.8rem 0rem;
-  border: 1px solid ${styles.colors.gray[10]};
-  border-radius: 0.6rem;
+  padding: 0.5rem 0rem;
+  border: 1.5px solid ${styles.colors.gray[140]}40;
+  border-radius: 0.5rem;
   position: relative;
   overflow: hidden;
 `;
@@ -39,9 +44,15 @@ export const Separator = styled.div`
   background-color: ${styles.colors.gray[50]};
 `;
 
-export const AuthTabLink = styled(Link)`
+export const AuthTabButton = styled.button`
   width: 50%;
   display: flex;
+  background-color: transparent;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.2rem 0;
+  margin: 0;
   justify-content: center;
   align-items: center;
   color: ${styles.colors.gray[110]};
@@ -52,7 +63,7 @@ export const AuthTabLink = styled(Link)`
 export const ActiveHighlighter = styled.div<{ position: number }>`
   position: absolute;
   height: calc(100% - 0.4rem);
-  border-radius: 0.4rem;
+  border-radius: 0.25rem;
   width: calc(50% - 0.4rem);
   transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   left: ${props => props.position == 0 ? '0px' : '50%'};
@@ -64,7 +75,10 @@ export const ActiveHighlighter = styled.div<{ position: number }>`
 
 export default function Authenticate() {
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams ] = useSearchParams();
+  const a = useActionData<AuthActionData>();
+  const t = useTransition();
+
   const redirectTo = encodeURI(searchParams.get('redirectTo') ?? '').replace('/', '%2F');
 
   const [ position, setPosition ] = React.useState(0);
@@ -80,15 +94,16 @@ export default function Authenticate() {
 
   return <>
     <Title>Welcome to Reserveroo.</Title>
-    <SubHeader>Let's make online booking easier for everyone. Together.</SubHeader>
+    <IconRow invertColors={true} />
     <TabBar>
       <ActiveHighlighter position={position} />
-      <AuthTabLink onClick={() => {setPosition(0)}} to={`/authenticate/login${!!redirectTo ? `?redirectTo=${redirectTo}` : ''}`}>Sign In</AuthTabLink>
+      <AuthTabButton onClick={() => {setPosition(0)}}>Sign In</AuthTabButton>
       <Separator />
-      <AuthTabLink onClick={() => {setPosition(1)}} to={`/authenticate/register${!!redirectTo ? `?redirectTo=${redirectTo}` : ''}`}>Create Account</AuthTabLink>
+      <AuthTabButton onClick={() => {setPosition(1)}}>Create Account</AuthTabButton>
     </TabBar>
     <div>
-      <Outlet />
+      { position == 0 && <LoginComponent a={a} searchParams={searchParams} setSearchParams={(data) => { setSearchParams(data) }} t={t} />}
+      { position == 1 && <RegisterComponent a={a} searchParams={searchParams} setSearchParams={(data) => { setSearchParams(data) }} t={t} />}
     </div>
   </>
 }

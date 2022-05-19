@@ -3,17 +3,20 @@ import { Form } from "@remix-run/react";
 import React from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
-import { ReservationStatus } from "~/types/types"
+import { ReservableTypeWithTexts, ReservationStatus } from "~/types/types"
 import { Button } from "../button";
 import { ConfirmationDialog } from "../confirmation-dialog";
 import { IdInput } from "../inputs/ObjectInput";
+import { PlaceImage } from "../place/place-image";
+import { SecondaryButtonBtn } from "../place/place-summary";
 import { ReservationSummary } from "./reservation-summary"
 
 interface ReservationGroupSummaryProps {
   reservationGroup: (ReservationGroup & {
     reservations: (Reservation & {
       reservable: (Reservable & {
-        place: Place
+        place: Place,
+        ReservableType: ReservableTypeWithTexts
       }) | null;
     })[];
   }),
@@ -47,16 +50,16 @@ const Wrap = styled.div`
     padding 0.3s cubic-bezier(0.33, 1, 0.68, 1),
     margin 0.3s cubic-bezier(0.33, 1, 0.68, 1),
     opacity 0.3s cubic-bezier(0.33, 1, 0.68, 1);
-  box-shadow: ${styles.shadows[0]};
   border-radius: 0.6rem;
-  background-color: ${styles.colors.white};
+  background-color: ${styles.colors.gray[5]};
   padding: 1.3rem 1rem;
   align-items: flex-start;
+  flex-direction: column;
   justify-content: space-between;
   margin-top: 1rem;
-  &>* {
+  /* &>* {
     flex-shrink: 0;
-  }
+  } */
 `;
 
 const InnerWrap = styled.div`
@@ -85,6 +88,9 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
     if (formRef.current) onCancel(rg.id, formRef.current);
   }
 
+  const prefs = rg.reservations.filter(r => !r.backup).length;
+  const backups = rg.reservations.filter(r => r.backup).length;
+
   return <>
     <ConfirmationDialog
       title='Confirm cancellation' 
@@ -100,22 +106,32 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
       cancelText={'Keep my reservation'}
     />
     <Wrap key={rg.id} ref={ref}>
+      <PlaceImage shape='square' imageUrl={rg.reservations[0].reservable?.place.profilePicUrl} />
       <InnerWrap>
         <Title>{rg.reservations.length > 0 ? rg.reservations[0].reservable?.place.name : 'Reservation'}</Title>
-        { rg.reservations.map(r => <div key={r.id}>
-          <ReservationSummary reservation={r} />
-        </div>) }
+        {prefs > 0 && <>
+          <p>Preffered slot{prefs > 1 && 's'}:</p>
+          { rg.reservations.filter(r => !r.backup).map(r => <div key={r.id}>
+            <ReservationSummary reservation={r} />
+          </div>) }
+        </>}
+        {backups > 0 && <>
+          <p>Backup slot{backups > 1 && 's'}:</p>
+          { rg.reservations.filter(r => r.backup).map(r => <div key={r.id}>
+            <ReservationSummary reservation={r} />
+          </div>) }
+        </>}
         <div>
           <NoteTitle>Note to business</NoteTitle>
           <Value>{rg.note}</Value>
         </div>
+        <SecondaryButtonBtn onClick={(e) => {
+          setShowConfirmation(true);
+        }}>Cancel reservation</SecondaryButtonBtn>
       </InnerWrap>
-      <Button onClick={(e) => {
-        setShowConfirmation(true);
-      }}>Cancel reservation</Button>
+      <Form ref={formRef} method='post' action='/profile/cancelReservation' style={{ visibility: 'hidden' }}>
+        <IdInput name='rgId' value={rg.id} />
+      </Form>
     </Wrap>
-    <Form ref={formRef} method='post' action='/profile/cancelReservation'>
-      <IdInput name='rgId' value={rg.id} />
-    </Form>
   </>
 }

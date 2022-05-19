@@ -118,13 +118,14 @@ export const action: ActionFunction = async ({ request }) => {
 
   }
 
-  const reservables: Pick<Reservable, 'id' | 'name' | 'placeId' | 'minimumReservationTime' | 'reservationsPerSlot' | 'reservableTypeId'>[] = getFormItems('reservableId[]').map((id, i) => {
+  const reservables: Pick<Reservable, 'id' | 'name' | 'placeId' | 'minimumReservationTime' | 'reservationsPerSlot' | 'reservableDaysAhead' | 'reservableTypeId'>[] = getFormItems('reservableId[]').map((id, i) => {
     return {
       id,
       name: getFormItems('reservableName[]')[i],
       reservableTypeId: getFormItems('reservableTypeId[]')[i],
       minimumReservationTime: parseInt(getFormItems('minimumReservationTime[]')[i]),
       reservationsPerSlot: parseInt(getFormItems('reservationsPerSlot[]')[i]),
+      reservableDaysAhead: parseInt(getFormItems('reservableDaysAhead[]')[i]),
       placeId: place.id
     }
   });
@@ -199,7 +200,8 @@ export default function AdminPlaceDetail() {
           placeId: place.id,
           minimumReservationTime: 30,
           reservationsPerSlot: 1,
-          reservableTypeId: null
+          reservableTypeId: null,
+          reservableDaysAhead: 30
         }
       ]
     });
@@ -247,6 +249,7 @@ export default function AdminPlaceDetail() {
           <TextInput title='Reservable name' name='reservableName[]' defaultValue={r.name} />
           <NumberInput title='Minimum reservation interval (minutes)' name='minimumReservationTime[]' defaultValue={r.minimumReservationTime} />
           <NumberInput title='Reservations per slot' name='reservationsPerSlot[]' defaultValue={r.reservationsPerSlot} />
+          <NumberInput title='Reservable days ahead' name='reservableDaysAhead[]' defaultValue={r.reservableDaysAhead} />
           <SingleSelectorInput defaultValueAndText={
             r.reservableTypeId ? { value: r.reservableTypeId, text: findReservableTypeName(r.reservableTypeId) } : null
           } title='Reservable type' name='reservableTypeId[]' possibleValuesAndTexts={

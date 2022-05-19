@@ -13,6 +13,7 @@ const Wrap = styled.div`
   padding: 2rem;
   border-radius: 1.5rem;
   margin-top: 2rem;
+  box-sizing: border-box;
   max-width: 968px;
   width: 100%;
   margin: 0px auto;
@@ -67,7 +68,8 @@ export const loader: LoaderFunction = async ({ params }) => {
 const GalleryImage = styled.img`
   object-fit: cover;
   width: 20rem;
-  height: 20rem;
+  aspect-ratio: 1;
+  max-width: 90%;
 `;
 
 const Gallery = styled.div`
@@ -84,6 +86,10 @@ const FlexApart = styled.div`
   align-items: center;
   margin-bottom: 3rem;
   gap: 2rem;
+  @media (max-width: 800px) {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 `;
 
 const TimesGrid = styled.div`
@@ -109,7 +115,7 @@ export default function PlaceDetails({}) {
   return <Wrap>
     <FlexApart>
       <Title>Make a reservation</Title>
-      <MainButton to={`/${place.id}/reserve`} >Reserve<AnglesRightIcon height='1.25rem' /></MainButton>  
+      <MainButton inSearch={false} to={`/${place.id}/reserve`} >Reserve<AnglesRightIcon height='1.25rem' /></MainButton>  
     </FlexApart>
     <FlexApart style={{ alignItems: 'flex-start' }}>
       <DetailsWrap>

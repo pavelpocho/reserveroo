@@ -13,23 +13,29 @@ import VolleyballIcon from "~/assets/icons/Volleyball";
 import WeightHangingIcon from "~/assets/icons/WeightHanging";
 import { styles } from "~/constants/styles";
 
-const Wrap = styled.div`
+const Wrap = styled.div<{ invertedColors?: boolean }>`
   display: flex;
   gap: 0.25rem;
   justify-content: center;
   position: relative;
-  background-color: ${styles.colors.primary};
+  background-color: ${props => props.invertedColors ? styles.colors.white : styles.colors.primary};
   padding: 1rem 0rem;
   max-width: 968px;
+  width: 66vw;
+  overflow: hidden;
   margin: 0 auto;
 `;
 
-const Overlay = styled.div`
+const Overlay = styled.div<{ invertedColors?: boolean }>`
   position: absolute;
-  width: 150%;
+  width: 100%;
   height: 100%;
   top: 0;
-  background-image: linear-gradient(to right, ${styles.colors.primary}FF, ${styles.colors.primary}00, ${styles.colors.primary}FF);
+  background-image: ${props => props.invertedColors ? (
+    `linear-gradient(to right, ${styles.colors.white}FF, ${styles.colors.white}00, ${styles.colors.white}FF)`
+  ) : (
+    `linear-gradient(to right, ${styles.colors.primary}FF, ${styles.colors.primary}00, ${styles.colors.primary}FF)`
+  )};
 `;
 
 const ListItem = styled.div`
@@ -40,8 +46,12 @@ const ListItem = styled.div`
   }
 `;
 
-export const IconRow = () => <Wrap>
-  <Overlay />
+interface Props {
+  invertColors?: boolean
+}
+
+export const IconRow: React.FC<Props> = ({ invertColors }) => <Wrap invertedColors={invertColors}>
+  <Overlay invertedColors={invertColors} />
   {[...Array(4).keys()].map(i => <ListItem key={i}>
     <TableTennisPaddleBallIcon height={'1.64rem'} fill={styles.colors.gray[70]} />
     <FireFlameCurvedIcon height={'1.64rem'} fill={styles.colors.gray[70]} />

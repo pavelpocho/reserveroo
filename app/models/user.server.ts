@@ -124,7 +124,12 @@ export const getUserByUsername = async ({ username }: Pick<User, 'username'>) =>
           include: {
             reservable: {
               include: {
-                place: true
+                place: true,
+                ReservableType: {
+                  include: {
+                    multiLangName: true
+                  }
+                }
               }
             }
           }

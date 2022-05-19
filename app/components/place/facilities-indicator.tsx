@@ -12,22 +12,24 @@ interface FacilitiesIndicatorProps {
 
 const Wrap = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 1.3125rem;
+  row-gap: 0.5rem;
 `;
 
-const Indicator = styled.p`
+export const Indicator = styled.p`
   background-color: ${styles.colors.white};
   box-shadow: ${styles.shadows[2]};
   margin: 0px;
   display: flex;
   border-radius: 0.375rem;
-  padding: 0 0.2rem 0 0.7rem;
+  padding: 0.3rem 0.2rem 0.3rem 0.7rem;
   font-weight: 500;
   gap: 0.5rem;
   align-items: center;
 `;
 
-const Amount = styled.span`
+export const Amount = styled.span`
   background-color: ${styles.colors.gray[5]};
   color: ${styles.colors.primary};
   font-weight: 600;

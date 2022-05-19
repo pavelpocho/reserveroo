@@ -26,12 +26,16 @@ const Wrap = styled.button`
   text-align: start;
   color: white;
   padding: 1.125rem;
+  margin: 0;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   & svg {
     flex-shrink: 0;
   }
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
+  }
+  @media (max-width: 550px) {
+    border-radius: 0;
   }
 `;
 
@@ -43,8 +47,12 @@ const Title = styled.h5`
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, auto));
+  @media (max-width: 450px) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(4, minmax(0, auto));
+  }
   gap: 1.25rem;
-  grid-template-rows: repeat(2, auto);
 `;
 
 const Flex = styled.div`
