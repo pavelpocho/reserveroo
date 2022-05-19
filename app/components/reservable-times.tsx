@@ -233,9 +233,17 @@ const Title = styled.p`
   left: -30%;
   padding: 0.5rem 1rem;
   align-self: stretch;
+
   margin: 0;
   font-weight: 500;
   background-color: ${styles.colors.gray[5]};
+`;
+
+const CannotReserve = styled.div`
+  margin: 0;
+  font-weight: 500;
+  font-size: 0.8rem;
+  height: 1.5rem;
 `;
 
 
@@ -278,15 +286,22 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
   const [ selectedRange, setSelectedRange ] = React.useState<TimeSection | null>(defaultReservation ? getTimeSectionOfReservation(defaultReservation) : null);
   const [ selectedDate, setSelectedDate ] = React.useState<Date>(date);
 
-  console.log("Reservable id");
-  console.log(reservable.id);
+  const maxReservableDate = new Date();
+  maxReservableDate.setDate(maxReservableDate.getDate() + reservable.reservableDaysAhead);
 
   return <>
     <Title>{reservable.name}</Title>
     <SectionWrap>
-      { timeSections.map(s => (
+      { date.getTime() > maxReservableDate.getTime() ? <CannotReserve>You cannot yet reserve this far ahead.</CannotReserve> : timeSections.map(s => (
         <Section
-          taken={!!reservable.reservations.find(r => doDaysMatch(date, r.start, r.end) && doSectionsOverlap(getTimeSectionOfReservation(r), s) && !defaultReservationGroup?.reservations.find(dr => dr.id == r.id) && r.status != ReservationStatus.Cancelled)}
+          taken={reservable.reservations.filter(
+            r => (
+              doDaysMatch(date, r.start, r.end) &&                                  // Is the reservation on the same?
+              doSectionsOverlap(getTimeSectionOfReservation(r), s) &&               // Is the reservation during the same time?
+              !defaultReservationGroup?.reservations.find(dr => dr.id == r.id) &&   // Is it done by someone else?
+              r.status != ReservationStatus.Cancelled                               // Is it active?
+            )
+          ).length >= reservable.reservationsPerSlot}
           key={getTotalMinutes(s.start)}
           selected={selectedRange != null && areDatesEqual(date, selectedDate) && getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.start) && getTotalMinutes(s.start) < getTotalMinutes(selectedRange.end)}
           onClick={(e) => {
@@ -306,7 +321,14 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
             else if (getTotalMinutes(selectedRange.start) <= getTotalMinutes(s.start) && getTotalMinutes(s.start) <= getTotalMinutes(selectedRange.end)) {
               newRange = { start: selectedRange.start, end: s.end };
             }
-            const overlap = reservable.reservations.find(r => doDaysMatch(date, r.start, r.end) && doSectionsOverlap(getTimeSectionOfReservation(r), newRange) && !defaultReservationGroup?.reservations.find(dr => dr.id == r.id) && r.status != ReservationStatus.Cancelled)
+            const overlap = reservable.reservations.filter(
+              r => (
+                doDaysMatch(date, r.start, r.end) &&                                  // Is the reservation on the same?
+                doSectionsOverlap(getTimeSectionOfReservation(r), s) &&               // Is the reservation during the same time?
+                !defaultReservationGroup?.reservations.find(dr => dr.id == r.id) &&   // Is it done by someone else?
+                r.status != ReservationStatus.Cancelled                               // Is it active?
+              )
+            ).length >= reservable.reservationsPerSlot;
             setSelectedRange(overlap ? selectedRange : newRange);
             setSelectedDate(overlap ? selectedDate : date);
             e.preventDefault();

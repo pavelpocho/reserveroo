@@ -9,6 +9,7 @@ const ImageWrap = styled.div<{ shape: ImageShape }>`
   width: ${props => props.shape == 'square' ? '100%' : '9rem'};
   height: ${props => props.shape == 'square' ? '100%' : '9rem'};
   align-self: center;
+  box-shadow: ${props => props.shape == 'circle' ? styles.shadows[1] : ''};
   background-color: ${styles.colors.gray[30]};
 `;
 

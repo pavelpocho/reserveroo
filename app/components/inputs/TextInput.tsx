@@ -13,7 +13,7 @@ interface TextInputProps {
   style?: React.CSSProperties,
   containerStyle?: React.CSSProperties,
   onClick?: () => void,
-  setValue?: React.Dispatch<React.SetStateAction<string>>
+  setValue?: (s: string) => void
 }
 
 const TextInputField = styled.input`

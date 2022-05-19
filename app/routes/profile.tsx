@@ -3,7 +3,7 @@ import { LoaderFunction } from '@remix-run/server-runtime';
 import { getUserByUsername } from '~/models/user.server';
 import { requireUsernameAndAdmin } from '~/utils/session.server';
 import { Place, Reservable, Reservation, ReservationGroup, User } from '@prisma/client';
-import { ReservationStatus } from '~/types/types';
+import { ReservableTypeWithTexts, ReservationStatus } from '~/types/types';
 import { ReservationGroupSummary } from '~/components/profile/reservation-group-summary';
 import styled from 'styled-components';
 import { styles } from '~/constants/styles';
@@ -13,7 +13,8 @@ export interface ProfileLoaderData {
     reservationGroups: (ReservationGroup & {
       reservations: (Reservation & {
         reservable: (Reservable & {
-          place: Place
+          place: Place,
+          ReservableType: ReservableTypeWithTexts
         }) | null;
       })[];
     })[];
@@ -30,7 +31,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 const ReservationsWrap = styled.div`
   padding: 2rem;
-  background-color: ${styles.colors.gray[5]};
 `;
 
 const ReservationsTitle = styled.h4`

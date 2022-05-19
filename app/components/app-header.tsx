@@ -254,10 +254,16 @@ export default function AppHeader({ children }: AppHeaderProps) {
     <Wrap>
       <InnerWrap>
         <Side>
-          <BarLink to='/places'>
+          <BarLink onClick={(e) => {
+            console.log('x');
+            setShowMenu(false);
+          }} to='/places'>
             <Title>{children}</Title>
           </BarLink>
-          <BarLinkMoreThan400 to={isLandingPage ? "/places" : "/"}>
+          <BarLinkMoreThan400 onClick={(e) => {
+            console.log('x');
+            setShowMenu(false);
+          }} to={isLandingPage ? "/places" : "/"}>
             <MenuItem>{isLandingPage ? "Places" : "Who are we?"}</MenuItem>
           </BarLinkMoreThan400>
         </Side>
@@ -269,11 +275,17 @@ export default function AppHeader({ children }: AppHeaderProps) {
           <FaBars />
         </MenuButton>
         <RightSide showMenu={showMenu} >
-          <BarLinkLessThan400 to={isLandingPage ? "/places" : "/"}>
+          <BarLinkLessThan400 onClick={(e) => {
+            console.log('x');
+            setShowMenu(false);
+          }} to={isLandingPage ? "/places" : "/"}>
             <MenuItem>{isLandingPage ? "Places" : "Who are we?"}</MenuItem>
           </BarLinkLessThan400>
           <Separator400 />
-          <BarLink style={{ marginRight: "0.6rem" }} to={"/admin/reservations"}>
+          <BarLink onClick={(e) => {
+            console.log('x');
+            setShowMenu(false);
+          }} style={{ marginRight: "0.6rem" }} to={"/admin/reservations"}>
             <MenuItem border={true}>List a business</MenuItem>
           </BarLink>
           <Separator />
@@ -298,7 +310,10 @@ export default function AppHeader({ children }: AppHeaderProps) {
             )}
           </BarButton>
           <Separator />
-          <BarLink hide={signingIn ?? false} to={"/profile"} style={{ fontWeight: "bold" }}>
+          <BarLink onClick={(e) => {
+            console.log('x');
+            setShowMenu(false);
+          }} hide={signingIn ?? false} to={"/profile"} style={{ fontWeight: "bold" }}>
             <MenuItem>
               {usernameToVerify ? "Verify your email" : username ?? "Sign In"}
               <ProfileImage>{username ? username[0] : ""}</ProfileImage>
@@ -307,7 +322,10 @@ export default function AppHeader({ children }: AppHeaderProps) {
           {!signingIn && <Separator />}
           <StretchForm action='/logout' method='post'>
             <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate'} />
-            {(username || usernameToVerify) && <HoverBarButton>Logout</HoverBarButton> }
+            {(username || usernameToVerify) && <HoverBarButton onClick={(e) => {
+            console.log('x');
+            setShowMenu(false);
+          }}>Logout</HoverBarButton> }
           </StretchForm>
         </RightSide>
       </InnerWrap>

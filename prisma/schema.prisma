@@ -69,6 +69,7 @@ model Reservable {
   updatedAt              DateTime        @default(now()) @updatedAt
   place                  Place?          @relation(fields: [placeId], references: [id], onDelete: Cascade)
   reservations           Reservation[]
+  reservableDaysAhead    Int             @default(30)
   placeId                String?
   minimumReservationTime Int             @default(30)
   reservationsPerSlot    Int             @default(1)

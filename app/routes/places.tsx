@@ -1,17 +1,16 @@
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
-import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
-import { getPlaceList, Place } from "~/models/place.server";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
+import { getNewPlaces, Place } from "~/models/place.server";
 import styled from "styled-components";
-import { SearchBar } from "~/components/search/search-bar";
 import { PlaceSummary } from "~/components/place/place-summary";
 import { styles } from "~/constants/styles";
-import { Category, Location, OpeningTime, Reservable, Search, Tag } from "@prisma/client";
+import { OpeningTime, Reservable, Search } from "@prisma/client";
 import { SearchUI } from "~/components/search/search-ui";
 import { getAllLocations } from "~/models/location.server";
 import { getTagList } from "~/models/tag.server";
 import { getCategoryList } from "~/models/category.server";
-import { CategoryWithTexts, LocationWithEverything, LocationWithTexts, ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
+import { CategoryWithTexts, LocationWithEverything, ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
 import { WidthRestrictor } from "~/root";
 import { IconRow } from "~/components/icon-row";
 import HeartIcon from "~/assets/icons/Heart";
@@ -47,7 +46,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const usernameAndAdmin = await getUsernameAndAdmin(request);
 
   return json({
-    places: await getPlaceList({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories }),
+    places: await getNewPlaces(),
     locations: await getAllLocations(),
     tags: await getTagList({ nameFragment: '' }),
     categories: await getCategoryList({ nameFragment: '' }),

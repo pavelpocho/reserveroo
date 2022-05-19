@@ -116,6 +116,43 @@ export const getPlaceList = async ({ name: nameFragment, cityCountry, tagIds, ca
   }
 }));
 
+export const getNewPlaces = async () => (await prisma.place.findMany({
+  orderBy: [{
+    createdAt: 'desc',
+  }],
+  take: 6,
+  include: {
+    openingTimes: true,
+    company: true,
+    reservables: {
+      include: {
+        ReservableType: {
+          include: {
+            multiLangName: true
+          }
+        }
+      }
+    },
+    tags: {
+      include: {
+        multiLangDesc: true,
+        multiLangName: true
+      }
+    },
+    categories: {
+      include: {
+        multiLangName: true
+      }
+    },
+    Location: {
+      include: {
+        multiLangCountry: true,
+        multiLangCity: true
+      }
+    }
+  }
+}));
+
 export const getAllPlaces = async () => (await prisma.place.findMany({
   include: {
     company: true,

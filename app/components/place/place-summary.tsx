@@ -84,7 +84,7 @@ const BaseButton = styled(Link)<{ inSearch: boolean }>`
   align-items: center;
   padding: 0.5rem 1.6rem;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 600;
   gap: 1.3rem;
   border-radius: 0.25rem;
   box-sizing: border-box;

@@ -1,12 +1,10 @@
 import { OpeningTime, Reservable } from "@prisma/client";
-import { Link, Outlet, useLoaderData, useParams } from "@remix-run/react"
+import { Link, Outlet, useLoaderData } from "@remix-run/react"
 import { json, LoaderFunction } from "@remix-run/server-runtime";
 import React from "react";
-import { useRoutes } from "react-router";
 import styled from "styled-components";
 import ClockIcon from "~/assets/icons/Clock";
 import LocationIcon from "~/assets/icons/Location";
-import { AvailabilityIndicator } from "~/components/availability-indicator";
 import { FacilitiesIndicator } from "~/components/place/facilities-indicator";
 import { PlaceImage } from "~/components/place/place-image";
 import { getNextImportantTime } from "~/components/place/place-summary";
@@ -14,17 +12,15 @@ import { TagList } from "~/components/place/tag-list";
 import { styles } from "~/constants/styles";
 import { getPlace, Place } from "~/models/place.server";
 import { ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
-import { getImageFromS3 } from "~/utils/s3.server";
-import { ActiveHighlighter, AuthTabLink, Separator, TabBar } from "./authenticate";
 
 interface LoaderData {
-  place: Place & {
+  place: (Place & {
     openingTimes: OpeningTime[],
     tags: TagWithTexts[],
     reservables: Reservable & {
       ReservableType: ReservableTypeWithTexts
     }[]
-  },
+  }) | null | undefined,
   imageUrl: string | undefined
 }
 
@@ -120,7 +116,7 @@ export default function PlaceDetail() {
   const [ position, setPosition ] = React.useState<number>(0);
 
   return <>
-    <Banner>
+    {place ? <Banner>
       <OuterFlex>
         <PlaceImage shape='circle' imageUrl={imageUrl} />
         <PlaceInfoWrap>
@@ -142,7 +138,7 @@ export default function PlaceDetail() {
           </GeneralInfoWrap>
         </PlaceInfoWrap>
       </OuterFlex>
-    </Banner>
+    </Banner> : <p>An error has occured.</p>}
     <Outlet />
   </>
 }

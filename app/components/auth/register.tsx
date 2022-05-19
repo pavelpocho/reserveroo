@@ -5,8 +5,10 @@ import styled from "styled-components"
 import AnglesRightIcon from "~/assets/icons/AnglesRight"
 import { styles } from "~/constants/styles"
 import { AuthActionData } from "~/routes/authenticate/login"
+import { isValidEmail, isValidPhone } from "~/utils/forms"
 import { TextInput } from "../inputs/TextInput"
 import { MainButtonBtn } from "../place/place-summary"
+import { ErrorLabel } from "../profile/account-summary"
 import { AuthWrap, FieldSet, SubmitButton } from "./login"
 
 interface Props {
@@ -49,6 +51,10 @@ const BarBack = styled.div`
   border-radius: 3px;
 `;
 
+const RelativeWrap = styled.div`
+  position: relative;
+`;
+
 const ItB = (b: boolean) => b ? 1 : 0;
 
 const checkPasswordStrength = (pwd: string) => {
@@ -79,6 +85,9 @@ export const RegisterComponent: React.FC<Props> = ({ a, searchParams, setSearchP
     s < 12 ? 'Strong' : 'Very Strong'
   )
 
+  const [ validEmail, setValidEmail ] = useState(true);
+  const [ validPhone, setValidPhone ] = useState(true);
+
   return <AuthWrap>
   <Form method='post' action='/authenticate/register'>
     <FieldSet disabled={t.state === 'submitting'}>
@@ -92,11 +101,21 @@ export const RegisterComponent: React.FC<Props> = ({ a, searchParams, setSearchP
       { pwd != cpwd && <PwdWarn>Your passwords don't match.</PwdWarn> }
       <TextInput title={'First Name'} name='firstName' defaultValue={a?.fields?.firstName ?? ''} />
       <TextInput title={'Last Name'} name='lastName' defaultValue={a?.fields?.lastName ?? ''} />
-      <TextInput title={'Email'} name='email' defaultValue={a?.fields?.email ?? ''} />
-      <TextInput title={'Phone Number'} name='phone' defaultValue={a?.fields?.phone ?? ''} />
+      <RelativeWrap>
+        <TextInput setValue={(s) => {setValidEmail(isValidEmail(s))}} title={'Email'} name='email' defaultValue={a?.fields?.email ?? ''} />
+        { !validEmail && <ErrorLabel>Invalid email</ErrorLabel> }
+      </RelativeWrap>
+      <RelativeWrap>
+        <TextInput setValue={(s) => {setValidPhone(isValidPhone(s))}} title={'Phone Number'} name='phone' defaultValue={a?.fields?.phone ?? ''} />
+        { !validPhone && <ErrorLabel>Invalid phone</ErrorLabel> }
+      </RelativeWrap>
       <ConditionsText>By creating an account, you agree with us sending you necessary email corespondence. (Password resets, confirmation emails, etc.)</ConditionsText>
       <ConditionsText>Your details (name, email, phone) may be shared with those places where you make reservations.</ConditionsText>
-      <MainButtonBtn>Create Account<AnglesRightIcon height={'1.5rem'} /></MainButtonBtn>
+      <MainButtonBtn disabled={!validEmail || !validPhone} onClick={(e) => {
+        if (!validEmail || !validPhone) {
+          e.preventDefault();
+        }
+      }}>Create Account<AnglesRightIcon height={'1.5rem'} /></MainButtonBtn>
       { a && a.formError && <p>
         {a.formError}
       </p> }
