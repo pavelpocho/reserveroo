@@ -44,7 +44,8 @@ const ReservationsTitle = styled.h4`
 `;
 
 const NoReservations = styled.p`
-
+  margin-left: 1rem;
+  font-weight: 500;
 `;
 
 export default function Profile() {
@@ -63,7 +64,7 @@ export default function Profile() {
       <Outlet />
       <ReservationsWrap>
         <ReservationsTitle>Your Reservations</ReservationsTitle>
-        { reservationGroups?.length == 0 && <NoReservations>Nothing here right now.</NoReservations> }
+        { reservationGroups?.length == 0 && <NoReservations>You don't have any reservations :'(. Go ahead and make some!</NoReservations> }
         { reservationGroups?.map(rg => <div key={rg.id}>
           <>
             <ReservationGroupSummary onCancel={(rgId, formRef) => {
