@@ -10,7 +10,6 @@ import { styles } from "~/constants/styles";
 import { UnstyledLink } from "~/root";
 import { ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
 import { getDayOfWeek } from "~/utils/forms";
-import { AvailabilityIndicator } from "../availability-indicator";
 import { FacilitiesIndicator } from "./facilities-indicator";
 import { PlaceImage } from "./place-image";
 import { TagList } from "./tag-list";
