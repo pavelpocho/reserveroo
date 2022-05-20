@@ -13,16 +13,17 @@ export const loader: LoaderFunction = () => {
   return {}
 }
 
-const Title = styled.h2`
+export const Title = styled.h2`
   color: ${styles.colors.black};
   text-align: center;
   font-size: 1.375rem;
   margin: 2rem 0rem 1rem;
-`;
-
-const SubHeader = styled.h4`
-  color: ${styles.colors.action};
-  text-align: center;
+  @media (min-width: 500px) {
+    font-size: 2rem;
+  }
+  @media (min-width: 800px) {
+    font-size: 2.3rem;
+  }
 `;
 
 export const TabBar = styled.div`

@@ -10,7 +10,7 @@ import * as en_texts from "~/assets/langs/en.texts.json";
 import { createCookie } from "@remix-run/node";
 import GbIcon from "~/assets/icons/gb";
 import CzIcon from "~/assets/icons/cz";
-import { FaBars } from 'react-icons/fa'
+import { FaBars } from 'react-icons/fa';
 
 const Wrap = styled.header`
   background-color: ${styles.colors.primary};

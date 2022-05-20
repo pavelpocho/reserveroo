@@ -140,6 +140,13 @@ export const SecondaryButtonBtn = styled(BaseButtonBtn)`
 export const MainButtonBtn = styled(BaseButtonBtn)`
   border: 1.5px solid ${styles.colors.action};
   background-color: ${styles.colors.action};
+  &:disabled {
+    background-color: ${styles.colors.gray[60]};
+    &:hover {
+      transform: none;
+      cursor: default;
+    }
+  }
 `;
 
 const Time = styled.p`
