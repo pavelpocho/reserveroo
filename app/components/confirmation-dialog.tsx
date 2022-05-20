@@ -34,9 +34,14 @@ const Window = styled.div`
   box-shadow: ${styles.shadows[0]};
   width: 32rem;
   display: flex;
+  max-width: 100%;
+  border-radius: 1rem;
+  @media (max-width: 650px) {
+    width: 100%;
+    border-radius: 0;
+  }
   flex-direction: column;
   gap: 1.3rem;
-  border-radius: 1rem;
   padding: 1.5rem;
   z-index: 8;
 `;
@@ -69,6 +74,7 @@ const ButtonRow = styled.div`
   display: flex;
   justify-content: center;
   gap: 1.5rem;
+  flex-wrap: wrap;
 `;
 
 export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ hidden, title, text, confirmText, cancelText, onConfirm, close }) => {

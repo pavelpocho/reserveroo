@@ -30,11 +30,17 @@ export const loader: LoaderFunction = async ({ request }) => {
 }
 
 const ReservationsWrap = styled.div`
-  padding: 2rem;
+  padding: 2rem 0.5rem;
+  max-width: 968px;
+  margin: 0 auto;
 `;
 
 const ReservationsTitle = styled.h4`
   margin-top: 0;
+  @media (min-width: 500px) {
+    font-size: 1.8rem;
+  }
+  margin-left: 1rem;
 `;
 
 const NoReservations = styled.p`

@@ -58,8 +58,10 @@ export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBac
       openingTime={openingTime}
       startName={startName}
       endName={endName}
+      backup={backup}
       reservableIdName={reservableIdName}
       defaultReservation={undefined}
+      defaultReservationGroup={defaultReservationGroup}
       reservationIdName={reservationIdName}
       reservationBackupName={reservationBackupName} />
     )}
@@ -160,9 +162,11 @@ const ReservableGroupSection: React.FC<ReservableGroupSectionProps> = ({
       openingTime={openingTime}
       startName={startName}
       endName={endName}
+      backup={backup}
       reservableIdName={reservableIdName}
       defaultReservation={defaultReservation}
-      reservationIdName={reservableIdName}
+      reservationIdName={reservationIdName}
+      defaultReservationGroup={defaultReservationGroup}
       reservationBackupName={reservationBackupName}
     />)}
   </>
@@ -272,6 +276,8 @@ interface ReservableSectionProps {
 
 const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservationGroup, reservationBackupName, backup, reservationIdName, defaultReservation, reservableIdName, reservable, date, openingTime, startName, endName }: ReservableSectionProps) => {
 
+  console.log("IS BACKUP?");
+  console.log(backup);
   const openMinutes = getDiffBetweenTwoDates(openingTime.close, openingTime.open);
   const openSinceMinutes = new Date(openingTime.open).getMinutes() + new Date(openingTime.open).getHours() * 60;
   const minMin = reservable.minimumReservationTime;
