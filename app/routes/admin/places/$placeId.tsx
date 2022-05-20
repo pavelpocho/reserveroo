@@ -292,13 +292,13 @@ export default function AdminPlaceDetail() {
       }} />
 
       <p>Profile picture</p>
-      {place.profilePicUrl && <img loading='lazy' style={{ height: '120px', width: '120px' }} src={place.profilePicUrl} /> }
+      {place.profilePicUrl && <img loading='lazy' style={{ height: '120px', width: '120px' }} src={/*place.profilePicUrl*/''} /> }
       <p>Replace:</p>
       <ImageInput name='profilePic' />
 
       <p>Gallery pictures</p>
       { place.galleryPicUrls.map((g, i) => (!deletedGalleryImages.includes(g) && <div key={i}>
-        <img loading='lazy' style={{ height: '120px', width: '120px' }} src={g ?? ''} />
+        <img loading='lazy' style={{ height: '120px', width: '120px' }} src={/*g ?? ''*/''} />
         <Button onClick={() => { setDeletedGalleryImages([...deletedGalleryImages, g]) }}>Delete</Button>
       </div>)) }
       { deletedGalleryImages.map((d, i) => <IdInput key={i} name='deletedGalleryPicUrls[]' value={d} />) }

@@ -27,6 +27,6 @@ interface PlaceImageProps {
 export const PlaceImage: React.FC<PlaceImageProps> = ({ shape, imageUrl }) => {
 
   return <ImageWrap shape={shape}>
-    {imageUrl && <Image loading='lazy' src={imageUrl} />}
+    {imageUrl && <Image loading='lazy' src={/*imageUrl*/''} />}
   </ImageWrap>
 }
