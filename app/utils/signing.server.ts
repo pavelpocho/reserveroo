@@ -1,12 +1,12 @@
 import { createSign, createVerify } from 'crypto';
 
-const publicKey = process.env.SIGNING_PUBLIC_KEY ?? '';
+var publicKey = process.env.SIGNING_PUBLIC_KEY ?? '';
 while (publicKey.includes("_")) {
-  publicKey.replace("_", "\n")
+  publicKey = publicKey.replace("_", "\n")
 }
-const privateKey = process.env.SIGNING_PRIVATE_KEY ?? '';
+var privateKey = process.env.SIGNING_PRIVATE_KEY ?? '';
 while (privateKey.includes("_")) {
-  privateKey.replace("_", "\n")
+  privateKey = privateKey.replace("_", "\n")
 }
 
 export const signMessage = (message: string) => {
