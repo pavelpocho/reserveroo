@@ -27,8 +27,11 @@ export const areDatesEqual = (date1: Date, date2: Date) => (
 )
 
 export const getFormEssentials = async (request: Request) => {
+  console.log("await form data");
   const form = await request.formData();
+  console.log("await form data");
   const getFormItem = (key: string) => form.get(key)?.toString() ?? '';
+  console.log("await form data");
   const getFormItems = (key: string) => form.getAll(key).map(r => r.toString());
   return { form, getFormItem, getFormItems };
 }

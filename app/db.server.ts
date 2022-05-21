@@ -26,17 +26,17 @@ if (!process.env.AWS_EMAIL_ACCESS_KEY_ID || !process.env.AWS_EMAIL_SECRET_ACCESS
 // the server with every change, but we want to make sure we don't
 // create a new connection to the DB with every change either.
 // in production we'll have a single connection to the DB.
-// if (process.env.NODE_ENV === "production") {
-//   prisma = getClient();
-//   ses = new SES({
-//     region: 'eu-west-2',
-//     credentials: {
-//       accessKeyId: process.env.AWS_EMAIL_ACCESS_KEY_ID,
-//       secretAccessKey: process.env.AWS_EMAIL_SECRET_ACCESS_KEY
-//     }
-//   });
-//   s3 = new AWS.S3();
-// } else {
+if (process.env.NODE_ENV === "production") {
+  prisma = getClient();
+  ses = new SES({
+    region: 'eu-west-2',
+    credentials: {
+      accessKeyId: process.env.AWS_EMAIL_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_EMAIL_SECRET_ACCESS_KEY
+    }
+  });
+  s3 = new AWS.S3();
+} else {
   if (!global.__db__) {
     global.__db__ = getClient();
     global.__ses__ = new SES({
@@ -51,7 +51,7 @@ if (!process.env.AWS_EMAIL_ACCESS_KEY_ID || !process.env.AWS_EMAIL_SECRET_ACCESS
   prisma = global.__db__;
   ses = global.__ses__;
   s3 = global.__s3__;
-// }
+}
 
 function getClient() {
   const { DATABASE_URL } = process.env;
