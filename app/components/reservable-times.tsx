@@ -52,6 +52,8 @@ export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBac
     }
   });
 
+  console.log(reservableGroups);
+
   return <GroupWrap>
     {reservableGroups.map(rg => <ReservableGroupSection
       key={rg.typeId}
@@ -273,8 +275,6 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
   const openMinutes = getDiffBetweenTwoDates(openingTime.close, openingTime.open);
   const openSinceMinutes = new Date(openingTime.open).getMinutes() + new Date(openingTime.open).getHours() * 60;
   const minMin = reservable.minimumReservationTime;
-  // Not used right now, might be in the future
-  const slotCapacity = reservable.reservationsPerSlot;
   const sections = Math.floor(openMinutes / Math.max(1, minMin));
   const timeSections = [...Array(sections).keys()].map(s => ({
     start: { minute: Math.round((s * minMin + openSinceMinutes) % 60), hour: Math.floor((s * minMin + openSinceMinutes) / 60) },
@@ -335,7 +335,7 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
               const startDate = r ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.start.hour, r.start.minute) : null;
               const endDate = r ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.end.hour, r.end.minute) : null;
               const obj = (startDate?.getTime() ?? 0) < (endDate?.getTime() ?? 0) ? { reservableId: reservable.id, startTime: startDate, endTime: endDate, isBackup: backup ?? false } : null;
-              const arr =  resList.filter(rx => rx.reservableId != reservable.id);
+              const arr =  resList.filter(rx => rx.reservableId != reservable.id || rx.isBackup != backup);
               if (obj != null) arr.push(obj);
               return arr;
             })

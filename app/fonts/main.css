@@ -2,6 +2,7 @@
 @font-face {
   font-family: 'Inter';
   font-style: normal;
+  font-display: swap;
   font-weight: 400;
   src: local(''),
       url('../../fonts/inter-v11-latin-ext_latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
@@ -11,6 +12,7 @@
 @font-face {
   font-family: 'Inter';
   font-style: normal;
+  font-display: swap;
   font-weight: 500;
   src: local(''),
       url('../../fonts/inter-v11-latin-ext_latin-500.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
@@ -20,6 +22,7 @@
 @font-face {
   font-family: 'Inter';
   font-style: normal;
+  font-display: swap;
   font-weight: 600;
   src: local(''),
       url('../../fonts/inter-v11-latin-ext_latin-600.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
@@ -29,6 +32,7 @@
 @font-face {
   font-family: 'Inter';
   font-style: normal;
+  font-display: swap;
   font-weight: 700;
   src: local(''),
       url('../../fonts/inter-v11-latin-ext_latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */

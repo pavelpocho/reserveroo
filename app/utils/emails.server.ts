@@ -124,7 +124,7 @@ export const sendCancellationEmail = async () => {
   const response = await ses.sendEmail(emailParams);
 }
 
-export const sendStatusUpdateEmail = async (sendToAddress: string, status: ReservationStatus, place: Place, start: Date) => {
+export const sendStatusUpdateEmail = async (sendToAddress: string, status: string, place: Place, start: Date) => {
 
   const emailParams: SendEmailRequest = {
     Source: 'reserveroo@reserveroo.com',
@@ -136,14 +136,13 @@ export const sendStatusUpdateEmail = async (sendToAddress: string, status: Reser
     },
     Message: {
       Subject: {
-        Data: `Reserveroo - Reservation ${status == ReservationStatus.Cancelled ? 'Cancelled' : status == ReservationStatus.Confirmed ? 'Confirmed' : ''}`,
+        Data: `Reserveroo - Reservation ${status}`,
         Charset: 'UTF-8'
       },
       Body: {
         Text: {
           Data: `Your reservation at ${place} for ${new Date(start).getDate()} ${
-            status == ReservationStatus.Cancelled ? 'could not be created. The selected timeslot isn\'t available' :
-            status == ReservationStatus.Confirmed ? 'is CONFIRMED. Thank you for booking with us!' : ''
+            status
           }`,
           Charset: 'UTF-8'
         }

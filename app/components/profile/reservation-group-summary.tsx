@@ -1,5 +1,5 @@
 import { Place, Reservable, Reservation, ReservationGroup } from "@prisma/client"
-import { Form } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 import React from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
@@ -23,8 +23,11 @@ interface ReservationGroupSummaryProps {
   onCancel: (reservationGroupId: string, formRef: HTMLFormElement) => void
 }
 
-const Title = styled.h5`
+const Title = styled(Link)`
   margin: 0;
+  font-weight: bold;
+  text-decoration: none;
+  color: ${styles.colors.black};
   font-size: 1.2rem;
 `;
 
@@ -137,7 +140,45 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
   const prefs = rg.reservations.filter(r => !r.backup).length;
   const backups = rg.reservations.filter(r => r.backup).length;
   console.log(rg);
-  const status = rg.reservations[0].status;
+  // Options: 
+  // Just main option       Waiting
+  // Just main option       Confirmed
+  // Just main option       Unavailable
+  // Main + backup option       Waiting
+  // Main + backup option       Main confirmed
+  // Main + backup option       Backup confirmed
+  // Main + backup option       Unavailable
+  const prefStatus = rg.reservations.filter(r => !r.backup)[prefs - 1].status;
+  const backupStatus = backups > 0 ? rg.reservations.filter(r => r.backup)[backups - 1].status : null;
+  const text = (
+    prefStatus == R.AwaitingConfirmation || backupStatus == R.AwaitingConfirmation ? 'Awaiting confirmation' : 
+    prefStatus == R.Confirmed && backupStatus == null ? 'Confirmed' : 
+    prefStatus == R.Rejected && backupStatus == null ? 'Unavailable' : 
+    prefStatus == R.Confirmed && backupStatus == R.Cancelled ? 'Preferred Confirmed' : 
+    prefStatus == R.Rejected && backupStatus == R.Confirmed ? 'Backup Confirmed' : 
+    prefStatus == R.Rejected && backupStatus == R.Rejected ? 'Unavailable' :
+    prefStatus == R.Cancelled && backupStatus == R.Cancelled ? 'Cancelled' : ''
+  );
+
+  const backgroundColor = (
+    prefStatus == R.AwaitingConfirmation || backupStatus == R.AwaitingConfirmation ? styles.colors.warn : 
+    prefStatus == R.Confirmed && backupStatus == null ? styles.colors.free : 
+    prefStatus == R.Rejected && backupStatus == null ? styles.colors.busy : 
+    prefStatus == R.Confirmed && backupStatus == R.Cancelled ? styles.colors.free : 
+    prefStatus == R.Rejected && backupStatus == R.Confirmed ? styles.colors.free : 
+    prefStatus == R.Rejected && backupStatus == R.Rejected ? styles.colors.busy : 
+    prefStatus == R.Cancelled && backupStatus == R.Cancelled ? styles.colors.gray[70] : ''
+  );
+
+  const color = (
+    prefStatus == R.AwaitingConfirmation || backupStatus == R.AwaitingConfirmation ? styles.colors.black : 
+    prefStatus == R.Confirmed && backupStatus == null ? styles.colors.black : 
+    prefStatus == R.Rejected && backupStatus == null ? styles.colors.white : 
+    prefStatus == R.Confirmed && backupStatus == R.Cancelled ? styles.colors.black : 
+    prefStatus == R.Rejected && backupStatus == R.Confirmed ? styles.colors.black : 
+    prefStatus == R.Rejected && backupStatus == R.Rejected ? styles.colors.white : 
+    prefStatus == R.Cancelled && backupStatus == R.Cancelled ? styles.colors.black : ''
+  );
 
   return <>
     <ConfirmationDialog
@@ -157,40 +198,25 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
       <PlaceImage shape='square' imageUrl={rg.reservations[0].reservable?.place.profilePicUrl} />
       <InnerWrap>
         <TitleStatus>
-        <Title>{rg.reservations.length > 0 ? rg.reservations[0].reservable?.place.name : 'Reservation'}</Title>
+        <Title to={`/${rg.reservations[0].reservable?.place.id}`}>{rg.reservations.length > 0 ? rg.reservations[0].reservable?.place.name : 'Reservation'}</Title>
           <Status style={{
-            backgroundColor: status == R.AwaitingConfirmation ? styles.colors.warn : 
-            status == R.Confirmed ? styles.colors.free : 
-            status == R.Rejected ? styles.colors.busy : 
-            status == R.Cancelled ? styles.colors.gray[70] : 
-            status == R.Paid ? styles.colors.free :
-            status == R.Past ? styles.colors.gray[30] : '',
-            color: status == R.AwaitingConfirmation ? styles.colors.black : 
-            status == R.Confirmed ? styles.colors.black : 
-            status == R.Rejected ? styles.colors.white : 
-            status == R.Cancelled ? styles.colors.black : 
-            status == R.Paid ? styles.colors.black :
-            status == R.Past ? styles.colors.black : '',
+            backgroundColor: backgroundColor,
+            color: color,
           }}>{
-            status == R.AwaitingConfirmation ? 'Awaiting confirmation' : 
-            status == R.Confirmed ? 'Confirmed' : 
-            status == R.Rejected ? 'Unavailable' : 
-            status == R.Cancelled ? 'Cancelled' : 
-            status == R.Paid ? 'Paid' :
-            status == R.Past ? 'Past' : '' 
+            text
           }</Status>
         </TitleStatus>
         {prefs > 0 && <>
-          <SlotTitle>Preffered slot{prefs > 1 && 's'}:</SlotTitle>
+          <SlotTitle style={text == 'Backup Confirmed' ? { opacity: 0.5 } : {}}>Preffered slot{prefs > 1 && 's'}:</SlotTitle>
           { rg.reservations.filter(r => !r.backup).map(r => <div key={r.id}>
-            <ReservationSummary reservation={r} />
+            <ReservationSummary style={text == 'Backup Confirmed' ? { opacity: 0.5 } : {}} reservation={r} />
           </div>) }
           <Line />
         </>}
         {backups > 0 && <>
-          <SlotTitle>Backup slot{backups > 1 && 's'}:</SlotTitle>
+          <SlotTitle style={text == 'Preferred Confirmed' ? { opacity: 0.5 } : {}}>Backup slot{backups > 1 && 's'}:</SlotTitle>
           { rg.reservations.filter(r => r.backup).map(r => <div key={r.id}>
-            <ReservationSummary reservation={r} />
+            <ReservationSummary style={text == 'Preferred Confirmed' ? { opacity: 0.5 } : {}} reservation={r} />
           </div>) }
           <Line />
         </>}

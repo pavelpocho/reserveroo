@@ -36,6 +36,15 @@ const getStatusOfReservation = async({ reservationGroupId }: Pick<Reservation, '
   }
 }))
 
+export const setStatusOfReservation = async({ id, status }: Pick<Reservation, 'id' | 'status'>) => (await prisma.reservation.update({
+  where: {
+    id
+  },
+  data: {
+    status
+  }
+}))
+
 export const setStatusOfReservationsInGroup = async ({ reservationGroupId, status }: Pick<Reservation, 'reservationGroupId' | 'status'>) => {
   const r = await getStatusOfReservation({ reservationGroupId });
   return await prisma.reservation.updateMany({

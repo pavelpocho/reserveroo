@@ -16,7 +16,12 @@ export const getReservationGroup = async ({ id }: Pick<ReservationGroup, 'id'>) 
                 openingTimes: true,
                 reservables: {
                   include: {
-                    reservations: true
+                    reservations: true,
+                    ReservableType: {
+                      include: {
+                        multiLangName: true
+                      }
+                    }
                   }
                 }
               }

@@ -14,7 +14,8 @@ interface ReservationSummaryProps {
       ReservableType: ReservableTypeWithTexts
       place: Place
     }) | null;
-  }
+  },
+  style: React.CSSProperties
 }
 
 const Wrap = styled.div`
@@ -43,11 +44,11 @@ const Value = styled.p`
   margin-bottom: 0;
 `;
 
-export const ReservationSummary: React.FC<ReservationSummaryProps> = ({ reservation: r }) => {
+export const ReservationSummary: React.FC<ReservationSummaryProps> = ({ reservation: r, style }) => {
 
   const { lang } = useLangs();
 
-  return <Wrap>
+  return <Wrap style={style}>
     { r?.reservable?.ReservableType.multiLangName && <Indicator style={{ padding: '0.5rem 1rem' }} key={r.id}>{r.reservable.ReservableType.multiLangName[lang]}</Indicator>}
     <Flex>
       <div>

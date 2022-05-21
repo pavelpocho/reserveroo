@@ -38,7 +38,9 @@ export type ReservationGroupForEdit = (ReservationGroup & {
       reservable: (Reservable & {
           place: (Place & {
               openingTimes: OpeningTime[];
-              reservables: ReservableWithReservations[];
+              reservables: (ReservableWithReservations & {
+                ReservableType: ReservableTypeWithTexts
+              })[];
           }) | null;
       }) | null;
   })[];

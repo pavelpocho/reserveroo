@@ -183,8 +183,8 @@ export const ReserveConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ s
         { resList.filter(r => r.isBackup).map(r => r.startTime && r.endTime && <ResE>
           <Indicator style={{ padding: '0.5rem' }}>{reservables.find(x => x.id == r.reservableId)?.name}</Indicator>
           <FlexSL>
-            <BackupSlotText>{getStringDateValue(r.startTime)}</BackupSlotText>
-            <BackupSlotText>{getStringTimeValue(r.startTime)} - {getStringTimeValue(new Date(r.endTime))}</BackupSlotText>
+            <BackupSlotText>Date: {getStringDateValue(r.startTime)}</BackupSlotText>
+            <BackupSlotText>Time: {getStringTimeValue(r.startTime)} - {getStringTimeValue(new Date(r.endTime))}</BackupSlotText>
           </FlexSL>
         </ResE>) }
       </BackupSlotList> }

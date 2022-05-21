@@ -6,6 +6,7 @@ import { styles } from "~/constants/styles";
 import { ReservationStatus } from "~/types/types"
 import { Button } from "../button";
 import { IdInput } from "../inputs/ObjectInput";
+import { SingleSelectorInput } from "../inputs/SingleSelectorInput";
 import { ReservationSummary } from "../profile/reservation-summary"
 import { AdminReservationSummary } from "./reservation-summary";
 
@@ -19,8 +20,7 @@ interface ReservationGroupSummaryProps {
             });
         }) | null;
     })[];
-  }),
-  onChangeStatus: (reservationGroupId: string, formRef: HTMLFormElement) => void
+  });
 }
 
 const Title = styled.h5`
@@ -67,13 +67,32 @@ const Wrap = styled.div`
   }
 `;
 
+const UpdateStatus = styled.button`
+  display: block;
+  margin: 1rem 0rem;
+`;
+
 const InnerWrap = styled.div`
 `;
 
-export const AdminReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = ({ reservationGroup: rg, onChangeStatus }) => {
+export const AdminReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = ({ reservationGroup: rg }) => {
 
   const ref = React.useRef<HTMLDivElement>(null);
-  const formRef = React.useRef<HTMLFormElement>(null);
+
+  const actions = [{
+    text: "Confirm preferred",
+    value: "confirm_preferred",
+  }, {
+    text: "Set as unavailable",
+    value: "unavailable",
+  }];
+
+  if (!!rg.reservations.find(r => r.backup)) {
+    actions.push({
+      text: "Confirm backup",
+      value: "confirm_backup",
+    });
+  }
 
   return <>
     <Wrap key={rg.id} ref={ref}>
@@ -92,24 +111,13 @@ export const AdminReservationGroupSummary: React.FC<ReservationGroupSummaryProps
             <Value>{rg.note}</Value>
           </div>
         </SummaryInfoWrap>
-      </InnerWrap>
-      <InnerWrap>
-        {(rg.reservations.length > 0 ? rg.reservations[0].status : ReservationStatus.Cancelled) != ReservationStatus.Cancelled && <>
-          <Form method='post' ref={formRef} onChange={(e) => {
-            onChangeStatus(rg.id, e.currentTarget);
-          }}>
-            <IdInput name={'rgId'} value={rg.id} />
-            <select name='status' defaultValue={rg.reservations.length > 0 ? rg.reservations[0].status.toString() : '5'}>
-              <option value='0'>Awaiting confirmation</option>
-              <option value='1'>Confirmed</option>
-              <option value='2'>Rejected</option>
-              <option value='3'>Cancelled</option>
-              <option value='4'>Paid</option>
-              <option value='5'>Nothing Reserved</option>
-            </select>
-          </Form>
-          <Link to={`/admin/reservations/${rg.id}`}>Edit</Link>
-        </>}
+        { rg.reservations.length > 0 && !rg.reservations.find(r => r.status == ReservationStatus.Cancelled || r.status == ReservationStatus.Confirmed || r.status == ReservationStatus.Rejected) && <Form method='post' action='/admin/reservations?index'>
+          <SingleSelectorInput name='action' possibleValuesAndTexts={actions} defaultValueAndText={null} />
+          <IdInput name='rgId' value={rg.id} />
+          <p>Select a status in the input above and then hit "Update status". This WILL SEND AN EMAIL to the user!</p>
+          <UpdateStatus>Update status</UpdateStatus>
+        </Form> }
+        <Link to={`/admin/reservations/${rg.id}`}>Edit</Link>
       </InnerWrap>
     </Wrap>
   </>

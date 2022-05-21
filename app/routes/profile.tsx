@@ -57,7 +57,7 @@ export default function Profile() {
     submit(form, { replace: true })
   }
 
-  const reservationGroups = user?.reservationGroups.filter(rg => rg.reservations.length > 0 && !rg.reservations.find(r => r.status == ReservationStatus.Cancelled));
+  const reservationGroups = user?.reservationGroups.filter(rg => rg.reservations.length > 0);
 
   return (
     <div>
