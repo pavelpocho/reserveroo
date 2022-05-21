@@ -4,14 +4,18 @@ var publicKey = process.env.SIGNING_PUBLIC_KEY ?? '';
 while (publicKey.includes("_")) {
   publicKey = publicKey.replace("_", "\n")
 }
+while (publicKey.includes(",")) {
+  publicKey = publicKey.replace(",", " ")
+}
 var privateKey = process.env.SIGNING_PRIVATE_KEY ?? '';
 while (privateKey.includes("_")) {
   privateKey = privateKey.replace("_", "\n")
 }
+while (privateKey.includes(",")) {
+  privateKey = privateKey.replace(",", " ")
+}
 
 export const signMessage = (message: string) => {
-  console.log("Private key");
-  console.log(privateKey);
   if (privateKey && publicKey) {
     const signer = createSign('rsa-sha256');
     signer.update(message);

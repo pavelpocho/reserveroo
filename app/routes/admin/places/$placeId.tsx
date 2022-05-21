@@ -51,12 +51,17 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const action: ActionFunction = async ({ request }) => {
 
-  const { form, getFormItem: getFileType } = await getFormEssentials(request);
+  // const { form, getFormItem: getFileType } = await getFormEssentials(request);
+
+  console.log("eh?");
 
   const getFormItem = (name: string) => imgForm.get(name)?.toString() ?? '';
   const getFormItems = (key: string) => imgForm.getAll(key).map(r => r.toString());
 
+  console.log("eh?");
+
   const uploadHandler: UploadHandler = async ({ name, stream, filename }) => {
+    console.log("HELOOOOOO?");
     console.log(name);
     if (name !== 'profilePic' && name !== 'galleryPic[]') {
       stream.resume();
@@ -76,6 +81,8 @@ export const action: ActionFunction = async ({ request }) => {
       return '';
     }
 
+    console.log(filename);
+
     const extension = filename.split('.')[filename.split('.').length - 1];
     const acceptableTypes = ['jpeg', 'jpg', 'png', 'webp', 'gif'];
     if (!acceptableTypes.includes(extension)) {
@@ -92,6 +99,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const profilePicUrl = imgForm.get('profilePic')?.toString() ?? '';
   const galleryPicUrls = imgForm.getAll('galleryPic[]').map(v => v.toString() ?? '').filter(g => g != '');
+  console.log(profilePicUrl);
   console.log(galleryPicUrls);
 
   const place: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'description' | 'street' | 'city' | 'postCode' | 'howToGetThere'> & {
@@ -292,21 +300,21 @@ export default function AdminPlaceDetail() {
       }} />
 
       <p>Profile picture</p>
-      {place.profilePicUrl && <img loading='lazy' style={{ height: '120px', width: '120px' }} src={/*place.profilePicUrl*/''} /> }
+      {place.profilePicUrl && <img loading='lazy' style={{ height: '120px', width: '120px' }} src={place.profilePicUrl} /> }
       <p>Replace:</p>
       <ImageInput name='profilePic' />
 
       <p>Gallery pictures</p>
       { place.galleryPicUrls.map((g, i) => (!deletedGalleryImages.includes(g) && <div key={i}>
-        <img loading='lazy' style={{ height: '120px', width: '120px' }} src={/*g ?? ''*/''} />
+        <img loading='lazy' style={{ height: '120px', width: '120px' }} src={g ?? ''} />
         <Button onClick={() => { setDeletedGalleryImages([...deletedGalleryImages, g]) }}>Delete</Button>
       </div>)) }
       { deletedGalleryImages.map((d, i) => <IdInput key={i} name='deletedGalleryPicUrls[]' value={d} />) }
-      { [...Array(addedImages).keys()].map(i => (
+      { /*[...Array(addedImages).keys()].map(i => (
         <ImageInput onChange={(value) => {
           if (value != '') setAddedImages(addedImages + 1);
-        }} key={i} name='galleryPic[]' /*hidden={i == [...Array(addedImages).keys()].length - 1}*/ />
-      )) }
+        }} key={i} name='galleryPic[]' />
+      ))*/ }
 
       <input type='submit'/>
     </Form>
