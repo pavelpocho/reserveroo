@@ -2,10 +2,10 @@ import { S3 } from "aws-sdk"
 import { InternalSymbolName } from "typescript";
 import { s3 } from "~/db.server"
 
-export const uploadImageToS3 = async (image: Buffer, fileName: string) => {
+export const uploadImageToS3 = async (image: File, fileName: string) => {
   const params: S3.PutObjectRequest = {
     Bucket: 'reserveroobucket',
-    Body: image,
+    Body: new Uint8Array(await image.arrayBuffer()),
     Key: fileName
   };
 

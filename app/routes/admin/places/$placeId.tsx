@@ -1,5 +1,5 @@
 import { Category, Company, Location, OpeningTime, Reservable, Tag } from '@prisma/client';
-import { unstable_parseMultipartFormData, UploadHandler } from '@remix-run/node';
+import { unstable_createMemoryUploadHandler, unstable_parseMultipartFormData, UploadHandler } from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime';
 import React from 'react';
@@ -27,6 +27,8 @@ import { getDateObjectFromTimeString, getFormEssentials } from '~/utils/forms';
 import { deleteImageFromS3, uploadImageToS3 } from '~/utils/s3.server';
 import crypto from 'crypto'
 import { getReservableTypeList } from '~/models/reservableType.server';
+import { PutObjectRequest } from 'aws-sdk/clients/s3';
+import { s3 } from '~/db.server';
 
 interface AdminPlaceDetailLoaderData {
   place: PlaceForEdit;
@@ -51,54 +53,35 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const action: ActionFunction = async ({ request }) => {
 
-  // const { form, getFormItem: getFileType } = await getFormEssentials(request);
-
-  console.log("eh?");
-
   const getFormItem = (name: string) => imgForm.get(name)?.toString() ?? '';
   const getFormItems = (key: string) => imgForm.getAll(key).map(r => r.toString());
 
-  console.log("eh?");
-
-  const uploadHandler: UploadHandler = async ({ name, stream, filename }) => {
-    console.log("HELOOOOOO?");
-    console.log(name);
-    if (name !== 'profilePic' && name !== 'galleryPic[]') {
-      stream.resume();
-      return;
-    }
-
-    const stream2buffer: Buffer = await new Promise((resolve, reject) => {
-      const _buf: any[] = [];
-  
-      stream.on('data', (chunk) => _buf.push(chunk));
-      stream.on('end', () => resolve(Buffer.concat(_buf)));
-      stream.on('error', (err) => reject(err));
-
-    });
-
-    if (stream2buffer.byteLength > 500_000 || stream2buffer.byteLength == 0) {
-      return '';
-    }
-
-    console.log(filename);
-
-    const extension = filename.split('.')[filename.split('.').length - 1];
-    const acceptableTypes = ['jpeg', 'jpg', 'png', 'webp', 'gif'];
-    if (!acceptableTypes.includes(extension)) {
-      return '';
-    }
-    
-    return await uploadImageToS3(stream2buffer, `${crypto.randomUUID()}.${extension}`);
-  }
+  const uploadHandlerY = unstable_createMemoryUploadHandler({
+    maxFileSize: 500_000
+  });
 
   const imgForm = await unstable_parseMultipartFormData(
     request,
-    uploadHandler
+    uploadHandlerY
   )
 
-  const profilePicUrl = imgForm.get('profilePic')?.toString() ?? '';
-  const galleryPicUrls = imgForm.getAll('galleryPic[]').map(v => v.toString() ?? '').filter(g => g != '');
+  const profilePic = imgForm.get('profilePic') as File;
+  const galleryPics = imgForm.getAll('galleryPic[]') as File[];
+  console.log(profilePic);
+  console.log(galleryPics);
+  const extension = profilePic ? profilePic.name.split('.')[profilePic.name.split('.').length - 1] : '';
+  const acceptableTypes = ['jpeg', 'jpg', 'png', 'webp', 'gif'];
+  const profilePicUrl = acceptableTypes.includes(extension) ? await uploadImageToS3(profilePic, `${crypto.randomUUID()}.${extension}`) : '';
+  const galleryPicUrlPromises: (Promise<string>)[] = [];
+  galleryPics.forEach((p) => {
+    const extensionG = p.name.split('.')[p.name.split('.').length - 1];
+    const acceptableTypes = ['jpeg', 'jpg', 'png', 'webp', 'gif'];
+    if (!acceptableTypes.includes(extensionG)) {
+      return;
+    }
+    galleryPicUrlPromises.push(uploadImageToS3(p, `${crypto.randomUUID()}.${extensionG}`));
+  });
+  const galleryPicUrls = await Promise.all(galleryPicUrlPromises);
   console.log(profilePicUrl);
   console.log(galleryPicUrls);
 
@@ -162,6 +145,9 @@ export const action: ActionFunction = async ({ request }) => {
   if (galleryPicUrls && galleryPicUrls.length > 0) promises.push(addToPlaceGalleryPics({ id: place.id, galleryPicUrls }));
   if (deletedGalleryPicUrls && deletedGalleryPicUrls.length > 0) promises.push(removeFromPlaceGalleryPics({ id: place.id, galleryPicUrls: deletedGalleryPicUrls }));
 
+  console.log("Keys to delete");
+  console.log(keysToDelete);
+  console.log(deletedGalleryPicUrls);
   if (keysToDelete && keysToDelete.length > 0) keysToDelete.forEach(k => {console.log(k); promises.push(deleteImageFromS3(k))});
 
   await Promise.all(promises);
@@ -310,11 +296,11 @@ export default function AdminPlaceDetail() {
         <Button onClick={() => { setDeletedGalleryImages([...deletedGalleryImages, g]) }}>Delete</Button>
       </div>)) }
       { deletedGalleryImages.map((d, i) => <IdInput key={i} name='deletedGalleryPicUrls[]' value={d} />) }
-      { /*[...Array(addedImages).keys()].map(i => (
+      { [...Array(addedImages).keys()].map(i => (
         <ImageInput onChange={(value) => {
           if (value != '') setAddedImages(addedImages + 1);
         }} key={i} name='galleryPic[]' />
-      ))*/ }
+      )) }
 
       <input type='submit'/>
     </Form>
