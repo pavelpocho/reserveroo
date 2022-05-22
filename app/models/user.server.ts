@@ -11,7 +11,8 @@ export const getUser = async ({ id }: Pick<User, 'id'>) => (await prisma.user.fi
 export const getUserId = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
   where: { username },
   select: {
-    id: true
+    id: true,
+    email: true
   }
 }));
 

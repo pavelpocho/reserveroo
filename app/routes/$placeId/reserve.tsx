@@ -81,7 +81,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const user = await getUserId({ username });
-  await sendCreationEmail(username);
+  await sendCreationEmail(user?.email ?? '');
   const resGroup = user ? await createReservationGroup({ note: note ?? '', userId: user.id }) : null;
   if (resGroup == null) {
     return badRequest({

@@ -1,155 +1,99 @@
-import { SendEmailRequest } from "@aws-sdk/client-ses";
-import { ses } from "~/db.server";
+import sgMail from '@sendgrid/mail';
 import { Place } from "~/models/place.server";
-import { ReservationStatus } from "~/types/types";
-import { signMessage } from "./signing.server";
+import { signMessage } from './signing.server';
 
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 export const sendEmailConfirmationEmail = async (sendToAddress: string, baseUrl: string) => {
-
-  const msg = sendToAddress;
-  const signature = signMessage(msg);
-
-  const emailParams: SendEmailRequest = {
-    Source: 'reserveroo@reserveroo.com',
-    Destination: {
-      ToAddresses: [
-        // sendToAddress
-        'success@simulator.amazonses.com'
-      ]
-    },
-    Message: {
-      Subject: {
-        Data: 'Reserveroo - Verify Email Address',
-        Charset: 'UTF-8'
-      },
-      Body: {
-        Text: {
-          Data: 'Click the link to verify: ',
-          Charset: 'UTF-8'
-        }
-      }
-    }
+  let address = 'pavlik.pocho@gmail.com';
+  const signature = signMessage(sendToAddress);
+  if (process.env.NODE_ENV === 'production') {
+    address = sendToAddress;
   }
-
-  console.log("Link that would otherwise be in email:");
-  console.log(`${baseUrl}/verifyEmail?verifyToken=${msg}:${signature}`);
-  const response = await ses.sendEmail(emailParams);
+  const msg = {
+    to: address,
+    from: {
+      name: 'Reserveroo Security',
+      email: 'security@reserveroo.com'
+    },
+    subject: 'Reserveroo Email Verification',
+    text: `Please click the following link: ${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}`,
+    html: `<p>Please click the following link: ${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}</p>`
+  }
+  await sgMail.send(msg);
 }
 
-export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, msg: string) => {
-
-  const signature = signMessage(msg);
-
-  const emailParams: SendEmailRequest = {
-    Source: 'reserveroo@reserveroo.com',
-    Destination: {
-      ToAddresses: [
-        // sendToAddress
-        'success@simulator.amazonses.com'
-      ]
-    },
-    Message: {
-      Subject: {
-        Data: 'Reserveroo - Password Reset',
-        Charset: 'UTF-8'
-      },
-      Body: {
-        Text: {
-          Data: 'Click the link to reset: ',
-          Charset: 'UTF-8'
-        }
-      }
-    }
+export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, username: string) => {
+  let address = 'pavlik.pocho@gmail.com';
+  const signature = signMessage(username);
+  if (process.env.NODE_ENV === 'production') {
+    address = sendToAddress;
   }
-
-  console.log("Link that would otherwise be in email:");
-  console.log(`${baseUrl}/pwd/reset?token=${msg}:${signature}`);
-  const response = await ses.sendEmail(emailParams);
+  const msg = {
+    to: address,
+    from: {
+      name: 'Reserveroo Security',
+      email: 'security@reserveroo.com'
+    },
+    subject: 'Reserveroo Password Reset',
+    text: `Please click the following link: ${baseUrl}/pwd/reset?token=${username}:${signature}`,
+    html: `<p>Please click the following link: ${baseUrl}/pwd/reset?token=${username}:${signature}</p>`
+  }
+  await sgMail.send(msg);
 }
 
-export const sendCreationEmail = async (username: string) => {
-
-  const emailParams: SendEmailRequest = {
-    Source: 'reserveroo@reserveroo.com',
-    Destination: {
-      ToAddresses: [
-        // 'pavlik.pocho@gmail.com', 'loskotaklp@gmail.com', 'tomasekerbenu@gmail.com'
-        'success@simulator.amazonses.com'
-      ]
-    },
-    Message: {
-      Subject: {
-        Data: `Reserveroo - New Reservation!!`,
-        Charset: 'UTF-8'
-      },
-      Body: {
-        Text: {
-          Data: `${username} created a new reservation!!`,
-          Charset: 'UTF-8'
-        }
-      }
-    }
+export const sendCreationEmail = async (sendToAddress: string) => {
+  if (sendToAddress == '') return;
+  let address = 'pavlik.pocho@gmail.com';
+  if (process.env.NODE_ENV === 'production') {
+    address = sendToAddress;
   }
-
-  console.log("Sent creation email to all of us.");
-  const response = await ses.sendEmail(emailParams);
+  const msg = {
+    to: address,
+    from: {
+      name: 'Reserveroo Info',
+      email: 'info@reserveroo.com'
+    },
+    subject: `Reservation created`,
+    text: `Thanks for making a reservation. We will let you know if your chosen time is free ASAP.`,
+    html: `<p>Thanks for making a reservation. We will let you know if your chosen time is free ASAP.</p>`
+  }
+  await sgMail.send(msg);
 }
 
 export const sendCancellationEmail = async () => {
-
-  const emailParams: SendEmailRequest = {
-    Source: 'reserveroo@reserveroo.com',
-    Destination: {
-      ToAddresses: [
-        // 'pavlik.pocho@gmail.com', 'loskotaklp@gmail.com', 'tomasekerbenu@gmail.com'
-        'success@simulator.amazonses.com'
-      ]
-    },
-    Message: {
-      Subject: {
-        Data: `Reserveroo - CANCELLED Reservation!!`,
-        Charset: 'UTF-8'
-      },
-      Body: {
-        Text: {
-          Data: `A reservation was just cancelled by a user.`,
-          Charset: 'UTF-8'
-        }
-      }
-    }
-  }
-
-  console.log("Sent cancellation email to all of us.");
-  const response = await ses.sendEmail(emailParams);
+  
 }
 
-export const sendStatusUpdateEmail = async (sendToAddress: string, status: string, place: Place, start: Date) => {
-
-  const emailParams: SendEmailRequest = {
-    Source: 'reserveroo@reserveroo.com',
-    Destination: {
-      ToAddresses: [
-        // sendToAddress
-        'success@simulator.amazonses.com'
-      ]
-    },
-    Message: {
-      Subject: {
-        Data: `Reserveroo - Reservation ${status}`,
-        Charset: 'UTF-8'
-      },
-      Body: {
-        Text: {
-          Data: `Your reservation at ${place} for ${new Date(start).getDate()} ${
-            status
-          }`,
-          Charset: 'UTF-8'
-        }
-      }
-    }
+export const sendStatusUpdateEmail = async (sendToAddress: string, status: 'confirm_preferred' | 'unavailable' | 'confirm_backup', place: Place, start: Date) => {
+  if (sendToAddress == '') return;
+  let address = 'pavlik.pocho@gmail.com';
+  if (process.env.NODE_ENV === 'production') {
+    address = sendToAddress;
   }
-
-  console.log("Sent confirmation / rejection email to " + sendToAddress);
-  const response = await ses.sendEmail(emailParams);
+  const msg = {
+    to: address,
+    from: {
+      name: 'Reserveroo Info',
+      email: 'info@reserveroo.com'
+    },
+    subject: status == 'confirm_preferred' ? `Reservation Confirmed` : status == 'confirm_backup' ? `Backup Confirmed` : 'Reservation Time Unavailable',
+    text: status == 'confirm_preferred' ? (
+      `Your time is available and confirmed. The fun is looking forward to you!`
+    ) : status == 'confirm_backup' ? (
+      `Your preffered slot was not available, but your backup was free! The fun is looking forward to you!`
+    ) : status == 'unavailable' ? (
+      `Unfortunately, your selected time(s) wasn't/weren't available. Feel free to go for another time though!`
+    ) : '',
+    html: status == 'confirm_preferred' ? (
+      `<p>Your time is available and confirmed. The fun is looking forward to you!</p>`
+    ) : status == 'confirm_backup' ? (
+      `<p>Your preffered slot was not available, but your backup was free! The fun is looking forward to you!</p>`
+    ) : status == 'unavailable' ? (
+      `<p>Unfortunately, your selected time(s) wasn't/weren't available. Feel free to go for another time though!</p>`
+    ) : '',
+  }
+  await sgMail.send(msg);
 }
