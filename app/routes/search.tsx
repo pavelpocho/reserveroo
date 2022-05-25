@@ -50,7 +50,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 
   return json({
-    places: await getSearchPlaces({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories }),
+    places: await getSearchPlaces({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories, itemsPerPage: 10, page:  }),
     locations: await getAllLocations(),
     tags: await getTagList({ nameFragment: '' }),
     categories: await getCategoryList({ nameFragment: '' }),

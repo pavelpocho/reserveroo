@@ -4,7 +4,60 @@ import React from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
 import { useWhereAreWe } from "~/contexts/whereAreWeContext";
-import { faCircleArrowDown, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleArrowDown,
+  faQuestion,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ParallaxLayerComponent from "~/components/parallax-layer-component";
+
+const parallaxLayers = [
+  {
+    question:
+      "Imagine you are in a new city and you want to have some fun with your friend. What do you do?",
+    offset: 1,
+    factor: 0.5,
+    speed: 0.4,
+  },
+  {
+    question:
+      "How do you find out what activities are available? A Google search perhaps?",
+    offset: 2,
+    factor: 0.5,
+    speed: 0.4,
+  },
+  {
+    question: "Do yo u look at each website that pops up?",
+    offset: 3,
+    factor: 0.5,
+    speed: 0.5,
+  },
+  {
+    question: "How do you know each place is legit and open?",
+    offset: 4,
+    factor: 0.5,
+    speed: 0.6,
+  },
+  {
+    question: "Do you have to book a spot? No? Are you sure?",
+    offset: 5,
+    factor: 0.5,
+    speed: 0.7,
+  },
+  { question: "How do you book a spot?", offset: 6, factor: 0.5, speed: 0.8 },
+  {
+    question: "No booking system. Do you call them?",
+    offset: 7,
+    factor: 0.5,
+    speed: 0.9,
+  },
+  {
+    question: "Their phone is busy (or you just don’t like calling people)?",
+    offset: 8,
+    factor: 0.5,
+    speed: 1.1,
+  },
+];
 
 const H1 = styled.h1`
   margin-top: 4rem;
@@ -38,18 +91,41 @@ const ALink = styled(Link)`
   text-decoration: none;
 `;
 
-// const Arrow = styled(FontAwesomeIcon)`
-//   display: flex;
-//   margin: 0 auto;
-//   font-size: 2.5rem;
-//   color: ${styles.colors.primary};
-// `;
+const Arrow = styled(FontAwesomeIcon)`
+  display: flex;
+  margin: 0 auto;
+  font-size: 2.5rem;
+  color: ${styles.colors.primary};
+`;
 
-// const FirstQuestionMark = styled(FontAwesomeIcon)`
-//   margin-left: 2rem;
-//   font-size: 2.5rem;
-//   transform: rotate(25deg);
-// `
+const FirstQuestionMark = styled(FontAwesomeIcon)`
+  right: 5rem;
+  margin-top: 3rem;
+  font-size: 2.5rem;
+  transform: rotate(25deg);
+  position: absolute;
+`;
+const SecondQuestionMark = styled(FontAwesomeIcon)`
+  left: 10rem;
+  margin-top: 5rem;
+  font-size: 2.5rem;
+  transform: rotate(-25deg);
+  position: absolute;
+`;
+const ThirdQuestionMark = styled(FontAwesomeIcon)`
+  left: 15rem;
+  margin-top: 25rem;
+  font-size: 2.5rem;
+  transform: rotate(25deg);
+  position: absolute;
+`;
+const FourthQuestionMark = styled(FontAwesomeIcon)`
+  right: 20rem;
+  margin-top: 20rem;
+  font-size: 2.5rem;
+  transform: rotate(-25deg);
+  position: absolute;
+`;
 
 export default function About() {
   const { setLandingPage } = useWhereAreWe();
@@ -75,105 +151,29 @@ export default function About() {
             <Button>Check out activities</Button>
           </ALink>
           <H1>Why was Reserveroo created?</H1>
-          {/* <Arrow icon={faCircleArrowDown}></Arrow> */}
+          <Arrow icon={faCircleArrowDown}></Arrow>
           <p style={{ textAlign: "center" }}>Scroll down</p>
         </ParallaxLayer>
-        <ParallaxLayer
-          offset={1}
-          factor={0.5}
-          speed={0.4}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            // backgroundColor: styles.colors.busy,
-          }}
-        >
-          <Wrapper>
-            Imagine you are in a new city and you want to have some fun with
-            your friend.
-            <br />
-            What do you do?
-          </Wrapper>
+        {parallaxLayers.map((layer) => (
+          <ParallaxLayerComponent
+            key={layer.offset}
+            question={layer.question}
+            offset={layer.offset}
+            factor={layer.factor}
+            speed={layer.speed}
+          ></ParallaxLayerComponent>
+        ))}
+        <ParallaxLayer sticky={{ start: 1.8, end: 9 }}>
+          <FirstQuestionMark icon={faQuestion}></FirstQuestionMark>
         </ParallaxLayer>
-
-        <ParallaxLayer sticky={{ start: 1.3 }}>
-          {/* <FirstQuestionMark icon={faQuestion}></FirstQuestionMark> */}
+        <ParallaxLayer sticky={{ start: 2.8, end: 9 }}>
+          <SecondQuestionMark icon={faQuestion}></SecondQuestionMark>
         </ParallaxLayer>
-
-        <ParallaxLayer
-          offset={2}
-          speed={0.5}
-          factor={0.5}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            // backgroundColor: "red",
-          }}
-        >
-          {/* <QuestionIcon></QuestionIcon> */}
-          <Wrapper>
-            How do you find out what activities are available?
-            <br />A Google search perhaps?
-          </Wrapper>
-          {/* <QuestionIcon></QuestionIcon> */}
+        <ParallaxLayer sticky={{ start: 3.8, end: 9 }}>
+          <ThirdQuestionMark icon={faQuestion}></ThirdQuestionMark>
         </ParallaxLayer>
-
-        <ParallaxLayer
-          offset={3}
-          factor={0.5}
-          speed={0.6}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            // backgroundColor: styles.colors.busy,
-          }}
-        >
-          <Wrapper>Do you look at each website that pops up?</Wrapper>
-        </ParallaxLayer>
-
-        <ParallaxLayer
-          offset={4}
-          factor={0.5}
-          speed={0.7}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            // backgroundColor: styles.colors.busy,
-          }}
-        >
-          <Wrapper>How do you know each place is legit and open?</Wrapper>
-        </ParallaxLayer>
-
-        <ParallaxLayer
-          offset={5}
-          factor={0.5}
-          speed={0.8}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            // backgroundColor: styles.colors.busy,
-          }}
-        >
-          <Wrapper>Do you have to book a spot? No? Are you sure?</Wrapper>
-        </ParallaxLayer>
-
-        <ParallaxLayer
-          offset={6}
-          factor={0.5}
-          speed={2}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            // backgroundColor: styles.colors.busy,
-          }}
-        >
-          <Wrapper>How do you book a spot?</Wrapper>
+        <ParallaxLayer sticky={{ start: 4.8, end: 9 }}>
+          <FourthQuestionMark icon={faQuestion}></FourthQuestionMark>
         </ParallaxLayer>
       </Parallax>
     </>
