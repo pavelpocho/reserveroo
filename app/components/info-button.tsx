@@ -21,6 +21,8 @@ const Tooltip = styled.p<{ bottom: boolean, left: boolean }>`
   ${props => props.left ? 'right: -0.4rem' : 'left: 50%'};
   ${props => props.bottom ? 'top: 1rem' : 'bottom: 1rem'};
   max-width: 30ch;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  color: ${styles.colors.black};
   background-color: ${styles.colors.white};
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -55,15 +57,20 @@ const InfoButton: React.FC<Props> = ({ helpText, color = styles.colors.black, bo
   
   const [ active, setActive ] = useState(false);
 
-  return <InfoButtonEl onMouseOver={() => {
-    setActive(true);
-  }} onMouseOut={() => {
-    setActive(false);
-  }} onFocus={() => {
-    setActive(true);
-  }} onBlur={() => {
-    setActive(false);
-  }}>
+  return <InfoButtonEl 
+    onClick={(e) => {
+      e.preventDefault();
+    }}
+    onMouseOver={() => {
+      setActive(true);
+    }} onMouseOut={() => {
+      setActive(false);
+    }} onFocus={() => {
+      setActive(true);
+    }} onBlur={() => {
+      setActive(false);
+    }}
+  >
     <CircleInfoIcon fill={color} height={'0.75rem'} />
     <Tooltip left={left} bottom={bottom} style={{ visibility: active ? 'visible' : 'hidden', opacity: active ? '1' : '0', width: `${Math.min(helpText.length, 20)}ch` }}>
       {helpText}
