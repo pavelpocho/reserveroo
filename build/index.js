@@ -77,7 +77,7 @@ function handleRequest(request, responseStatusCode, responseHeaders, remixContex
   });
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/root.tsx
+// route:C:\React\remix\reserveroo\app\root.tsx
 var root_exports = {};
 __export(root_exports, {
   UnstyledLink: () => UnstyledLink,
@@ -962,9 +962,9 @@ var logout = async (request, redirectUrl) => {
 };
 
 // app/fonts/main.css
-var main_default = "/build/_assets/main-H5UVVGYO.css";
+var main_default = "/build/_assets/main-6EUVJCID.css";
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/root.tsx
+// route:C:\React\remix\reserveroo\app\root.tsx
 var meta = () => ({
   charset: "utf-8",
   title: "Reserveroo",
@@ -1063,7 +1063,7 @@ function App() {
   })))), /* @__PURE__ */ import_react9.default.createElement(import_react8.ScrollRestoration, null), /* @__PURE__ */ import_react9.default.createElement(import_react8.Scripts, null), /* @__PURE__ */ import_react9.default.createElement(import_react8.LiveReload, null)));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/doneVerifyingEmail.tsx
+// route:C:\React\remix\reserveroo\app\routes\doneVerifyingEmail.tsx
 var doneVerifyingEmail_exports = {};
 __export(doneVerifyingEmail_exports, {
   action: () => action,
@@ -1087,7 +1087,7 @@ var IdInput = ({ name: name3, value, onChange }) => {
   }));
 };
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/doneVerifyingEmail.tsx
+// route:C:\React\remix\reserveroo\app\routes\doneVerifyingEmail.tsx
 var loader2 = async ({ request }) => {
   const usernameToVerify = await requireUsernameToVerify(request);
   return (0, import_server_runtime.json)({ usernameToVerify });
@@ -1111,7 +1111,7 @@ function ComponentName() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/authenticate.tsx
+// route:C:\React\remix\reserveroo\app\routes\authenticate.tsx
 var authenticate_exports = {};
 __export(authenticate_exports, {
   ActiveHighlighter: () => ActiveHighlighter,
@@ -2635,7 +2635,7 @@ var IconRow = ({ invertColors }) => /* @__PURE__ */ React.createElement(Wrap10, 
   fill: styles.colors.gray[70]
 }))));
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/authenticate.tsx
+// route:C:\React\remix\reserveroo\app\routes\authenticate.tsx
 var loader3 = () => {
   return {};
 };
@@ -2737,7 +2737,7 @@ function Authenticate() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/authenticate/register.tsx
+// route:C:\React\remix\reserveroo\app\routes\authenticate\register.tsx
 var register_exports = {};
 __export(register_exports, {
   action: () => action2
@@ -2861,7 +2861,7 @@ var sendStatusUpdateEmail = async (sendToAddress, status, place, start) => {
   await import_mail.default.send(msg);
 };
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/authenticate/register.tsx
+// route:C:\React\remix\reserveroo\app\routes\authenticate\register.tsx
 var badRequest2 = (data) => (0, import_server_runtime2.json)(data, { status: 400 });
 var action2 = async ({ request }) => {
   const { getFormItem } = await getFormEssentials(request);
@@ -2891,7 +2891,7 @@ var action2 = async ({ request }) => {
   return createUserSession(username, admin, false, "/verifyEmail");
 };
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/authenticate/login.tsx
+// route:C:\React\remix\reserveroo\app\routes\authenticate\login.tsx
 var login_exports = {};
 __export(login_exports, {
   action: () => action3
@@ -2919,7 +2919,7 @@ var action3 = async ({ request }) => {
   return createUserSession(username, admin, verifiedEmail, redirectTo ?? "/");
 };
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/verifyEmail.tsx
+// route:C:\React\remix\reserveroo\app\routes\verifyEmail.tsx
 var verifyEmail_exports = {};
 __export(verifyEmail_exports, {
   Text: () => Text2,
@@ -2994,7 +2994,7 @@ var ActiveHighlighter2 = import_styled_components20.default.div`
   z-index: -1;
 `;
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/verifyEmail.tsx
+// route:C:\React\remix\reserveroo\app\routes\verifyEmail.tsx
 var loader4 = async ({ request }) => {
   const { usernameToVerify } = await requireUsernameToVerify(request);
   return (0, import_server_runtime3.json)({ usernameToVerify });
@@ -3081,7 +3081,7 @@ function ComponentName2() {
   })))));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/pwd/forgot.tsx
+// route:C:\React\remix\reserveroo\app\routes\pwd\forgot.tsx
 var forgot_exports = {};
 __export(forgot_exports, {
   action: () => action5,
@@ -3112,7 +3112,7 @@ var Text3 = import_styled_components22.default.p`
   font-size: 0.875rem;
 `;
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/pwd/forgot.tsx
+// route:C:\React\remix\reserveroo\app\routes\pwd\forgot.tsx
 var action5 = async ({ request }) => {
   const { getFormItem } = await getFormEssentials(request);
   const username = getFormItem("username");
@@ -3147,7 +3147,7 @@ function ForgotPassword() {
   }, "Reset Password", /* @__PURE__ */ React.createElement(import_fa4.FaAngleDoubleRight, null)))));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/pwd/reset.tsx
+// route:C:\React\remix\reserveroo\app\routes\pwd\reset.tsx
 var reset_exports = {};
 __export(reset_exports, {
   action: () => action6,
@@ -3223,7 +3223,7 @@ function ForgotPassword2() {
   }, "Reset Password", /* @__PURE__ */ import_react41.default.createElement(import_fa5.FaAngleDoubleRight, null))))));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/$placeId.tsx
+// route:C:\React\remix\reserveroo\app\routes\$placeId.tsx
 var placeId_exports = {};
 __export(placeId_exports, {
   default: () => PlaceDetail,
@@ -3463,7 +3463,7 @@ var removeFromPlaceGalleryPics = async ({ id, galleryPicUrls }) => {
   });
 };
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/$placeId.tsx
+// route:C:\React\remix\reserveroo\app\routes\$placeId.tsx
 var loader7 = async ({ params }) => {
   const place = await getPlace({ id: params.placeId ?? "" });
   return (0, import_server_runtime7.json)({ place, imageUrl: place == null ? void 0 : place.profilePicUrl });
@@ -3558,7 +3558,7 @@ function PlaceDetail() {
   }))))) : /* @__PURE__ */ import_react43.default.createElement("p", null, "An error has occured."), /* @__PURE__ */ import_react43.default.createElement(import_react42.Outlet, null));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/$placeId/reserve.tsx
+// route:C:\React\remix\reserveroo\app\routes\$placeId\reserve.tsx
 var reserve_exports = {};
 __export(reserve_exports, {
   action: () => action7,
@@ -4327,7 +4327,7 @@ var updateReservationGroup = async ({ id, note, userId }) => await prisma.reserv
   }
 });
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/$placeId/reserve.tsx
+// route:C:\React\remix\reserveroo\app\routes\$placeId\reserve.tsx
 var badRequest4 = (data) => (0, import_server_runtime8.json)(data, { status: 400 });
 var loader8 = async ({ request, params }) => {
   const { username } = await requireUsernameAndAdmin(request);
@@ -4584,7 +4584,7 @@ function ReservationElement() {
   })), (actionData == null ? void 0 : actionData.formError) && /* @__PURE__ */ import_react48.default.createElement("p", null, actionData.formError ?? "")));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/$placeId/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\$placeId\index.tsx
 var placeId_exports2 = {};
 __export(placeId_exports2, {
   default: () => PlaceDetails,
@@ -4687,7 +4687,7 @@ function PlaceDetails({}) {
   })))));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/profile.tsx
+// route:C:\React\remix\reserveroo\app\routes\profile.tsx
 var profile_exports = {};
 __export(profile_exports, {
   default: () => Profile,
@@ -4996,7 +4996,7 @@ var ReservationGroupSummary = ({ reservationGroup: rg, onCancel }) => {
   }))));
 };
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/profile.tsx
+// route:C:\React\remix\reserveroo\app\routes\profile.tsx
 var import_styled_components34 = __toESM(require("styled-components"));
 var loader10 = async ({ request }) => {
   const user = await getUserByUsername({ username: (await requireUsernameAndAdmin(request)).username });
@@ -5040,7 +5040,7 @@ function Profile() {
   }))))));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/profile/cancelReservation.tsx
+// route:C:\React\remix\reserveroo\app\routes\profile\cancelReservation.tsx
 var cancelReservation_exports = {};
 __export(cancelReservation_exports, {
   action: () => action8,
@@ -5058,7 +5058,7 @@ function CancelReservation() {
   return /* @__PURE__ */ React.createElement("div", null);
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/profile/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\profile\index.tsx
 var profile_exports2 = {};
 __export(profile_exports2, {
   default: () => ProfileIndex,
@@ -5080,7 +5080,7 @@ function ProfileIndex() {
   });
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/profile/edit.tsx
+// route:C:\React\remix\reserveroo\app\routes\profile\edit.tsx
 var edit_exports = {};
 __export(edit_exports, {
   action: () => action9,
@@ -5121,7 +5121,7 @@ function ProfileEdit() {
   });
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/logout.tsx
+// route:C:\React\remix\reserveroo\app\routes\logout.tsx
 var logout_exports = {};
 __export(logout_exports, {
   action: () => action10,
@@ -5137,7 +5137,7 @@ function Logout() {
   return /* @__PURE__ */ React.createElement(React.Fragment, null);
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/places.tsx
+// route:C:\React\remix\reserveroo\app\routes\places.tsx
 var places_exports = {};
 __export(places_exports, {
   default: () => Places,
@@ -5472,7 +5472,7 @@ var RecentSearch = ({ searchPhrase, location, categories, tags }) => {
   }), tags.map((t) => (t == null ? void 0 : t.multiLangName) ? t.multiLangName[lang] : "").join(", "))));
 };
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/places.tsx
+// route:C:\React\remix\reserveroo\app\routes\places.tsx
 var loader13 = async ({ request }) => {
   var _a;
   const url = new URL(request.url);
@@ -5590,7 +5590,7 @@ function Places() {
   }))))));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/search.tsx
+// route:C:\React\remix\reserveroo\app\routes\search.tsx
 var search_exports = {};
 __export(search_exports, {
   default: () => Search,
@@ -5669,7 +5669,7 @@ function Search() {
   }))))));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/about.tsx
+// route:C:\React\remix\reserveroo\app\routes\about.tsx
 var about_exports = {};
 __export(about_exports, {
   default: () => About
@@ -5681,7 +5681,7 @@ function About() {
   }, "See place list."));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin.tsx
 var admin_exports = {};
 __export(admin_exports, {
   default: () => Admin,
@@ -5727,7 +5727,7 @@ function Admin() {
   }, "Reservable types")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(import_react61.Outlet, null)));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservableTypes/$reservableTypeId.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\reservableTypes\$reservableTypeId.tsx
 var reservableTypeId_exports = {};
 __export(reservableTypeId_exports, {
   action: () => action11,
@@ -5791,7 +5791,7 @@ var getReservableTypeList = async ({ nameFragment }) => await prisma.reservableT
   }
 });
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservableTypes/$reservableTypeId.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\reservableTypes\$reservableTypeId.tsx
 var loader16 = async ({ request, params }) => {
   if (!params.reservableTypeId)
     return (0, import_server_runtime15.json)({});
@@ -5833,7 +5833,7 @@ function AdminReservableTypeDetail() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservableTypes/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\reservableTypes\index.tsx
 var reservableTypes_exports = {};
 __export(reservableTypes_exports, {
   default: () => CategoriesAdminIndex,
@@ -5856,7 +5856,7 @@ function CategoriesAdminIndex() {
   }, "New reservable type")));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservableTypes/new.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\reservableTypes\new.tsx
 var new_exports = {};
 __export(new_exports, {
   action: () => action12,
@@ -5902,7 +5902,7 @@ function AdminCompanyDetail() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservations.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\reservations.tsx
 var reservations_exports = {};
 __export(reservations_exports, {
   default: () => ReservationsAdmin
@@ -5916,7 +5916,7 @@ function ReservationsAdmin() {
   return /* @__PURE__ */ React.createElement(Wrap19, null, /* @__PURE__ */ React.createElement(import_react65.Outlet, null));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservations/$reservationId.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\reservations\$reservationId.tsx
 var reservationId_exports = {};
 __export(reservationId_exports, {
   action: () => action13,
@@ -6029,7 +6029,7 @@ function EditReservation() {
   }));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservations/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\reservations\index.tsx
 var reservations_exports2 = {};
 __export(reservations_exports2, {
   action: () => action14,
@@ -6152,7 +6152,7 @@ var AdminReservationGroupSummary = ({ reservationGroup: rg }) => {
   }, "Edit"))));
 };
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservations/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\reservations\index.tsx
 var loader20 = async () => {
   const reservationGroups = await getReservationGroupList();
   return (0, import_server_runtime18.json)({ reservationGroups });
@@ -6210,7 +6210,7 @@ function ReservationAdminList() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/categories.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\categories.tsx
 var categories_exports = {};
 __export(categories_exports, {
   default: () => CompaniesAdmin,
@@ -6224,7 +6224,7 @@ function CompaniesAdmin() {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "CATEGORY ADMIN"), /* @__PURE__ */ React.createElement(import_react71.Outlet, null));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/categories/$categoryId.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\categories\$categoryId.tsx
 var categoryId_exports = {};
 __export(categoryId_exports, {
   action: () => action15,
@@ -6275,7 +6275,7 @@ function AdminCategoryDetail() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/categories/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\categories\index.tsx
 var categories_exports2 = {};
 __export(categories_exports2, {
   default: () => CategoriesAdminIndex2,
@@ -6298,7 +6298,7 @@ function CategoriesAdminIndex2() {
   }, "New category")));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/categories/new.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\categories\new.tsx
 var new_exports2 = {};
 __export(new_exports2, {
   action: () => action16,
@@ -6348,7 +6348,7 @@ function AdminCompanyDetail2() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/companies.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\companies.tsx
 var companies_exports = {};
 __export(companies_exports, {
   default: () => CompaniesAdmin2,
@@ -6363,7 +6363,7 @@ function CompaniesAdmin2() {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "COMPANY ADMIN"), /* @__PURE__ */ React.createElement(import_react75.Outlet, null));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/companies/$companyId.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\companies\$companyId.tsx
 var companyId_exports = {};
 __export(companyId_exports, {
   action: () => action17,
@@ -6402,7 +6402,7 @@ var updateCompany = async ({ id, name: name3 }) => await prisma.company.update({
   }
 });
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/companies/$companyId.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\companies\$companyId.tsx
 var loader26 = async ({ request, params }) => {
   if (!params.companyId)
     return (0, import_server_runtime21.json)({});
@@ -6438,7 +6438,7 @@ function AdminCompanyDetail3() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/companies/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\companies\index.tsx
 var companies_exports2 = {};
 __export(companies_exports2, {
   default: () => CompaniesAdminIndex,
@@ -6460,7 +6460,7 @@ function CompaniesAdminIndex() {
   }, "New company")));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/companies/new.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\companies\new.tsx
 var new_exports3 = {};
 __export(new_exports3, {
   action: () => action18,
@@ -6506,7 +6506,7 @@ function AdminCompanyDetail4() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/locations.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\locations.tsx
 var locations_exports = {};
 __export(locations_exports, {
   default: () => TagAdmin,
@@ -6520,7 +6520,7 @@ function TagAdmin() {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "LOCATION ADMIN"), /* @__PURE__ */ React.createElement(import_react80.Outlet, null));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/locations/$locationId.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\locations\$locationId.tsx
 var locationId_exports = {};
 __export(locationId_exports, {
   action: () => action19,
@@ -6588,7 +6588,7 @@ function AdminLocationDetail() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/locations/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\locations\index.tsx
 var locations_exports2 = {};
 __export(locations_exports2, {
   default: () => CompaniesAdminIndex2,
@@ -6611,7 +6611,7 @@ function CompaniesAdminIndex2() {
   }, "New location")));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/locations/new.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\locations\new.tsx
 var new_exports4 = {};
 __export(new_exports4, {
   action: () => action20,
@@ -6681,7 +6681,7 @@ function AdminLocationNew() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/places.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\places.tsx
 var places_exports2 = {};
 __export(places_exports2, {
   default: () => PlacesAdmin,
@@ -6696,7 +6696,7 @@ function PlacesAdmin() {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "PLACE ADMIN"), /* @__PURE__ */ React.createElement(import_react84.Outlet, null));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/places/$placeId.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\places\$placeId.tsx
 var placeId_exports3 = {};
 __export(placeId_exports3, {
   action: () => action21,
@@ -6915,7 +6915,7 @@ var deleteImageFromS3 = async (key) => {
   return await s3.deleteObject(params).promise();
 };
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/places/$placeId.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\places\$placeId.tsx
 var import_crypto3 = __toESM(require("crypto"));
 var loader34 = async ({ request, params }) => {
   if (!params.placeId)
@@ -7213,7 +7213,7 @@ function AdminPlaceDetail() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/places/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\places\index.tsx
 var places_exports3 = {};
 __export(places_exports3, {
   default: () => PlacesAdminIndex,
@@ -7238,7 +7238,7 @@ function PlacesAdminIndex() {
   }, "New Place"));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/places/new.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\places\new.tsx
 var new_exports5 = {};
 __export(new_exports5, {
   action: () => action22,
@@ -7294,7 +7294,7 @@ function AdminPlaceDetail2() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/tags.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\tags.tsx
 var tags_exports = {};
 __export(tags_exports, {
   default: () => TagAdmin2,
@@ -7308,7 +7308,7 @@ function TagAdmin2() {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "TAG ADMIN"), /* @__PURE__ */ React.createElement(import_react94.Outlet, null));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/tags/$tagId.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\tags\$tagId.tsx
 var tagId_exports = {};
 __export(tagId_exports, {
   action: () => action23,
@@ -7366,7 +7366,7 @@ function AdminTagDetail() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/tags/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\tags\index.tsx
 var tags_exports2 = {};
 __export(tags_exports2, {
   default: () => CompaniesAdminIndex3,
@@ -7389,7 +7389,7 @@ function CompaniesAdminIndex3() {
   }, "New tag")));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/tags/new.tsx
+// route:C:\React\remix\reserveroo\app\routes\admin\tags\new.tsx
 var new_exports6 = {};
 __export(new_exports6, {
   action: () => action24,
@@ -7454,30 +7454,22 @@ function AdminTagNew() {
   })));
 }
 
-// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/index.tsx
+// route:C:\React\remix\reserveroo\app\routes\index.tsx
 var routes_exports = {};
 __export(routes_exports, {
   default: () => About2
 });
+var import_parallax2 = require("@react-spring/parallax");
+var import_react99 = require("@remix-run/react");
+var import_react100 = __toESM(require("react"));
+var import_styled_components59 = __toESM(require("styled-components"));
+var import_free_solid_svg_icons = require("@fortawesome/free-solid-svg-icons");
+var import_react_fontawesome = require("@fortawesome/react-fontawesome");
+
+// app/components/parallax-layer-component.tsx
 var import_parallax = require("@react-spring/parallax");
-var import_react98 = require("@remix-run/react");
-var import_react99 = __toESM(require("react"));
+var import_react98 = __toESM(require("react"));
 var import_styled_components58 = __toESM(require("styled-components"));
-var H1 = import_styled_components58.default.h1`
-  margin-top: 4rem;
-  color: ${styles.colors.primary};
-  text-align: center;
-`;
-var Button3 = import_styled_components58.default.button`
-  color: ${styles.colors.white};
-  background-color: ${styles.colors.primary};
-  border-radius: 0.4rem;
-  padding: 0.7rem;
-  cursor: pointer;
-  margin: 0 auto;
-  display: block;
-  border: none;
-`;
 var Wrapper = import_styled_components58.default.h1`
   display: flex;
   align-items: center;
@@ -7488,91 +7480,145 @@ var Wrapper = import_styled_components58.default.h1`
   color: ${styles.colors.primary};
   background-color: ${styles.colors.gray};
 `;
-var ALink = (0, import_styled_components58.default)(import_react98.Link)`
+function ParallaxLayerComponent({ question, offset, factor, speed }) {
+  return /* @__PURE__ */ import_react98.default.createElement(import_parallax.ParallaxLayer, {
+    offset,
+    factor,
+    speed,
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, /* @__PURE__ */ import_react98.default.createElement(Wrapper, null, question));
+}
+var parallax_layer_component_default = ParallaxLayerComponent;
+
+// route:C:\React\remix\reserveroo\app\routes\index.tsx
+var parallaxLayers = [
+  {
+    question: "Imagine you are in a new city and you want to have some fun with your friend. What do you do?",
+    offset: 1,
+    factor: 0.5,
+    speed: 0.4
+  },
+  {
+    question: "How do you find out what activities are available? A Google search perhaps?",
+    offset: 2,
+    factor: 0.5,
+    speed: 0.4
+  },
+  {
+    question: "Do yo u look at each website that pops up?",
+    offset: 3,
+    factor: 0.5,
+    speed: 0.5
+  },
+  {
+    question: "How do you know each place is legit and open?",
+    offset: 4,
+    factor: 0.5,
+    speed: 0.6
+  },
+  {
+    question: "Do you have to book a spot? No? Are you sure?",
+    offset: 5,
+    factor: 0.5,
+    speed: 0.7
+  },
+  { question: "How do you book a spot?", offset: 6, factor: 0.5, speed: 0.8 },
+  {
+    question: "No booking system. Do you call them?",
+    offset: 7,
+    factor: 0.5,
+    speed: 0.9
+  },
+  {
+    question: "Their phone is busy (or you just don\u2019t like calling people)?",
+    offset: 8,
+    factor: 0.5,
+    speed: 1.1
+  }
+];
+var H1 = import_styled_components59.default.h1`
+  margin-top: 4rem;
+  color: ${styles.colors.primary};
+  text-align: center;
+`;
+var Button3 = import_styled_components59.default.button`
+  color: ${styles.colors.white};
+  background-color: ${styles.colors.primary};
+  border-radius: 0.4rem;
+  padding: 0.7rem;
+  cursor: pointer;
+  margin: 0 auto;
+  display: block;
+  border: none;
+`;
+var Wrapper2 = import_styled_components59.default.h1`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: ${styles.shadows[1]};
+  width: 300px;
+  padding: 2rem;
+  color: ${styles.colors.primary};
+  background-color: ${styles.colors.gray};
+`;
+var ALink = (0, import_styled_components59.default)(import_react99.Link)`
   text-decoration: none;
+`;
+var Arrow = (0, import_styled_components59.default)(import_react_fontawesome.FontAwesomeIcon)`
+  display: flex;
+  margin: 0 auto;
+  font-size: 2.5rem;
+  color: ${styles.colors.primary};
+`;
+var FirstQuestionMark = (0, import_styled_components59.default)(import_react_fontawesome.FontAwesomeIcon)`
+  right: 5rem;
+  margin-top: 3rem;
+  font-size: 2.5rem;
+  transform: rotate(25deg);
+  position: absolute;
 `;
 function About2() {
   const { setLandingPage } = useWhereAreWe();
-  import_react99.default.useEffect(() => {
+  import_react100.default.useEffect(() => {
     setLandingPage(true);
     return () => {
       setLandingPage(false);
     };
   }, []);
-  return /* @__PURE__ */ import_react99.default.createElement(import_react99.default.Fragment, null, /* @__PURE__ */ import_react99.default.createElement(import_parallax.Parallax, {
+  return /* @__PURE__ */ import_react100.default.createElement(import_react100.default.Fragment, null, /* @__PURE__ */ import_react100.default.createElement(import_parallax2.Parallax, {
     pages: 6
-  }, /* @__PURE__ */ import_react99.default.createElement(import_parallax.ParallaxLayer, {
+  }, /* @__PURE__ */ import_react100.default.createElement(import_parallax2.ParallaxLayer, {
     factor: 1,
     speed: 0.3
-  }, /* @__PURE__ */ import_react99.default.createElement(H1, null, "All the", /* @__PURE__ */ import_react99.default.createElement("span", {
+  }, /* @__PURE__ */ import_react100.default.createElement(H1, null, "All the", /* @__PURE__ */ import_react100.default.createElement("span", {
     style: { color: styles.colors.busy }
-  }, " activities "), "you love in", /* @__PURE__ */ import_react99.default.createElement("span", {
+  }, " activities "), "you love in", /* @__PURE__ */ import_react100.default.createElement("span", {
     style: { color: styles.colors.busy }
-  }, " one place")), /* @__PURE__ */ import_react99.default.createElement(ALink, {
+  }, " one place")), /* @__PURE__ */ import_react100.default.createElement(ALink, {
     to: "/places"
-  }, /* @__PURE__ */ import_react99.default.createElement(Button3, null, "Check out activities")), /* @__PURE__ */ import_react99.default.createElement(H1, null, "Why was Reserveroo created?"), /* @__PURE__ */ import_react99.default.createElement("p", {
+  }, /* @__PURE__ */ import_react100.default.createElement(Button3, null, "Check out activities")), /* @__PURE__ */ import_react100.default.createElement(H1, null, "Why was Reserveroo created?"), /* @__PURE__ */ import_react100.default.createElement(Arrow, {
+    icon: import_free_solid_svg_icons.faCircleArrowDown
+  }), /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { textAlign: "center" }
-  }, "Scroll down")), /* @__PURE__ */ import_react99.default.createElement(import_parallax.ParallaxLayer, {
-    offset: 1,
-    factor: 0.5,
-    speed: 0.4,
-    style: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }
-  }, /* @__PURE__ */ import_react99.default.createElement(Wrapper, null, "Imagine you are in a new city and you want to have some fun with your friend.", /* @__PURE__ */ import_react99.default.createElement("br", null), "What do you do?")), /* @__PURE__ */ import_react99.default.createElement(import_parallax.ParallaxLayer, {
-    sticky: { start: 1.3 }
-  }), /* @__PURE__ */ import_react99.default.createElement(import_parallax.ParallaxLayer, {
-    offset: 2,
-    speed: 0.5,
-    factor: 0.5,
-    style: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }
-  }, /* @__PURE__ */ import_react99.default.createElement(Wrapper, null, "How do you find out what activities are available?", /* @__PURE__ */ import_react99.default.createElement("br", null), "A Google search perhaps?")), /* @__PURE__ */ import_react99.default.createElement(import_parallax.ParallaxLayer, {
-    offset: 3,
-    factor: 0.5,
-    speed: 0.6,
-    style: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }
-  }, /* @__PURE__ */ import_react99.default.createElement(Wrapper, null, "Do you look at each website that pops up?")), /* @__PURE__ */ import_react99.default.createElement(import_parallax.ParallaxLayer, {
-    offset: 4,
-    factor: 0.5,
-    speed: 0.7,
-    style: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }
-  }, /* @__PURE__ */ import_react99.default.createElement(Wrapper, null, "How do you know each place is legit and open?")), /* @__PURE__ */ import_react99.default.createElement(import_parallax.ParallaxLayer, {
-    offset: 5,
-    factor: 0.5,
-    speed: 0.8,
-    style: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }
-  }, /* @__PURE__ */ import_react99.default.createElement(Wrapper, null, "Do you have to book a spot? No? Are you sure?")), /* @__PURE__ */ import_react99.default.createElement(import_parallax.ParallaxLayer, {
-    offset: 6,
-    factor: 0.5,
-    speed: 2,
-    style: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }
-  }, /* @__PURE__ */ import_react99.default.createElement(Wrapper, null, "How do you book a spot?"))));
+  }, "Scroll down")), parallaxLayers.map((layer) => /* @__PURE__ */ import_react100.default.createElement(parallax_layer_component_default, {
+    key: layer.offset,
+    question: layer.question,
+    offset: layer.offset,
+    factor: layer.factor,
+    speed: layer.speed
+  })), /* @__PURE__ */ import_react100.default.createElement(import_parallax2.ParallaxLayer, {
+    sticky: { start: 1.3, end: 9 }
+  }, /* @__PURE__ */ import_react100.default.createElement(FirstQuestionMark, {
+    icon: import_free_solid_svg_icons.faQuestion
+  }))));
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "2728b530", "entry": { "module": "/build/entry.client-X6M3IJQT.js", "imports": ["/build/_shared/chunk-FKVNPCUN.js", "/build/_shared/chunk-RPT4ZEQV.js", "/build/_shared/chunk-FN7GJDOI.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-USILH7NL.js", "imports": ["/build/_shared/chunk-WGKQYW5G.js", "/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId": { "id": "routes/$placeId", "parentId": "root", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId-W345E5LY.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-OWCQ3NZK.js", "/build/_shared/chunk-KHR7REP7.js", "/build/_shared/chunk-GGYM52YX.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/index": { "id": "routes/$placeId/index", "parentId": "routes/$placeId", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/$placeId/index-ASOA725C.js", "imports": ["/build/_shared/chunk-WGKQYW5G.js", "/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/reserve": { "id": "routes/$placeId/reserve", "parentId": "routes/$placeId", "path": "reserve", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId/reserve-RVJFJLDF.js", "imports": ["/build/_shared/chunk-WKASWSUF.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-IS4EBVOC.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-WGKQYW5G.js", "/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-R7A7O53D.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin": { "id": "routes/admin", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin-2UXZDLOD.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories": { "id": "routes/admin/categories", "parentId": "routes/admin", "path": "categories", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories-WIGKIAX4.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/$categoryId": { "id": "routes/admin/categories/$categoryId", "parentId": "routes/admin/categories", "path": ":categoryId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/$categoryId-U3RDRWUE.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/index": { "id": "routes/admin/categories/index", "parentId": "routes/admin/categories", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/categories/index-FNX2275K.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/new": { "id": "routes/admin/categories/new", "parentId": "routes/admin/categories", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/new-OSYGP724.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies": { "id": "routes/admin/companies", "parentId": "routes/admin", "path": "companies", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies-5YWK75YQ.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/$companyId": { "id": "routes/admin/companies/$companyId", "parentId": "routes/admin/companies", "path": ":companyId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/$companyId-BE5B5UMW.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/index": { "id": "routes/admin/companies/index", "parentId": "routes/admin/companies", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/companies/index-7EN6UF3P.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/new": { "id": "routes/admin/companies/new", "parentId": "routes/admin/companies", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/new-QGZGAMWN.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations": { "id": "routes/admin/locations", "parentId": "routes/admin", "path": "locations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations-TBNCWIA4.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/$locationId": { "id": "routes/admin/locations/$locationId", "parentId": "routes/admin/locations", "path": ":locationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/$locationId-JTQHZVNV.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/index": { "id": "routes/admin/locations/index", "parentId": "routes/admin/locations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/locations/index-2EMTKHKF.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/new": { "id": "routes/admin/locations/new", "parentId": "routes/admin/locations", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/new-RLQVA6C6.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places": { "id": "routes/admin/places", "parentId": "routes/admin", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places-CT4S4YDE.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/$placeId": { "id": "routes/admin/places/$placeId", "parentId": "routes/admin/places", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/$placeId-OYITBLTD.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-GGYM52YX.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/index": { "id": "routes/admin/places/index", "parentId": "routes/admin/places", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/places/index-2IQ43JDT.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/new": { "id": "routes/admin/places/new", "parentId": "routes/admin/places", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/new-NPHP2766.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/$reservableTypeId": { "id": "routes/admin/reservableTypes/$reservableTypeId", "parentId": "routes/admin", "path": "reservableTypes/:reservableTypeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/$reservableTypeId-LUJXZNEE.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/index": { "id": "routes/admin/reservableTypes/index", "parentId": "routes/admin", "path": "reservableTypes", "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/index-PHCM4WMV.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/new": { "id": "routes/admin/reservableTypes/new", "parentId": "routes/admin", "path": "reservableTypes/new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/new-X6EKBPOY.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations": { "id": "routes/admin/reservations", "parentId": "routes/admin", "path": "reservations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations-OGBQ723Q.js", "imports": ["/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/$reservationId": { "id": "routes/admin/reservations/$reservationId", "parentId": "routes/admin/reservations", "path": ":reservationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/$reservationId-IJKV2LEZ.js", "imports": ["/build/_shared/chunk-WKASWSUF.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-IS4EBVOC.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-KHR7REP7.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/index": { "id": "routes/admin/reservations/index", "parentId": "routes/admin/reservations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/index-EM35ZCOY.js", "imports": ["/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-GGYM52YX.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags": { "id": "routes/admin/tags", "parentId": "routes/admin", "path": "tags", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags-GE3IFYQV.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/$tagId": { "id": "routes/admin/tags/$tagId", "parentId": "routes/admin/tags", "path": ":tagId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/$tagId-OEQPMHRE.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/index": { "id": "routes/admin/tags/index", "parentId": "routes/admin/tags", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/tags/index-O5UUMBOQ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/new": { "id": "routes/admin/tags/new", "parentId": "routes/admin/tags", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/new-DKCMONYR.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate": { "id": "routes/authenticate", "parentId": "root", "path": "authenticate", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate-32WXVCUF.js", "imports": ["/build/_shared/chunk-YOWN2AVB.js", "/build/_shared/chunk-XDDV4RAY.js", "/build/_shared/chunk-QTSITXXQ.js", "/build/_shared/chunk-OWCQ3NZK.js", "/build/_shared/chunk-KHR7REP7.js", "/build/_shared/chunk-GGYM52YX.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/login": { "id": "routes/authenticate/login", "parentId": "routes/authenticate", "path": "login", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/login-KUGGUOQM.js", "imports": void 0, "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/register": { "id": "routes/authenticate/register", "parentId": "routes/authenticate", "path": "register", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/register-I72IQBC4.js", "imports": void 0, "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/doneVerifyingEmail": { "id": "routes/doneVerifyingEmail", "parentId": "root", "path": "doneVerifyingEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/doneVerifyingEmail-OXS47DF3.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-C74RVSAB.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/logout": { "id": "routes/logout", "parentId": "root", "path": "logout", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/logout-XMXFMUNS.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/places": { "id": "routes/places", "parentId": "root", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/places-URQ5C4RF.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-XDDV4RAY.js", "/build/_shared/chunk-OWCQ3NZK.js", "/build/_shared/chunk-KHR7REP7.js", "/build/_shared/chunk-GGYM52YX.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile-CS36IFOT.js", "imports": ["/build/_shared/chunk-IS4EBVOC.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-OWCQ3NZK.js", "/build/_shared/chunk-KHR7REP7.js", "/build/_shared/chunk-GGYM52YX.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/cancelReservation": { "id": "routes/profile/cancelReservation", "parentId": "routes/profile", "path": "cancelReservation", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/cancelReservation-2LATRXGT.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-FTM4DERH.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/edit": { "id": "routes/profile/edit", "parentId": "routes/profile", "path": "edit", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/edit-NC7PLSGM.js", "imports": ["/build/_shared/chunk-QTSITXXQ.js", "/build/_shared/chunk-WGKQYW5G.js", "/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/index": { "id": "routes/profile/index", "parentId": "routes/profile", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/profile/index-MP7XLTGI.js", "imports": ["/build/_shared/chunk-QTSITXXQ.js", "/build/_shared/chunk-WGKQYW5G.js", "/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-7YLPBSAL.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/forgot": { "id": "routes/pwd/forgot", "parentId": "root", "path": "pwd/forgot", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/forgot-YLT7HSZI.js", "imports": ["/build/_shared/chunk-CDKQJK6M.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-YOWN2AVB.js", "/build/_shared/chunk-XDDV4RAY.js", "/build/_shared/chunk-QTSITXXQ.js", "/build/_shared/chunk-OWCQ3NZK.js", "/build/_shared/chunk-KHR7REP7.js", "/build/_shared/chunk-GGYM52YX.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/reset": { "id": "routes/pwd/reset", "parentId": "root", "path": "pwd/reset", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/reset-XO5HEADO.js", "imports": ["/build/_shared/chunk-CDKQJK6M.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-YOWN2AVB.js", "/build/_shared/chunk-XDDV4RAY.js", "/build/_shared/chunk-QTSITXXQ.js", "/build/_shared/chunk-OWCQ3NZK.js", "/build/_shared/chunk-KHR7REP7.js", "/build/_shared/chunk-GGYM52YX.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/search": { "id": "routes/search", "parentId": "root", "path": "search", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/search-Y2IXETJ6.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-XDDV4RAY.js", "/build/_shared/chunk-OWCQ3NZK.js", "/build/_shared/chunk-KHR7REP7.js", "/build/_shared/chunk-GGYM52YX.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/verifyEmail": { "id": "routes/verifyEmail", "parentId": "root", "path": "verifyEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/verifyEmail-ZYXCXKX7.js", "imports": ["/build/_shared/chunk-CDKQJK6M.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-YOWN2AVB.js", "/build/_shared/chunk-XDDV4RAY.js", "/build/_shared/chunk-QTSITXXQ.js", "/build/_shared/chunk-OWCQ3NZK.js", "/build/_shared/chunk-KHR7REP7.js", "/build/_shared/chunk-GGYM52YX.js", "/build/_shared/chunk-EKUNDD23.js", "/build/_shared/chunk-7ELF4O4C.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-2728B530.js" };
+var assets_manifest_default = { "version": "1bdaeb77", "entry": { "module": "/build/entry.client-V3TZFOI6.js", "imports": ["/build/_shared/chunk-FKVNPCUN.js", "/build/_shared/chunk-RPT4ZEQV.js", "/build/_shared/chunk-FN7GJDOI.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-CE7NDLCC.js", "imports": ["/build/_shared/chunk-XOW3Y2UR.js", "/build/_shared/chunk-4V2FDP3P.js", "/build/_shared/chunk-KTL2U4DC.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId": { "id": "routes/$placeId", "parentId": "root", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId-DH6NZDRY.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-YOZXHZK7.js", "/build/_shared/chunk-E5PLFFBH.js", "/build/_shared/chunk-UKX3DKWG.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/index": { "id": "routes/$placeId/index", "parentId": "routes/$placeId", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/$placeId/index-LC3YZ7A2.js", "imports": ["/build/_shared/chunk-XOW3Y2UR.js", "/build/_shared/chunk-4V2FDP3P.js", "/build/_shared/chunk-KTL2U4DC.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/reserve": { "id": "routes/$placeId/reserve", "parentId": "routes/$placeId", "path": "reserve", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId/reserve-4KLWDCGK.js", "imports": ["/build/_shared/chunk-ECYDDNUF.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-VE2BZMH3.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-XOW3Y2UR.js", "/build/_shared/chunk-4V2FDP3P.js", "/build/_shared/chunk-KTL2U4DC.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-4PBN66UF.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin": { "id": "routes/admin", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin-AJWNCOO4.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories": { "id": "routes/admin/categories", "parentId": "routes/admin", "path": "categories", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories-SJWUJG5U.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/$categoryId": { "id": "routes/admin/categories/$categoryId", "parentId": "routes/admin/categories", "path": ":categoryId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/$categoryId-WSTRZBMB.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-KTL2U4DC.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/index": { "id": "routes/admin/categories/index", "parentId": "routes/admin/categories", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/categories/index-V45DSY4V.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-KTL2U4DC.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/new": { "id": "routes/admin/categories/new", "parentId": "routes/admin/categories", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/new-NC5D55CN.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies": { "id": "routes/admin/companies", "parentId": "routes/admin", "path": "companies", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies-7PLOBWFX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/$companyId": { "id": "routes/admin/companies/$companyId", "parentId": "routes/admin/companies", "path": ":companyId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/$companyId-UW4RPN6S.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/index": { "id": "routes/admin/companies/index", "parentId": "routes/admin/companies", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/companies/index-4BSVGDD5.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/new": { "id": "routes/admin/companies/new", "parentId": "routes/admin/companies", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/new-GLSRUUU2.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations": { "id": "routes/admin/locations", "parentId": "routes/admin", "path": "locations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations-QONSRLML.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/$locationId": { "id": "routes/admin/locations/$locationId", "parentId": "routes/admin/locations", "path": ":locationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/$locationId-RWTMGOML.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-KTL2U4DC.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/index": { "id": "routes/admin/locations/index", "parentId": "routes/admin/locations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/locations/index-H5D5TGZI.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-KTL2U4DC.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/new": { "id": "routes/admin/locations/new", "parentId": "routes/admin/locations", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/new-RQAZBZBT.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places": { "id": "routes/admin/places", "parentId": "routes/admin", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places-JI4EUBKN.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/$placeId": { "id": "routes/admin/places/$placeId", "parentId": "routes/admin/places", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/$placeId-UUP5FXBR.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-UKX3DKWG.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-KTL2U4DC.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/index": { "id": "routes/admin/places/index", "parentId": "routes/admin/places", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/places/index-E537NUK4.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/new": { "id": "routes/admin/places/new", "parentId": "routes/admin/places", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/new-5YUM4XQO.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/$reservableTypeId": { "id": "routes/admin/reservableTypes/$reservableTypeId", "parentId": "routes/admin", "path": "reservableTypes/:reservableTypeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/$reservableTypeId-ZVLRI4VO.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-KTL2U4DC.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/index": { "id": "routes/admin/reservableTypes/index", "parentId": "routes/admin", "path": "reservableTypes", "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/index-LINDQWCG.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-KTL2U4DC.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/new": { "id": "routes/admin/reservableTypes/new", "parentId": "routes/admin", "path": "reservableTypes/new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/new-FTTIQOOS.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations": { "id": "routes/admin/reservations", "parentId": "routes/admin", "path": "reservations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations-X7OICTUY.js", "imports": ["/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/$reservationId": { "id": "routes/admin/reservations/$reservationId", "parentId": "routes/admin/reservations", "path": ":reservationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/$reservationId-3YAXAVFN.js", "imports": ["/build/_shared/chunk-ECYDDNUF.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-VE2BZMH3.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-E5PLFFBH.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-KTL2U4DC.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/index": { "id": "routes/admin/reservations/index", "parentId": "routes/admin/reservations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/index-UGJ3J2ZR.js", "imports": ["/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UKX3DKWG.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags": { "id": "routes/admin/tags", "parentId": "routes/admin", "path": "tags", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags-CBE3DI7P.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/$tagId": { "id": "routes/admin/tags/$tagId", "parentId": "routes/admin/tags", "path": ":tagId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/$tagId-S4VBNI2W.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/index": { "id": "routes/admin/tags/index", "parentId": "routes/admin/tags", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/tags/index-LMWBRXHM.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-KTL2U4DC.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/new": { "id": "routes/admin/tags/new", "parentId": "routes/admin/tags", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/new-SBTOJTPU.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate": { "id": "routes/authenticate", "parentId": "root", "path": "authenticate", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate-7IKAM4VF.js", "imports": ["/build/_shared/chunk-OL6MXRIT.js", "/build/_shared/chunk-VN2XBXNN.js", "/build/_shared/chunk-OJKNBJRJ.js", "/build/_shared/chunk-YOZXHZK7.js", "/build/_shared/chunk-E5PLFFBH.js", "/build/_shared/chunk-UKX3DKWG.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/login": { "id": "routes/authenticate/login", "parentId": "routes/authenticate", "path": "login", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/login-NWJQ2ACQ.js", "imports": void 0, "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/register": { "id": "routes/authenticate/register", "parentId": "routes/authenticate", "path": "register", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/register-JOC4TWPE.js", "imports": void 0, "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/doneVerifyingEmail": { "id": "routes/doneVerifyingEmail", "parentId": "root", "path": "doneVerifyingEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/doneVerifyingEmail-4P44TRBL.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-FYCA6OOL.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/logout": { "id": "routes/logout", "parentId": "root", "path": "logout", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/logout-5MGI43JZ.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/places": { "id": "routes/places", "parentId": "root", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/places-LGYJLQSZ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-VN2XBXNN.js", "/build/_shared/chunk-YOZXHZK7.js", "/build/_shared/chunk-E5PLFFBH.js", "/build/_shared/chunk-UKX3DKWG.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile-LVLEJQVW.js", "imports": ["/build/_shared/chunk-VE2BZMH3.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-YOZXHZK7.js", "/build/_shared/chunk-E5PLFFBH.js", "/build/_shared/chunk-UKX3DKWG.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/cancelReservation": { "id": "routes/profile/cancelReservation", "parentId": "routes/profile", "path": "cancelReservation", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/cancelReservation-PFYQJVRX.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-FTM4DERH.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/edit": { "id": "routes/profile/edit", "parentId": "routes/profile", "path": "edit", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/edit-JQ3QRJC4.js", "imports": ["/build/_shared/chunk-OJKNBJRJ.js", "/build/_shared/chunk-XOW3Y2UR.js", "/build/_shared/chunk-4V2FDP3P.js", "/build/_shared/chunk-KTL2U4DC.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/index": { "id": "routes/profile/index", "parentId": "routes/profile", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/profile/index-PIVWV76L.js", "imports": ["/build/_shared/chunk-OJKNBJRJ.js", "/build/_shared/chunk-XOW3Y2UR.js", "/build/_shared/chunk-4V2FDP3P.js", "/build/_shared/chunk-KTL2U4DC.js", "/build/_shared/chunk-PMUVGHLB.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/forgot": { "id": "routes/pwd/forgot", "parentId": "root", "path": "pwd/forgot", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/forgot-G2BWPXLJ.js", "imports": ["/build/_shared/chunk-MIKMODGZ.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-OL6MXRIT.js", "/build/_shared/chunk-VN2XBXNN.js", "/build/_shared/chunk-OJKNBJRJ.js", "/build/_shared/chunk-YOZXHZK7.js", "/build/_shared/chunk-E5PLFFBH.js", "/build/_shared/chunk-UKX3DKWG.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/reset": { "id": "routes/pwd/reset", "parentId": "root", "path": "pwd/reset", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/reset-6MSXYENM.js", "imports": ["/build/_shared/chunk-MIKMODGZ.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-OL6MXRIT.js", "/build/_shared/chunk-VN2XBXNN.js", "/build/_shared/chunk-OJKNBJRJ.js", "/build/_shared/chunk-YOZXHZK7.js", "/build/_shared/chunk-E5PLFFBH.js", "/build/_shared/chunk-UKX3DKWG.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/search": { "id": "routes/search", "parentId": "root", "path": "search", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/search-EVQVZ5CO.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-VN2XBXNN.js", "/build/_shared/chunk-YOZXHZK7.js", "/build/_shared/chunk-E5PLFFBH.js", "/build/_shared/chunk-UKX3DKWG.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/verifyEmail": { "id": "routes/verifyEmail", "parentId": "root", "path": "verifyEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/verifyEmail-P45UCFIH.js", "imports": ["/build/_shared/chunk-MIKMODGZ.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-EUWCKCHD.js", "/build/_shared/chunk-OL6MXRIT.js", "/build/_shared/chunk-VN2XBXNN.js", "/build/_shared/chunk-OJKNBJRJ.js", "/build/_shared/chunk-YOZXHZK7.js", "/build/_shared/chunk-E5PLFFBH.js", "/build/_shared/chunk-UKX3DKWG.js", "/build/_shared/chunk-XG74GX36.js", "/build/_shared/chunk-NYD43ICI.js", "/build/_shared/chunk-GQXZLMVL.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-1BDAEB77.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };
