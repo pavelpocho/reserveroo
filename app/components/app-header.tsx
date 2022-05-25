@@ -41,13 +41,14 @@ const InnerWrap = styled.div`
 
 const Title = styled.h6`
   color: ${styles.colors.primary};
-  padding: 0.5rem;
+  padding: 0.1rem 0.5rem;
   border-radius: 0.4rem;
   font-size: 1.375rem;
-  font-weight: bold;
+  font-weight: normal;
   margin: 0px;
   background-color: ${styles.colors.white};
   transition: background-color 0.15s;
+  font-family: 'Pacifico';
   &:hover {
     background-color: ${styles.colors.gray[20]};
   }

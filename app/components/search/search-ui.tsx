@@ -6,6 +6,7 @@ import SearchIcon from "~/assets/icons/Search";
 import { styles } from "~/constants/styles";
 import { useLangs } from "~/contexts/langsContext";
 import { CategoryWithTexts, LocationWithEverything, TagWithTexts } from "~/types/types";
+import InfoButton from "../info-button";
 import { MultiSelectorInput } from "../inputs/MultiSelectorInput";
 import { SingleSelectorInput } from "../inputs/SingleSelectorInput";
 import { SearchBar } from "./search-bar";
@@ -88,18 +89,6 @@ const TagFlex = styled.div`
   gap: 0.4rem;
 `;
 
-const InfoButton = styled.button`
-  background-color: transparent;
-  border: none;
-  flex-shrink: 0;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  width: 1.6rem;
-`;
-
 const StyledForm = styled(Form)`
   display: flex;
   flex-direction: column;
@@ -172,9 +161,7 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
     <StyledForm method='get' action='/search'>
       <Flex narrowView={narrowView ?? false}>
         <Title>Location</Title>
-        <InfoButton onClick={(e) => {
-          e.preventDefault();
-        }}><CircleInfoIcon height={'0.75rem'} /></InfoButton>
+        <InfoButton helpText={`Pick a city where you want to perfrom your search. Please note that our services aren't yet available everywhere.`}/>
         <InputFieldWrap narrowView={narrowView ?? false} >
           <SingleSelectorInput
             placeholder={'Pick a location'}
@@ -188,9 +175,7 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
         </InputFieldWrap>
         <LargeSpacer narrowView={narrowView ?? false}></LargeSpacer>
         <Title>Categories</Title>
-        <InfoButton onClick={(e) => {
-          e.preventDefault();
-        }}><CircleInfoIcon height={'0.75rem'} /></InfoButton>
+        <InfoButton helpText='Categories describe what kind of activity you can do at a place.' />
         <InputFieldWrap narrowView={narrowView ?? false}>
           <MultiSelectorInput
             placeholder='Pick categories'
@@ -203,9 +188,7 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
       { selectedTags.map(t => <input key={t.id} hidden={true} type={'text'} name='tags[]' value={t.id} readOnly={true} />)  }
       <TagFlex>
         <Title>Tags</Title>
-        <InfoButton onClick={(e) => {
-          e.preventDefault();
-        }}><CircleInfoIcon height={'0.75rem'} /></InfoButton>
+        <InfoButton helpText='Tags show additional attractive aspects of a place.' />
         {
           tags.map(t => <TagCategoryButton selected={!!selectedTags.find(st => st.id == t.id)} onClick={(e) => {
             e.preventDefault();

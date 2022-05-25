@@ -6,6 +6,7 @@ import AngleLeftIcon from '~/assets/icons/AngleLeft';
 import AnglesRightIcon from '~/assets/icons/AnglesRight';
 import { Button } from '~/components/button';
 import { ConfirmationDialog } from '~/components/confirmation-dialog';
+import InfoButton from '~/components/info-button';
 import { DateInput } from '~/components/inputs/DateInput';
 import { IdInput } from '~/components/inputs/ObjectInput';
 import { RadioInput } from '~/components/inputs/RadioInput';
@@ -127,6 +128,8 @@ const HeaderBar = styled.div<{ color: 'primary' | 'gray' | 'none' }>`
 
 const Title = styled.h5`
   margin: 0;
+  display: flex;
+  gap: 0.75rem;
 `;
 
 const ButtonWrap = styled.div`
@@ -302,7 +305,7 @@ export default function ReservationElement() {
         </ResE>) }
       </SlotList>
       <HeaderBar color='gray'>
-        <Title>Backup timeslot</Title>
+        <Title>Backup timeslot<InfoButton helpText={`If the timeslot you selected above isn't available, we will try to get a second option for you.`} /></Title>
         <SecondaryButtonBtn onClick={(e) => {
           e.preventDefault();
           setBackup(!backup);

@@ -6,6 +6,7 @@ import { styles } from "~/constants/styles";
 import { ReservableTypeWithTexts, ReservationStatus as R } from "~/types/types"
 import { Button } from "../button";
 import { ConfirmationDialog } from "../confirmation-dialog";
+import InfoButton from "../info-button";
 import { IdInput } from "../inputs/ObjectInput";
 import { PlaceImage } from "../place/place-image";
 import { SecondaryButtonBtn } from "../place/place-summary";
@@ -102,6 +103,8 @@ const InnerWrap = styled.div`
 const Status = styled.p`
   text-transform: uppercase;
   font-weight: 600;
+  display: flex;
+  gap: 0.75rem;
   font-size: 0.9rem;
   padding: 0.4rem 1rem;
   border-radius: 0.25rem;
@@ -180,6 +183,16 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
     prefStatus == R.Cancelled && backupStatus == R.Cancelled ? styles.colors.black : ''
   );
 
+  const helpText = (
+    prefStatus == R.AwaitingConfirmation || backupStatus == R.AwaitingConfirmation ? 'We are confirming your reservation with the business.' : 
+    prefStatus == R.Confirmed && backupStatus == null ? 'Your timeslot is confirmed. Enjoy!' : 
+    prefStatus == R.Rejected && backupStatus == null ? 'Your timeslot is unfortunately unavailable. You can try booking a different time though!' : 
+    prefStatus == R.Confirmed && backupStatus == R.Cancelled ? 'Your preferred timeslot is confirmed. Enjoy!' : 
+    prefStatus == R.Rejected && backupStatus == R.Confirmed ? 'Your BACKUP timeslot is confirmed. It is highlighed below. Enjoy!' : 
+    prefStatus == R.Rejected && backupStatus == R.Rejected ? 'Your timeslots are unfortunately unavailable. You can try booking a different time though!' : 
+    prefStatus == R.Cancelled && backupStatus == R.Cancelled ? 'You have cancelled this booking.' : ''
+  )
+
   return <>
     <ConfirmationDialog
       title='Confirm cancellation' 
@@ -202,9 +215,10 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
           <Status style={{
             backgroundColor: backgroundColor,
             color: color,
-          }}>{
-            text
-          }</Status>
+          }}>
+            {text}
+          <InfoButton left={true} bottom={true} helpText={helpText} />
+          </Status>
         </TitleStatus>
         {prefs > 0 && <>
           <SlotTitle style={text == 'Backup Confirmed' ? { opacity: 0.5 } : {}}>Preffered slot{prefs > 1 && 's'}:</SlotTitle>
