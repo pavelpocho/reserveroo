@@ -105,6 +105,27 @@ const FirstQuestionMark = styled(FontAwesomeIcon)`
   transform: rotate(25deg);
   position: absolute;
 `;
+const SecondQuestionMark = styled(FontAwesomeIcon)`
+  left: 10rem;
+  margin-top: 5rem;
+  font-size: 2.5rem;
+  transform: rotate(-25deg);
+  position: absolute;
+`;
+const ThirdQuestionMark = styled(FontAwesomeIcon)`
+  left: 15rem;
+  margin-top: 25rem;
+  font-size: 2.5rem;
+  transform: rotate(25deg);
+  position: absolute;
+`;
+const FourthQuestionMark = styled(FontAwesomeIcon)`
+  right: 20rem;
+  margin-top: 20rem;
+  font-size: 2.5rem;
+  transform: rotate(-25deg);
+  position: absolute;
+`;
 
 export default function About() {
   const { setLandingPage } = useWhereAreWe();
@@ -142,8 +163,17 @@ export default function About() {
             speed={layer.speed}
           ></ParallaxLayerComponent>
         ))}
-        <ParallaxLayer sticky={{ start: 1.3, end: 9 }}>
+        <ParallaxLayer sticky={{ start: 1.8, end: 9 }}>
           <FirstQuestionMark icon={faQuestion}></FirstQuestionMark>
+        </ParallaxLayer>
+        <ParallaxLayer sticky={{ start: 2.8, end: 9 }}>
+          <SecondQuestionMark icon={faQuestion}></SecondQuestionMark>
+        </ParallaxLayer>
+        <ParallaxLayer sticky={{ start: 3.8, end: 9 }}>
+          <ThirdQuestionMark icon={faQuestion}></ThirdQuestionMark>
+        </ParallaxLayer>
+        <ParallaxLayer sticky={{ start: 4.8, end: 9 }}>
+          <FourthQuestionMark icon={faQuestion}></FourthQuestionMark>
         </ParallaxLayer>
       </Parallax>
     </>

@@ -14,7 +14,14 @@ const Wrapper = styled.h1`
   background-color: ${styles.colors.gray};
 `;
 
-function ParallaxLayerComponent({question, offset, factor, speed}) {
+interface Question {
+  question: string;
+  offset: number;
+  factor: number;
+  speed: number;
+}
+
+const ParallaxLayerComponent: React.FC<Question> = ({ offset, factor, speed, question }) => {
   return (
     <ParallaxLayer
       offset={offset}
