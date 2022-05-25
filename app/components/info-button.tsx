@@ -18,17 +18,17 @@ const InfoButtonEl = styled.button`
 
 const Tooltip = styled.p<{ bottom: boolean, left: boolean }>`
   position: absolute;
-  left: 50%;
+  ${props => props.left ? 'right: -0.4rem' : 'left: 50%'};
+  ${props => props.bottom ? 'top: 1rem' : 'bottom: 1rem'};
   max-width: 30ch;
   background-color: ${styles.colors.white};
   padding: 0.5rem;
   border-radius: 0.5rem;
   border: 1px solid ${styles.colors.gray[20]};
-  ${props => props.bottom ? 'top: 1rem' : 'bottom: 1rem'};
   z-index: 2;
   font-weight: 500;
   transition: opacity 0.2s;
-  transform: translateX(-50%);
+  ${props => props.left ? '' : 'transform: translateX(-50%)'};
   &::after {
     height: 0.5rem;
     width: 0.5rem;
@@ -39,7 +39,7 @@ const Tooltip = styled.p<{ bottom: boolean, left: boolean }>`
     z-index: 0;
     border-bottom: 1px solid ${styles.colors.gray[20]};
     border-right: 1px solid ${styles.colors.gray[20]};
-    left: calc(50% - 0.25rem);
+    ${props => props.left ? 'right: 0.8rem' : 'left: calc(50% - 0.25rem)'};
     content: '';
   }
 `;
@@ -47,14 +47,15 @@ const Tooltip = styled.p<{ bottom: boolean, left: boolean }>`
 interface Props {
   helpText: string,
   bottom?: boolean,
-  left?: boolean
+  left?: boolean,
+  color?: string
 }
 
-const InfoButton: React.FC<Props> = ({ helpText, bottom = false, left = false }) => {
+const InfoButton: React.FC<Props> = ({ helpText, color = styles.colors.black, bottom = false, left = false }) => {
   
   const [ active, setActive ] = useState(false);
 
-  return <InfoButtonEl onClick={(e) => {e.preventDefault(); console.log('eeee')}} onMouseOver={() => {
+  return <InfoButtonEl onMouseOver={() => {
     setActive(true);
   }} onMouseOut={() => {
     setActive(false);
@@ -63,7 +64,7 @@ const InfoButton: React.FC<Props> = ({ helpText, bottom = false, left = false })
   }} onBlur={() => {
     setActive(false);
   }}>
-    <CircleInfoIcon height={'0.75rem'} />
+    <CircleInfoIcon fill={color} height={'0.75rem'} />
     <Tooltip left={left} bottom={bottom} style={{ visibility: active ? 'visible' : 'hidden', opacity: active ? '1' : '0', width: `${Math.min(helpText.length, 20)}ch` }}>
       {helpText}
     </Tooltip>
