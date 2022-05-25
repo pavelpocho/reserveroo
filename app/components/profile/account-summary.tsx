@@ -170,7 +170,7 @@ export const AccountSummary: React.FC<AccountSummaryProps> = ({ editing, user })
           </div>
           <div>
             <SectionTitle>Phone</SectionTitle>
-            { editing ? <TextInput setValue={(s) => { setValidPhone(isValidPhone(s)); console.log(isValidPhone(s)) }} name={'phone'} defaultValue={user?.phone} /> : <Value>{user?.phone}</Value> }
+            { editing ? <TextInput setValue={(s) => { setValidPhone(isValidPhone(s)) }} name={'phone'} defaultValue={user?.phone} /> : <Value>{user?.phone}</Value> }
             { editing && !validPhone && <ErrorLabel>Invalid phone</ErrorLabel> }
           </div>
           <div>

@@ -27,8 +27,6 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (user == null) return badRequest({ msg: "Something went wrong.", fields: { username: username } });
 
-  console.log(user);
-
   await sendPwdResetEmail(user?.email, getBaseUrl(request), username);
 
   return json({ msg: "You should get an email with the reset link.", fields: { username: username } });

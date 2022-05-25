@@ -39,9 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
       english: getFormItem('countryEnglish'),
     },
   }
-
-  console.log("just before update");
-  console.log(location)
+  
   await updateLocation(location);
 
   return redirect('/admin/locations');

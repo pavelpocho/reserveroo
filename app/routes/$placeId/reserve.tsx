@@ -237,8 +237,6 @@ export default function ReservationElement() {
   const [ date, setDate ] = React.useState<Date | null>(null);
   const [ backup, setBackup ] = React.useState(false);
 
-  console.log(resList);
-
   return (<Wrap>
     <ReserveConfirmationDialog 
       hidden={!confirmationDialog}

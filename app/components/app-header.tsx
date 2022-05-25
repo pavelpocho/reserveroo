@@ -256,20 +256,17 @@ export default function AppHeader({ children }: AppHeaderProps) {
       <InnerWrap>
         <Side>
           <BarLink onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }} to='/places'>
             <Title>{children}</Title>
           </BarLink>
           <BarLinkMoreThan400 onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }} to={isLandingPage ? "/places" : "/"}>
             <MenuItem>{isLandingPage ? "Places" : "Who are we?"}</MenuItem>
           </BarLinkMoreThan400>
         </Side>
         <MenuButton onClick={(e) => {
-          console.log('x');
           e.preventDefault();
           setShowMenu(!showMenu);
         }}>
@@ -277,14 +274,12 @@ export default function AppHeader({ children }: AppHeaderProps) {
         </MenuButton>
         <RightSide showMenu={showMenu} >
           <BarLinkLessThan400 onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }} to={isLandingPage ? "/places" : "/"}>
             <MenuItem>{isLandingPage ? "Places" : "Who are we?"}</MenuItem>
           </BarLinkLessThan400>
           <Separator400 />
           <BarLink onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }} style={{ marginRight: "0.6rem" }} to={"/admin/reservations"}>
             <MenuItem border={true}>List a business</MenuItem>
@@ -312,7 +307,6 @@ export default function AppHeader({ children }: AppHeaderProps) {
           </BarButton>
           <Separator />
           <BarLink onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }} hide={signingIn ?? false} to={"/profile"} style={{ fontWeight: "bold" }}>
             <MenuItem>
@@ -324,7 +318,6 @@ export default function AppHeader({ children }: AppHeaderProps) {
           <StretchForm action='/logout' method='post'>
             <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate'} />
             {(username || usernameToVerify) && <HoverBarButton onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }}>Logout</HoverBarButton> }
           </StretchForm>

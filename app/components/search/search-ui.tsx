@@ -8,6 +8,7 @@ import { useLangs } from "~/contexts/langsContext";
 import { CategoryWithTexts, LocationWithEverything, TagWithTexts } from "~/types/types";
 import InfoButton from "../info-button";
 import { MultiSelectorInput } from "../inputs/MultiSelectorInput";
+import { IdInput } from "../inputs/ObjectInput";
 import { SingleSelectorInput } from "../inputs/SingleSelectorInput";
 import { SearchBar } from "./search-bar";
 
@@ -153,8 +154,6 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
   const defaultCategories = categoryIds.map(ci => categories.find(c => c.id == ci));
   const defaultCategoryNames = defaultCategories.every(c => c != null) ? defaultCategories.map(c => c?.multiLangName ? `${c.multiLangName[lang]}` : null) : [];
 
-  console.log(categoryIds);
-
   const getLocationDescription = (l: LocationWithEverything) => `${l.multiLangCity ? l.multiLangCity[lang] : ''}, ${l.multiLangCountry ? l.multiLangCountry[lang] : ''}`;
 
   return <Wrap narrowView={narrowView ?? false}>
@@ -204,6 +203,7 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
         }
       </TagFlex>
       <SearchBar defaultValue={searchParams.get('searchTerm') ?? ''}></SearchBar>
+      <IdInput name='page' value='1'></IdInput>
       <SearchButton>Search<SearchIcon height={'1rem'} fill={styles.colors.white} /></SearchButton>
     </StyledForm>
   </Wrap>

@@ -38,8 +38,6 @@ export const action: ActionFunction = async ({ request }) => {
   const reservationGroupId = formData.get('rgId')?.toString();
   const action = formData.get('action')?.toString();
 
-  console.log("what dont we have");
-
   if (!reservationGroupId || !action) {
     // return error message
     return {}
@@ -48,10 +46,8 @@ export const action: ActionFunction = async ({ request }) => {
   const reservationGroup = await getReservationGroupForConfirmationEmail({ id: reservationGroupId });
 
   const promises: Promise<object>[] = [];
-  console.log(reservationGroup);
   
   reservationGroup?.reservations.forEach(r => {
-    console.log('r');
     if (action == 'confirm_preferred') {
       if (!r.backup) {
         promises.push(setStatusOfReservation({ id: r.id, status: ReservationStatus.Confirmed }));

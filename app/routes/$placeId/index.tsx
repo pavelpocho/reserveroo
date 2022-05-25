@@ -110,8 +110,6 @@ export default function PlaceDetails({}) {
 
   const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-  console.log(place.description != '' ? place.description : 'No description');
-
   return <Wrap>
     <FlexApart>
       <Title>Make a reservation</Title>

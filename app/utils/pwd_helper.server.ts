@@ -19,8 +19,6 @@ export const generateHashAndSalt = async (pwd: string) => {
 
 export const checkPassword = async (pwd: string, hash: string) => {
   const [salt, key] = hash.split(':');
-  console.log(salt);
-  console.log(key);
   const hashedBuffer = scryptSync(pwd, salt, 64);
 
   const keyBuffer = Buffer.from(key, 'hex');

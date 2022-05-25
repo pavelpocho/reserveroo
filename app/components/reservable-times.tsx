@@ -52,8 +52,6 @@ export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBac
     }
   });
 
-  console.log(reservableGroups);
-
   return <GroupWrap>
     {reservableGroups.map(rg => <ReservableGroupSection
       key={rg.typeId}

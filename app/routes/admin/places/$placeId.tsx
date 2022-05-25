@@ -67,8 +67,6 @@ export const action: ActionFunction = async ({ request }) => {
 
   const profilePic = imgForm.get('profilePic') as File;
   const galleryPics = imgForm.getAll('galleryPic[]') as File[];
-  console.log(profilePic);
-  console.log(galleryPics);
   const extension = profilePic ? profilePic.name.split('.')[profilePic.name.split('.').length - 1] : '';
   const acceptableTypes = ['jpeg', 'jpg', 'png', 'webp', 'gif'];
   const profilePicUrl = acceptableTypes.includes(extension) ? await uploadImageToS3(profilePic, `${crypto.randomUUID()}.${extension}`) : '';
@@ -82,8 +80,6 @@ export const action: ActionFunction = async ({ request }) => {
     galleryPicUrlPromises.push(uploadImageToS3(p, `${crypto.randomUUID()}.${extensionG}`));
   });
   const galleryPicUrls = await Promise.all(galleryPicUrlPromises);
-  console.log(profilePicUrl);
-  console.log(galleryPicUrls);
 
   const place: Pick<Place, 'id' | 'name' | 'companyId' | 'hidden' | 'description' | 'street' | 'city' | 'postCode' | 'howToGetThere'> & {
     addedTagIds: string[],
@@ -145,9 +141,6 @@ export const action: ActionFunction = async ({ request }) => {
   if (galleryPicUrls && galleryPicUrls.length > 0) promises.push(addToPlaceGalleryPics({ id: place.id, galleryPicUrls }));
   if (deletedGalleryPicUrls && deletedGalleryPicUrls.length > 0) promises.push(removeFromPlaceGalleryPics({ id: place.id, galleryPicUrls: deletedGalleryPicUrls }));
 
-  console.log("Keys to delete");
-  console.log(keysToDelete);
-  console.log(deletedGalleryPicUrls);
   if (keysToDelete && keysToDelete.length > 0) keysToDelete.forEach(k => {console.log(k); promises.push(deleteImageFromS3(k))});
 
   await Promise.all(promises);

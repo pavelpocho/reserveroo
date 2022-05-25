@@ -53,7 +53,6 @@ const Body = styled.body<{ isLandingPage: boolean }>`
 export const loader: LoaderFunction = async ({ request }) => {
   const { username, admin, usernameToVerify } = await getUsernameAndAdmin(request);
   const langs = request.headers.get('Accept-Language');
-  console.log(langs);
   return json({ username, admin, usernameToVerify, langs: langs?.split(',')[0] ?? '' });
 }
 

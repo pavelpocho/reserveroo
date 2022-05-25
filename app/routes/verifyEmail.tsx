@@ -75,7 +75,6 @@ export default function ComponentName() {
   const formRef = React.useRef<HTMLFormElement>(null);
 
   const [ countDown, setCountDown ] = React.useState(30);
-  console.log(countDown);
 
   React.useEffect(() => {
     if (formRef.current) {
