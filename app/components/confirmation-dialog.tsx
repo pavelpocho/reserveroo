@@ -16,7 +16,7 @@ interface ConfirmationDialogProps {
 const Wrap = styled.div<{ hidden: boolean }>`
   position: fixed;
   visibility: ${props => props.hidden ? 'hidden' : 'visible'};
-  transition: opacity 0.15s ease-in-out, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 0.15s ease-in-out, transform 0.3s ${styles.easings[0]};
   transform: scale(0.9);
   opacity: 0;
   z-index: 10;

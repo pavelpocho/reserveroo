@@ -32,5 +32,8 @@ export const styles = {
     '0 4px 8px 0 rgb(0 0 0 / 8%)',
     '0px 1px 4px rgba(0, 0, 0, 0.25)',
     '0px 1px 1px rgba(0, 0, 0, 0.25)'
+  ],
+  easings: [
+    'cubic-bezier(0.16, 1, 0.3, 1)'
   ]
 }

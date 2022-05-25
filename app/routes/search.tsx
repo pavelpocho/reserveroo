@@ -1,7 +1,7 @@
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
-import { getPlaceList, Place } from "~/models/place.server";
+import { getSearchPlaces, Place } from "~/models/place.server";
 import styled from "styled-components";
 import { SearchBar } from "~/components/search/search-bar";
 import { PlaceSummary } from "~/components/place/place-summary";
@@ -47,8 +47,10 @@ export const loader: LoaderFunction = async ({ request }) => {
     categoryIds: categories
   })
 
+
+
   return json({
-    places: await getPlaceList({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories }),
+    places: await getSearchPlaces({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories }),
     locations: await getAllLocations(),
     tags: await getTagList({ nameFragment: '' }),
     categories: await getCategoryList({ nameFragment: '' }),
