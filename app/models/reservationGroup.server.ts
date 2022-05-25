@@ -7,6 +7,7 @@ export type { ReservationGroup } from "@prisma/client";
 export const getReservationGroup = async ({ id }: Pick<ReservationGroup, 'id'>) => (await prisma.reservationGroup.findFirst({
   where: { id },
   include: {
+    user: true,
     reservations: {
       include: {
         reservable: {

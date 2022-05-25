@@ -1,5 +1,6 @@
 import { ActionFunction, redirect } from '@remix-run/server-runtime'
 import { setStatusOfReservationsInGroup } from '~/models/reservation.server';
+import { getReservationGroup } from '~/models/reservationGroup.server';
 import { ReservationStatus } from '~/types/types';
 import { sendCancellationEmail } from '~/utils/emails.server';
 import { getFormEssentials } from '~/utils/forms';
@@ -11,7 +12,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   await setStatusOfReservationsInGroup({ reservationGroupId, status: ReservationStatus.Cancelled });
 
-  await sendCancellationEmail();
+  const resGroup = await getReservationGroup({ id: reservationGroupId });
+  if (resGroup?.user?.email) await sendCancellationEmail(resGroup?.user?.email);
   
   return redirect('/profile');
 }

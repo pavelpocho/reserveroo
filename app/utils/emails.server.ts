@@ -63,8 +63,23 @@ export const sendCreationEmail = async (sendToAddress: string) => {
   await sgMail.send(msg);
 }
 
-export const sendCancellationEmail = async () => {
-  
+export const sendCancellationEmail = async (sendToAddress: string) => {
+  if (sendToAddress == '') return;
+  let address = 'pavlik.pocho@gmail.com';
+  if (process.env.NODE_ENV === 'production') {
+    address = sendToAddress;
+  }
+  const msg = {
+    to: address,
+    from: {
+      name: 'Reserveroo Info',
+      email: 'info@reserveroo.com'
+    },
+    subject: `Reservation cancelled`,
+    text: `You cancelled your reservaiton successfuly. Thank you for giving us a shot! We appreciate it. :)`,
+    html: `<p>You cancelled your reservaiton successfuly. Thank you for giving us a shot! We appreciate it. :)</p>`
+  }
+  await sgMail.send(msg);
 }
 
 export const sendStatusUpdateEmail = async (sendToAddress: string, status: 'confirm_preferred' | 'unavailable' | 'confirm_backup', place: Place, start: Date) => {
