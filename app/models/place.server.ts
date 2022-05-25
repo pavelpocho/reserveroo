@@ -54,8 +54,13 @@ export const getPlaceWithReservations = async ({ id }: Pick<Place, 'id'>) => (aw
   }
 }));
 
-export const getPlaceList = async ({ name: nameFragment, cityCountry, tagIds, catIds }: Pick<Place, 'name'> & { cityCountry: string | undefined, tagIds: string[], catIds: string[] }) => (await prisma.place.findMany({
-  where: { 
+export const getSearchPlaces = async ({ name: nameFragment, cityCountry, tagIds, catIds, page, itemsPerPage }: Pick<Place, 'name'> & { cityCountry: string | undefined, tagIds: string[], catIds: string[], itemsPerPage: number, page: number }) => (await prisma.place.findMany({
+  orderBy: [{
+    createdAt: 'desc',
+  }],
+  take: itemsPerPage,
+  skip: (page - 1) * itemsPerPage,
+  where: {
     AND: [{
       name: {
         contains: nameFragment, mode: 'insensitive',

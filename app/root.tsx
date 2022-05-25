@@ -98,7 +98,7 @@ const Main: React.FC<MainProps> = ({ isLandingPage, admin }) => {
 
   return <>
     <div style={{ minHeight: 'calc(100vh - 11.2rem)' }}>
-      <AppHeader>Reserveroo</AppHeader>
+      <AppHeader>idlehours</AppHeader>
       <Outlet />
     </div>
     {!isLandingPage && <Footer>

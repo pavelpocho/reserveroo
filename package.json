@@ -10,7 +10,7 @@
     "migrate-prisma": "prisma migrate dev",
     "build": "remix build",
     "deploy": "fly deploy --remote-only",
-    "dev": "remix dev",
+    "dev": "npm run clean && remix dev",
     "start": "remix-serve build"
   },
   "dependencies": {

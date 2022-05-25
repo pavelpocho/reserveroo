@@ -9,7 +9,7 @@ interface LoaderProps {
 
 const Wrap = styled.div<{ show: boolean }>`
   position: fixed;
-  transition: opacity 0.1s ease-out, transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+  transition: opacity 0.3s ${styles.easings[0]}, transform 0.3s ${styles.easings[0]};
   opacity: ${props => props.show ? '1' : '0'};
   transform: translateY(${props => props.show ? '0' : '4.5'}rem);
   bottom: 2.5rem;
@@ -51,8 +51,6 @@ const Symbol = styled.div`
   border-radius: 0.2rem;
   animation-name: ${spin};
   animation-duration: 1.2s;
-  animation-delay: 0.9s;
-  animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 `;
 
