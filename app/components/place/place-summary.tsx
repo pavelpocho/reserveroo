@@ -10,7 +10,6 @@ import { styles } from "~/constants/styles";
 import { UnstyledLink } from "~/root";
 import { ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
 import { getDayOfWeek } from "~/utils/forms";
-import { AvailabilityIndicator } from "../availability-indicator";
 import { FacilitiesIndicator } from "./facilities-indicator";
 import { PlaceImage } from "./place-image";
 import { TagList } from "./tag-list";
@@ -140,6 +139,13 @@ export const SecondaryButtonBtn = styled(BaseButtonBtn)`
 export const MainButtonBtn = styled(BaseButtonBtn)`
   border: 1.5px solid ${styles.colors.action};
   background-color: ${styles.colors.action};
+  &:disabled {
+    background-color: ${styles.colors.gray[60]};
+    &:hover {
+      transform: none;
+      cursor: default;
+    }
+  }
 `;
 
 const Time = styled.p`

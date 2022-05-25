@@ -1,9 +1,16 @@
 import { Form, useActionData } from '@remix-run/react'
 import { ActionFunction, json, LoaderFunction } from '@remix-run/server-runtime'
+import { FaAngleDoubleRight } from 'react-icons/fa'
+import styled from 'styled-components'
+import { AuthWrap } from '~/components/auth/login'
+import { IconRow } from '~/components/icon-row'
 import { TextInput } from '~/components/inputs/TextInput'
+import { MainButtonBtn } from '~/components/place/place-summary'
 import { getEmailFromUsername } from '~/models/user.server'
 import { sendPwdResetEmail } from '~/utils/emails.server'
 import { badRequest, getBaseUrl, getFormEssentials } from '~/utils/forms'
+import { Title } from '../authenticate'
+import { Text } from '../verifyEmail'
 
 interface ActionData {
   msg: string;
@@ -31,16 +38,26 @@ export const loader: LoaderFunction = async ({ request }) => {
   return {};
 }
 
+const InputWrap = styled.div`
+  padding: 0 1rem;
+`;
+
 export default function ForgotPassword() {
 
   const a = useActionData<ActionData>();
 
   return <div>
-    <p>Put in your username, we will send you a link to reset your password</p>
-    <Form method='post'>
-      {a?.msg && <p>{a?.msg}</p>}
-      <TextInput name='username' title='Username' defaultValue={a?.fields?.username ?? ''} />
-      <button>Reset password</button>
-    </Form>
+    <Title>Password Reset - Step 1</Title>
+    <IconRow invertColors={true} />
+    <AuthWrap style={{ paddingBottom: '2rem' }}>
+      <Text>Enter your username. If it exists, we will send a password recovery link to the email address paired with your account.</Text>
+      <Form method='post'>
+        {a?.msg && <p>{a?.msg}</p>}
+        <InputWrap>
+          <TextInput name='username' title='Username' defaultValue={a?.fields?.username ?? ''} />
+        </InputWrap>
+        <MainButtonBtn style={{ margin: '1.5rem auto 0' }}>Reset Password<FaAngleDoubleRight /></MainButtonBtn>
+      </Form>
+    </AuthWrap>
   </div>
 }

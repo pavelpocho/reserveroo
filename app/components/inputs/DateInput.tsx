@@ -40,6 +40,12 @@ const Calendar = styled.div`
   box-shadow: ${styles.shadows[0]};
   border-radius: 0.5rem;
   z-index: 6;
+  @media(max-width: 500px) {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 `;
 
 const Header = styled.div`

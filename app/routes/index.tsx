@@ -1,4 +1,3 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Parallax, ParallaxLayer } from "@react-spring/parallax";
 import { Link } from "@remix-run/react";
 import React from "react";
@@ -39,18 +38,18 @@ const ALink = styled(Link)`
   text-decoration: none;
 `;
 
-const Arrow = styled(FontAwesomeIcon)`
-  display: flex;
-  margin: 0 auto;
-  font-size: 2.5rem;
-  color: ${styles.colors.primary};
-`;
+// const Arrow = styled(FontAwesomeIcon)`
+//   display: flex;
+//   margin: 0 auto;
+//   font-size: 2.5rem;
+//   color: ${styles.colors.primary};
+// `;
 
-const FirstQuestionMark = styled(FontAwesomeIcon)`
-  margin-left: 2rem;
-  font-size: 2.5rem;
-  transform: rotate(25deg);
-`
+// const FirstQuestionMark = styled(FontAwesomeIcon)`
+//   margin-left: 2rem;
+//   font-size: 2.5rem;
+//   transform: rotate(25deg);
+// `
 
 export default function About() {
   const { setLandingPage } = useWhereAreWe();
@@ -76,8 +75,8 @@ export default function About() {
             <Button>Check out activities</Button>
           </ALink>
           <H1>Why was Reserveroo created?</H1>
-          <Arrow icon={faCircleArrowDown}></Arrow>
-          <p style={{ "text-align": "center" }}>Scroll down</p>
+          {/* <Arrow icon={faCircleArrowDown}></Arrow> */}
+          <p style={{ textAlign: "center" }}>Scroll down</p>
         </ParallaxLayer>
         <ParallaxLayer
           offset={1}
@@ -99,7 +98,7 @@ export default function About() {
         </ParallaxLayer>
 
         <ParallaxLayer sticky={{ start: 1.3 }}>
-          <FirstQuestionMark icon={faQuestion}></FirstQuestionMark>
+          {/* <FirstQuestionMark icon={faQuestion}></FirstQuestionMark> */}
         </ParallaxLayer>
 
         <ParallaxLayer

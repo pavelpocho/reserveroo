@@ -14,77 +14,49 @@ interface ReservationSummaryProps {
       ReservableType: ReservableTypeWithTexts
       place: Place
     }) | null;
-  }
+  },
+  style: React.CSSProperties
 }
 
 const Wrap = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
 `;
 
-const Background = styled.div`
-  background-color: ${styles.colors.white};
-  box-shadow: ${styles.shadows[2]};
+const Flex = styled.div`
   display: flex;
-  border-top-left-radius: 0.25rem;
-  overflow: hidden;
-  border-top-right-radius: 0.25rem;
-`;
-
-const Title = styled.p`
-  font-weight: bold;
-  font-size: 0.9rem;
-  margin: 0;
-  margin-top: 1rem;
-  color: ${styles.colors.action};
+  align-items: center;
+  gap: 1rem;
+  &>div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.7rem;
+  }
 `;
 
 const Value = styled.p`
-  font-size: 1.2rem;
+  font-size: 0.9125rem;
   margin-top: 0.2rem;
+  font-weight: 500;
   margin-bottom: 0;
 `;
 
-const Status = styled.p`
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: 0.8125rem;
-  padding: 0.2rem;
-  box-shadow: ${styles.shadows[2]};
-  border-bottom-left-radius: 0.25rem;
-  border-bottom-right-radius: 0.25rem;
-  margin: 0;
-`;
-
-export const ReservationSummary: React.FC<ReservationSummaryProps> = ({ reservation: r }) => {
+export const ReservationSummary: React.FC<ReservationSummaryProps> = ({ reservation: r, style }) => {
 
   const { lang } = useLangs();
 
-  return <Wrap>
-    <Background>
-      { r?.reservable?.ReservableType.multiLangName && <Indicator key={r.id}>{r.reservable.ReservableType.multiLangName[lang]}</Indicator>}
+  return <Wrap style={style}>
+    { r?.reservable?.ReservableType.multiLangName && <Indicator style={{ padding: '0.5rem 1rem' }} key={r.id}>{r.reservable.ReservableType.multiLangName[lang]}</Indicator>}
+    <Flex>
       <div>
-        <CalendarIcon /><Value>{new Date(r.start).toLocaleDateString()}</Value>
+        <CalendarIcon height={'1rem'} /><Value>{new Date(r.start).toLocaleDateString()}</Value>
       </div>
       <div>
-        <ClockIcon />
-        <Value>{getStringTimeValue(new Date(r.start))} - {getStringTimeValue(new Date(r.end))}</Value>
+        <ClockIcon height={'1rem'} /><Value>{getStringTimeValue(new Date(r.start))} - {getStringTimeValue(new Date(r.end))}</Value>
       </div>
-    </Background>
-    <Status style={{
-      backgroundColor: (r.status) == R.AwaitingConfirmation ? styles.colors.warn : 
-      (r.status) == R.Confirmed ? styles.colors.free : 
-      (r.status) == R.Rejected ? styles.colors.busy : 
-      (r.status) == R.Cancelled ? styles.colors.gray[70] : 
-      (r.status) == R.Paid ? styles.colors.free :
-      (r.status) == R.Past ? styles.colors.gray[30] : ''
-    }}>{
-      (r.status) == R.AwaitingConfirmation ? 'Awaiting confirmation' : 
-      (r.status) == R.Confirmed ? 'Confirmed' : 
-      (r.status) == R.Rejected ? 'Rejected' : 
-      (r.status) == R.Cancelled ? 'Cancelled' : 
-      (r.status) == R.Paid ? 'Paid' :
-      (r.status) == R.Past ? 'Past' : '' 
-    }</Status>
+    </Flex>
   </Wrap>
 }

@@ -1,5 +1,6 @@
 import { Company, CompanyIdentity, OpeningTime, Place, PrismaClient, Reservation, ReservationGroup } from "@prisma/client";
 import { checkPassword, generateHashAndSalt } from "~/utils/pwd_helper.server";
+import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
 
@@ -12,10 +13,21 @@ const seed = async () => {
   const users = await generateUsers();
 
   const createdCompanies = await Promise.all(
-    companies.map(c => {
-      return prisma.company.create({ data: c });
+    [...Array(100).keys()].map(i => {
+      return prisma.company.create({ data: {
+        name: `${faker.company.companyName()} ${faker.company.companySuffix()}`
+      } });
     })
   );
+  
+  const createdPlaces = await Promise.all(
+    places.map((p, i) => {
+      return prisma.place.create({ data: {
+        companyId: createdCompanies[i].id,
+        ...p
+      } })
+    })
+  )
 
   const createdCompanyIdentities = await Promise.all(
     companyIdentities.map((cI, i) => {
@@ -31,15 +43,6 @@ const seed = async () => {
       return prisma.user.create({ data: u })
     })
   );
-
-  const createdPlaces = await Promise.all(
-    places.map((p, i) => {
-      return prisma.place.create({ data: {
-        companyId: createdCompanies[i].id,
-        ...p
-      } })
-    })
-  )
 
   let openingTimePromises: Promise<OpeningTime>[] = [];
 

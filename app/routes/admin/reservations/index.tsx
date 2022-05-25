@@ -6,7 +6,7 @@ import { AdminReservationGroupSummary } from '~/components/admin/reservation-gro
 import { IdInput } from '~/components/inputs/ObjectInput';
 import { ReservationGroupSummary } from '~/components/profile/reservation-group-summary';
 import { Place } from '~/models/place.server';
-import { changeReservationStatus, setStatusOfReservationsInGroup, updateReservation } from '~/models/reservation.server';
+import { changeReservationStatus, setStatusOfReservation, setStatusOfReservationsInGroup, updateReservation } from '~/models/reservation.server';
 import { getReservationGroup, getReservationGroupForConfirmationEmail, getReservationGroupList, ReservationGroup } from '~/models/reservationGroup.server'
 import { User } from '~/models/user.server';
 import { ReservationStatus } from '~/types/types';
@@ -36,28 +36,66 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   // TODO: Validation
   const reservationGroupId = formData.get('rgId')?.toString();
-  const status = parseInt(formData.get('status')?.toString() ?? '');
+  const action = formData.get('action')?.toString();
 
-  if (!reservationGroupId || isNaN(status)) {
+  console.log("what dont we have");
+
+  if (!reservationGroupId || !action) {
     // return error message
     return {}
   }
 
   const reservationGroup = await getReservationGroupForConfirmationEmail({ id: reservationGroupId });
+
+  const promises: Promise<object>[] = [];
+  console.log(reservationGroup);
   
-  await setStatusOfReservationsInGroup({ reservationGroupId, status });
-  if (
-    reservationGroup?.reservations[0].reservable?.place && 
-    reservationGroup?.user?.email &&
-    reservationGroup?.reservations.length > 0 &&
-    (status == ReservationStatus.Confirmed || status == ReservationStatus.Rejected)
-  ) {
-    await sendStatusUpdateEmail(
-      reservationGroup?.user?.email,
-      status,
-      reservationGroup?.reservations[0].reservable?.place,
-      reservationGroup.reservations[0].start
-    );
+  reservationGroup?.reservations.forEach(r => {
+    console.log('r');
+    if (action == 'confirm_preferred') {
+      if (!r.backup) {
+        promises.push(setStatusOfReservation({ id: r.id, status: ReservationStatus.Confirmed }));
+      }
+      else {
+        promises.push(setStatusOfReservation({ id: r.id, status: ReservationStatus.Cancelled }));
+      }
+    } else if (action == 'unavailable') {
+      promises.push(setStatusOfReservation({ id: r.id, status: ReservationStatus.Rejected }));
+    } else if (action == 'confirm_backup') {
+      if (r.backup) {
+        promises.push(setStatusOfReservation({ id: r.id, status: ReservationStatus.Confirmed }));
+      }
+      else {
+        promises.push(setStatusOfReservation({ id: r.id, status: ReservationStatus.Rejected }));
+      }
+    }
+  });
+
+  await Promise.all(promises);
+
+  if (reservationGroup?.user && reservationGroup?.reservations[0].reservable?.place) { 
+    if (action == 'confirm_preferred') {
+      await sendStatusUpdateEmail(
+        reservationGroup?.user?.email,
+        'confirm_preferred',
+        reservationGroup?.reservations[0].reservable?.place,
+        reservationGroup.reservations[0].start
+      );
+    } else if (action == 'unavailable') {
+      await sendStatusUpdateEmail(
+        reservationGroup?.user?.email,
+        'unavailable',
+        reservationGroup?.reservations[0].reservable?.place,
+        reservationGroup.reservations[0].start
+      );
+    } else if (action == 'confirm_backup') {
+      await sendStatusUpdateEmail(
+        reservationGroup?.user?.email,
+        'confirm_backup',
+        reservationGroup?.reservations[0].reservable?.place,
+        reservationGroup.reservations[0].start
+      );
+    }
   }
 
   return {}
@@ -70,16 +108,9 @@ const Title = styled.h4`
 export default function ReservationAdminList() {
 
   const { reservationGroups } = useLoaderData<ReservationsAdminLoaderData>();
-  const submit = useSubmit();
-
-  const handleChange = (rgId: string, form: HTMLFormElement) => {
-    submit(form, { replace: true });
-  }
 
   return <>
     <Title>Reservations</Title>
-    { reservationGroups.map(rg => <AdminReservationGroupSummary key={rg.id} reservationGroup={rg} onChangeStatus={(rgId, form) => {
-        handleChange(rgId, form);
-    }} />) }
+    { reservationGroups.map(rg => <AdminReservationGroupSummary key={rg.id} reservationGroup={rg} />) }
   </>
 }

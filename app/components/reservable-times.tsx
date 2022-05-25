@@ -3,6 +3,7 @@ import React from "react"
 import styled from "styled-components"
 import { styles } from "~/constants/styles"
 import { useLangs } from "~/contexts/langsContext"
+import { Res } from "~/routes/$placeId/reserve"
 import { ReservableTypeWithTexts, ReservableWithReservations, ReservationGroupForEdit, ReservationStatus, Time, TimeSection } from "~/types/types"
 import { areDatesEqual, getInputDateFromString, getStringTimeValue } from "~/utils/forms"
 import { IdInput } from "./inputs/ObjectInput"
@@ -20,6 +21,7 @@ interface ReservableTimesProps {
   reservationIdName: string,
   backup?: boolean,
   reservationBackupName: string,
+  setResList: React.Dispatch<React.SetStateAction<Res[]>>
 }
 
 type ReservableGroup = {
@@ -30,7 +32,7 @@ type ReservableGroup = {
   })[]
 }
 
-export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBackupName, backup = false, reservationIdName, defaultReservationGroup, reservableIdName, reservables, date, openingTime, startName, endName }: ReservableTimesProps) => {
+export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBackupName, setResList, backup = false, reservationIdName, defaultReservationGroup, reservableIdName, reservables, date, openingTime, startName, endName }: ReservableTimesProps) => {
 
   const { lang } = useLangs();
 
@@ -50,6 +52,8 @@ export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBac
     }
   });
 
+  console.log(reservableGroups);
+
   return <GroupWrap>
     {reservableGroups.map(rg => <ReservableGroupSection
       key={rg.typeId}
@@ -58,23 +62,15 @@ export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBac
       openingTime={openingTime}
       startName={startName}
       endName={endName}
+      backup={backup}
       reservableIdName={reservableIdName}
       defaultReservation={undefined}
+      defaultReservationGroup={defaultReservationGroup}
       reservationIdName={reservationIdName}
-      reservationBackupName={reservationBackupName} />
+      reservationBackupName={reservationBackupName}
+      setResList={setResList} />
     )}
   </GroupWrap>
-
-  // return <>{
-  //   reservables.map(r => <ReservableSection
-  //     backup={backup}
-  //     reservationBackupName={reservationBackupName}
-  //     reservationIdName={reservationIdName}
-  //     defaultReservationGroup={defaultReservationGroup}
-  //     defaultReservation={defaultReservationGroup?.reservations.find(reservation => (
-  //       reservation.reservable?.id == r.id && reservation.backup === backup
-  //   ))} reservableIdName={reservableIdName} startName={startName} endName={endName} key={r.id} reservable={r} date={date} openingTime={openingTime} />)
-  // }</>
 }
 
 interface ReservableGroupSectionProps {
@@ -96,6 +92,7 @@ interface ReservableGroupSectionProps {
   reservationIdName: string,
   backup?: boolean,
   reservationBackupName: string,
+  setResList: React.Dispatch<React.SetStateAction<Res[]>>
 }
 
 const TypeName = styled.h3`
@@ -107,7 +104,6 @@ const TypeName = styled.h3`
   padding: 1.6rem 1rem 0.5rem;
   margin-bottom: 0;
   margin-top: 0;
-  border-top-left-radius: 0.5rem;
   background-color: ${styles.colors.gray[5]};
 `;
 
@@ -134,7 +130,7 @@ const GroupWrap = styled.div`
 
 const ReservableGroupSection: React.FC<ReservableGroupSectionProps> = ({
   reservableGroup, date, openingTime, startName, endName, reservableIdName, defaultReservation,
-  defaultReservationGroup, reservationIdName, backup, reservationBackupName
+  defaultReservationGroup, reservationIdName, backup, reservationBackupName, setResList
 }) => {
 
   const openMinutes = getDiffBetweenTwoDates(openingTime.close, openingTime.open);
@@ -160,10 +156,13 @@ const ReservableGroupSection: React.FC<ReservableGroupSectionProps> = ({
       openingTime={openingTime}
       startName={startName}
       endName={endName}
+      backup={backup}
       reservableIdName={reservableIdName}
       defaultReservation={defaultReservation}
-      reservationIdName={reservableIdName}
+      reservationIdName={reservationIdName}
+      defaultReservationGroup={defaultReservationGroup}
       reservationBackupName={reservationBackupName}
+      setResList={setResList}
     />)}
   </>
 }
@@ -268,15 +267,14 @@ interface ReservableSectionProps {
   reservationIdName: string,
   backup?: boolean,
   reservationBackupName: string,
+  setResList: React.Dispatch<React.SetStateAction<Res[]>>
 }
 
-const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservationGroup, reservationBackupName, backup, reservationIdName, defaultReservation, reservableIdName, reservable, date, openingTime, startName, endName }: ReservableSectionProps) => {
+const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservationGroup, setResList, reservationBackupName, backup, reservationIdName, defaultReservation, reservableIdName, reservable, date, openingTime, startName, endName }: ReservableSectionProps) => {
 
   const openMinutes = getDiffBetweenTwoDates(openingTime.close, openingTime.open);
   const openSinceMinutes = new Date(openingTime.open).getMinutes() + new Date(openingTime.open).getHours() * 60;
   const minMin = reservable.minimumReservationTime;
-  // Not used right now, might be in the future
-  const slotCapacity = reservable.reservationsPerSlot;
   const sections = Math.floor(openMinutes / Math.max(1, minMin));
   const timeSections = [...Array(sections).keys()].map(s => ({
     start: { minute: Math.round((s * minMin + openSinceMinutes) % 60), hour: Math.floor((s * minMin + openSinceMinutes) / 60) },
@@ -331,6 +329,16 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
             ).length >= reservable.reservationsPerSlot;
             setSelectedRange(overlap ? selectedRange : newRange);
             setSelectedDate(overlap ? selectedDate : date);
+            setResList(resList => {
+              const r = overlap ? selectedRange: newRange;
+              const d = overlap ? selectedDate: date;
+              const startDate = r ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.start.hour, r.start.minute) : null;
+              const endDate = r ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.end.hour, r.end.minute) : null;
+              const obj = (startDate?.getTime() ?? 0) < (endDate?.getTime() ?? 0) ? { reservableId: reservable.id, startTime: startDate, endTime: endDate, isBackup: backup ?? false } : null;
+              const arr =  resList.filter(rx => rx.reservableId != reservable.id || rx.isBackup != backup);
+              if (obj != null) arr.push(obj);
+              return arr;
+            })
             e.preventDefault();
           }}
         ></Section>

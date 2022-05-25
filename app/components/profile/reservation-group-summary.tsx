@@ -1,9 +1,9 @@
 import { Place, Reservable, Reservation, ReservationGroup } from "@prisma/client"
-import { Form } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 import React from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
-import { ReservableTypeWithTexts, ReservationStatus } from "~/types/types"
+import { ReservableTypeWithTexts, ReservationStatus as R } from "~/types/types"
 import { Button } from "../button";
 import { ConfirmationDialog } from "../confirmation-dialog";
 import { IdInput } from "../inputs/ObjectInput";
@@ -23,8 +23,11 @@ interface ReservationGroupSummaryProps {
   onCancel: (reservationGroupId: string, formRef: HTMLFormElement) => void
 }
 
-const Title = styled.h5`
+const Title = styled(Link)`
   margin: 0;
+  font-weight: bold;
+  text-decoration: none;
+  color: ${styles.colors.black};
   font-size: 1.2rem;
 `;
 
@@ -32,7 +35,6 @@ const NoteTitle = styled.p`
   font-weight: bold;
   font-size: 0.9rem;
   margin: 0;
-  margin-top: 1.5rem;
   color: ${styles.colors.action};
 `;
 
@@ -43,8 +45,14 @@ const Value = styled.p`
 `;
 
 const Wrap = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-rows: 9rem auto;
+  @media (min-width: 550px) {
+    grid-template-rows: unset;
+    grid-template-columns: 11rem auto;
+  }
   overflow: hidden;
+  gap: 0.87rem;
   transition:
     height 0.3s cubic-bezier(0.33, 1, 0.68, 1),
     padding 0.3s cubic-bezier(0.33, 1, 0.68, 1),
@@ -53,16 +61,57 @@ const Wrap = styled.div`
   border-radius: 0.6rem;
   background-color: ${styles.colors.gray[5]};
   padding: 1.3rem 1rem;
-  align-items: flex-start;
-  flex-direction: column;
-  justify-content: space-between;
   margin-top: 1rem;
   /* &>* {
     flex-shrink: 0;
   } */
 `;
 
+const CancelWrap = styled.div`
+  width: 100%;
+  @media (min-width: 550px) {
+    width: auto;
+    align-self: flex-end;
+  }
+`;
+
+const TitleStatus = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  @media (max-width: 550px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+`;
+
+const SlotTitle = styled.p`
+  margin: 0;
+`;
+
 const InnerWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.87rem;
+  align-items: flex-start;
+`;
+
+const Status = styled.p`
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.4rem 1rem;
+  border-radius: 0.25rem;
+  margin: 0;
+`;
+
+const Line = styled.div`
+  height: 1px;
+  width: 100%;
+  background-color: ${styles.colors.gray[30]};
 `;
 
 export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = ({ reservationGroup: rg, onCancel }) => {
@@ -90,6 +139,46 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
 
   const prefs = rg.reservations.filter(r => !r.backup).length;
   const backups = rg.reservations.filter(r => r.backup).length;
+  console.log(rg);
+  // Options: 
+  // Just main option       Waiting
+  // Just main option       Confirmed
+  // Just main option       Unavailable
+  // Main + backup option       Waiting
+  // Main + backup option       Main confirmed
+  // Main + backup option       Backup confirmed
+  // Main + backup option       Unavailable
+  const prefStatus = rg.reservations.filter(r => !r.backup)[prefs - 1].status;
+  const backupStatus = backups > 0 ? rg.reservations.filter(r => r.backup)[backups - 1].status : null;
+  const text = (
+    prefStatus == R.AwaitingConfirmation || backupStatus == R.AwaitingConfirmation ? 'Awaiting confirmation' : 
+    prefStatus == R.Confirmed && backupStatus == null ? 'Confirmed' : 
+    prefStatus == R.Rejected && backupStatus == null ? 'Unavailable' : 
+    prefStatus == R.Confirmed && backupStatus == R.Cancelled ? 'Preferred Confirmed' : 
+    prefStatus == R.Rejected && backupStatus == R.Confirmed ? 'Backup Confirmed' : 
+    prefStatus == R.Rejected && backupStatus == R.Rejected ? 'Unavailable' :
+    prefStatus == R.Cancelled && backupStatus == R.Cancelled ? 'Cancelled' : ''
+  );
+
+  const backgroundColor = (
+    prefStatus == R.AwaitingConfirmation || backupStatus == R.AwaitingConfirmation ? styles.colors.warn : 
+    prefStatus == R.Confirmed && backupStatus == null ? styles.colors.free : 
+    prefStatus == R.Rejected && backupStatus == null ? styles.colors.busy : 
+    prefStatus == R.Confirmed && backupStatus == R.Cancelled ? styles.colors.free : 
+    prefStatus == R.Rejected && backupStatus == R.Confirmed ? styles.colors.free : 
+    prefStatus == R.Rejected && backupStatus == R.Rejected ? styles.colors.busy : 
+    prefStatus == R.Cancelled && backupStatus == R.Cancelled ? styles.colors.gray[70] : ''
+  );
+
+  const color = (
+    prefStatus == R.AwaitingConfirmation || backupStatus == R.AwaitingConfirmation ? styles.colors.black : 
+    prefStatus == R.Confirmed && backupStatus == null ? styles.colors.black : 
+    prefStatus == R.Rejected && backupStatus == null ? styles.colors.white : 
+    prefStatus == R.Confirmed && backupStatus == R.Cancelled ? styles.colors.black : 
+    prefStatus == R.Rejected && backupStatus == R.Confirmed ? styles.colors.black : 
+    prefStatus == R.Rejected && backupStatus == R.Rejected ? styles.colors.white : 
+    prefStatus == R.Cancelled && backupStatus == R.Cancelled ? styles.colors.black : ''
+  );
 
   return <>
     <ConfirmationDialog
@@ -108,26 +197,38 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
     <Wrap key={rg.id} ref={ref}>
       <PlaceImage shape='square' imageUrl={rg.reservations[0].reservable?.place.profilePicUrl} />
       <InnerWrap>
-        <Title>{rg.reservations.length > 0 ? rg.reservations[0].reservable?.place.name : 'Reservation'}</Title>
+        <TitleStatus>
+        <Title to={`/${rg.reservations[0].reservable?.place.id}`}>{rg.reservations.length > 0 ? rg.reservations[0].reservable?.place.name : 'Reservation'}</Title>
+          <Status style={{
+            backgroundColor: backgroundColor,
+            color: color,
+          }}>{
+            text
+          }</Status>
+        </TitleStatus>
         {prefs > 0 && <>
-          <p>Preffered slot{prefs > 1 && 's'}:</p>
+          <SlotTitle style={text == 'Backup Confirmed' ? { opacity: 0.5 } : {}}>Preffered slot{prefs > 1 && 's'}:</SlotTitle>
           { rg.reservations.filter(r => !r.backup).map(r => <div key={r.id}>
-            <ReservationSummary reservation={r} />
+            <ReservationSummary style={text == 'Backup Confirmed' ? { opacity: 0.5 } : {}} reservation={r} />
           </div>) }
+          <Line />
         </>}
         {backups > 0 && <>
-          <p>Backup slot{backups > 1 && 's'}:</p>
+          <SlotTitle style={text == 'Preferred Confirmed' ? { opacity: 0.5 } : {}}>Backup slot{backups > 1 && 's'}:</SlotTitle>
           { rg.reservations.filter(r => r.backup).map(r => <div key={r.id}>
-            <ReservationSummary reservation={r} />
+            <ReservationSummary style={text == 'Preferred Confirmed' ? { opacity: 0.5 } : {}} reservation={r} />
           </div>) }
+          <Line />
         </>}
-        <div>
-          <NoteTitle>Note to business</NoteTitle>
+        {rg.note && <div>
+          <NoteTitle>Note</NoteTitle>
           <Value>{rg.note}</Value>
-        </div>
-        <SecondaryButtonBtn onClick={(e) => {
-          setShowConfirmation(true);
-        }}>Cancel reservation</SecondaryButtonBtn>
+        </div>}
+        <CancelWrap>
+          <SecondaryButtonBtn style={{ width: '100%' }} onClick={(e) => {
+            setShowConfirmation(true);
+          }}>Cancel reservation</SecondaryButtonBtn>
+        </CancelWrap>
       </InnerWrap>
       <Form ref={formRef} method='post' action='/profile/cancelReservation' style={{ visibility: 'hidden' }}>
         <IdInput name='rgId' value={rg.id} />

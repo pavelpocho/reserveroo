@@ -1,7 +1,7 @@
 import { OpeningTime, Place, Reservable, Reservation, ReservationGroup } from '@prisma/client';
 import { Form, useActionData, useLoaderData, useParams } from '@remix-run/react';
 import { ActionFunction, LoaderFunction, redirect } from '@remix-run/server-runtime'
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { DateInput } from '~/components/inputs/DateInput';
 import { IdInput } from '~/components/inputs/ObjectInput';
@@ -9,6 +9,7 @@ import { TextInput } from '~/components/inputs/TextInput';
 import { ReservableTimes } from '~/components/reservable-times';
 import { createReservation, deleteReservation, updateReservation } from '~/models/reservation.server';
 import { getReservationGroup, updateReservationGroup } from '~/models/reservationGroup.server';
+import { Res } from '~/routes/$placeId/reserve';
 import { ReservableWithReservations, ReservationGroupForEdit } from '~/types/types';
 import { badRequest, getDayOfWeek } from '~/utils/forms';
 
@@ -99,6 +100,7 @@ const Title = styled.h4`
 export default function EditReservation() {
 
   const { reservationGroup } = useLoaderData<LoaderData>();
+  const [ resList, setResList ] = useState<Res[]>([]);
   const place = reservationGroup?.reservations && reservationGroup.reservations.length > 0 ? reservationGroup?.reservations[0].reservable?.place : null;
 
   const actionData = useActionData<ReserveActionData>();
@@ -122,6 +124,7 @@ export default function EditReservation() {
       reservableIdName={'reservableId[]'}
       defaultReservationGroup={reservationGroup}
       reservationIdName={'reservationId[]'}
+      setResList={setResList}
     /> }
     <p>Backup timeslots (if any):</p>
     { date && place?.reservables && <ReservableTimes
@@ -135,6 +138,7 @@ export default function EditReservation() {
       reservableIdName={'reservableId[]'}
       defaultReservationGroup={reservationGroup}
       reservationIdName={'reservationId[]'}
+      setResList={setResList}
     /> }
     {
       actionData?.formError && <p>{actionData.formError ?? ''}</p>

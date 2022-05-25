@@ -1,8 +1,10 @@
 import { Company, Place, Reservable, Reservation } from "@prisma/client"
+import { Form } from "@remix-run/react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
 import { ReservationStatus } from "~/types/types"
 import { getStringTimeValue } from "~/utils/forms";
+import { IdInput } from "../inputs/ObjectInput";
 
 interface ReservationSummaryProps {
   reservation: (Reservation & {
@@ -11,7 +13,7 @@ interface ReservationSummaryProps {
           company: Company | null;
         });
     }) | null;
-  })
+  });
 }
 
 const Wrap = styled.div`
@@ -34,6 +36,7 @@ const Value = styled.p`
 `;
 
 export const AdminReservationSummary: React.FC<ReservationSummaryProps> = ({ reservation: r }) => {
+
   return <Wrap>
     {/* <div>
       <Title>Company</Title>

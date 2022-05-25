@@ -28,6 +28,7 @@ import { usernameContext } from "./contexts/usernameContext";
 import { getUsernameAndAdmin } from "./utils/session.server";
 import * as cs_texts from '~/assets/langs/cs.texts.json';
 import * as en_texts from '~/assets/langs/en.texts.json';
+import fonts from "~/fonts/main.css";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -111,6 +112,10 @@ const Main: React.FC<MainProps> = ({ isLandingPage, admin }) => {
   </>
 }
 
+export function links() {
+  return [{ rel: "stylesheet", href: fonts }];
+}
+
 export default function App() {
 
   const loaderData = useLoaderData<AppHeaderLoaderData>();
@@ -140,11 +145,8 @@ export default function App() {
   return (
     <html lang="en" className="h-full">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com"></link>
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin={'true'}></link>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></link>
         <Meta />
-        <Links />
+        <link rel='stylesheet' href={fonts} />
         {typeof document === "undefined" ? "__STYLES__" : null}
       </head>
       <Body className="h-full" isLandingPage={landingPage}>

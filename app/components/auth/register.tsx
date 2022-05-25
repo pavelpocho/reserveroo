@@ -18,12 +18,12 @@ interface Props {
   t: Transition
 }
 
-const PwdWarn = styled.p`
+export const PwdWarn = styled.p`
   margin: 0;
   color: ${styles.colors.busy};
   font-size: 0.875rem;
 `;
-const PwdInfo = styled.p`
+export const PwdInfo = styled.p`
   margin: 0;
   color: ${styles.colors.black};
   font-size: 0.875rem;
@@ -34,7 +34,7 @@ const ConditionsText = styled.p`
   font-size: 0.8125rem;
 `;
 
-const Bar = styled.div<{ width: number }>`
+export const Bar = styled.div<{ width: number }>`
   width: ${props => props.width}%;
   height: 6px;
   min-width: 6px;
@@ -44,7 +44,7 @@ const Bar = styled.div<{ width: number }>`
     props.width < 75 ? styles.colors.primary : styles.colors.free
   )};
 `;
-const BarBack = styled.div`
+export const BarBack = styled.div`
   width: 100%;
   background-color: ${styles.colors.gray[70]};
   height: 6px;
@@ -57,7 +57,7 @@ const RelativeWrap = styled.div`
 
 const ItB = (b: boolean) => b ? 1 : 0;
 
-const checkPasswordStrength = (pwd: string) => {
+export const checkPasswordStrength = (pwd: string) => {
   const specialChar = /[!-\/]|[:-@]|[\[-`]|[{-~]/.test(pwd);
   const number = /[0-9]/.test(pwd);
   const lowerCase = /[a-z]/.test(pwd);

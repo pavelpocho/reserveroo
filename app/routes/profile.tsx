@@ -30,15 +30,22 @@ export const loader: LoaderFunction = async ({ request }) => {
 }
 
 const ReservationsWrap = styled.div`
-  padding: 2rem;
+  padding: 2rem 0.5rem;
+  max-width: 968px;
+  margin: 0 auto;
 `;
 
 const ReservationsTitle = styled.h4`
   margin-top: 0;
+  @media (min-width: 500px) {
+    font-size: 1.8rem;
+  }
+  margin-left: 1rem;
 `;
 
 const NoReservations = styled.p`
-
+  margin-left: 1rem;
+  font-weight: 500;
 `;
 
 export default function Profile() {
@@ -50,14 +57,14 @@ export default function Profile() {
     submit(form, { replace: true })
   }
 
-  const reservationGroups = user?.reservationGroups.filter(rg => rg.reservations.length > 0 && !rg.reservations.find(r => r.status == ReservationStatus.Cancelled));
+  const reservationGroups = user?.reservationGroups.filter(rg => rg.reservations.length > 0);
 
   return (
     <div>
       <Outlet />
       <ReservationsWrap>
         <ReservationsTitle>Your Reservations</ReservationsTitle>
-        { reservationGroups?.length == 0 && <NoReservations>Nothing here right now.</NoReservations> }
+        { reservationGroups?.length == 0 && <NoReservations>You don't have any reservations :'(. Go ahead and make some!</NoReservations> }
         { reservationGroups?.map(rg => <div key={rg.id}>
           <>
             <ReservationGroupSummary onCancel={(rgId, formRef) => {
