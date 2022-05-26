@@ -20,11 +20,11 @@ import { styles } from '~/constants/styles';
 import { useUsername } from '~/contexts/usernameContext';
 import { OpeningTime } from '~/models/openingTime.server';
 import { getPlace, getPlaceWithReservations, Place } from '~/models/place.server';
-import { getReservableList, Reservable } from '~/models/reservable.server';
+import { getReservable, getReservableList, getReservableWReservations, Reservable } from '~/models/reservable.server';
 import { createReservation, Reservation } from '~/models/reservation.server';
 import { createReservationGroup } from '~/models/reservationGroup.server';
 import { getUserId } from '~/models/user.server';
-import { ReservableTypeWithTexts, ReservableWithReservations, TimeSection } from '~/types/types';
+import { ReservableTypeWithTexts, ReservableWithReservations, ReservationStatus, Time, TimeSection } from '~/types/types';
 import { sendCreationEmail } from '~/utils/emails.server';
 import { getDayOfWeek, getStringDateValue, getStringTimeValue } from '~/utils/forms';
 import { requireUsernameAndAdmin } from '~/utils/session.server'
@@ -54,7 +54,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   // Return availability data
   const { username } = await requireUsernameAndAdmin(request);
   const place = await getPlaceWithReservations({ id: params.placeId ?? '' });
-  return json({ username, place })
+  return json({ username, place });
 }
 
 export const action: ActionFunction = async ({ request }) => {
@@ -63,12 +63,67 @@ export const action: ActionFunction = async ({ request }) => {
   const placeId = form.get('placeId')?.toString();
   const username = form.get('username')?.toString();
 
+  const getTotalMinutes = (time: Time) => time.hour * 60 + time.minute;
+
+  const doDaysMatch = (date1: Date | string, date2: Date | string, date3: Date | string) => {
+    return (
+      new Date(date1).getFullYear() === new Date(date2).getFullYear() && new Date(date1).getFullYear() === new Date(date3).getFullYear() &&
+      new Date(date1).getMonth() === new Date(date2).getMonth() && new Date(date1).getMonth() === new Date(date3).getMonth() &&
+      new Date(date1).getDate() === new Date(date2).getDate() && new Date(date1).getDate() === new Date(date3).getDate()
+    );
+  }
+
+  const getTimeSectionOfReservation = (reservation: Reservation) => {
+    return getTimeSectionOfDates(new Date(reservation.start), new Date(reservation.end));
+  }
+
+  const getTimeSectionOfDates = (start: Date, end: Date) => {
+    return {
+      start: {
+        hour: start.getHours(),
+        minute: start.getMinutes(),
+      },
+      end: {
+        hour: end.getHours(),
+        minute: end.getMinutes(),
+      }
+    }
+  }
+
+  const doSectionsOverlap = (section1: TimeSection, section2: TimeSection | null) => {
+    return section2 != null && (!(getTotalMinutes(section1.end) <= getTotalMinutes(section2.start) || getTotalMinutes(section2.end) <= getTotalMinutes(section1.start)))
+  }
+
   const reservationBackup = form.getAll('reservationBackup[]').map(r => r.toString());
   const reservableId = form.getAll('reservableId[]').map(r => r.toString()).filter(r => r != '-1');
   const dateTimeStart = form.getAll('start[]').map(r => r.toString());
   const dateTimeEnd = form.getAll('end[]').map(r => r.toString());
 
-  // You need to repeat the validation here!!!!!!
+  const reservablePromises = reservableId.map((r) => getReservableWReservations({ id: r }));
+  const reservables = await Promise.all(reservablePromises);
+
+  // These are the reservableIds we book
+  const overlap = !!(reservables.map((r, i) => {
+    const start = dateTimeStart[i];
+    const end = dateTimeEnd[i];
+    if (r == null) return false;
+    return r.reservations.filter(
+      rx => (
+        doDaysMatch(new Date(start), rx.start, rx.end) &&                                                             // Is the reservation on the same day?
+        doSectionsOverlap(getTimeSectionOfReservation(rx), getTimeSectionOfDates(new Date(start), new Date(end))) &&  // Is the reservation during the same time?
+        rx.status != ReservationStatus.Cancelled                                                                      // Is it active?
+      )
+    ).length >= r.reservationsPerSlot;
+  }).find(o => o));
+
+  if (overlap) {
+    return badRequest({
+      fields: {
+        note: note ?? '', placeId: placeId ?? '', username: username ?? ''
+      },
+      formError: `It looks like you selected a time that's already booked. Please try another time.`
+    })
+  }
 
   const datesInPast = dateTimeStart.find(s => new Date(s).getTime() < new Date().getTime());
 

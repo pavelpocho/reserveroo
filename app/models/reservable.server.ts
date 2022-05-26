@@ -8,6 +8,13 @@ export const getReservable = async ({ id }: Pick<Reservable, 'id'>) => (await pr
   where: { id },
 }));
 
+export const getReservableWReservations = async ({ id }: Pick<Reservable, 'id'>) => (await prisma.reservable.findFirst({
+  where: { id },
+  include: {
+    reservations: true
+  }
+}));
+
 export const getReservableList = async () => (await prisma.reservable.findMany({
 }));
 

@@ -181,17 +181,21 @@ const getDiffBetweenTwoDates = (close: string | Date, open: string | Date) => {
   return millis / 1000 / 60;
 }
 
-const getTimeSectionOfReservation = (reservation: Reservation) => {
+const getTimeSectionOfDates = (start: Date, end: Date) => {
   return {
     start: {
-      hour: new Date(reservation.start).getHours(),
-      minute: new Date(reservation.start).getMinutes(),
+      hour: start.getHours(),
+      minute: start.getMinutes(),
     },
     end: {
-      hour: new Date(reservation.end).getHours(),
-      minute: new Date(reservation.end).getMinutes(),
+      hour: end.getHours(),
+      minute: end.getMinutes(),
     }
   }
+}
+
+const getTimeSectionOfReservation = (reservation: Reservation) => {
+  return getTimeSectionOfDates(new Date(reservation.start), new Date(reservation.end));
 }
 
 const doDaysMatch = (date1: Date | string, date2: Date | string, date3: Date | string) => {
@@ -318,13 +322,17 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
               newRange = { start: selectedRange.start, end: s.end };
             }
             const overlap = reservable.reservations.filter(
-              r => (
-                doDaysMatch(date, r.start, r.end) &&                                  // Is the reservation on the same?
-                doSectionsOverlap(getTimeSectionOfReservation(r), s) &&               // Is the reservation during the same time?
+              r => (doDaysMatch(date, r.start, r.end) &&    // Is the reservation on the same date? 
+                newRange != null &&                         
+                doSectionsOverlap(getTimeSectionOfReservation(r), getTimeSectionOfDates(
+                  new Date(date.getFullYear(), date.getMonth(), date.getDate(), newRange.start.hour, newRange.start.minute),
+                  new Date(date.getFullYear(), date.getMonth(), date.getDate(), newRange.end.hour, newRange.end.minute)
+                )) &&                                                                 // Is the reservation during the same time?
                 !defaultReservationGroup?.reservations.find(dr => dr.id == r.id) &&   // Is it done by someone else?
                 r.status != ReservationStatus.Cancelled                               // Is it active?
-              )
+              )                                                                       
             ).length >= reservable.reservationsPerSlot;
+            console.log(overlap);
             setSelectedRange(overlap ? selectedRange : newRange);
             setSelectedDate(overlap ? selectedDate : date);
             setResList(resList => {

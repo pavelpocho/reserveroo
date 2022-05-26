@@ -170,7 +170,7 @@ export const ReserveConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ s
       <Text>{subHeaderText}</Text>
       { resList.filter(r => !r.isBackup).length > 0 && <SlotList>
         <WhiteSlotListTitle>{resList.filter(r => r.isBackup).length > 0 ? `Preferred timeslot${resList.filter(r => !r.isBackup).length > 1 ? 's' : ''}` :`Picked timeslot${resList.filter(r => !r.isBackup).length > 1 ? 's' : ''}`}</WhiteSlotListTitle>
-        { resList.filter(r => !r.isBackup).map(r => r.startTime && r.endTime && <ResE>
+        { resList.filter(r => !r.isBackup).map((r, i) => r.startTime && r.endTime && <ResE key={i}>
           <Indicator style={{ padding: '0.5rem', whiteSpace: 'nowrap' }}>{reservables.find(x => x.id == r.reservableId)?.name}</Indicator>
           <FlexSL>
             <SlotText>Date: {getStringDateValue(r.startTime)}</SlotText>

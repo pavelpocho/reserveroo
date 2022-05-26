@@ -19,8 +19,37 @@ export const sendEmailConfirmationEmail = async (sendToAddress: string, baseUrl:
       email: 'security@reserveroo.com'
     },
     subject: 'Reserveroo Email Verification',
-    text: `Please click the following link: ${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}`,
-    html: `<p>Please click the following link: ${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}</p>`
+    text: `
+      We need to make sure you used a real email address to sign up. Please click the following link to get back to Reserveroo and confirm your email.
+      ${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}
+    `,
+    html: `
+      <head>
+        <!--[if (gte mso 9)|(IE)]><!-->
+        <link rel="preconnect" href="https://fonts.googleapis.com"></link> 
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin></link>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet"></link>
+        <!--<![endif]-->
+      </head>
+      <body>
+        <div style="height: 6rem;width: 100%;box-sizing:border-box;background-color: #2E294E;border-radius: 0.5rem;display: flex; justify-content: space-between; align-items: center;padding: 0rem 1rem">
+          <p style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;color: white;">Please Verify Your Email</p>
+          <p style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;background-color: white;color: black;border-radius: 0.25rem;padding: 0.5rem;">Reserveroo</p>
+        </div>
+        <div style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 2rem auto;border-radius: 0.5rem;width: 100%;max-width: 570px;background-color: #F2F2F8;padding: 2rem;">
+          <p>We need to make sure you used a real email address to sign up. Please click to button bellow to get back to Reserveroo and confirm your email.</p>
+          <a style="background-color: #ACC196;display: flex;justify-content: center;align-items: center;gap: 1rem;width: 10rem;height: 2rem;padding: 0.5rem 0.5rem;text-align: center;line-height: 1.5rem;margin: 0 auto;border-radius: 0.25rem;" href="${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}">
+            <p style="color: black;text-decoration: unset;">Verify Email</p>
+          </a>
+          <p>
+            You can also click or copy this loong link:
+            <a style="font-size: 0.8rem;white-space: pre-wrap;white-space: -moz-pre-wrap !important;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: pre-wrap;word-wrap: break-word;word-break: break-all;white-space: normal;" href="${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}">
+            ${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}
+            </a>
+          </p>
+        </div>
+      </body>
+    `
   }
   await sgMail.send(msg);
 }
