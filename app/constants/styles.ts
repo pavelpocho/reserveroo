@@ -34,6 +34,6 @@ export const styles = {
     '0px 1px 1px rgba(0, 0, 0, 0.25)'
   ],
   easings: [
-    'cubic-bezier(0.16, 1, 0.3, 1)'
+    'cubic-bezier(0.25, 1, 0.5, 1)'
   ]
 }

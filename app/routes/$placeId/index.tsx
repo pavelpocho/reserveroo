@@ -1,4 +1,5 @@
 import { OpeningTime } from "@prisma/client";
+import { redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
@@ -58,11 +59,15 @@ interface PlaceDetailsLoaderData {
   place: (Place & {
     reservables: Reservable[];
     openingTimes: OpeningTime[];
-  })
+  }) | null
 }
 
 export const loader: LoaderFunction = async ({ params }) => {
-  return json({ place: await getPlace({ id: params.placeId ?? '' }) });
+  const place = await getPlace({ id: params.placeId ?? '' });
+  if (place == null) {
+    return redirect('/');
+  }
+  return json({ place: place });
 }
 
 const GalleryImage = styled.img`
@@ -110,10 +115,10 @@ export default function PlaceDetails({}) {
 
   const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-  return <Wrap>
+  return place && <Wrap>
     <FlexApart>
       <Title>Make a reservation</Title>
-      <MainButton inSearch={false} to={`/${place.id}/reserve`} >Reserve<AnglesRightIcon height='1.25rem' /></MainButton>  
+      <MainButton inSearch={false} to={`/${place.id}/reserve`} >Reserve<AnglesRightIcon height='1.25rem' /></MainButton>
     </FlexApart>
     <FlexApart style={{ alignItems: 'flex-start' }}>
       <DetailsWrap>

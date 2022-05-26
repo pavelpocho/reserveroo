@@ -1,9 +1,7 @@
-import { Link, Outlet, useActionData, useSearchParams, useTransition } from '@remix-run/react'
+import { Link, Outlet, useActionData, useLocation, useSearchParams, useTransition } from '@remix-run/react'
 import { LoaderFunction, redirect } from '@remix-run/server-runtime'
 import React from 'react';
 import styled from 'styled-components';
-import { LoginComponent } from '~/components/auth/login';
-import { RegisterComponent } from '~/components/auth/register';
 import { IconRow } from '~/components/icon-row';
 import { Title, TabBar, ActiveHighlighter, AuthTabButton, Separator } from '~/components/other/auth-components';
 import { styles } from '~/constants/styles';
@@ -21,15 +19,12 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Authenticate() {
 
-  const [searchParams, setSearchParams ] = useSearchParams();
-  const a = useActionData<AuthActionData>();
-  const t = useTransition();
-
-  const redirectTo = encodeURI(searchParams.get('redirectTo') ?? '').replace('/', '%2F');
-
-  const [ position, setPosition ] = React.useState(0);
+  const loc = useLocation();
+  const [ position, setPosition ] = React.useState(loc.pathname.includes('register') ? 1 : 0);
 
   const { setSigningIn } = useWhereAreWe();
+
+  const [searchParams, setSearchParams ] = useSearchParams();
 
   React.useEffect(() => {
     setSigningIn(true);
@@ -43,13 +38,12 @@ export default function Authenticate() {
     <IconRow invertColors={true} />
     <TabBar>
       <ActiveHighlighter position={position} />
-      <AuthTabButton onClick={() => {setPosition(0)}}>Sign In</AuthTabButton>
+      <AuthTabButton to={`/authenticate/login?${searchParams}`} onClick={() => {setPosition(0)}}>Sign In</AuthTabButton>
       <Separator />
-      <AuthTabButton onClick={() => {setPosition(1)}}>Create Account</AuthTabButton>
+      <AuthTabButton to={`/authenticate/register?${searchParams}`} onClick={() => {setPosition(1)}}>Create Account</AuthTabButton>
     </TabBar>
     <div>
-      { position == 0 && <LoginComponent a={a} searchParams={searchParams} setSearchParams={(data) => { setSearchParams(data) }} t={t} />}
-      { position == 1 && <RegisterComponent a={a} searchParams={searchParams} setSearchParams={(data) => { setSearchParams(data) }} t={t} />}
+      <Outlet />
     </div>
   </>
 }

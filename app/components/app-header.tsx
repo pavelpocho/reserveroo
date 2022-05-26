@@ -318,7 +318,7 @@ export default function AppHeader({ children, data }: AppHeaderProps) {
           </BarLink>
           {!signingIn && <Separator />}
           <StretchForm action='/logout' method='post'>
-            <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate'} />
+            <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
             {(username || usernameToVerify) && <HoverBarButton onClick={(e) => {
             setShowMenu(false);
           }}>Logout</HoverBarButton> }

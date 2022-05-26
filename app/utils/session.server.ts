@@ -1,6 +1,6 @@
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import { useResolvedPath } from "@remix-run/react";
-import { createUser, getUser, checkForUserByUsername, checkForUserByEmail } from "~/models/user.server";
+import { createUser, getUser, checkForUserByUsername, checkForUserByEmail, checkForUserByPhone } from "~/models/user.server";
 import { checkPassword, generateHashAndSalt } from "./pwd_helper.server";
 
 
@@ -37,7 +37,7 @@ export const register = async ({ username, password, email, phone, firstName, la
 
   if (username == '' || password == '' || email == '' || phone == '' || firstName == '' || lastName == '') return null;
 
-  if (await checkForUserByUsername({ username }) != null || await checkForUserByEmail({ email })) return null;
+  if (await checkForUserByUsername({ username }) != null || await checkForUserByEmail({ email }) || await checkForUserByPhone({ phone })) return null;
 
   const newUser = await createUser({ username, email, phone, firstName, lastName, passwordHash: await generateHashAndSalt(password) });
 
@@ -101,7 +101,7 @@ export const requireUsernameAndAdmin = async (
     const searchParams = new URLSearchParams([
       ['redirectTo', redirectTo]
     ]);
-    throw redirect(`/authenticate?${searchParams}`);
+    throw redirect(`/authenticate/login?${searchParams}`);
   } 
   return { username, admin: admin == 'true' || admin == '1' };
 }
@@ -119,7 +119,7 @@ export const requireUsernameToVerify = async (
   const session = await getUserSession(request);
   const usernameToVerify = session.get('usernameToVerify');
   if (!usernameToVerify) {
-    throw redirect(`/authenticate`);
+    throw redirect(`/authenticate/login`);
   }
   return { usernameToVerify: usernameToVerify as string };
 }

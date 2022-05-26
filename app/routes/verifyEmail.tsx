@@ -5,7 +5,7 @@ import { FaAngleDoubleRight } from 'react-icons/fa'
 import styled from 'styled-components'
 import { IconRow } from '~/components/icon-row'
 import { IdInput } from '~/components/inputs/ObjectInput'
-import { Title, AuthWrap } from '~/components/other/auth-components'
+import { Title, AuthWrap, FormError } from '~/components/other/auth-components'
 import { MainButtonBtn } from '~/components/place/place-summary'
 import { getUserByUsername, getUserEmailToResend, subtractResendTries, verifyUserEmail } from '~/models/user.server'
 import { sendEmailConfirmationEmail } from '~/utils/emails.server'
@@ -101,6 +101,9 @@ export default function ComponentName() {
         <Header>Please confirm your email address.</Header>
         <Text>To use your account, you must confirm your email address by clicking a link we sent you there.</Text>
         <Text bottom={true}>Didn't receive anything? Check your spam folder. Or... ({countDown.toString()}s)</Text>
+        <div style={{ margin: '0 1rem' }}>
+          { actionData?.msg ? <FormError height={'2rem'}>{actionData.msg}</FormError> : msg && <FormError height={'2rem'}>{msg}</FormError> }
+        </div>
         <Form ref={resendEmail} method='post'>
           <IdInput name='usernameToVerify' value={usernameToVerify} />
           <MainButtonBtn style={{ margin: '0 auto' }} disabled={countDown > 0} onClick={() => {
@@ -109,7 +112,6 @@ export default function ComponentName() {
           }}>Resend Email<FaAngleDoubleRight /></MainButtonBtn>
         </Form>
       </AuthWrap>
-      { actionData?.msg ? <p>{actionData.msg}</p> : msg && <p>{msg}</p> }
     </> : <>
       <Title>Email Verification - Step 2</Title>
       <IconRow invertColors={true} />

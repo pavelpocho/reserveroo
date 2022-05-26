@@ -31,6 +31,11 @@ export const checkForUserByEmail = async ({ email }: Pick<User, 'email'>) => (aw
   select: { id: true, passwordHash: true, admin: true }
 }));
 
+export const checkForUserByPhone = async ({ phone }: Pick<User, 'phone'>) => (await prisma.user.findUnique({
+  where: { phone },
+  select: { id: true, passwordHash: true, admin: true }
+}));
+
 export const getUserEmailToResend = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
   where: {
     username

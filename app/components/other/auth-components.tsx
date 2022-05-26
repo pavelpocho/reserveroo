@@ -1,3 +1,4 @@
+import { Link } from "@remix-run/react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
 
@@ -33,7 +34,7 @@ export const Separator = styled.div`
   background-color: ${styles.colors.gray[50]};
 `;
 
-export const AuthTabButton = styled.button`
+export const AuthTabButton = styled(Link)`
   width: 50%;
   display: flex;
   background-color: transparent;
@@ -85,7 +86,6 @@ export const FieldSet = styled.fieldset`
   border: none;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 `;
 
 export const SubmitButton = styled.button`
@@ -124,4 +124,26 @@ export const BarBack = styled.div`
   background-color: ${styles.colors.gray[70]};
   height: 6px;
   border-radius: 3px;
+`;
+
+export const FormError = styled.p<{ height?: string }>`
+  font-size: 0.8rem;
+  color: ${styles.colors.busy};
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  margin-bottom: 1rem;
+  padding: 0;
+  animation: appear 0.3s ${styles.easings[0]};
+  @keyframes appear {
+  from {
+    opacity: 0;
+    height: 0rem;
+    margin-bottom: 0rem;
+  }
+  to {
+    opacity: 1;
+    height: ${props => props.height ?? '1rem'};
+    margin-bottom: 1rem;
+  }
+}
 `;
