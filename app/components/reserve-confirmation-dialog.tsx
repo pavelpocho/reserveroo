@@ -50,11 +50,15 @@ const Window = styled.div`
   box-shadow: ${styles.shadows[0]};
   width: 968px;
   display: flex;
+  box-sizing: border-box;
   max-width: 100%;
+  max-height: 100vh;
+  max-width: 100vw;
   border-radius: 1rem;
-  @media (max-width: 650px) {
+  @media (max-width: 1000px) {
     width: 100%;
     border-radius: 0;
+    overflow-y: scroll;
   }
   flex-direction: column;
   gap: 1.3rem;
