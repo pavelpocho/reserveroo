@@ -1,5 +1,5 @@
-import { Category, Company, Location, OpeningTime, Reservable, Tag } from '@prisma/client';
-import { unstable_createMemoryUploadHandler, unstable_parseMultipartFormData, UploadHandler } from '@remix-run/node';
+import { Company, OpeningTime, Reservable } from '@prisma/client';
+import { unstable_createMemoryUploadHandler, unstable_parseMultipartFormData } from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime';
 import React from 'react';
@@ -23,12 +23,10 @@ import { addToPlaceGalleryPics, getPlace, Place, removeFromPlaceGalleryPics, upd
 import { createReservable, deleteReservable, updateReservable } from '~/models/reservable.server';
 import { getTagList } from '~/models/tag.server';
 import { CategoryWithTexts, LocationWithTexts, PlaceForEdit, ReservableTypeWithTexts, TagWithTexts } from '~/types/types';
-import { getDateObjectFromTimeString, getFormEssentials } from '~/utils/forms';
+import { getDateObjectFromTimeString } from '~/utils/forms';
 import { deleteImageFromS3, uploadImageToS3 } from '~/utils/s3.server';
 import crypto from 'crypto'
 import { getReservableTypeList } from '~/models/reservableType.server';
-import { PutObjectRequest } from 'aws-sdk/clients/s3';
-import { s3 } from '~/db.server';
 
 interface AdminPlaceDetailLoaderData {
   place: PlaceForEdit;
@@ -131,7 +129,7 @@ export const action: ActionFunction = async ({ request }) => {
   const keysToDelete = deletedGalleryPicUrls.map(u => u.split('/')[u.split('/').length - 1]);
 
   const promises: Promise<object>[] = [
-    ...reservables.map(r => r.id == '-1' ? createReservable(r) : updateReservable(r)),
+    ...reservables.map(r => r.id.length < 36 ? createReservable(r) : updateReservable(r)),
     ...openingTimes.sort((a, b) => a.day - b.day).map(ot => updateOpeningTime(ot)),
     ...deletedReservableIds.map(id => deleteReservable({ id })),
     updatePlace(place)
@@ -141,7 +139,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (galleryPicUrls && galleryPicUrls.length > 0) promises.push(addToPlaceGalleryPics({ id: place.id, galleryPicUrls }));
   if (deletedGalleryPicUrls && deletedGalleryPicUrls.length > 0) promises.push(removeFromPlaceGalleryPics({ id: place.id, galleryPicUrls: deletedGalleryPicUrls }));
 
-  if (keysToDelete && keysToDelete.length > 0) keysToDelete.forEach(k => {console.log(k); promises.push(deleteImageFromS3(k))});
+  if (keysToDelete && keysToDelete.length > 0) keysToDelete.forEach(k => {promises.push(deleteImageFromS3(k))});
 
   await Promise.all(promises);
 
@@ -160,11 +158,12 @@ export default function AdminPlaceDetail() {
   const [ deletedReservables, setDeletedReservables ] = useState<string[]>([]);
   const [ deletedGalleryImages, setDeletedGalleryImages ] = useState<string[]>([]);
   const [ addedImages, setAddedImages ] = useState<number>(1);
+  const [ nextReservableId, setNextReservableId ] = useState(1);
 
   const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
   const deleteReservable = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
-    if (id != '-1') {
+    if (id.length === 36) {
       setDeletedReservables([...deletedReservables, id])
     }
     setPlace({
@@ -180,7 +179,7 @@ export default function AdminPlaceDetail() {
       reservables: [
         ...place.reservables,
         {
-          id: '-1',
+          id: `-${nextReservableId}`,
           name: '',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -192,6 +191,7 @@ export default function AdminPlaceDetail() {
         }
       ]
     });
+    setNextReservableId(nextReservableId + 1);
   }
 
   const { lang } = useLangs();

@@ -11,6 +11,7 @@ import { createCookie } from "@remix-run/node";
 import GbIcon from "~/assets/icons/gb";
 import CzIcon from "~/assets/icons/cz";
 import { FaBars } from 'react-icons/fa';
+import { AppHeaderLoaderData } from "~/root";
 
 const Wrap = styled.header`
   background-color: ${styles.colors.primary};
@@ -92,6 +93,7 @@ const WrappedMenuItem = styled.p`
 
 interface AppHeaderProps {
   children: React.ReactNode;
+  data: AppHeaderLoaderData;
 }
 
 const ProfileImage = styled.span`
@@ -235,12 +237,12 @@ const Backdrop = styled.div<{ hidden?: boolean }>`
 `;
 
 
-export default function AppHeader({ children }: AppHeaderProps) {
+export default function AppHeader({ children, data }: AppHeaderProps) {
   const location = useLocation();
   const [ isLandingPage, setIsLandingPage ] = useState(false);
   const [ showMenu, setShowMenu ] = useState(false);
 
-  const { username, admin, usernameToVerify } = useUsername();
+  const { username, admin, usernameToVerify } = data;
 
   const { setTranslations: setL, translations: l, lang, setLang } = useLangs();
 
@@ -282,7 +284,7 @@ export default function AppHeader({ children }: AppHeaderProps) {
           <BarLink onClick={(e) => {
             setShowMenu(false);
           }} style={{ marginRight: "0.6rem" }} to={"/admin/reservations"}>
-            <MenuItem border={true}>List a business</MenuItem>
+            {/* <MenuItem border={true}>List a business</MenuItem> */}
           </BarLink>
           <Separator />
           <BarButton

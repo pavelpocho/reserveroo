@@ -14,10 +14,10 @@ import { CategoryWithTexts, LocationWithEverything, LocationWithTexts, Reservabl
 import { IconRow } from "~/components/icon-row";
 import { addToSearchHistory } from "~/models/user.server";
 import { getUsernameAndAdmin } from "~/utils/session.server";
-import { WidthRestrictor } from "~/root";
 import { SearchUI } from "~/components/search/search-ui";
 import { useEffect, useRef, useState } from "react";
 import { IdInput } from "~/components/inputs/ObjectInput";
+import { WidthRestrictor } from "~/components/other/width-restrictor";
 
 interface LoaderData {
   locations: LocationWithEverything[],
@@ -36,7 +36,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get('page');
   const dontSave =  url.searchParams.get('dontSave');
-  console.log(page);
   const searchTerm = url.searchParams.get('searchTerm');
   const location =  url.searchParams.get('selectedLocation');
   const tags = url.searchParams.getAll('tags[]');
@@ -145,8 +144,6 @@ export default function Search() {
 
   useEffect(() => {
     if (fetcherForm.current) {
-      console.log("page change request");
-      console.log(page);
       fetcher.submit(fetcherForm.current);
     }
   }, [page]);

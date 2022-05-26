@@ -3,19 +3,20 @@ import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/serve
 import React from 'react'
 import { FaAngleDoubleRight } from 'react-icons/fa'
 import styled from 'styled-components'
-import { AuthWrap } from '~/components/auth/login'
 import { IconRow } from '~/components/icon-row'
 import { IdInput } from '~/components/inputs/ObjectInput'
+import { Title, AuthWrap } from '~/components/other/auth-components'
 import { MainButtonBtn } from '~/components/place/place-summary'
-import { getUserByUsername, getUserEmailToResend, verifyUserEmail } from '~/models/user.server'
+import { getUserByUsername, getUserEmailToResend, subtractResendTries, verifyUserEmail } from '~/models/user.server'
 import { sendEmailConfirmationEmail } from '~/utils/emails.server'
 import { badRequest, getBaseUrl, getFormEssentials } from '~/utils/forms'
 import { createUserSession, requireUsernameToVerify } from '~/utils/session.server'
 import { verifyMessage } from '~/utils/signing.server'
-import { Title } from './authenticate'
+import { Text } from '~/components/other/auth-components'
 
 interface LoaderData {
-  usernameToVerify: string
+  usernameToVerify: string,
+  msg: string
 };
 
 interface ActionData {
@@ -24,6 +25,15 @@ interface ActionData {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const { usernameToVerify } = await requireUsernameToVerify(request);
+  const user = await getUserEmailToResend({ username: usernameToVerify });
+  const baseUrl = getBaseUrl(request);
+  if (!!usernameToVerify && !!user && user.verifyEmailTriesLeft > 0) {
+    await subtractResendTries({ email: user.email });
+    await sendEmailConfirmationEmail(user.email, baseUrl);
+  }
+  else {
+    return json({ msg: "Looks like you're out of verification emails. Please check your spam folder for one of the emails sent." });
+  }
   return json({ usernameToVerify });
 }
 
@@ -43,11 +53,12 @@ export const action: ActionFunction = async ({ request }) => {
   }
   else if (!!usernameToVerify && !!user && user.verifyEmailTriesLeft > 0) {
     const baseUrl = getBaseUrl(request);
+    await subtractResendTries({ email: user.email });
     await sendEmailConfirmationEmail(user.email, baseUrl);
     return json({ msg: "Another email sent." });
   }
   else {
-    return badRequest({ msg: "Looks like you're out of verification emails." });
+    return badRequest({ msg: "Looks like you're out of verification emails. Please check your spam folder for one of the emails sent." });
   }
 }
 
@@ -58,21 +69,15 @@ const Header = styled.h5`
   margin-bottom: 1.5rem;
 `;
 
-export const Text = styled.p<{ bottom?: boolean }>`
-  font-weight: 500;
-  padding: 0 1rem;
-  margin-bottom: ${props => props.bottom ? '2rem' : ''};
-  font-size: 0.875rem;
-`;
-
 export default function ComponentName() {
 
   const [s] = useSearchParams();
   const token = s.get('verifyToken');
   const submit = useSubmit();
-  const { usernameToVerify } = useLoaderData<LoaderData>();
+  const { usernameToVerify, msg } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
   const formRef = React.useRef<HTMLFormElement>(null);
+  const resendEmail = React.useRef<HTMLFormElement>(null);
 
   const [ countDown, setCountDown ] = React.useState(30);
 
@@ -96,14 +101,15 @@ export default function ComponentName() {
         <Header>Please confirm your email address.</Header>
         <Text>To use your account, you must confirm your email address by clicking a link we sent you there.</Text>
         <Text bottom={true}>Didn't receive anything? Check your spam folder. Or... ({countDown.toString()}s)</Text>
-        <Form method='post'>
+        <Form ref={resendEmail} method='post'>
           <IdInput name='usernameToVerify' value={usernameToVerify} />
           <MainButtonBtn style={{ margin: '0 auto' }} disabled={countDown > 0} onClick={() => {
             setCountDown(30);
+            if (resendEmail.current) submit(resendEmail.current, { replace: true });
           }}>Resend Email<FaAngleDoubleRight /></MainButtonBtn>
         </Form>
       </AuthWrap>
-      { actionData?.msg && <p>{actionData.msg}</p> }
+      { actionData?.msg ? <p>{actionData.msg}</p> : msg && <p>{msg}</p> }
     </> : <>
       <Title>Email Verification - Step 2</Title>
       <IconRow invertColors={true} />

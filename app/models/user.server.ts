@@ -18,7 +18,7 @@ export const getUserId = async ({ username }: Pick<User, 'username'>) => (await 
 
 export const checkForUserByUsername = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
   where: { username },
-  select: { id: true, passwordHash: true, admin: true, verifiedEmail: true, email: true }
+  select: { id: true, passwordHash: true, admin: true, verifiedEmail: true, email: true, deleted: true }
 }));
 
 export const getEmailFromUsername = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
@@ -160,4 +160,11 @@ export const updateUser = async ({ id, firstName, lastName, /*username, email,*/
 
 export const deleteUser = async ({ id }: Pick<User, 'id'>) => (await prisma.user.deleteMany({
     where: { id },
+}));
+
+export const setUserAsDeleted = async ({ id }: Pick<User, 'id'>) => (await prisma.user.update({
+  where: { id },
+  data: {
+    deleted: true
+  }
 }));

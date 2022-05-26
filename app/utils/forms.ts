@@ -46,4 +46,14 @@ export const isValidPhone = (phone: string) => {
   return /\+?[0-9 ()-]{3,15}/g.test(phone);
 }
 
+const ItB = (b: boolean) => b ? 1 : 0;
 
+export const checkPasswordStrength = (pwd: string) => {
+  const specialChar = /[!-\/]|[:-@]|[\[-`]|[{-~]/.test(pwd);
+  const number = /[0-9]/.test(pwd);
+  const lowerCase = /[a-z]/.test(pwd);
+  const upperCase = /[A-Z]/.test(pwd);
+  const length = Math.min(pwd.length, 12) / 2;
+  // max is 21
+  return ItB(specialChar) * 2 + ItB(number) * 2 + ItB(lowerCase) + ItB(upperCase) + length;
+}

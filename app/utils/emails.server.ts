@@ -51,7 +51,13 @@ export const sendEmailConfirmationEmail = async (sendToAddress: string, baseUrl:
       </body>
     `
   }
-  await sgMail.send(msg);
+  if (baseUrl.includes('localhost')) {
+    console.log('Email link');
+    console.log(`${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}`);
+  }
+  else {
+    await sgMail.send(msg);
+  }
 }
 
 export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, username: string) => {
@@ -70,10 +76,16 @@ export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, 
     text: `Please click the following link: ${baseUrl}/pwd/reset?token=${username}:${signature}`,
     html: `<p>Please click the following link: ${baseUrl}/pwd/reset?token=${username}:${signature}</p>`
   }
-  await sgMail.send(msg);
+  if (baseUrl.includes('localhost')) {
+    console.log('Email link');
+    console.log(`${baseUrl}/pwd/reset?token=${username}:${signature}`);
+  }
+  else {
+    await sgMail.send(msg);
+  }
 }
 
-export const sendCreationEmail = async (sendToAddress: string) => {
+export const sendCreationEmail = async (baseUrl: string, sendToAddress: string) => {
   if (sendToAddress == '') return;
   let address = 'pavlik.pocho@gmail.com';
   if (process.env.NODE_ENV === 'production') {
@@ -89,10 +101,28 @@ export const sendCreationEmail = async (sendToAddress: string) => {
     text: `Thanks for making a reservation. We will let you know if your chosen time is free ASAP.`,
     html: `<p>Thanks for making a reservation. We will let you know if your chosen time is free ASAP.</p>`
   }
-  await sgMail.send(msg);
+
+  const usMsg = {
+    to: ['pavlik.pocho@gmail.com', 'loskotaklp@gmail.com', 'tomasekerbenu@gmail.com'],
+    from: {
+      name: 'Reserveroo Info',
+      email: 'info@reserveroo.com'
+    },
+    subject: `Reservation created`,
+    text: `Thanks for making a reservation. We will let you know if your chosen time is free ASAP.`,
+    html: `<p>Thanks for making a reservation. We will let you know if your chosen time is free ASAP.</p>`
+  }
+  
+  if (baseUrl.includes('localhost')) {
+    console.log('Creation email would be sent');
+  }
+  else {
+    await sgMail.send(msg);
+    await sgMail.send(usMsg);
+  }
 }
 
-export const sendCancellationEmail = async (sendToAddress: string) => {
+export const sendCancellationEmail = async (baseUrl: string, sendToAddress: string) => {
   if (sendToAddress == '') return;
   let address = 'pavlik.pocho@gmail.com';
   if (process.env.NODE_ENV === 'production') {
@@ -108,10 +138,27 @@ export const sendCancellationEmail = async (sendToAddress: string) => {
     text: `You cancelled your reservaiton successfuly. Thank you for giving us a shot! We appreciate it. :)`,
     html: `<p>You cancelled your reservaiton successfuly. Thank you for giving us a shot! We appreciate it. :)</p>`
   }
-  await sgMail.send(msg);
+
+  const usMsg = {
+    to: ['pavlik.pocho@gmail.com', 'loskotaklp@gmail.com', 'tomasekerbenu@gmail.com'],
+    from: {
+      name: 'Reserveroo Info',
+      email: 'info@reserveroo.com'
+    },
+    subject: `Reservation cancelled`,
+    text: `You cancelled your reservaiton successfuly. Thank you for giving us a shot! We appreciate it. :)`,
+    html: `<p>You cancelled your reservaiton successfuly. Thank you for giving us a shot! We appreciate it. :)</p>`
+  }
+  if (baseUrl.includes('localhost')) {
+    console.log('Cancellation email would be sent');
+  }
+  else {
+    await sgMail.send(msg);
+    await sgMail.send(usMsg);
+  }
 }
 
-export const sendStatusUpdateEmail = async (sendToAddress: string, status: 'confirm_preferred' | 'unavailable' | 'confirm_backup', place: Place, start: Date) => {
+export const sendStatusUpdateEmail = async (baseUrl: string, sendToAddress: string, status: 'confirm_preferred' | 'unavailable' | 'confirm_backup', place: Place, start: Date) => {
   if (sendToAddress == '') return;
   let address = 'pavlik.pocho@gmail.com';
   if (process.env.NODE_ENV === 'production') {
@@ -139,5 +186,10 @@ export const sendStatusUpdateEmail = async (sendToAddress: string, status: 'conf
       `<p>Unfortunately, your selected time(s) wasn't/weren't available. Feel free to go for another time though!</p>`
     ) : '',
   }
-  await sgMail.send(msg);
+  if (baseUrl.includes('localhost')) {
+    console.log('Status email would be sent');
+  }
+  else {
+    await sgMail.send(msg);
+  }
 }

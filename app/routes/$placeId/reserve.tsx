@@ -26,7 +26,7 @@ import { createReservationGroup } from '~/models/reservationGroup.server';
 import { getUserId } from '~/models/user.server';
 import { ReservableTypeWithTexts, ReservableWithReservations, ReservationStatus, Time, TimeSection } from '~/types/types';
 import { sendCreationEmail } from '~/utils/emails.server';
-import { getDayOfWeek, getStringDateValue, getStringTimeValue } from '~/utils/forms';
+import { getBaseUrl, getDayOfWeek, getStringDateValue, getStringTimeValue } from '~/utils/forms';
 import { requireUsernameAndAdmin } from '~/utils/session.server'
 
 interface ReserveLoaderData {
@@ -137,7 +137,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const user = await getUserId({ username });
-  await sendCreationEmail(user?.email ?? '');
+  await sendCreationEmail(getBaseUrl(request) ,user?.email ?? '');
   const resGroup = user ? await createReservationGroup({ note: note ?? '', userId: user.id }) : null;
   if (resGroup == null) {
     return badRequest({

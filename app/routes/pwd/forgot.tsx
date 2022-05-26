@@ -1,16 +1,17 @@
+import { redirect } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
 import { ActionFunction, json, LoaderFunction } from '@remix-run/server-runtime'
 import { FaAngleDoubleRight } from 'react-icons/fa'
 import styled from 'styled-components'
-import { AuthWrap } from '~/components/auth/login'
 import { IconRow } from '~/components/icon-row'
 import { TextInput } from '~/components/inputs/TextInput'
+import { AuthWrap, Title } from '~/components/other/auth-components'
 import { MainButtonBtn } from '~/components/place/place-summary'
 import { getEmailFromUsername } from '~/models/user.server'
 import { sendPwdResetEmail } from '~/utils/emails.server'
 import { badRequest, getBaseUrl, getFormEssentials } from '~/utils/forms'
-import { Title } from '../authenticate'
-import { Text } from '../verifyEmail'
+import { getUsernameAndAdmin } from '~/utils/session.server'
+import { Text } from '~/components/other/auth-components'
 
 interface ActionData {
   msg: string;
@@ -33,6 +34,10 @@ export const action: ActionFunction = async ({ request }) => {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
+  const user = await getUsernameAndAdmin(request);
+  if (user.username) {
+    return redirect('/places');
+  }
   return {};
 }
 

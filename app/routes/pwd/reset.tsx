@@ -1,21 +1,18 @@
-import { Form, useActionData, useSearchParams, useSubmit } from '@remix-run/react'
+import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { FaAngleDoubleRight } from 'react-icons/fa'
 import styled from 'styled-components'
-import { AuthWrap } from '~/components/auth/login'
-import { Bar, BarBack, checkPasswordStrength, PwdInfo, PwdWarn } from '~/components/auth/register'
 import { IconRow } from '~/components/icon-row'
 import { IdInput } from '~/components/inputs/ObjectInput'
 import { TextInput } from '~/components/inputs/TextInput'
 import { MainButtonBtn } from '~/components/place/place-summary'
-import { changeUserPassword, getEmailFromUsername } from '~/models/user.server'
-import { sendPwdResetEmail } from '~/utils/emails.server'
-import { badRequest, getBaseUrl, getFormEssentials } from '~/utils/forms'
+import { changeUserPassword } from '~/models/user.server'
+import { checkPasswordStrength, getFormEssentials } from '~/utils/forms'
 import { generateHashAndSalt } from '~/utils/pwd_helper.server'
+import { getUsernameAndAdmin } from '~/utils/session.server'
 import { verifyMessage } from '~/utils/signing.server'
-import { Title } from '../authenticate'
-import { Text } from '../verifyEmail'
+import { AuthWrap, Bar, BarBack, PwdInfo, PwdWarn, Text, Title } from '~/components/other/auth-components'
 
 interface ActionData {
   msg: string;
@@ -45,6 +42,10 @@ export const action: ActionFunction = async ({ request }) => {
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const token = url.searchParams.get('token');
+  const user = await getUsernameAndAdmin(request);
+  if (user.username) {
+    return redirect('/places');
+  }
   if (!token || token == '') {
     return redirect('/authenticate');
   }

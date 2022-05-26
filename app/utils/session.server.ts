@@ -23,7 +23,7 @@ export const login = async ({ username, password }: LoginType) => {
 
   const user = await checkForUserByUsername({ username });
 
-  if (user == null) return null;
+  if (user == null || user.deleted) return null;
 
   const passwordMatch = await checkPassword(password, user.passwordHash);
 

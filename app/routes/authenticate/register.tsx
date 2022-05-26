@@ -40,7 +40,5 @@ export const action: ActionFunction = async ({ request }) => {
 
   const baseUrl = getBaseUrl(request);
 
-  await sendEmailConfirmationEmail(email, baseUrl);
-
   return createUserSession(username, admin, false, '/verifyEmail');
 }

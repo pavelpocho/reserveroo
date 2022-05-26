@@ -5,11 +5,11 @@ import styled from "styled-components"
 import AnglesRightIcon from "~/assets/icons/AnglesRight"
 import { styles } from "~/constants/styles"
 import { AuthActionData } from "~/routes/authenticate/login"
-import { isValidEmail, isValidPhone } from "~/utils/forms"
+import { checkPasswordStrength, isValidEmail, isValidPhone } from "~/utils/forms"
 import { TextInput } from "../inputs/TextInput"
+import { AuthWrap, FieldSet, BarBack, Bar, PwdInfo, PwdWarn } from "../other/auth-components"
 import { MainButtonBtn } from "../place/place-summary"
 import { ErrorLabel } from "../profile/account-summary"
-import { AuthWrap, FieldSet, SubmitButton } from "./login"
 
 interface Props {
   a?: AuthActionData,
@@ -18,54 +18,22 @@ interface Props {
   t: Transition
 }
 
-export const PwdWarn = styled.p`
-  margin: 0;
-  color: ${styles.colors.busy};
-  font-size: 0.875rem;
-`;
-export const PwdInfo = styled.p`
-  margin: 0;
-  color: ${styles.colors.black};
-  font-size: 0.875rem;
-`;
+
 const ConditionsText = styled.p`
   margin: 0;
   color: ${styles.colors.black};
   font-size: 0.8125rem;
 `;
 
-export const Bar = styled.div<{ width: number }>`
-  width: ${props => props.width}%;
-  height: 6px;
-  min-width: 6px;
-  border-radius: 3px;
-  background-color: ${props => (
-    props.width < 25 ? styles.colors.busy : props.width < 50 ? styles.colors.warn :
-    props.width < 75 ? styles.colors.primary : styles.colors.free
-  )};
-`;
-export const BarBack = styled.div`
-  width: 100%;
-  background-color: ${styles.colors.gray[70]};
-  height: 6px;
-  border-radius: 3px;
-`;
-
 const RelativeWrap = styled.div`
   position: relative;
 `;
 
-const ItB = (b: boolean) => b ? 1 : 0;
-
-export const checkPasswordStrength = (pwd: string) => {
-  const specialChar = /[!-\/]|[:-@]|[\[-`]|[{-~]/.test(pwd);
-  const number = /[0-9]/.test(pwd);
-  const lowerCase = /[a-z]/.test(pwd);
-  const upperCase = /[A-Z]/.test(pwd);
-  const length = Math.min(pwd.length, 12) / 2;
-  // max is 21
-  return ItB(specialChar) * 2 + ItB(number) * 2 + ItB(lowerCase) + ItB(upperCase) + length;
-}
+const CheckboxLabel = styled.label`
+  font-size: 0.875rem;
+  display: flex;
+  gap: 0.5rem;
+`;
 
 export const RegisterComponent: React.FC<Props> = ({ a, searchParams, setSearchParams, t }) => {
 
@@ -77,6 +45,7 @@ export const RegisterComponent: React.FC<Props> = ({ a, searchParams, setSearchP
 
   const [ pwd, setPwd ] = useState('');
   const [ cpwd, setCPwd ] = useState('');
+  const [ agree, setAgree ] = useState(false);
 
   const s = Math.max(checkPasswordStrength(pwd), checkPasswordStrength(cpwd));
 
@@ -111,7 +80,8 @@ export const RegisterComponent: React.FC<Props> = ({ a, searchParams, setSearchP
       </RelativeWrap>
       <ConditionsText>By creating an account, you agree with us sending you necessary email corespondence. (Password resets, confirmation emails, etc.)</ConditionsText>
       <ConditionsText>Your details (name, email, phone) may be shared with those places where you make reservations.</ConditionsText>
-      <MainButtonBtn disabled={!validEmail || !validPhone} onClick={(e) => {
+      <CheckboxLabel><input type='checkbox' checked={agree} onClick={(e) => {setAgree(e.currentTarget.checked)}} />I agree with the above terms.</CheckboxLabel>
+      <MainButtonBtn disabled={!validEmail || !validPhone || !agree} onClick={(e) => {
         if (!validEmail || !validPhone) {
           e.preventDefault();
         }

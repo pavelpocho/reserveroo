@@ -1,11 +1,12 @@
 import { Place, Reservable, Reservation, User } from "@prisma/client"
 import { Form, Link, useSubmit } from "@remix-run/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
 import { ReservationStatus } from "~/types/types"
 import { isValidEmail, isValidPhone } from "~/utils/forms";
 import { Button } from "../button";
+import { ConfirmationDialog } from "../confirmation-dialog";
 import { IdInput } from "../inputs/ObjectInput";
 import { TextInput } from "../inputs/TextInput";
 import { SecondaryButton, SecondaryButtonBtn } from "../place/place-summary";
@@ -112,11 +113,25 @@ const EditButton = styled(SecondaryButton)`
   width: auto !important;
 `;
 
+const DeleteButtonBtn = styled(SecondaryButtonBtn)`
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  background-color: ${styles.colors.busy};
+  color: white;
+  width: auto !important;
+`;
+
 const EditButtonBtn = styled(SecondaryButtonBtn)`
   padding: 0.5rem;
   font-size: 0.8rem;
   background-color: ${styles.colors.white};
   width: auto !important;
+`;
+
+const Flex = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 `;
 
 export const ErrorLabel = styled.p`
@@ -135,23 +150,50 @@ export const ErrorLabel = styled.p`
 export const AccountSummary: React.FC<AccountSummaryProps> = ({ editing, user }) => {
 
   const form = React.useRef<HTMLFormElement>(null);
+  const deleteForm = React.useRef<HTMLFormElement>(null);
   const submit = useSubmit();
   const [ validEmail, setValidEmail ] = useState(true);
   const [ validPhone, setValidPhone ] = useState(true);
+  const [ shouldDelete, setShouldDelete ] = useState(false);
+  const [ confirmationDialog, setConfirmationDialog ] = useState(false);
+
+  useEffect(() => {
+    if (shouldDelete && deleteForm.current) {
+      submit(deleteForm.current, { replace: true });
+    }
+  }, [shouldDelete]);
 
   return user && <Wrap><InnerWrap>
+    <ConfirmationDialog hidden={!confirmationDialog} onConfirm={() => {
+      setShouldDelete(true);
+      setConfirmationDialog(false);
+    }} title={"Are you *absolutely* sure?"} text={"This will permanently delete your account. You will immediatelly be signed out forever."} confirmText={"Yes, DELETE my account"} cancelText={"No, go back"} close={() => {
+      setConfirmationDialog(false);
+    }} />
     <Photo>{user.username[0].toUpperCase()}</Photo>
+    { shouldDelete && <Form method={'post'} ref={deleteForm} action='/profile/delete'>
+      <IdInput name='id' value={user?.id} />
+    </Form> }
     <StretchForm method='post' ref={form}>
       <HeaderWrap>
         <Title>Personal Information</Title>
-        { !editing ? <EditButton inSearch={false} to={'/profile/edit'}>Edit</EditButton> : <EditButtonBtn disabled={!validEmail || !validPhone} onClick={(e) => {
-          e.preventDefault();
-          if (validEmail && validPhone) {
-            submit(form.current, { replace: true })
-          }
-        }}>{
-          !editing ? 'Edit' : 'Save'
-        }</EditButtonBtn>}
+        { !editing ? <EditButton inSearch={false} to={'/profile/edit'}>Edit</EditButton> : <Flex>
+          <DeleteButtonBtn onClick={(e) => {
+            e.preventDefault();
+            setConfirmationDialog(true);
+          }}>
+            Delete Account
+          </DeleteButtonBtn>
+          <EditButtonBtn disabled={!validEmail || !validPhone} onClick={(e) => {
+            e.preventDefault();
+            if (validEmail && validPhone) {
+              submit(form.current, { replace: true });
+            }
+          }}>{
+            !editing ? 'Edit' : 'Save'
+          }</EditButtonBtn>
+          <EditButton inSearch={false} to={'/profile'}>Cancel</EditButton>
+        </Flex>}
       </HeaderWrap>
       <InfoWrap>
           { editing && <IdInput name={'id'} value={user?.id} /> }
