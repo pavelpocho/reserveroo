@@ -9,11 +9,27 @@ import { Button } from "../button";
 import { ConfirmationDialog } from "../confirmation-dialog";
 import { IdInput } from "../inputs/ObjectInput";
 import { TextInput } from "../inputs/TextInput";
+import { FormError } from "../other/auth-components";
 import { SecondaryButton, SecondaryButtonBtn } from "../place/place-summary";
 
 interface AccountSummaryProps {
   user: User | null,
-  editing: boolean
+  editing: boolean,
+  formError?: string | null;
+  fieldErrors?: {
+    username?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    email?: string | null;
+    phone?: string | null;
+  };
+  fields?: {
+    username: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+    phone: string | null;
+  };
 }
 
 const Wrap = styled.div`
@@ -126,6 +142,9 @@ const EditButtonBtn = styled(SecondaryButtonBtn)`
   font-size: 0.8rem;
   background-color: ${styles.colors.white};
   width: auto !important;
+  &:disabled {
+    cursor: default;
+  }
 `;
 
 const Flex = styled.div`
@@ -147,7 +166,7 @@ export const ErrorLabel = styled.p`
   padding: 0.1rem 0.5rem;
 `;
 
-export const AccountSummary: React.FC<AccountSummaryProps> = ({ editing, user }) => {
+export const AccountSummary: React.FC<AccountSummaryProps> = ({ editing, user, fieldErrors, fields, formError }) => {
 
   const form = React.useRef<HTMLFormElement>(null);
   const deleteForm = React.useRef<HTMLFormElement>(null);
@@ -199,25 +218,30 @@ export const AccountSummary: React.FC<AccountSummaryProps> = ({ editing, user })
           { editing && <IdInput name={'id'} value={user?.id} /> }
           <div>
             <SectionTitle>First Name</SectionTitle>
-            { editing ? <TextInput name={'firstName'} defaultValue={user?.firstName} /> : <Value>{user?.firstName}</Value> }
+            { editing ? <TextInput name={'firstName'} defaultValue={fields?.firstName ?? user?.firstName} /> : <Value>{user?.firstName}</Value> }
+            { fieldErrors?.firstName &&  <FormError>{fieldErrors.firstName}</FormError> }
           </div>
           <div>
             <SectionTitle>Last Name</SectionTitle>
-            { editing ? <TextInput name={'lastName'} defaultValue={user?.lastName} /> : <Value>{user?.lastName}</Value> }
+            { editing ? <TextInput name={'lastName'} defaultValue={fields?.lastName ?? user?.lastName} /> : <Value>{user?.lastName}</Value> }
+            { fieldErrors?.lastName &&  <FormError>{fieldErrors.lastName}</FormError> }
           </div>
           <div>
             <SectionTitle>Email</SectionTitle>
-            { editing ? <TextInput setValue={(s) => { setValidEmail(isValidEmail(s)) }} name={'email'} defaultValue={user?.email} /> : <Value>{user?.email}</Value> }
+            { editing ? <TextInput setValue={(s) => { setValidEmail(isValidEmail(s)) }} name={'email'} defaultValue={fields?.email ?? user?.email} /> : <Value>{user?.email}</Value> }
             { editing && !validEmail && <ErrorLabel>Invalid email</ErrorLabel> }
+            { fieldErrors?.email &&  <FormError>{fieldErrors.email}</FormError> }
           </div>
           <div>
             <SectionTitle>Phone</SectionTitle>
-            { editing ? <TextInput setValue={(s) => { setValidPhone(isValidPhone(s)) }} name={'phone'} defaultValue={user?.phone} /> : <Value>{user?.phone}</Value> }
+            { editing ? <TextInput setValue={(s) => { setValidPhone(isValidPhone(s)) }} name={'phone'} defaultValue={fields?.phone ?? user?.phone} /> : <Value>{user?.phone}</Value> }
             { editing && !validPhone && <ErrorLabel>Invalid phone</ErrorLabel> }
+            { fieldErrors?.phone &&  <FormError>{fieldErrors.phone}</FormError> }
           </div>
           <div>
             <SectionTitle>Username</SectionTitle>
-            { editing && false ? <TextInput name={'username'} defaultValue={user?.username ?? ''} /> : <Value>{user?.username}</Value> }
+            { editing ? <TextInput name={'username'} defaultValue={fields?.username ?? user?.username ?? ''} /> : <Value>{user?.username}</Value> }
+            { fieldErrors?.username &&  <FormError>{fieldErrors.username}</FormError> }
           </div>
           <div>
             <SectionTitle>Reserving since</SectionTitle>

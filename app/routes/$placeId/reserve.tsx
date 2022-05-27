@@ -12,6 +12,7 @@ import { IdInput } from '~/components/inputs/ObjectInput';
 import { RadioInput } from '~/components/inputs/RadioInput';
 import { TextInput } from '~/components/inputs/TextInput';
 import { TimeInput } from '~/components/inputs/TimeInput';
+import { FormError } from '~/components/other/auth-components';
 import { Indicator } from '~/components/place/facilities-indicator';
 import { MainButton, MainButtonBtn, SecondaryButton, SecondaryButtonBtn } from '~/components/place/place-summary';
 import { ReservableTimes } from '~/components/reservable-times';
@@ -102,6 +103,25 @@ export const action: ActionFunction = async ({ request }) => {
   const reservablePromises = reservableId.map((r) => getReservableWReservations({ id: r }));
   const reservables = await Promise.all(reservablePromises);
 
+  // Possible errors
+  /**
+   * 1) No main timeslot selected
+   * 2) Timeslots overlap
+   * 3) Past slot selected
+   * 4) Something else missing
+   */
+
+    console.log(reservationBackup);
+   if (reservationBackup.filter(b => b === '0').length == 0) {
+    // Problem 1)
+    return badRequest({
+      fields: {
+        note: note ?? '', placeId: placeId ?? '', username: username ?? ''
+      },
+      formError: `Please select a preferred timeslot.`
+    })
+  }
+
   // These are the reservableIds we book
   const overlap = !!(reservables.map((r, i) => {
     const start = dateTimeStart[i];
@@ -123,16 +143,30 @@ export const action: ActionFunction = async ({ request }) => {
       },
       formError: `It looks like you selected a time that's already booked. Please try another time.`
     })
+    // Problem 2)
   }
 
-  const datesInPast = dateTimeStart.find(s => new Date(s).getTime() < new Date().getTime());
+  const inTwoHours = new Date();
+  inTwoHours.setHours(inTwoHours.getHours() + 2);
+  const datesInPast = dateTimeStart.find(s => new Date(s).getTime() < inTwoHours.getTime());
 
-  if (dateTimeEnd.length == 0 || dateTimeStart.length == 0 || datesInPast || !placeId || !username || !reservableId) {
+  if (datesInPast) {
     return badRequest({
       fields: {
         note: note ?? '', placeId: placeId ?? '', username: username ?? ''
       },
-      formError: 'Fill everything in pls.'
+      formError: `Please select a slot that's at least 2 hours in the future.`
+    })
+    // Problem 3)
+  }
+
+  if (!placeId || !username || !reservableId) {
+    // Problem 4)
+    return badRequest({
+      fields: {
+        note: note ?? '', placeId: placeId ?? '', username: username ?? ''
+      },
+      formError: 'We are mising some information about you. Please try reloading.'
     })
   }
 
@@ -144,7 +178,7 @@ export const action: ActionFunction = async ({ request }) => {
       fields: {
         note: note ?? '', placeId: placeId ?? '', username: username ?? ''
       },
-      formError: 'Cannot find who you are :(.'
+      formError: 'We cannot find you. Please try reloading the page.'
     })
   }
   const promises: Promise<object>[] = []
@@ -392,13 +426,13 @@ export default function ReservationElement() {
       <TextWrap>
         <TextInput name={'note'} title={'Note'} defaultValue={actionData?.fields?.note ?? ''} />
       </TextWrap>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+        { actionData?.formError && <FormError>{actionData.formError ?? ''}</FormError> }
+      </div>
       <MainButtonBtn disabled={resList.filter(r => !r.isBackup).length == 0} style={{ margin: '2rem auto' }} onClick={(e) => {
         e.preventDefault();
         setConfirmationDialog(true);
       }}>Create reservation<AnglesRightIcon height='1.5rem' /></MainButtonBtn>
-      {
-        actionData?.formError && <p>{actionData.formError ?? ''}</p>
-      }
     </Form>
   </Wrap>)
 }

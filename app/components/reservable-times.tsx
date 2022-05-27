@@ -1,4 +1,5 @@
 import { OpeningTime, Place, Reservable, Reservation } from "@prisma/client"
+import { PresignedPost } from "aws-sdk/clients/s3"
 import React from "react"
 import styled from "styled-components"
 import { styles } from "~/constants/styles"
@@ -207,7 +208,13 @@ const Section = styled.button<{taken: boolean, selected: boolean}>`
   &:hover {
     box-shadow: ${styles.shadows[2]};
   }
-  background-color: ${props => props.selected ? styles.colors.action : props.taken ? styles.colors.busy : styles.colors.gray[70]};
+  background-color: ${props => props.selected ? styles.colors.action : styles.colors.gray[70]};
+  &:disabled {
+    box-shadow: none;
+    cursor: default;
+    background-color: ${styles.colors.gray[30]};
+  }
+  ${props => props.taken ? `background-color: ${styles.colors.busy} !important;` : ''}
 `;
 
 const SectionWrap = styled.div`
@@ -292,6 +299,11 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
             )
           ).length >= reservable.reservationsPerSlot}
           key={getTotalMinutes(s.start)}
+          disabled={(() => {
+            const inTwoHours = new Date();
+            inTwoHours.setHours(inTwoHours.getHours() + 2);
+            return !!(new Date(date.getFullYear(), date.getMonth(), date.getDate(), s.start.hour, s.start.minute).getTime() < inTwoHours.getTime());
+          })()}
           selected={selectedRange != null && selectedDate != null && areDatesEqual(date, selectedDate) && getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.start) && getTotalMinutes(s.start) < getTotalMinutes(selectedRange.end)}
           onClick={(e) => {
             let newRange: TimeSection | null = null;
@@ -337,7 +349,6 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
           }}
         ></Section>
       )) }
-      {/* Combine these into just start and end dateTime inputs*/}
       {selectedRange && <IdInput name={reservationBackupName} value={backup ? '1' : '0'} />}
       {selectedRange && <IdInput name={reservationIdName} value={defaultReservation ? defaultReservation.id : '-1'} /> }
       {selectedRange && <input hidden={true} readOnly={true} name={startName} type='datetime-local' value={selectedDate && selectedRange ?
@@ -347,9 +358,6 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
         new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.end.hour, selectedRange.end.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ''
       } /> }
       {selectedRange && <IdInput name={reservableIdName} value={reservable.id} />}
-      {/* <input readOnly={true} name={startName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.start.hour, selectedRange?.start.minute))} />
-      <input readOnly={true} name={endName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.end.hour, selectedRange?.end.minute))} />
-      <input readOnly={true} type='date' value={getInputDateFromString(selectedDate)} /> */}
     </SectionWrap>
   </>
 }

@@ -89,7 +89,7 @@ export const action: ActionFunction = async ({ request }) => {
   );
 
   const lastNameError = (
-    firstName == null || lastName == null ? 'You must provide your first and last names' : null
+    firstName == null || firstName == '' || lastName == null || lastName == '' ? 'You must provide your first and last names' : null
   )
 
   const emailError = (
