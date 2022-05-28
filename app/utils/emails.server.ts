@@ -222,7 +222,7 @@ export const sendCreationEmail = async (baseUrl: string, sendToAddress: string, 
   }
 }
 
-export const sendCancellationEmail = async (sendToAddress: string, placeName: string, slots: ReservableWithCountForEmail[]) => {
+export const sendCancellationEmail = async (baseUrl: string, sendToAddress: string, placeName: string, slots: ReservableWithCountForEmail[]) => {
   if (sendToAddress == '') return;
   let address = 'pavlik.pocho@gmail.com';
   if (process.env.NODE_ENV === 'production') {
@@ -282,13 +282,13 @@ export const sendCancellationEmail = async (sendToAddress: string, placeName: st
     text: `Somebody cancelled a reservation. So like maybe go sort it out or smth.`,
     html: `<p>Somebody cancelled a reservation. So like maybe go sort it out or smth.</p>`
   }
-  // if (baseUrl.includes('localhost')) {
-  //   console.log('Cancellation email would be sent');
-  // }
-  // else {
+  if (baseUrl.includes('localhost')) {
+    console.log('Cancellation email would be sent');
+  }
+  else {
     await sgMail.send(msg);
-  //   await sgMail.send(usMsg);
-  // }
+    await sgMail.send(usMsg);
+  }
 }
 
 export const sendStatusUpdateEmail = async (baseUrl: string, sendToAddress: string, status: 'confirm_preferred' | 'unavailable' | 'confirm_backup' | string, placeName: string, slots: ReservableWithCountForEmail[]) => {

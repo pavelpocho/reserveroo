@@ -3,7 +3,7 @@ import { setStatusOfReservationsInGroup } from '~/models/reservation.server';
 import { getReservationGroup, getReservationGroupForConfirmationEmail } from '~/models/reservationGroup.server';
 import { ReservableWithCountForEmail, ReservationStatus } from '~/types/types';
 import { sendCancellationEmail } from '~/utils/emails.server';
-import { getFormEssentials } from '~/utils/forms';
+import { getBaseUrl, getFormEssentials } from '~/utils/forms';
 
 export const action: ActionFunction = async ({ request }) => {
 
@@ -32,6 +32,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const resGroup = await getReservationGroup({ id: reservationGroupId });
   if (resGroup?.user?.email) await sendCancellationEmail(
+    getBaseUrl(request),
     resGroup?.user?.email,
     reservationGroup?.reservations[0].reservable?.place?.name ?? '',
     typesWithAmount
