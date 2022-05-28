@@ -3012,31 +3012,47 @@ var sendEmailConfirmationEmail = async (sendToAddress, baseUrl) => {
       ${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}
     `,
     html: `
-      <head>
-        <!--[if (gte mso 9)|(IE)]><!-->
-        <link rel="preconnect" href="https://fonts.googleapis.com"></link> 
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin></link>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet"></link>
-        <!--<![endif]-->
-      </head>
-      <body>
-        <div style="height: 6rem;width: 100%;box-sizing:border-box;background-color: #2E294E;border-radius: 0.5rem;display: flex; justify-content: space-between; align-items: center;padding: 0rem 1rem">
+    <head>
+    <!--[if (gte mso 9)|(IE)]><!-->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet"></link>
+    <!--<![endif]-->
+  </head>
+  <body>
+    <table style="background-color: #2E294E;width: 100%; padding: 24px; border-radius: 8px;">
+      <tr>
+        <td>
           <p style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;color: white;">Please Verify Your Email</p>
-          <p style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;background-color: white;color: black;border-radius: 0.25rem;padding: 0.5rem;">Reserveroo</p>
-        </div>
-        <div style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 2rem auto;border-radius: 0.5rem;width: 100%;max-width: 570px;background-color: #F2F2F8;padding: 2rem;">
-          <p>We need to make sure you used a real email address to sign up. Please click to button bellow to get back to Reserveroo and confirm your email.</p>
-          <a style="background-color: #ACC196;display: flex;justify-content: center;align-items: center;gap: 1rem;width: 10rem;height: 2rem;padding: 0.5rem 0.5rem;text-align: center;line-height: 1.5rem;margin: 0 auto;border-radius: 0.25rem;" href="${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}">
-            <p style="color: black;text-decoration: unset;">Verify Email</p>
+        </td>
+        <td style="width: 80px">
+          <p style="font-weight: 700; font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;background-color: white;color: black;border-radius: 4px;padding: 8px;">Reserveroo</p>
+        </td>
+      </tr>
+    </table>
+    <table style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;background-color: #F2F2F8; width: 100%; margin: 30px auto; max-width: 572px; padding: 24px; border-radius: 8px">
+      <tr>
+        <td style="padding-bottom: 32px;">
+        <p>You received this email because you or someone else tried to create a Reserveroo account with your email address. If this wasn't you, you can disregard this email and we will delete your address from our database. If you did this, we need to make sure you used your actual email address to sign up. Please click to button bellow to get back to Reserveroo and confirm your email.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-bottom: 32px; text-align: center;">
+          <a style="color: black; padding: 16px 24px; text-decoration: none; background-color: #ACC196; width: 160px; height: 32px; text-align: center; line-height: 24px; margin: 0 auto; border-radius: 4px;" href="${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}">
+            Verify Email
           </a>
+        </td>
+      </tr>
+      <tr>
+        <td>
           <p>
             You can also click or copy this loong link:
-            <a style="font-size: 0.8rem;white-space: pre-wrap;white-space: -moz-pre-wrap !important;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: pre-wrap;word-wrap: break-word;word-break: break-all;white-space: normal;" href="${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}">
+            <a style="font-size: 13px;white-space: pre-wrap;white-space: -moz-pre-wrap !important;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: pre-wrap;word-wrap: break-word;word-break: break-all;white-space: normal;" href="${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}">
             ${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}
             </a>
           </p>
-        </div>
-      </body>
+        </td>
+      </tr>
+    </div>
+  </body>
     `
   };
   if (baseUrl.includes("localhost")) {
@@ -3060,7 +3076,49 @@ var sendPwdResetEmail = async (sendToAddress, baseUrl, username) => {
     },
     subject: "Reserveroo Password Reset",
     text: `Please click the following link: ${baseUrl}/pwd/reset?token=${username}:${signature}`,
-    html: `<p>Please click the following link: ${baseUrl}/pwd/reset?token=${username}:${signature}</p>`
+    html: `
+    <head>
+      <!--[if (gte mso 9)|(IE)]><!-->
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet"></link>
+      <!--<![endif]-->
+    </head>
+    <body>
+      <table style="background-color: #2E294E;width: 100%; padding: 24px; border-radius: 8px;">
+        <tr>
+          <td>
+            <p style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;color: white;">Password Reset Link</p>
+          </td>
+          <td style="width: 80px">
+            <p style="font-weight: 700; font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;background-color: white;color: black;border-radius: 4px;padding: 8px;">Reserveroo</p>
+          </td>
+        </tr>
+      </table>
+      <table style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;background-color: #F2F2F8; width: 100%; margin: 30px auto; max-width: 572px; padding: 24px; border-radius: 8px">
+        <tr>
+          <td style="padding-bottom: 32px;">
+            <p>You received this email because somebody tried to reset your Reserveroo account password. If this wasn't you, you can safely disregard this email. Otherwise, click the link below to reset your password.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding-bottom: 32px; text-align: center;">
+            <a style="color: black; padding: 16px 24px; text-decoration: none; background-color: #ACC196; width: 160px; height: 32px; text-align: center; line-height: 24px; margin: 0 auto; border-radius: 4px;" href="${baseUrl}/pwd/reset?token=${username}:${signature}">
+              Reset password
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p>
+              You can also click or copy this loong link:
+              <a style="font-size: 13px;white-space: pre-wrap;white-space: -moz-pre-wrap !important;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: pre-wrap;word-wrap: break-word;word-break: break-all;white-space: normal;" href="${baseUrl}/pwd/reset?token=${username}:${signature}">
+              ${baseUrl}/pwd/reset?token=${username}:${signature}
+              </a>
+            </p>
+          </td>
+        </tr>
+      </div>
+    </body>  
+    `
   };
   if (baseUrl.includes("localhost")) {
     console.log("Email link");
@@ -3069,7 +3127,7 @@ var sendPwdResetEmail = async (sendToAddress, baseUrl, username) => {
     await import_mail.default.send(msg);
   }
 };
-var sendCreationEmail = async (baseUrl, sendToAddress) => {
+var sendCreationEmail = async (baseUrl, sendToAddress, placeName, slots) => {
   if (sendToAddress == "")
     return;
   let address = "pavlik.pocho@gmail.com";
@@ -3084,7 +3142,47 @@ var sendCreationEmail = async (baseUrl, sendToAddress) => {
     },
     subject: `Reservation created`,
     text: `Thanks for making a reservation. We will let you know if your chosen time is free ASAP.`,
-    html: `<p>Thanks for making a reservation. We will let you know if your chosen time is free ASAP.</p>`
+    html: `
+    <head>
+      <!--[if (gte mso 9)|(IE)]><!-->
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet"></link>
+      <!--<![endif]-->
+    </head>
+    <body>
+      <table style="background-color: #2E294E;width: 100%; padding: 24px; border-radius: 8px;">
+        <tr>
+          <td>
+            <p style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;color: white;">We've got your reservation.</p>
+          </td>
+          <td style="width: 80px">
+            <p style="font-weight: bold, font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;background-color: white;color: black;border-radius: 4px;padding: 8px;">Reserveroo</p>
+          </td>
+        </tr>
+      </table>
+      <table style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif; margin: 30px auto 0px; background-color: #F2F2F8; width: 100%; max-width: 572px; padding: 24px; border-top-left-radius: 8px; border-top-right-radius: 8px">
+        <tr>
+          <td style="padding-bottom: 32px; text-align: center; font-weight: 700; color: red">We will try to confirm your reservation as soon as possible.</td>
+        </tr>
+        <tr>
+          <td style="padding-bottom: 16px; text-align: center; font-weight: 700">Thank you for using Reserveroo! We received your request. To see more information about your reservation, please visit your profile page.</td>
+        </tr>
+        <tr>
+          <td style="font-size: 20px; font-weight: 700">Reservation details</td>
+        </tr>
+      </table>
+      <table style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif; margin: 0px auto 30px; background-color: #F2F2F8; width: 100%; max-width: 572px; padding: 0px 24px 0px 24px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px">
+        <tr>
+          <td style="vertical-align: middle; font-size: 13px; padding-bottom: 24px">Place name</td>
+          <td style="vertical-align: middle; font-weight: 700; padding-bottom: 24px;text-align: end">${placeName}</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: middle; font-size: 13px; padding-bottom: 24px">What is booked?</td>
+          <td style="vertical-align: middle; font-weight: 700; padding-bottom: 24px; text-align: end">${slots.map((s) => s.amount + "x " + s.type).join(", ")}</td>
+        </tr>
+      </table>
+    </body>
+  
+    `
   };
   const usMsg = {
     to: ["pavlik.pocho@gmail.com", "loskotaklp@gmail.com", "tomasekerbenu@gmail.com"],
@@ -3093,8 +3191,8 @@ var sendCreationEmail = async (baseUrl, sendToAddress) => {
       email: "info@reserveroo.com"
     },
     subject: `Reservation created`,
-    text: `Thanks for making a reservation. We will let you know if your chosen time is free ASAP.`,
-    html: `<p>Thanks for making a reservation. We will let you know if your chosen time is free ASAP.</p>`
+    text: `Someone just created a reservation. Go complete it!`,
+    html: `<p>Someone just created a reservation. Go complete it!</p>`
   };
   if (baseUrl.includes("localhost")) {
     console.log("Creation email would be sent");
@@ -3103,7 +3201,7 @@ var sendCreationEmail = async (baseUrl, sendToAddress) => {
     await import_mail.default.send(usMsg);
   }
 };
-var sendCancellationEmail = async (baseUrl, sendToAddress) => {
+var sendCancellationEmail = async (sendToAddress, placeName, slots) => {
   if (sendToAddress == "")
     return;
   let address = "pavlik.pocho@gmail.com";
@@ -3118,7 +3216,40 @@ var sendCancellationEmail = async (baseUrl, sendToAddress) => {
     },
     subject: `Reservation cancelled`,
     text: `You cancelled your reservaiton successfuly. Thank you for giving us a shot! We appreciate it. :)`,
-    html: `<p>You cancelled your reservaiton successfuly. Thank you for giving us a shot! We appreciate it. :)</p>`
+    html: `
+      <head>
+        <!--[if (gte mso 9)|(IE)]><!-->
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet"></link>
+        <!--<![endif]-->
+      </head>
+      <body>
+        <table style="background-color: #2E294E;width: 100%; padding: 24px; border-radius: 8px;">
+          <tr>
+            <td>
+              <p style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;color: white;">Reservation cancelled.</p>
+            </td>
+            <td style="width: 80px">
+              <p style="font-weight: 700; font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;background-color: white;color: black;border-radius: 4px;padding: 8px;">Reserveroo</p>
+            </td>
+          </tr>
+        </table>
+        <table style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif; margin: 30px auto 0px; background-color: #F2F2F8; width: 100%; max-width: 572px; padding: 24px; border-top-left-radius: 8px; border-top-right-radius: 8px">
+          <tr>
+            <td style="padding-bottom: 16px; text-align: center; font-weight: 700">You successfuly cancelled your reservation. Thanks for giving us a shot!</td>
+          </tr>
+        </table>
+        <table style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif; margin: 0px auto 30px; background-color: #F2F2F8; width: 100%; max-width: 572px; padding: 0px 24px 0px 24px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px">
+          <tr>
+            <td style="vertical-align: middle; font-size: 13px; padding-bottom: 24px">Place name</td>
+            <td style="vertical-align: middle; font-weight: 700; padding-bottom: 24px;text-align: end">${placeName}</td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; font-size: 13px; padding-bottom: 24px">What was booked?</td>
+            <td style="vertical-align: middle; font-weight: 700; padding-bottom: 24px; text-align: end">${slots.map((s) => s.amount + "x " + s.type).join(", ")}</td>
+          </tr>
+        </table>
+      </body>  
+    `
   };
   const usMsg = {
     to: ["pavlik.pocho@gmail.com", "loskotaklp@gmail.com", "tomasekerbenu@gmail.com"],
@@ -3127,17 +3258,12 @@ var sendCancellationEmail = async (baseUrl, sendToAddress) => {
       email: "info@reserveroo.com"
     },
     subject: `Reservation cancelled`,
-    text: `You cancelled your reservaiton successfuly. Thank you for giving us a shot! We appreciate it. :)`,
-    html: `<p>You cancelled your reservaiton successfuly. Thank you for giving us a shot! We appreciate it. :)</p>`
+    text: `Somebody cancelled a reservation. So like maybe go sort it out or smth.`,
+    html: `<p>Somebody cancelled a reservation. So like maybe go sort it out or smth.</p>`
   };
-  if (baseUrl.includes("localhost")) {
-    console.log("Cancellation email would be sent");
-  } else {
-    await import_mail.default.send(msg);
-    await import_mail.default.send(usMsg);
-  }
+  await import_mail.default.send(msg);
 };
-var sendStatusUpdateEmail = async (baseUrl, sendToAddress, status, place, start) => {
+var sendStatusUpdateEmail = async (baseUrl, sendToAddress, status, placeName, slots) => {
   if (sendToAddress == "")
     return;
   let address = "pavlik.pocho@gmail.com";
@@ -3150,9 +3276,48 @@ var sendStatusUpdateEmail = async (baseUrl, sendToAddress, status, place, start)
       name: "Reserveroo Info",
       email: "info@reserveroo.com"
     },
-    subject: status == "confirm_preferred" ? `Reservation Confirmed` : status == "confirm_backup" ? `Backup Confirmed` : "Reservation Time Unavailable",
-    text: status == "confirm_preferred" ? `Your time is available and confirmed. The fun is looking forward to you!` : status == "confirm_backup" ? `Your preffered slot was not available, but your backup was free! The fun is looking forward to you!` : status == "unavailable" ? `Unfortunately, your selected time(s) wasn't/weren't available. Feel free to go for another time though!` : "",
-    html: status == "confirm_preferred" ? `<p>Your time is available and confirmed. The fun is looking forward to you!</p>` : status == "confirm_backup" ? `<p>Your preffered slot was not available, but your backup was free! The fun is looking forward to you!</p>` : status == "unavailable" ? `<p>Unfortunately, your selected time(s) wasn't/weren't available. Feel free to go for another time though!</p>` : ""
+    subject: status == "confirm_preferred" ? `Reservation Confirmed` : status == "confirm_backup" ? `Backup Reservation Confirmed` : "Reservation Time Unavailable",
+    text: status == "confirm_preferred" ? `Your time is available and confirmed. The fun is looking forward to you!` : status == "confirm_backup" ? `Your preffered slot was not available, but your backup was free! The fun is looking forward to you!` : status == "unavailable" ? `Unfortunately, your timeslot was not available. Feel free to go for another time though!` : "",
+    html: `
+      <head>
+        <!--[if (gte mso 9)|(IE)]><!-->
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet"></link>
+        <!--<![endif]-->
+      </head>
+      <body>
+        <table style="background-color: #2E294E;width: 100%; padding: 24px; border-radius: 8px;">
+          <tr>
+            <td>
+              <p style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;color: white;">Reservation Status Update.</p>
+            </td>
+            <td style="width: 80px">
+              <p style="font-weight: 700; font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0;font-size: 22px;background-color: white;color: black;border-radius: 4px;padding: 8px;">Reserveroo</p>
+            </td>
+          </tr>
+        </table>
+        <table style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif; margin: 30px auto 0px; background-color: #F2F2F8; width: 100%; max-width: 572px; padding: 24px; border-top-left-radius: 8px; border-top-right-radius: 8px">
+          <tr>
+            <td style="padding-bottom: 16px; text-align: center; font-weight: 700">${status == "confirm_preferred" ? `Thank you for using Reserveroo! Your time is available and confirmed. Have fun!` : status == "confirm_backup" ? `Your preffered slot was not available, but your backup was free! Have fun!` : status == "unavailable" ? `Unfortunately, your timeslot was not available. Feel free to go for another time though!` : ""}</td>
+          </tr>
+          <tr>
+            <td style="padding-bottom: 16px; text-align: center; font-weight: 700">Please check your profile for more information about your reservation.</td>
+          </tr>
+          <tr>
+            <td style="font-size: 20px; font-weight: 700">Reservation details</td>
+          </tr>
+        </table>
+        <table style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif; margin: 0px auto 30px; background-color: #F2F2F8; width: 100%; max-width: 572px; padding: 0px 24px 0px 24px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px">
+        <tr>
+          <td style="vertical-align: middle; font-size: 13px; padding-bottom: 24px">Place name</td>
+          <td style="vertical-align: middle; font-weight: 700; padding-bottom: 24px;text-align: end">${placeName}</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: middle; font-size: 13px; padding-bottom: 24px">What is booked?</td>
+          <td style="vertical-align: middle; font-weight: 700; padding-bottom: 24px; text-align: end">${slots.map((s) => s.amount + "x " + s.type).join(", ")}</td>
+        </tr>
+        </table>
+      </body>
+    `
   };
   if (baseUrl.includes("localhost")) {
     console.log("Status email would be sent");
@@ -4529,7 +4694,12 @@ var ReserveConfirmationDialog = ({ subHeaderText, reservables, resList, hidden, 
 var getReservableWReservations = async ({ id }) => await prisma.reservable.findFirst({
   where: { id },
   include: {
-    reservations: true
+    reservations: true,
+    ReservableType: {
+      include: {
+        multiLangName: true
+      }
+    }
   }
 });
 var createReservable = async ({
@@ -4666,6 +4836,11 @@ var getReservationGroupForConfirmationEmail = async ({ id }) => await prisma.res
       include: {
         reservable: {
           include: {
+            ReservableType: {
+              include: {
+                multiLangName: true
+              }
+            },
             place: true
           }
         }
@@ -4723,6 +4898,7 @@ var action7 = async ({ request }) => {
   const note = (_a = form.get("note")) == null ? void 0 : _a.toString();
   const placeId = (_b = form.get("placeId")) == null ? void 0 : _b.toString();
   const username = (_c = form.get("username")) == null ? void 0 : _c.toString();
+  const place = await getPlaceWithReservations({ id: placeId ?? "" });
   const getTotalMinutes2 = (time) => time.hour * 60 + time.minute;
   const doDaysMatch2 = (date1, date2, date3) => {
     return new Date(date1).getFullYear() === new Date(date2).getFullYear() && new Date(date1).getFullYear() === new Date(date3).getFullYear() && new Date(date1).getMonth() === new Date(date2).getMonth() && new Date(date1).getMonth() === new Date(date3).getMonth() && new Date(date1).getDate() === new Date(date2).getDate() && new Date(date1).getDate() === new Date(date3).getDate();
@@ -4751,6 +4927,10 @@ var action7 = async ({ request }) => {
   const dateTimeEnd = form.getAll("end[]").map((r) => r.toString());
   const reservablePromises = reservableId.map((r) => getReservableWReservations({ id: r }));
   const reservables = await Promise.all(reservablePromises);
+  const reservablesWithBackup = reservables.map((r, i) => ({
+    reservable: r,
+    backup: reservationBackup[i]
+  }));
   console.log(reservationBackup);
   if (reservationBackup.filter((b) => b === "0").length == 0) {
     return badRequest4({
@@ -4803,7 +4983,23 @@ var action7 = async ({ request }) => {
     });
   }
   const user = await getUserId({ username });
-  await sendCreationEmail(getBaseUrl(request), (user == null ? void 0 : user.email) ?? "");
+  const typesWithAmount = [];
+  const reservableTypes = reservablesWithBackup.filter((r) => r.backup == "0").map((r) => {
+    var _a2;
+    return (_a2 = r == null ? void 0 : r.reservable) == null ? void 0 : _a2.ReservableType;
+  });
+  reservableTypes.forEach((rt) => {
+    var _a2;
+    let cur = typesWithAmount.find((t) => {
+      var _a3;
+      return t.type == ((_a3 = rt == null ? void 0 : rt.multiLangName) == null ? void 0 : _a3.english);
+    });
+    if (cur) {
+      cur.amount += 1;
+    } else {
+      typesWithAmount.push({ amount: 1, type: ((_a2 = rt == null ? void 0 : rt.multiLangName) == null ? void 0 : _a2.english) ?? "" });
+    }
+  });
   const resGroup = user ? await createReservationGroup({ note: note ?? "", userId: user.id }) : null;
   if (resGroup == null) {
     return badRequest4({
@@ -4815,6 +5011,7 @@ var action7 = async ({ request }) => {
       formError: "We cannot find you. Please try reloading the page."
     });
   }
+  await sendCreationEmail(getBaseUrl(request), (user == null ? void 0 : user.email) ?? "", (place == null ? void 0 : place.name) ?? "", typesWithAmount);
   const promises = [];
   dateTimeStart.forEach((d, i) => {
     promises.push(createReservation({ backup: reservationBackup[i] == "1", start: new Date(dateTimeStart[i]), end: new Date(dateTimeEnd[i]), reservableId: reservableId[i] ?? null, reservationGroupId: resGroup.id ?? null }));
@@ -5413,13 +5610,35 @@ __export(cancelReservation_exports, {
 });
 var import_server_runtime10 = require("@remix-run/server-runtime");
 var action8 = async ({ request }) => {
-  var _a, _b;
+  var _a, _b, _c, _d;
   const { getFormItem } = await getFormEssentials(request);
   const reservationGroupId = getFormItem("rgId");
   await setStatusOfReservationsInGroup({ reservationGroupId, status: 3 /* Cancelled */ });
+  const reservationGroup = await getReservationGroupForConfirmationEmail({ id: reservationGroupId });
+  const reservablesWithBackup = (reservationGroup == null ? void 0 : reservationGroup.reservations.filter((r) => !r.backup).map((x) => x.reservable).map((r, i) => ({
+    reservable: r,
+    backup: false
+  }))) ?? [];
+  const typesWithAmount = [];
+  const reservableTypes = reservablesWithBackup.map((r) => {
+    var _a2;
+    return (_a2 = r == null ? void 0 : r.reservable) == null ? void 0 : _a2.ReservableType;
+  });
+  reservableTypes.forEach((rt) => {
+    var _a2;
+    let cur = typesWithAmount.find((t) => {
+      var _a3;
+      return t.type == ((_a3 = rt == null ? void 0 : rt.multiLangName) == null ? void 0 : _a3.english);
+    });
+    if (cur) {
+      cur.amount += 1;
+    } else {
+      typesWithAmount.push({ amount: 1, type: ((_a2 = rt == null ? void 0 : rt.multiLangName) == null ? void 0 : _a2.english) ?? "" });
+    }
+  });
   const resGroup = await getReservationGroup({ id: reservationGroupId });
   if ((_a = resGroup == null ? void 0 : resGroup.user) == null ? void 0 : _a.email)
-    await sendCancellationEmail((_b = resGroup == null ? void 0 : resGroup.user) == null ? void 0 : _b.email);
+    await sendCancellationEmail((_b = resGroup == null ? void 0 : resGroup.user) == null ? void 0 : _b.email, ((_d = (_c = reservationGroup == null ? void 0 : reservationGroup.reservations[0].reservable) == null ? void 0 : _c.place) == null ? void 0 : _d.name) ?? "", typesWithAmount);
   return (0, import_server_runtime10.redirect)("/profile");
 };
 function CancelReservation() {
@@ -6679,7 +6898,7 @@ var loader23 = async () => {
   return (0, import_server_runtime18.json)({ reservationGroups });
 };
 var action15 = async ({ request }) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i;
+  var _a, _b, _c, _d;
   const formData = await request.formData();
   const reservationGroupId = (_a = formData.get("rgId")) == null ? void 0 : _a.toString();
   const action26 = (_b = formData.get("action")) == null ? void 0 : _b.toString();
@@ -6706,14 +6925,29 @@ var action15 = async ({ request }) => {
     }
   });
   await Promise.all(promises);
-  if ((reservationGroup == null ? void 0 : reservationGroup.user) && ((_c = reservationGroup == null ? void 0 : reservationGroup.reservations[0].reservable) == null ? void 0 : _c.place)) {
-    if (action26 == "confirm_preferred") {
-      await sendStatusUpdateEmail((_d = reservationGroup == null ? void 0 : reservationGroup.user) == null ? void 0 : _d.email, "confirm_preferred", (_e = reservationGroup == null ? void 0 : reservationGroup.reservations[0].reservable) == null ? void 0 : _e.place, reservationGroup.reservations[0].start);
-    } else if (action26 == "unavailable") {
-      await sendStatusUpdateEmail((_f = reservationGroup == null ? void 0 : reservationGroup.user) == null ? void 0 : _f.email, "unavailable", (_g = reservationGroup == null ? void 0 : reservationGroup.reservations[0].reservable) == null ? void 0 : _g.place, reservationGroup.reservations[0].start);
-    } else if (action26 == "confirm_backup") {
-      await sendStatusUpdateEmail((_h = reservationGroup == null ? void 0 : reservationGroup.user) == null ? void 0 : _h.email, "confirm_backup", (_i = reservationGroup == null ? void 0 : reservationGroup.reservations[0].reservable) == null ? void 0 : _i.place, reservationGroup.reservations[0].start);
+  const reservablesWithBackup = (reservationGroup == null ? void 0 : reservationGroup.reservations.filter((r) => !r.backup).map((x) => x.reservable).map((r, i) => ({
+    reservable: r,
+    backup: false
+  }))) ?? [];
+  const typesWithAmount = [];
+  const reservableTypes = reservablesWithBackup.map((r) => {
+    var _a2;
+    return (_a2 = r == null ? void 0 : r.reservable) == null ? void 0 : _a2.ReservableType;
+  });
+  reservableTypes.forEach((rt) => {
+    var _a2;
+    let cur = typesWithAmount.find((t) => {
+      var _a3;
+      return t.type == ((_a3 = rt == null ? void 0 : rt.multiLangName) == null ? void 0 : _a3.english);
+    });
+    if (cur) {
+      cur.amount += 1;
+    } else {
+      typesWithAmount.push({ amount: 1, type: ((_a2 = rt == null ? void 0 : rt.multiLangName) == null ? void 0 : _a2.english) ?? "" });
     }
+  });
+  if ((reservationGroup == null ? void 0 : reservationGroup.user) && ((_c = reservationGroup == null ? void 0 : reservationGroup.reservations[0].reservable) == null ? void 0 : _c.place)) {
+    await sendStatusUpdateEmail(getBaseUrl(request), (_d = reservationGroup == null ? void 0 : reservationGroup.user) == null ? void 0 : _d.email, action26, reservationGroup.reservations[0].reservable.place.name, typesWithAmount);
   }
   return {};
 };
@@ -8118,7 +8352,7 @@ function About2() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "e0385896", "entry": { "module": "/build/entry.client-IHW3J2V2.js", "imports": ["/build/_shared/chunk-FKVNPCUN.js", "/build/_shared/chunk-4ZPJ7ZPH.js", "/build/_shared/chunk-FN7GJDOI.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-MMMVWWEN.js", "imports": ["/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-LYCDU64F.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId": { "id": "routes/$placeId", "parentId": "root", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId-42I3BZVW.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/index": { "id": "routes/$placeId/index", "parentId": "routes/$placeId", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/$placeId/index-4DEYZ7CM.js", "imports": ["/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/reserve": { "id": "routes/$placeId/reserve", "parentId": "routes/$placeId", "path": "reserve", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId/reserve-BJUEAODV.js", "imports": ["/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-SJGNZCZF.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin": { "id": "routes/admin", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin-5Y6MFIMP.js", "imports": ["/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories": { "id": "routes/admin/categories", "parentId": "routes/admin", "path": "categories", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories-Z66YEFR7.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/$categoryId": { "id": "routes/admin/categories/$categoryId", "parentId": "routes/admin/categories", "path": ":categoryId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/$categoryId-7Y54MTVY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/index": { "id": "routes/admin/categories/index", "parentId": "routes/admin/categories", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/categories/index-ZMS23OUI.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/new": { "id": "routes/admin/categories/new", "parentId": "routes/admin/categories", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/new-5FEGZYJY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies": { "id": "routes/admin/companies", "parentId": "routes/admin", "path": "companies", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies-MGDRJYXX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/$companyId": { "id": "routes/admin/companies/$companyId", "parentId": "routes/admin/companies", "path": ":companyId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/$companyId-UGRQMAEZ.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/index": { "id": "routes/admin/companies/index", "parentId": "routes/admin/companies", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/companies/index-SRV7RBEB.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/new": { "id": "routes/admin/companies/new", "parentId": "routes/admin/companies", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/new-55YN7JTT.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations": { "id": "routes/admin/locations", "parentId": "routes/admin", "path": "locations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations-YK6MJBBR.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/$locationId": { "id": "routes/admin/locations/$locationId", "parentId": "routes/admin/locations", "path": ":locationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/$locationId-NZPRQJJH.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/index": { "id": "routes/admin/locations/index", "parentId": "routes/admin/locations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/locations/index-74HGNSZS.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/new": { "id": "routes/admin/locations/new", "parentId": "routes/admin/locations", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/new-MFKYHSQV.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places": { "id": "routes/admin/places", "parentId": "routes/admin", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places-DTZZ753K.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/$placeId": { "id": "routes/admin/places/$placeId", "parentId": "routes/admin/places", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/$placeId-IMGSLEGW.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/index": { "id": "routes/admin/places/index", "parentId": "routes/admin/places", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/places/index-ITIOSNCI.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/new": { "id": "routes/admin/places/new", "parentId": "routes/admin/places", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/new-XNCWI2XN.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/$reservableTypeId": { "id": "routes/admin/reservableTypes/$reservableTypeId", "parentId": "routes/admin", "path": "reservableTypes/:reservableTypeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/$reservableTypeId-IZG64SI2.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/index": { "id": "routes/admin/reservableTypes/index", "parentId": "routes/admin", "path": "reservableTypes", "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/index-5V73L7PL.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/new": { "id": "routes/admin/reservableTypes/new", "parentId": "routes/admin", "path": "reservableTypes/new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/new-UGCPTN4J.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations": { "id": "routes/admin/reservations", "parentId": "routes/admin", "path": "reservations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations-Y5L3M25S.js", "imports": ["/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/$reservationId": { "id": "routes/admin/reservations/$reservationId", "parentId": "routes/admin/reservations", "path": ":reservationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/$reservationId-V6EADIMN.js", "imports": ["/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/index": { "id": "routes/admin/reservations/index", "parentId": "routes/admin/reservations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/index-W4743MK5.js", "imports": ["/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags": { "id": "routes/admin/tags", "parentId": "routes/admin", "path": "tags", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags-YY5X2N6Z.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/$tagId": { "id": "routes/admin/tags/$tagId", "parentId": "routes/admin/tags", "path": ":tagId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/$tagId-CMLD73RM.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/index": { "id": "routes/admin/tags/index", "parentId": "routes/admin/tags", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/tags/index-3KHD5ATQ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/new": { "id": "routes/admin/tags/new", "parentId": "routes/admin/tags", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/new-WF27CYEE.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate": { "id": "routes/authenticate", "parentId": "root", "path": "authenticate", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate-WTT7N4TV.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/login": { "id": "routes/authenticate/login", "parentId": "routes/authenticate", "path": "login", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/login-4N6H62CB.js", "imports": ["/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/register": { "id": "routes/authenticate/register", "parentId": "routes/authenticate", "path": "register", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/register-DTIMN6SU.js", "imports": ["/build/_shared/chunk-IVN5F3DA.js", "/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/doneVerifyingEmail": { "id": "routes/doneVerifyingEmail", "parentId": "root", "path": "doneVerifyingEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/doneVerifyingEmail-HNE3JJI5.js", "imports": ["/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-SWDSYVNS.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/logout": { "id": "routes/logout", "parentId": "root", "path": "logout", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/logout-XMXFMUNS.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/places": { "id": "routes/places", "parentId": "root", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/places-IZ2GEH52.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile-5BUSPYID.js", "imports": ["/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/cancelReservation": { "id": "routes/profile/cancelReservation", "parentId": "routes/profile", "path": "cancelReservation", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/cancelReservation-MI7WGXFJ.js", "imports": ["/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-FTM4DERH.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/delete": { "id": "routes/profile/delete", "parentId": "routes/profile", "path": "delete", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/delete-5CP75NND.js", "imports": void 0, "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/edit": { "id": "routes/profile/edit", "parentId": "routes/profile", "path": "edit", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/edit-LUH3EHVO.js", "imports": ["/build/_shared/chunk-IVN5F3DA.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/index": { "id": "routes/profile/index", "parentId": "routes/profile", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/profile/index-W6X3HJ3L.js", "imports": ["/build/_shared/chunk-IVN5F3DA.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/forgot": { "id": "routes/pwd/forgot", "parentId": "root", "path": "pwd/forgot", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/forgot-KPWMXY7M.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/reset": { "id": "routes/pwd/reset", "parentId": "root", "path": "pwd/reset", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/reset-BLB3L77N.js", "imports": ["/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/search": { "id": "routes/search", "parentId": "root", "path": "search", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/search-KAKQTEDV.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/verifyEmail": { "id": "routes/verifyEmail", "parentId": "root", "path": "verifyEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/verifyEmail-EFRWZ2DQ.js", "imports": ["/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-E0385896.js" };
+var assets_manifest_default = { "version": "0a0a520d", "entry": { "module": "/build/entry.client-IHW3J2V2.js", "imports": ["/build/_shared/chunk-FKVNPCUN.js", "/build/_shared/chunk-4ZPJ7ZPH.js", "/build/_shared/chunk-FN7GJDOI.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-MMMVWWEN.js", "imports": ["/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-LYCDU64F.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId": { "id": "routes/$placeId", "parentId": "root", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId-42I3BZVW.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/index": { "id": "routes/$placeId/index", "parentId": "routes/$placeId", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/$placeId/index-4DEYZ7CM.js", "imports": ["/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/reserve": { "id": "routes/$placeId/reserve", "parentId": "routes/$placeId", "path": "reserve", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId/reserve-3CDPQO7Z.js", "imports": ["/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-SJGNZCZF.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin": { "id": "routes/admin", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin-5Y6MFIMP.js", "imports": ["/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories": { "id": "routes/admin/categories", "parentId": "routes/admin", "path": "categories", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories-Z66YEFR7.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/$categoryId": { "id": "routes/admin/categories/$categoryId", "parentId": "routes/admin/categories", "path": ":categoryId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/$categoryId-7Y54MTVY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/index": { "id": "routes/admin/categories/index", "parentId": "routes/admin/categories", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/categories/index-ZMS23OUI.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/new": { "id": "routes/admin/categories/new", "parentId": "routes/admin/categories", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/new-5FEGZYJY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies": { "id": "routes/admin/companies", "parentId": "routes/admin", "path": "companies", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies-MGDRJYXX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/$companyId": { "id": "routes/admin/companies/$companyId", "parentId": "routes/admin/companies", "path": ":companyId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/$companyId-UGRQMAEZ.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/index": { "id": "routes/admin/companies/index", "parentId": "routes/admin/companies", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/companies/index-SRV7RBEB.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/new": { "id": "routes/admin/companies/new", "parentId": "routes/admin/companies", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/new-55YN7JTT.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations": { "id": "routes/admin/locations", "parentId": "routes/admin", "path": "locations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations-YK6MJBBR.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/$locationId": { "id": "routes/admin/locations/$locationId", "parentId": "routes/admin/locations", "path": ":locationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/$locationId-NZPRQJJH.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/index": { "id": "routes/admin/locations/index", "parentId": "routes/admin/locations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/locations/index-74HGNSZS.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/new": { "id": "routes/admin/locations/new", "parentId": "routes/admin/locations", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/new-MFKYHSQV.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places": { "id": "routes/admin/places", "parentId": "routes/admin", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places-DTZZ753K.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/$placeId": { "id": "routes/admin/places/$placeId", "parentId": "routes/admin/places", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/$placeId-IMGSLEGW.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/index": { "id": "routes/admin/places/index", "parentId": "routes/admin/places", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/places/index-ITIOSNCI.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/new": { "id": "routes/admin/places/new", "parentId": "routes/admin/places", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/new-XNCWI2XN.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/$reservableTypeId": { "id": "routes/admin/reservableTypes/$reservableTypeId", "parentId": "routes/admin", "path": "reservableTypes/:reservableTypeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/$reservableTypeId-IZG64SI2.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/index": { "id": "routes/admin/reservableTypes/index", "parentId": "routes/admin", "path": "reservableTypes", "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/index-5V73L7PL.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/new": { "id": "routes/admin/reservableTypes/new", "parentId": "routes/admin", "path": "reservableTypes/new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/new-UGCPTN4J.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations": { "id": "routes/admin/reservations", "parentId": "routes/admin", "path": "reservations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations-Y5L3M25S.js", "imports": ["/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/$reservationId": { "id": "routes/admin/reservations/$reservationId", "parentId": "routes/admin/reservations", "path": ":reservationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/$reservationId-V6EADIMN.js", "imports": ["/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/index": { "id": "routes/admin/reservations/index", "parentId": "routes/admin/reservations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/index-QU3YMRAT.js", "imports": ["/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags": { "id": "routes/admin/tags", "parentId": "routes/admin", "path": "tags", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags-YY5X2N6Z.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/$tagId": { "id": "routes/admin/tags/$tagId", "parentId": "routes/admin/tags", "path": ":tagId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/$tagId-CMLD73RM.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/index": { "id": "routes/admin/tags/index", "parentId": "routes/admin/tags", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/tags/index-3KHD5ATQ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/new": { "id": "routes/admin/tags/new", "parentId": "routes/admin/tags", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/new-WF27CYEE.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate": { "id": "routes/authenticate", "parentId": "root", "path": "authenticate", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate-WTT7N4TV.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/login": { "id": "routes/authenticate/login", "parentId": "routes/authenticate", "path": "login", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/login-4N6H62CB.js", "imports": ["/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/register": { "id": "routes/authenticate/register", "parentId": "routes/authenticate", "path": "register", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/register-N7TOHXU7.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/doneVerifyingEmail": { "id": "routes/doneVerifyingEmail", "parentId": "root", "path": "doneVerifyingEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/doneVerifyingEmail-HNE3JJI5.js", "imports": ["/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-SWDSYVNS.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/logout": { "id": "routes/logout", "parentId": "root", "path": "logout", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/logout-XMXFMUNS.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/places": { "id": "routes/places", "parentId": "root", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/places-IZ2GEH52.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile-5BUSPYID.js", "imports": ["/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/cancelReservation": { "id": "routes/profile/cancelReservation", "parentId": "routes/profile", "path": "cancelReservation", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/cancelReservation-S7AGXQTE.js", "imports": ["/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-FTM4DERH.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/delete": { "id": "routes/profile/delete", "parentId": "routes/profile", "path": "delete", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/delete-5CP75NND.js", "imports": void 0, "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/edit": { "id": "routes/profile/edit", "parentId": "routes/profile", "path": "edit", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/edit-SRI2A6A4.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/index": { "id": "routes/profile/index", "parentId": "routes/profile", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/profile/index-JGCYGICE.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/forgot": { "id": "routes/pwd/forgot", "parentId": "root", "path": "pwd/forgot", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/forgot-KPWMXY7M.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/reset": { "id": "routes/pwd/reset", "parentId": "root", "path": "pwd/reset", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/reset-BLB3L77N.js", "imports": ["/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/search": { "id": "routes/search", "parentId": "root", "path": "search", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/search-KAKQTEDV.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/verifyEmail": { "id": "routes/verifyEmail", "parentId": "root", "path": "verifyEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/verifyEmail-EFRWZ2DQ.js", "imports": ["/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-0A0A520D.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };

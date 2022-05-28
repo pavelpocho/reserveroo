@@ -42,6 +42,11 @@ export const getReservationGroupForConfirmationEmail = async ({ id }: Pick<Reser
       include: {
         reservable: {
           include: {
+            ReservableType: {
+              include: {
+                multiLangName: true
+              }
+            },
             place: true
           }
         }

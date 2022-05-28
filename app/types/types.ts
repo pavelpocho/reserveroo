@@ -87,3 +87,8 @@ export type LocationWithEverything = Location & {
   multiLangCountry: MultilingualName | null;
   multiLangCity: MultilingualDesc | null;
 };
+
+export type ReservableWithCountForEmail = {
+  amount: number;
+  type: string;
+}

@@ -25,7 +25,7 @@ import { getReservable, getReservableList, getReservableWReservations, Reservabl
 import { createReservation, Reservation } from '~/models/reservation.server';
 import { createReservationGroup } from '~/models/reservationGroup.server';
 import { getUserId } from '~/models/user.server';
-import { ReservableTypeWithTexts, ReservableWithReservations, ReservationStatus, Time, TimeSection } from '~/types/types';
+import { ReservableTypeWithTexts, ReservableWithCountForEmail, ReservableWithReservations, ReservationStatus, Time, TimeSection } from '~/types/types';
 import { sendCreationEmail } from '~/utils/emails.server';
 import { getBaseUrl, getDayOfWeek, getStringDateValue, getStringTimeValue } from '~/utils/forms';
 import { requireUsernameAndAdmin } from '~/utils/session.server'
@@ -63,6 +63,8 @@ export const action: ActionFunction = async ({ request }) => {
   const note = form.get('note')?.toString();
   const placeId = form.get('placeId')?.toString();
   const username = form.get('username')?.toString();
+
+  const place = await getPlaceWithReservations({ id: placeId ?? '' });
 
   const getTotalMinutes = (time: Time) => time.hour * 60 + time.minute;
 
@@ -102,6 +104,10 @@ export const action: ActionFunction = async ({ request }) => {
 
   const reservablePromises = reservableId.map((r) => getReservableWReservations({ id: r }));
   const reservables = await Promise.all(reservablePromises);
+  const reservablesWithBackup = reservables.map((r, i) => ({
+    reservable: r,
+    backup: reservationBackup[i]
+  }));
 
   // Possible errors
   /**
@@ -171,7 +177,18 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const user = await getUserId({ username });
-  await sendCreationEmail(getBaseUrl(request) ,user?.email ?? '');
+  const typesWithAmount: ReservableWithCountForEmail[] = [];
+  const reservableTypes = reservablesWithBackup.filter(r => r.backup == '0').map(r => r?.reservable?.ReservableType);
+  reservableTypes.forEach(rt => {
+    let cur = typesWithAmount.find(t => t.type == rt?.multiLangName?.english);
+    if (cur) {
+      cur.amount += 1;
+    }
+    else {
+      typesWithAmount.push({ amount: 1, type: rt?.multiLangName?.english ?? '' });
+    }
+  });
+
   const resGroup = user ? await createReservationGroup({ note: note ?? '', userId: user.id }) : null;
   if (resGroup == null) {
     return badRequest({
@@ -181,6 +198,9 @@ export const action: ActionFunction = async ({ request }) => {
       formError: 'We cannot find you. Please try reloading the page.'
     })
   }
+
+  await sendCreationEmail(getBaseUrl(request), user?.email ?? '', place?.name ?? '', typesWithAmount);
+
   const promises: Promise<object>[] = []
   dateTimeStart.forEach((d, i) => {
     promises.push(createReservation({ backup: reservationBackup[i] == '1', start: new Date(dateTimeStart[i]), end: new Date(dateTimeEnd[i]), reservableId: reservableId[i] ?? null, reservationGroupId: resGroup.id ?? null }));
