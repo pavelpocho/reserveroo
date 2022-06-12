@@ -9,9 +9,10 @@ import {
   faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ParallaxLayerComponent from "~/components/parallax-layer-component";
+import Question from "~/components/landing-page/question";
+import QuestionMark from "~/components/landing-page/question-mark";
 
-const parallaxLayers = [
+const questions = [
   {
     question:
       "Imagine you are in a new city and you want to have some fun with your friend. What do you do?",
@@ -27,7 +28,7 @@ const parallaxLayers = [
     speed: 0.4,
   },
   {
-    question: "Do yo u look at each website that pops up?",
+    question: "Do you look at each website that pops up?",
     offset: 3,
     factor: 0.5,
     speed: 0.5,
@@ -57,6 +58,53 @@ const parallaxLayers = [
     factor: 0.5,
     speed: 1.1,
   },
+];
+
+const questionMarks = [
+  {
+    right: "5rem",
+    "margin-top": "3rem",
+    rotation: "25deg",
+    start: 1.8
+  },
+  {
+    left: "10rem",
+    "margin-top": "5rem",
+    rotation: "-25deg",
+    start: 2.8
+  },
+  {
+    right: "15rem",
+    "margin-top": "25rem",
+    rotation: "25deg",
+    start: 3.8
+  },
+  {
+    left: "20rem",
+    "margin-top": "20rem",
+    rotation: "-25deg",
+    start: 4.8
+  },
+  // {
+  //   right: "5rem",
+  //   "margin-top": "3rem",
+  //   rotation: "25deg",
+  // },
+  // {
+  //   left: "10rem",
+  //   "margin-top": "5rem",
+  //   rotation: "-25deg",
+  // },
+  // {
+  //   right: "5rem",
+  //   "margin-top": "3rem",
+  //   rotation: "25deg",
+  // },
+  // {
+  //   left: "10rem",
+  //   "margin-top": "5rem",
+  //   rotation: "-25deg",
+  // },
 ];
 
 const H1 = styled.h1`
@@ -139,7 +187,7 @@ export default function About() {
 
   return (
     <>
-      <Parallax pages={6}>
+      <Parallax pages={9}>
         <ParallaxLayer factor={1} speed={0.3}>
           <H1>
             All the
@@ -154,16 +202,22 @@ export default function About() {
           <Arrow icon={faCircleArrowDown}></Arrow>
           <p style={{ textAlign: "center" }}>Scroll down</p>
         </ParallaxLayer>
-        {parallaxLayers.map((layer) => (
-          <ParallaxLayerComponent
+        {questionMarks.map((questionMark) => (
+          <QuestionMark
+            {...questionMark}
+            key={questionMark.start}
+          ></QuestionMark>
+        ))}
+        {questions.map((layer) => (
+          <Question
             key={layer.offset}
             question={layer.question}
             offset={layer.offset}
             factor={layer.factor}
             speed={layer.speed}
-          ></ParallaxLayerComponent>
+          ></Question>
         ))}
-        <ParallaxLayer sticky={{ start: 1.8, end: 9 }}>
+        {/* <ParallaxLayer sticky={{ start: 1.8, end: 9 }}>
           <FirstQuestionMark icon={faQuestion}></FirstQuestionMark>
         </ParallaxLayer>
         <ParallaxLayer sticky={{ start: 2.8, end: 9 }}>
@@ -174,7 +228,7 @@ export default function About() {
         </ParallaxLayer>
         <ParallaxLayer sticky={{ start: 4.8, end: 9 }}>
           <FourthQuestionMark icon={faQuestion}></FourthQuestionMark>
-        </ParallaxLayer>
+        </ParallaxLayer> */}
       </Parallax>
     </>
   );
