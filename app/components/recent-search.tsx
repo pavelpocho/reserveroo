@@ -82,6 +82,7 @@ export const RecentSearch: React.FC<RecentSearchProps> = ({ searchPhrase, locati
       { categories.map(c => <IdInput key={c.id} value={c.id} name='categories[]' />) }
       { tags.map(t => <IdInput key={t.id} value={t.id} name='tags[]' />) }
       <IdInput name='searchTerm' value={searchPhrase} />
+      <IdInput name='page' value='1'></IdInput>
       <IdInput name='dontSave' value={'1'} />
     </Form>
     <Title>{searchPhrase != '' ? `"${searchPhrase}"` : categories.length == 1 ? (categories[0].multiLangName && categories[0].multiLangName[lang]) : 'All Activities'} {location?.multiLangCity && `in ${location.multiLangCity[lang]}`}</Title>

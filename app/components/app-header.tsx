@@ -11,6 +11,7 @@ import { createCookie } from "@remix-run/node";
 import GbIcon from "~/assets/icons/gb";
 import CzIcon from "~/assets/icons/cz";
 import { FaBars } from 'react-icons/fa';
+import { AppHeaderLoaderData } from "~/root";
 
 const Wrap = styled.header`
   background-color: ${styles.colors.primary};
@@ -92,6 +93,7 @@ const WrappedMenuItem = styled.p`
 
 interface AppHeaderProps {
   children: React.ReactNode;
+  data: AppHeaderLoaderData;
 }
 
 const ProfileImage = styled.span`
@@ -235,12 +237,12 @@ const Backdrop = styled.div<{ hidden?: boolean }>`
 `;
 
 
-export default function AppHeader({ children }: AppHeaderProps) {
+export default function AppHeader({ children, data }: AppHeaderProps) {
   const location = useLocation();
   const [ isLandingPage, setIsLandingPage ] = useState(false);
   const [ showMenu, setShowMenu ] = useState(false);
 
-  const { username, admin, usernameToVerify } = useUsername();
+  const { username, admin, usernameToVerify } = data;
 
   const { setTranslations: setL, translations: l, lang, setLang } = useLangs();
 
@@ -256,20 +258,17 @@ export default function AppHeader({ children }: AppHeaderProps) {
       <InnerWrap>
         <Side>
           <BarLink onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }} to='/places'>
             <Title>{children}</Title>
           </BarLink>
           <BarLinkMoreThan400 onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }} to={isLandingPage ? "/places" : "/"}>
             <MenuItem>{isLandingPage ? "Places" : "Who are we?"}</MenuItem>
           </BarLinkMoreThan400>
         </Side>
         <MenuButton onClick={(e) => {
-          console.log('x');
           e.preventDefault();
           setShowMenu(!showMenu);
         }}>
@@ -277,17 +276,15 @@ export default function AppHeader({ children }: AppHeaderProps) {
         </MenuButton>
         <RightSide showMenu={showMenu} >
           <BarLinkLessThan400 onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }} to={isLandingPage ? "/places" : "/"}>
             <MenuItem>{isLandingPage ? "Places" : "Who are we?"}</MenuItem>
           </BarLinkLessThan400>
           <Separator400 />
           <BarLink onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }} style={{ marginRight: "0.6rem" }} to={"/admin/reservations"}>
-            <MenuItem border={true}>List a business</MenuItem>
+            {/* <MenuItem border={true}>List a business</MenuItem> */}
           </BarLink>
           <Separator />
           <BarButton
@@ -312,7 +309,6 @@ export default function AppHeader({ children }: AppHeaderProps) {
           </BarButton>
           <Separator />
           <BarLink onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }} hide={signingIn ?? false} to={"/profile"} style={{ fontWeight: "bold" }}>
             <MenuItem>
@@ -322,9 +318,8 @@ export default function AppHeader({ children }: AppHeaderProps) {
           </BarLink>
           {!signingIn && <Separator />}
           <StretchForm action='/logout' method='post'>
-            <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate'} />
+            <input type='text' name={'redirectUrl'} hidden={true} defaultValue={'/authenticate/login'} />
             {(username || usernameToVerify) && <HoverBarButton onClick={(e) => {
-            console.log('x');
             setShowMenu(false);
           }}>Logout</HoverBarButton> }
           </StretchForm>

@@ -1,18 +1,35 @@
 import { Place, Reservable, Reservation, User } from "@prisma/client"
 import { Form, Link, useSubmit } from "@remix-run/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { styles } from "~/constants/styles";
 import { ReservationStatus } from "~/types/types"
 import { isValidEmail, isValidPhone } from "~/utils/forms";
 import { Button } from "../button";
+import { ConfirmationDialog } from "../confirmation-dialog";
 import { IdInput } from "../inputs/ObjectInput";
 import { TextInput } from "../inputs/TextInput";
+import { FormError } from "../other/auth-components";
 import { SecondaryButton, SecondaryButtonBtn } from "../place/place-summary";
 
 interface AccountSummaryProps {
   user: User | null,
-  editing: boolean
+  editing: boolean,
+  formError?: string | null;
+  fieldErrors?: {
+    username?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    email?: string | null;
+    phone?: string | null;
+  };
+  fields?: {
+    username: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+    phone: string | null;
+  };
 }
 
 const Wrap = styled.div`
@@ -112,11 +129,28 @@ const EditButton = styled(SecondaryButton)`
   width: auto !important;
 `;
 
+const DeleteButtonBtn = styled(SecondaryButtonBtn)`
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  background-color: ${styles.colors.busy};
+  color: white;
+  width: auto !important;
+`;
+
 const EditButtonBtn = styled(SecondaryButtonBtn)`
   padding: 0.5rem;
   font-size: 0.8rem;
   background-color: ${styles.colors.white};
   width: auto !important;
+  &:disabled {
+    cursor: default;
+  }
+`;
+
+const Flex = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 `;
 
 export const ErrorLabel = styled.p`
@@ -132,50 +166,82 @@ export const ErrorLabel = styled.p`
   padding: 0.1rem 0.5rem;
 `;
 
-export const AccountSummary: React.FC<AccountSummaryProps> = ({ editing, user }) => {
+export const AccountSummary: React.FC<AccountSummaryProps> = ({ editing, user, fieldErrors, fields, formError }) => {
 
   const form = React.useRef<HTMLFormElement>(null);
+  const deleteForm = React.useRef<HTMLFormElement>(null);
   const submit = useSubmit();
   const [ validEmail, setValidEmail ] = useState(true);
   const [ validPhone, setValidPhone ] = useState(true);
+  const [ shouldDelete, setShouldDelete ] = useState(false);
+  const [ confirmationDialog, setConfirmationDialog ] = useState(false);
+
+  useEffect(() => {
+    if (shouldDelete && deleteForm.current) {
+      submit(deleteForm.current, { replace: true });
+    }
+  }, [shouldDelete]);
 
   return user && <Wrap><InnerWrap>
+    <ConfirmationDialog hidden={!confirmationDialog} onConfirm={() => {
+      setShouldDelete(true);
+      setConfirmationDialog(false);
+    }} title={"Are you *absolutely* sure?"} text={"This will permanently delete your account. You will immediatelly be signed out forever."} confirmText={"Yes, DELETE my account"} cancelText={"No, go back"} close={() => {
+      setConfirmationDialog(false);
+    }} />
     <Photo>{user.username[0].toUpperCase()}</Photo>
+    { shouldDelete && <Form method={'post'} ref={deleteForm} action='/profile/delete'>
+      <IdInput name='id' value={user?.id} />
+    </Form> }
     <StretchForm method='post' ref={form}>
       <HeaderWrap>
         <Title>Personal Information</Title>
-        { !editing ? <EditButton inSearch={false} to={'/profile/edit'}>Edit</EditButton> : <EditButtonBtn disabled={!validEmail || !validPhone} onClick={(e) => {
-          e.preventDefault();
-          if (validEmail && validPhone) {
-            submit(form.current, { replace: true })
-          }
-        }}>{
-          !editing ? 'Edit' : 'Save'
-        }</EditButtonBtn>}
+        { !editing ? <EditButton inSearch={false} to={'/profile/edit'}>Edit</EditButton> : <Flex>
+          <DeleteButtonBtn onClick={(e) => {
+            e.preventDefault();
+            setConfirmationDialog(true);
+          }}>
+            Delete Account
+          </DeleteButtonBtn>
+          <EditButtonBtn disabled={!validEmail || !validPhone} onClick={(e) => {
+            e.preventDefault();
+            if (validEmail && validPhone) {
+              submit(form.current, { replace: true });
+            }
+          }}>{
+            !editing ? 'Edit' : 'Save'
+          }</EditButtonBtn>
+          <EditButton inSearch={false} to={'/profile'}>Cancel</EditButton>
+        </Flex>}
       </HeaderWrap>
       <InfoWrap>
           { editing && <IdInput name={'id'} value={user?.id} /> }
           <div>
             <SectionTitle>First Name</SectionTitle>
-            { editing ? <TextInput name={'firstName'} defaultValue={user?.firstName} /> : <Value>{user?.firstName}</Value> }
+            { editing ? <TextInput name={'firstName'} defaultValue={fields?.firstName ?? user?.firstName} /> : <Value>{user?.firstName}</Value> }
+            { fieldErrors?.firstName &&  <FormError>{fieldErrors.firstName}</FormError> }
           </div>
           <div>
             <SectionTitle>Last Name</SectionTitle>
-            { editing ? <TextInput name={'lastName'} defaultValue={user?.lastName} /> : <Value>{user?.lastName}</Value> }
+            { editing ? <TextInput name={'lastName'} defaultValue={fields?.lastName ?? user?.lastName} /> : <Value>{user?.lastName}</Value> }
+            { fieldErrors?.lastName &&  <FormError>{fieldErrors.lastName}</FormError> }
           </div>
           <div>
             <SectionTitle>Email</SectionTitle>
-            { editing ? <TextInput setValue={(s) => { setValidEmail(isValidEmail(s)) }} name={'email'} defaultValue={user?.email} /> : <Value>{user?.email}</Value> }
+            { editing ? <TextInput setValue={(s) => { setValidEmail(isValidEmail(s)) }} name={'email'} defaultValue={fields?.email ?? user?.email} /> : <Value>{user?.email}</Value> }
             { editing && !validEmail && <ErrorLabel>Invalid email</ErrorLabel> }
+            { fieldErrors?.email &&  <FormError>{fieldErrors.email}</FormError> }
           </div>
           <div>
             <SectionTitle>Phone</SectionTitle>
-            { editing ? <TextInput setValue={(s) => { setValidPhone(isValidPhone(s)); console.log(isValidPhone(s)) }} name={'phone'} defaultValue={user?.phone} /> : <Value>{user?.phone}</Value> }
+            { editing ? <TextInput setValue={(s) => { setValidPhone(isValidPhone(s)) }} name={'phone'} defaultValue={fields?.phone ?? user?.phone} /> : <Value>{user?.phone}</Value> }
             { editing && !validPhone && <ErrorLabel>Invalid phone</ErrorLabel> }
+            { fieldErrors?.phone &&  <FormError>{fieldErrors.phone}</FormError> }
           </div>
           <div>
             <SectionTitle>Username</SectionTitle>
-            { editing && false ? <TextInput name={'username'} defaultValue={user?.username ?? ''} /> : <Value>{user?.username}</Value> }
+            { editing ? <TextInput name={'username'} defaultValue={fields?.username ?? user?.username ?? ''} /> : <Value>{user?.username}</Value> }
+            { fieldErrors?.username &&  <FormError>{fieldErrors.username}</FormError> }
           </div>
           <div>
             <SectionTitle>Reserving since</SectionTitle>

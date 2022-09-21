@@ -94,7 +94,6 @@ export const MultiSelectorInput: React.FC<MultiSelectorProps> = ({ name, placeho
 
   return <Wrap>
     <TextWrap onClick={() => {
-        console.log('x');
         setDropdown(true);
       }}>
       <TextInput placeholder={placeholder} style={{ cursor: 'pointer', whiteSpace: 'nowrap', textOverflow: 'ellipsis', paddingRight: '2.25rem' }} containerStyle={{ gridColumn: '1 / span 2', gridRow: '1' }} value={valuesAndTexts.map(v => v.text).join(', ')} readOnly={true} />

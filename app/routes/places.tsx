@@ -11,12 +11,12 @@ import { getAllLocations } from "~/models/location.server";
 import { getTagList } from "~/models/tag.server";
 import { getCategoryList } from "~/models/category.server";
 import { CategoryWithTexts, LocationWithEverything, ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
-import { WidthRestrictor } from "~/root";
 import { IconRow } from "~/components/icon-row";
 import HeartIcon from "~/assets/icons/Heart";
 import { RecentSearch } from "~/components/recent-search";
 import { getUsernameAndAdmin } from "~/utils/session.server";
 import { getSearchHistory } from "~/models/user.server";
+import { WidthRestrictor } from "~/components/other/width-restrictor";
 
 interface LoaderData {
   locations: LocationWithEverything[],

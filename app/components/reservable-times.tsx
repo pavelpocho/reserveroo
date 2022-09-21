@@ -1,4 +1,5 @@
 import { OpeningTime, Place, Reservable, Reservation } from "@prisma/client"
+import { PresignedPost } from "aws-sdk/clients/s3"
 import React from "react"
 import styled from "styled-components"
 import { styles } from "~/constants/styles"
@@ -52,8 +53,6 @@ export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBac
     }
   });
 
-  console.log(reservableGroups);
-
   return <GroupWrap>
     {reservableGroups.map(rg => <ReservableGroupSection
       key={rg.typeId}
@@ -64,7 +63,6 @@ export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBac
       endName={endName}
       backup={backup}
       reservableIdName={reservableIdName}
-      defaultReservation={undefined}
       defaultReservationGroup={defaultReservationGroup}
       reservationIdName={reservationIdName}
       reservationBackupName={reservationBackupName}
@@ -80,19 +78,11 @@ interface ReservableGroupSectionProps {
   startName: string;
   endName: string;
   reservableIdName: string;
-  defaultReservation: Reservation & {
-    reservable: (Reservable & {
-      place: (Place & {
-        openingTimes: OpeningTime[];
-        reservables: ReservableWithReservations[];
-      }) | null;
-    }) | null;
-  } | undefined,
-  defaultReservationGroup?: ReservationGroupForEdit,
-  reservationIdName: string,
-  backup?: boolean,
-  reservationBackupName: string,
-  setResList: React.Dispatch<React.SetStateAction<Res[]>>
+  defaultReservationGroup?: ReservationGroupForEdit;
+  reservationIdName: string;
+  backup?: boolean;
+  reservationBackupName: string;
+  setResList: React.Dispatch<React.SetStateAction<Res[]>>;
 }
 
 const TypeName = styled.h3`
@@ -123,13 +113,13 @@ const Times = styled.div`
 const GroupWrap = styled.div`
   display: grid;
   width: 100%;
-  overflow-x: scroll;
+  overflow-x: auto;
   grid-template-columns: max-content 1fr;
   position: relative;
 `;
 
 const ReservableGroupSection: React.FC<ReservableGroupSectionProps> = ({
-  reservableGroup, date, openingTime, startName, endName, reservableIdName, defaultReservation,
+  reservableGroup, date, openingTime, startName, endName, reservableIdName,
   defaultReservationGroup, reservationIdName, backup, reservationBackupName, setResList
 }) => {
 
@@ -158,7 +148,6 @@ const ReservableGroupSection: React.FC<ReservableGroupSectionProps> = ({
       endName={endName}
       backup={backup}
       reservableIdName={reservableIdName}
-      defaultReservation={defaultReservation}
       reservationIdName={reservationIdName}
       defaultReservationGroup={defaultReservationGroup}
       reservationBackupName={reservationBackupName}
@@ -183,17 +172,21 @@ const getDiffBetweenTwoDates = (close: string | Date, open: string | Date) => {
   return millis / 1000 / 60;
 }
 
-const getTimeSectionOfReservation = (reservation: Reservation) => {
+const getTimeSectionOfDates = (start: Date, end: Date) => {
   return {
     start: {
-      hour: new Date(reservation.start).getHours(),
-      minute: new Date(reservation.start).getMinutes(),
+      hour: start.getHours(),
+      minute: start.getMinutes(),
     },
     end: {
-      hour: new Date(reservation.end).getHours(),
-      minute: new Date(reservation.end).getMinutes(),
+      hour: end.getHours(),
+      minute: end.getMinutes(),
     }
   }
+}
+
+const getTimeSectionOfReservation = (reservation: Reservation) => {
+  return getTimeSectionOfDates(new Date(reservation.start), new Date(reservation.end));
 }
 
 const doDaysMatch = (date1: Date | string, date2: Date | string, date3: Date | string) => {
@@ -215,7 +208,13 @@ const Section = styled.button<{taken: boolean, selected: boolean}>`
   &:hover {
     box-shadow: ${styles.shadows[2]};
   }
-  background-color: ${props => props.selected ? styles.colors.action : props.taken ? styles.colors.busy : styles.colors.gray[70]};
+  background-color: ${props => props.selected ? styles.colors.action : styles.colors.gray[70]};
+  &:disabled {
+    box-shadow: none;
+    cursor: default;
+    background-color: ${styles.colors.gray[30]};
+  }
+  ${props => props.taken ? `background-color: ${styles.colors.busy} !important;` : ''}
 `;
 
 const SectionWrap = styled.div`
@@ -223,6 +222,9 @@ const SectionWrap = styled.div`
   background-color: ${styles.colors.primary_background};
   gap: 2px;
   padding: 0.5rem 2rem 0.5rem 0;
+  &:last-of-type {
+    padding-bottom: 1.6rem;
+  }
   padding-left: 2.375rem;
 `;
 
@@ -232,9 +234,11 @@ const Title = styled.p`
   left: -30%;
   padding: 0.5rem 1rem;
   align-self: stretch;
-
   margin: 0;
   font-weight: 500;
+  &:last-of-type {
+    padding-bottom: 1.6rem;
+  }
   background-color: ${styles.colors.gray[5]};
 `;
 
@@ -255,22 +259,14 @@ interface ReservableSectionProps {
   startName: string;
   endName: string;
   reservableIdName: string;
-  defaultReservation: Reservation & {
-    reservable: (Reservable & {
-      place: (Place & {
-        openingTimes: OpeningTime[];
-        reservables: ReservableWithReservations[];
-      }) | null;
-    }) | null;
-  } | undefined,
-  defaultReservationGroup?: ReservationGroupForEdit,
-  reservationIdName: string,
-  backup?: boolean,
-  reservationBackupName: string,
-  setResList: React.Dispatch<React.SetStateAction<Res[]>>
+  defaultReservationGroup?: ReservationGroupForEdit;
+  reservationIdName: string;
+  backup?: boolean;
+  reservationBackupName: string;
+  setResList: React.Dispatch<React.SetStateAction<Res[]>>;
 }
 
-const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservationGroup, setResList, reservationBackupName, backup, reservationIdName, defaultReservation, reservableIdName, reservable, date, openingTime, startName, endName }: ReservableSectionProps) => {
+const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservationGroup, setResList, reservationBackupName, backup, reservationIdName, reservableIdName, reservable, date, openingTime, startName, endName }: ReservableSectionProps) => {
 
   const openMinutes = getDiffBetweenTwoDates(openingTime.close, openingTime.open);
   const openSinceMinutes = new Date(openingTime.open).getMinutes() + new Date(openingTime.open).getHours() * 60;
@@ -281,8 +277,10 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
     end: { minute: Math.round(((s + 1) * minMin + openSinceMinutes) % 60), hour: Math.floor(((s + 1) * minMin + openSinceMinutes) / 60) }
   }));
 
+  const defaultReservation = defaultReservationGroup?.reservations.find(r => r.backup == backup && r.reservableId == reservable.id);
+
   const [ selectedRange, setSelectedRange ] = React.useState<TimeSection | null>(defaultReservation ? getTimeSectionOfReservation(defaultReservation) : null);
-  const [ selectedDate, setSelectedDate ] = React.useState<Date>(date);
+  const [ selectedDate, setSelectedDate ] = React.useState<Date | null>(defaultReservation ? new Date(defaultReservation?.start) : null);
 
   const maxReservableDate = new Date();
   maxReservableDate.setDate(maxReservableDate.getDate() + reservable.reservableDaysAhead);
@@ -301,7 +299,12 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
             )
           ).length >= reservable.reservationsPerSlot}
           key={getTotalMinutes(s.start)}
-          selected={selectedRange != null && areDatesEqual(date, selectedDate) && getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.start) && getTotalMinutes(s.start) < getTotalMinutes(selectedRange.end)}
+          disabled={(() => {
+            const inTwoHours = new Date();
+            inTwoHours.setHours(inTwoHours.getHours() + 2);
+            return !!(new Date(date.getFullYear(), date.getMonth(), date.getDate(), s.start.hour, s.start.minute).getTime() < inTwoHours.getTime());
+          })()}
+          selected={selectedRange != null && selectedDate != null && areDatesEqual(date, selectedDate) && getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.start) && getTotalMinutes(s.start) < getTotalMinutes(selectedRange.end)}
           onClick={(e) => {
             let newRange: TimeSection | null = null;
             if (selectedRange == null || date != selectedDate) {
@@ -320,20 +323,23 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
               newRange = { start: selectedRange.start, end: s.end };
             }
             const overlap = reservable.reservations.filter(
-              r => (
-                doDaysMatch(date, r.start, r.end) &&                                  // Is the reservation on the same?
-                doSectionsOverlap(getTimeSectionOfReservation(r), s) &&               // Is the reservation during the same time?
+              r => (doDaysMatch(date, r.start, r.end) &&    // Is the reservation on the same date? 
+                newRange != null &&                         
+                doSectionsOverlap(getTimeSectionOfReservation(r), getTimeSectionOfDates(
+                  new Date(date.getFullYear(), date.getMonth(), date.getDate(), newRange.start.hour, newRange.start.minute),
+                  new Date(date.getFullYear(), date.getMonth(), date.getDate(), newRange.end.hour, newRange.end.minute)
+                )) &&                                                                 // Is the reservation during the same time?
                 !defaultReservationGroup?.reservations.find(dr => dr.id == r.id) &&   // Is it done by someone else?
                 r.status != ReservationStatus.Cancelled                               // Is it active?
-              )
+              )                                                                       
             ).length >= reservable.reservationsPerSlot;
             setSelectedRange(overlap ? selectedRange : newRange);
             setSelectedDate(overlap ? selectedDate : date);
             setResList(resList => {
               const r = overlap ? selectedRange: newRange;
               const d = overlap ? selectedDate: date;
-              const startDate = r ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.start.hour, r.start.minute) : null;
-              const endDate = r ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.end.hour, r.end.minute) : null;
+              const startDate = r && d ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.start.hour, r.start.minute) : null;
+              const endDate = r && d ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.end.hour, r.end.minute) : null;
               const obj = (startDate?.getTime() ?? 0) < (endDate?.getTime() ?? 0) ? { reservableId: reservable.id, startTime: startDate, endTime: endDate, isBackup: backup ?? false } : null;
               const arr =  resList.filter(rx => rx.reservableId != reservable.id || rx.isBackup != backup);
               if (obj != null) arr.push(obj);
@@ -343,19 +349,15 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ defaultReservatio
           }}
         ></Section>
       )) }
-      {/* Combine these into just start and end dateTime inputs*/}
       {selectedRange && <IdInput name={reservationBackupName} value={backup ? '1' : '0'} />}
       {selectedRange && <IdInput name={reservationIdName} value={defaultReservation ? defaultReservation.id : '-1'} /> }
-      {selectedRange && <input hidden={true} readOnly={true} name={startName} type='datetime-local' value={selectedRange ?
+      {selectedRange && <input hidden={true} readOnly={true} name={startName} type='datetime-local' value={selectedDate && selectedRange ?
         new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.start.hour, selectedRange.start.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ''
       } /> }
-      {selectedRange && <input hidden={true} readOnly={true} name={endName} type='datetime-local' value={selectedRange ?
+      {selectedRange && <input hidden={true} readOnly={true} name={endName} type='datetime-local' value={selectedDate && selectedRange ?
         new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.end.hour, selectedRange.end.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ''
       } /> }
       {selectedRange && <IdInput name={reservableIdName} value={reservable.id} />}
-      {/* <input readOnly={true} name={startName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.start.hour, selectedRange?.start.minute))} />
-      <input readOnly={true} name={endName} type='time' value={getStringTimeValue(new Date(0, 0, 0, selectedRange?.end.hour, selectedRange?.end.minute))} />
-      <input readOnly={true} type='date' value={getInputDateFromString(selectedDate)} /> */}
     </SectionWrap>
   </>
 }

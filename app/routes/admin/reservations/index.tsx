@@ -9,8 +9,9 @@ import { Place } from '~/models/place.server';
 import { changeReservationStatus, setStatusOfReservation, setStatusOfReservationsInGroup, updateReservation } from '~/models/reservation.server';
 import { getReservationGroup, getReservationGroupForConfirmationEmail, getReservationGroupList, ReservationGroup } from '~/models/reservationGroup.server'
 import { User } from '~/models/user.server';
-import { ReservationStatus } from '~/types/types';
+import { ReservableWithCountForEmail, ReservationStatus } from '~/types/types';
 import { sendStatusUpdateEmail } from '~/utils/emails.server';
+import { getBaseUrl } from '~/utils/forms';
 
 interface ReservationsAdminLoaderData {
   reservationGroups: (ReservationGroup & {
@@ -38,8 +39,6 @@ export const action: ActionFunction = async ({ request }) => {
   const reservationGroupId = formData.get('rgId')?.toString();
   const action = formData.get('action')?.toString();
 
-  console.log("what dont we have");
-
   if (!reservationGroupId || !action) {
     // return error message
     return {}
@@ -48,10 +47,8 @@ export const action: ActionFunction = async ({ request }) => {
   const reservationGroup = await getReservationGroupForConfirmationEmail({ id: reservationGroupId });
 
   const promises: Promise<object>[] = [];
-  console.log(reservationGroup);
   
   reservationGroup?.reservations.forEach(r => {
-    console.log('r');
     if (action == 'confirm_preferred') {
       if (!r.backup) {
         promises.push(setStatusOfReservation({ id: r.id, status: ReservationStatus.Confirmed }));
@@ -73,29 +70,31 @@ export const action: ActionFunction = async ({ request }) => {
 
   await Promise.all(promises);
 
-  if (reservationGroup?.user && reservationGroup?.reservations[0].reservable?.place) { 
-    if (action == 'confirm_preferred') {
-      await sendStatusUpdateEmail(
-        reservationGroup?.user?.email,
-        'confirm_preferred',
-        reservationGroup?.reservations[0].reservable?.place,
-        reservationGroup.reservations[0].start
-      );
-    } else if (action == 'unavailable') {
-      await sendStatusUpdateEmail(
-        reservationGroup?.user?.email,
-        'unavailable',
-        reservationGroup?.reservations[0].reservable?.place,
-        reservationGroup.reservations[0].start
-      );
-    } else if (action == 'confirm_backup') {
-      await sendStatusUpdateEmail(
-        reservationGroup?.user?.email,
-        'confirm_backup',
-        reservationGroup?.reservations[0].reservable?.place,
-        reservationGroup.reservations[0].start
-      );
+  const reservablesWithBackup = reservationGroup?.reservations.filter(r => !r.backup).map(x => x.reservable).map((r, i) => ({
+    reservable: r,
+    backup: false
+  })) ?? [];
+
+  const typesWithAmount: ReservableWithCountForEmail[] = [];
+  const reservableTypes = reservablesWithBackup.map(r => r?.reservable?.ReservableType);
+  reservableTypes.forEach(rt => {
+    let cur = typesWithAmount.find(t => t.type == rt?.multiLangName?.english);
+    if (cur) {
+      cur.amount += 1;
     }
+    else {
+      typesWithAmount.push({ amount: 1, type: rt?.multiLangName?.english ?? '' });
+    }
+  });
+
+  if (reservationGroup?.user && reservationGroup?.reservations[0].reservable?.place) {
+    await sendStatusUpdateEmail(
+      getBaseUrl(request),
+      reservationGroup?.user?.email,
+      action,
+      reservationGroup.reservations[0].reservable.place.name,
+      typesWithAmount
+    );
   }
 
   return {}

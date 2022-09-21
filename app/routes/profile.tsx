@@ -59,13 +59,16 @@ export default function Profile() {
 
   const reservationGroups = user?.reservationGroups.filter(rg => rg.reservations.length > 0);
 
+  const twoWeeksAgo = new Date();
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
   return (
     <div>
       <Outlet />
       <ReservationsWrap>
         <ReservationsTitle>Your Reservations</ReservationsTitle>
         { reservationGroups?.length == 0 && <NoReservations>You don't have any reservations :'(. Go ahead and make some!</NoReservations> }
-        { reservationGroups?.map(rg => <div key={rg.id}>
+        { reservationGroups?.filter(rg => rg.reservations.length > 0 && new Date(rg.reservations[0].end).getTime() > twoWeeksAgo.getTime()).map(rg => <div key={rg.id}>
           <>
             <ReservationGroupSummary onCancel={(rgId, formRef) => {
               setTimeout(() => {

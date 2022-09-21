@@ -18,7 +18,7 @@ export const getUserId = async ({ username }: Pick<User, 'username'>) => (await 
 
 export const checkForUserByUsername = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
   where: { username },
-  select: { id: true, passwordHash: true, admin: true, verifiedEmail: true, email: true }
+  select: { id: true, passwordHash: true, admin: true, verifiedEmail: true, email: true, deleted: true }
 }));
 
 export const getEmailFromUsername = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
@@ -28,6 +28,11 @@ export const getEmailFromUsername = async ({ username }: Pick<User, 'username'>)
 
 export const checkForUserByEmail = async ({ email }: Pick<User, 'email'>) => (await prisma.user.findUnique({
   where: { email },
+  select: { id: true, passwordHash: true, admin: true }
+}));
+
+export const checkForUserByPhone = async ({ phone }: Pick<User, 'phone'>) => (await prisma.user.findUnique({
+  where: { phone },
   select: { id: true, passwordHash: true, admin: true }
 }));
 
@@ -149,15 +154,22 @@ export const createUser = async ({
   select: { id: true, passwordHash: true }
 }));
 
-export const updateUser = async ({ id, firstName, lastName, /*username, email,*/ phone }: Pick<User, 'id' | 'firstName' | 'lastName' | 'phone'/* | 'email' | 'username'*/>) => (await prisma.user.update({
+export const updateUser = async ({ id, firstName, lastName, username, email, phone }: Pick<User, 'id' | 'firstName' | 'lastName' | 'phone' | 'email' | 'username'>) => (await prisma.user.update({
   where: {
     id
   },
   data: {
-    /*username, email, */firstName, lastName, phone
+    username, email, firstName, lastName, phone
   }
 }));
 
 export const deleteUser = async ({ id }: Pick<User, 'id'>) => (await prisma.user.deleteMany({
     where: { id },
+}));
+
+export const setUserAsDeleted = async ({ id }: Pick<User, 'id'>) => (await prisma.user.update({
+  where: { id },
+  data: {
+    deleted: true
+  }
 }));

@@ -12,6 +12,7 @@ import { IdInput } from '~/components/inputs/ObjectInput';
 import { RadioInput } from '~/components/inputs/RadioInput';
 import { TextInput } from '~/components/inputs/TextInput';
 import { TimeInput } from '~/components/inputs/TimeInput';
+import { FormError } from '~/components/other/auth-components';
 import { Indicator } from '~/components/place/facilities-indicator';
 import { MainButton, MainButtonBtn, SecondaryButton, SecondaryButtonBtn } from '~/components/place/place-summary';
 import { ReservableTimes } from '~/components/reservable-times';
@@ -20,13 +21,13 @@ import { styles } from '~/constants/styles';
 import { useUsername } from '~/contexts/usernameContext';
 import { OpeningTime } from '~/models/openingTime.server';
 import { getPlace, getPlaceWithReservations, Place } from '~/models/place.server';
-import { getReservableList, Reservable } from '~/models/reservable.server';
+import { getReservable, getReservableList, getReservableWReservations, Reservable } from '~/models/reservable.server';
 import { createReservation, Reservation } from '~/models/reservation.server';
 import { createReservationGroup } from '~/models/reservationGroup.server';
 import { getUserId } from '~/models/user.server';
-import { ReservableTypeWithTexts, ReservableWithReservations, TimeSection } from '~/types/types';
+import { ReservableTypeWithTexts, ReservableWithCountForEmail, ReservableWithReservations, ReservationStatus, Time, TimeSection } from '~/types/types';
 import { sendCreationEmail } from '~/utils/emails.server';
-import { getDayOfWeek, getStringDateValue, getStringTimeValue } from '~/utils/forms';
+import { getBaseUrl, getDayOfWeek, getStringDateValue, getStringTimeValue } from '~/utils/forms';
 import { requireUsernameAndAdmin } from '~/utils/session.server'
 
 interface ReserveLoaderData {
@@ -54,7 +55,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   // Return availability data
   const { username } = await requireUsernameAndAdmin(request);
   const place = await getPlaceWithReservations({ id: params.placeId ?? '' });
-  return json({ username, place })
+  return json({ username, place });
 }
 
 export const action: ActionFunction = async ({ request }) => {
@@ -63,35 +64,143 @@ export const action: ActionFunction = async ({ request }) => {
   const placeId = form.get('placeId')?.toString();
   const username = form.get('username')?.toString();
 
+  const place = await getPlaceWithReservations({ id: placeId ?? '' });
+
+  const getTotalMinutes = (time: Time) => time.hour * 60 + time.minute;
+
+  const doDaysMatch = (date1: Date | string, date2: Date | string, date3: Date | string) => {
+    return (
+      new Date(date1).getFullYear() === new Date(date2).getFullYear() && new Date(date1).getFullYear() === new Date(date3).getFullYear() &&
+      new Date(date1).getMonth() === new Date(date2).getMonth() && new Date(date1).getMonth() === new Date(date3).getMonth() &&
+      new Date(date1).getDate() === new Date(date2).getDate() && new Date(date1).getDate() === new Date(date3).getDate()
+    );
+  }
+
+  const getTimeSectionOfReservation = (reservation: Reservation) => {
+    return getTimeSectionOfDates(new Date(reservation.start), new Date(reservation.end));
+  }
+
+  const getTimeSectionOfDates = (start: Date, end: Date) => {
+    return {
+      start: {
+        hour: start.getHours(),
+        minute: start.getMinutes(),
+      },
+      end: {
+        hour: end.getHours(),
+        minute: end.getMinutes(),
+      }
+    }
+  }
+
+  const doSectionsOverlap = (section1: TimeSection, section2: TimeSection | null) => {
+    return section2 != null && (!(getTotalMinutes(section1.end) <= getTotalMinutes(section2.start) || getTotalMinutes(section2.end) <= getTotalMinutes(section1.start)))
+  }
+
   const reservationBackup = form.getAll('reservationBackup[]').map(r => r.toString());
   const reservableId = form.getAll('reservableId[]').map(r => r.toString()).filter(r => r != '-1');
   const dateTimeStart = form.getAll('start[]').map(r => r.toString());
   const dateTimeEnd = form.getAll('end[]').map(r => r.toString());
 
-  // You need to repeat the validation here!!!!!!
+  const reservablePromises = reservableId.map((r) => getReservableWReservations({ id: r }));
+  const reservables = await Promise.all(reservablePromises);
+  const reservablesWithBackup = reservables.map((r, i) => ({
+    reservable: r,
+    backup: reservationBackup[i]
+  }));
 
-  const datesInPast = dateTimeStart.find(s => new Date(s).getTime() < new Date().getTime());
+  // Possible errors
+  /**
+   * 1) No main timeslot selected
+   * 2) Timeslots overlap
+   * 3) Past slot selected
+   * 4) Something else missing
+   */
 
-  if (dateTimeEnd.length == 0 || dateTimeStart.length == 0 || datesInPast || !placeId || !username || !reservableId) {
+    console.log(reservationBackup);
+   if (reservationBackup.filter(b => b === '0').length == 0) {
+    // Problem 1)
     return badRequest({
       fields: {
         note: note ?? '', placeId: placeId ?? '', username: username ?? ''
       },
-      formError: 'Fill everything in pls.'
+      formError: `Please select a preferred timeslot.`
+    })
+  }
+
+  // These are the reservableIds we book
+  const overlap = !!(reservables.map((r, i) => {
+    const start = dateTimeStart[i];
+    const end = dateTimeEnd[i];
+    if (r == null) return false;
+    return r.reservations.filter(
+      rx => (
+        doDaysMatch(new Date(start), rx.start, rx.end) &&                                                             // Is the reservation on the same day?
+        doSectionsOverlap(getTimeSectionOfReservation(rx), getTimeSectionOfDates(new Date(start), new Date(end))) &&  // Is the reservation during the same time?
+        rx.status != ReservationStatus.Cancelled                                                                      // Is it active?
+      )
+    ).length >= r.reservationsPerSlot;
+  }).find(o => o));
+
+  if (overlap) {
+    return badRequest({
+      fields: {
+        note: note ?? '', placeId: placeId ?? '', username: username ?? ''
+      },
+      formError: `It looks like you selected a time that's already booked. Please try another time.`
+    })
+    // Problem 2)
+  }
+
+  const inTwoHours = new Date();
+  inTwoHours.setHours(inTwoHours.getHours() + 2);
+  const datesInPast = dateTimeStart.find(s => new Date(s).getTime() < inTwoHours.getTime());
+
+  if (datesInPast) {
+    return badRequest({
+      fields: {
+        note: note ?? '', placeId: placeId ?? '', username: username ?? ''
+      },
+      formError: `Please select a slot that's at least 2 hours in the future.`
+    })
+    // Problem 3)
+  }
+
+  if (!placeId || !username || !reservableId) {
+    // Problem 4)
+    return badRequest({
+      fields: {
+        note: note ?? '', placeId: placeId ?? '', username: username ?? ''
+      },
+      formError: 'We are mising some information about you. Please try reloading.'
     })
   }
 
   const user = await getUserId({ username });
-  await sendCreationEmail(user?.email ?? '');
+  const typesWithAmount: ReservableWithCountForEmail[] = [];
+  const reservableTypes = reservablesWithBackup.filter(r => r.backup == '0').map(r => r?.reservable?.ReservableType);
+  reservableTypes.forEach(rt => {
+    let cur = typesWithAmount.find(t => t.type == rt?.multiLangName?.english);
+    if (cur) {
+      cur.amount += 1;
+    }
+    else {
+      typesWithAmount.push({ amount: 1, type: rt?.multiLangName?.english ?? '' });
+    }
+  });
+
   const resGroup = user ? await createReservationGroup({ note: note ?? '', userId: user.id }) : null;
   if (resGroup == null) {
     return badRequest({
       fields: {
         note: note ?? '', placeId: placeId ?? '', username: username ?? ''
       },
-      formError: 'Cannot find who you are :(.'
+      formError: 'We cannot find you. Please try reloading the page.'
     })
   }
+
+  await sendCreationEmail(getBaseUrl(request), user?.email ?? '', place?.name ?? '', typesWithAmount);
+
   const promises: Promise<object>[] = []
   dateTimeStart.forEach((d, i) => {
     promises.push(createReservation({ backup: reservationBackup[i] == '1', start: new Date(dateTimeStart[i]), end: new Date(dateTimeEnd[i]), reservableId: reservableId[i] ?? null, reservationGroupId: resGroup.id ?? null }));
@@ -237,8 +346,6 @@ export default function ReservationElement() {
   const [ date, setDate ] = React.useState<Date | null>(null);
   const [ backup, setBackup ] = React.useState(false);
 
-  console.log(resList);
-
   return (<Wrap>
     <ReserveConfirmationDialog 
       hidden={!confirmationDialog}
@@ -339,13 +446,13 @@ export default function ReservationElement() {
       <TextWrap>
         <TextInput name={'note'} title={'Note'} defaultValue={actionData?.fields?.note ?? ''} />
       </TextWrap>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+        { actionData?.formError && <FormError>{actionData.formError ?? ''}</FormError> }
+      </div>
       <MainButtonBtn disabled={resList.filter(r => !r.isBackup).length == 0} style={{ margin: '2rem auto' }} onClick={(e) => {
         e.preventDefault();
         setConfirmationDialog(true);
       }}>Create reservation<AnglesRightIcon height='1.5rem' /></MainButtonBtn>
-      {
-        actionData?.formError && <p>{actionData.formError ?? ''}</p>
-      }
     </Form>
   </Wrap>)
 }

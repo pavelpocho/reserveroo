@@ -54,7 +54,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // You need to repeat the validation here!!!!!!
 
-  if (!dateTimeEnd || !dateTimeStart || !note || !placeId || !userId || !reservableId || note == '') {
+  if (!dateTimeEnd || !dateTimeStart || !placeId || !userId || !reservableId) {
     return badRequest({
       fields: {
         note: note ?? '', placeId: placeId ?? '', userId: userId ?? ''
@@ -63,7 +63,7 @@ export const action: ActionFunction = async ({ request }) => {
     })
   }
 
-  const resGroup = await updateReservationGroup({ id: rgId ?? '', note, userId });
+  const resGroup = await updateReservationGroup({ id: rgId ?? '', note: note ?? '', userId });
   const promises: Promise<object>[] = []
   dateTimeStart.forEach((d, i) => {
     if (reservationId[i] == '-1') {

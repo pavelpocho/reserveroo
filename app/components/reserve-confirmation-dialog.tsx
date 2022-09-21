@@ -50,11 +50,15 @@ const Window = styled.div`
   box-shadow: ${styles.shadows[0]};
   width: 968px;
   display: flex;
+  box-sizing: border-box;
   max-width: 100%;
+  max-height: 100vh;
+  max-width: 100vw;
   border-radius: 1rem;
-  @media (max-width: 650px) {
+  @media (max-width: 1000px) {
     width: 100%;
     border-radius: 0;
+    overflow-y: scroll;
   }
   flex-direction: column;
   gap: 1.3rem;
@@ -170,7 +174,7 @@ export const ReserveConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ s
       <Text>{subHeaderText}</Text>
       { resList.filter(r => !r.isBackup).length > 0 && <SlotList>
         <WhiteSlotListTitle>{resList.filter(r => r.isBackup).length > 0 ? `Preferred timeslot${resList.filter(r => !r.isBackup).length > 1 ? 's' : ''}` :`Picked timeslot${resList.filter(r => !r.isBackup).length > 1 ? 's' : ''}`}</WhiteSlotListTitle>
-        { resList.filter(r => !r.isBackup).map(r => r.startTime && r.endTime && <ResE>
+        { resList.filter(r => !r.isBackup).map((r, i) => r.startTime && r.endTime && <ResE key={i}>
           <Indicator style={{ padding: '0.5rem', whiteSpace: 'nowrap' }}>{reservables.find(x => x.id == r.reservableId)?.name}</Indicator>
           <FlexSL>
             <SlotText>Date: {getStringDateValue(r.startTime)}</SlotText>

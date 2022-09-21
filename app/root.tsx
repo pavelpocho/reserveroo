@@ -36,11 +36,6 @@ export const meta: MetaFunction = () => ({
   viewport: "width=device-width,initial-scale=1",
 });
 
-export const UnstyledLink = styled(Link)`
-  color: ${styles.colors.white};
-  text-decoration: none;
-`;
-
 const Body = styled.body<{ isLandingPage: boolean }>`
   margin: 0px;
   padding: 0px;
@@ -53,26 +48,15 @@ const Body = styled.body<{ isLandingPage: boolean }>`
 export const loader: LoaderFunction = async ({ request }) => {
   const { username, admin, usernameToVerify } = await getUsernameAndAdmin(request);
   const langs = request.headers.get('Accept-Language');
-  console.log(langs);
   return json({ username, admin, usernameToVerify, langs: langs?.split(',')[0] ?? '' });
 }
 
-interface AppHeaderLoaderData {
+export interface AppHeaderLoaderData {
   username: string | null;
   usernameToVerify: string | null;
   admin: boolean | null;
   langs: string;
 }
-
-export const WidthRestrictor = styled.div<{ width?: string }>`
-  width: 100%;
-  margin: 0 auto;
-  @media (min-width: 550px) {
-    padding: 0 1rem;
-  }
-  box-sizing: border-box;
-  max-width: ${props => props.width ?? '968px'};
-`;
 
 const Footer = styled.footer`
   width: 100%;
@@ -91,14 +75,15 @@ const Footer = styled.footer`
 
 interface MainProps {
   isLandingPage: boolean,
-  admin: boolean
+  admin: boolean,
+  appHeaderData: AppHeaderLoaderData
 }
 
-const Main: React.FC<MainProps> = ({ isLandingPage, admin }) => {
+const Main: React.FC<MainProps> = ({ isLandingPage, admin, appHeaderData }) => {
 
   return <>
     <div style={{ minHeight: 'calc(100vh - 11.2rem)' }}>
-      <AppHeader>idlehours</AppHeader>
+      <AppHeader data={appHeaderData}>idlehours</AppHeader>
       <Outlet />
     </div>
     {!isLandingPage && <Footer>
@@ -153,7 +138,7 @@ export default function App() {
         <signingInContext.Provider value={{ signingIn, setSigningIn, landingPage, setLandingPage }}>
           <usernameContext.Provider value={{ username, setUsername, admin, setAdmin, usernameToVerify, setUsernameToVerify }}>
             <langsContext.Provider value={{ translations, setTranslations, lang, setLang }}>
-              <Main isLandingPage={landingPage} admin={admin ?? false} />
+              <Main appHeaderData={loaderData} isLandingPage={landingPage} admin={admin ?? false} />
               <Loader show={loading ?? false}></Loader>
             </langsContext.Provider>
           </usernameContext.Provider>

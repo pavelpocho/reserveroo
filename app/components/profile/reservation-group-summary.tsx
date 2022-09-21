@@ -162,12 +162,7 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
     prefStatus == R.Rejected && backupStatus == R.Rejected ? 'Unavailable' :
     prefStatus == R.Cancelled && backupStatus == R.Cancelled ? 'Cancelled' : ''
   );
-
-  console.log("RG");
-  console.log(rg.note);
-  console.log(prefStatus);
-  console.log(backupStatus);
-
+  
   const backgroundColor = (
     prefStatus == R.AwaitingConfirmation || backupStatus == R.AwaitingConfirmation ? styles.colors.warn : 
     prefStatus == R.Confirmed && backupStatus == null ? styles.colors.free : 

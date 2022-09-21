@@ -22,6 +22,7 @@ model User {
   verifiedEmail        Boolean            @default(false)
   verifyEmailTriesLeft Int                @default(3)
   searchHistory        Search[]
+  deleted              Boolean            @default(false)
   reservationGroups    ReservationGroup[]
 }
 
@@ -57,7 +58,7 @@ model ReservationGroup {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @default(now()) @updatedAt
   note         String
-  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Restrict)
   reservations Reservation[]
   userId       String?
 }
