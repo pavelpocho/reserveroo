@@ -3,15 +3,16 @@ import React from 'react'
 import styled from 'styled-components';
 import { styles } from '~/constants/styles';
 
-const Wrapper = styled.h1`
+const Wrapper = styled.h1<{offset: number}>`
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: ${styles.shadows[1]};
   width: 300px;
   padding: 2rem;
-  color: ${styles.colors.primary};
-  background-color: ${styles.colors.gray};
+  border-radius: 0.375rem;
+  color: ${props => props.offset % 2 === 0 ? styles.colors.primary : styles.colors.white};
+  background-color: ${props => props.offset % 2 === 0 ? styles.colors.gray : styles.colors.primary};
 `;
 
 interface Question {
@@ -21,7 +22,7 @@ interface Question {
   speed: number;
 }
 
-const ParallaxLayerComponent: React.FC<Question> = ({ offset, factor, speed, question }) => {
+const Question: React.FC<Question> = ({ offset, factor, speed, question }) => {
   return (
     <ParallaxLayer
       offset={offset}
@@ -34,11 +35,11 @@ const ParallaxLayerComponent: React.FC<Question> = ({ offset, factor, speed, que
         // backgroundColor: styles.colors.busy,
       }}
     >
-      <Wrapper>
+      <Wrapper offset={offset}>
        {question}
       </Wrapper>
     </ParallaxLayer>
   );
 }
 
-export default ParallaxLayerComponent
+export default Question
