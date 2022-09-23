@@ -1,6 +1,6 @@
-import { Parallax, ParallaxLayer } from "@react-spring/parallax";
+import { IParallax, Parallax, ParallaxLayer } from "@react-spring/parallax";
 import { Link } from "@remix-run/react";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { styles } from "~/constants/styles";
 import { useWhereAreWe } from "~/contexts/whereAreWeContext";
@@ -246,18 +246,31 @@ const FaAngleDownA = styled(FaAngleDown)`
 `;
 
 export default function About() {
+
   const { setLandingPage } = useWhereAreWe();
+  const paralaxRef = useRef<IParallax>(null);
+  const [ yScroll, setYScroll ] = useState<number>(0);
 
   React.useEffect(() => {
     setLandingPage(true);
+    console.log('usef');
+    const handleScroll = (ev: Event) => {
+      setYScroll(() => (paralaxRef.current?.current ?? 0) / (paralaxRef.current?.space ?? 0));
+    };
+
+    if (paralaxRef.current) paralaxRef.current.container.current.onscroll = handleScroll;
+
     return () => {
       setLandingPage(false);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
+  console.log(yScroll);
+
   return (
     <>
-      <Parallax pages={6.7}>
+      <Parallax pages={6.7} ref={paralaxRef}>
         {/* <ParallaxLayer factor={1} speed={0.3}>
           <H1>
             All the
@@ -287,8 +300,8 @@ export default function About() {
             speed={layer.speed}
           ></Question>
         ))} */}
-        <ParallaxLayer factor={1} speed={1}>
-          <div style={{ marginTop: '100px' }} >
+        <ParallaxLayer factor={1} speed={0.1} offset={0.1}>
+          <div>
             <H1>What is Reserveroo?</H1>
             <IconRow invertColors={true} />
             <H1X>It's simple.<br/>It's all your favourite activities in one place.</H1X>
@@ -317,14 +330,20 @@ export default function About() {
             <H1X>Search for what you want, book right from the app and have fun!</H1X>
           </div>
         </ParallaxLayer>
+        <ParallaxLayer factor={1} sticky={{ start: 1, end: 2 }}>
+          <div style={{ paddingTop: '100px' }}>
+            <BackgroundStripe space={0} height={600}>
+              <BigText colour={styles.colors.white} space={0}>{questions[0].question}</BigText>
+            </BackgroundStripe>
+          </div>
+        </ParallaxLayer>
         <ParallaxLayer factor={1} speed={0.3}>
-          <BackgroundStripe space={1000} height={1000} />
-          <BackgroundStripe space={900} height={800} />
+          {/* <BackgroundStripe space={900} height={800} />
           <BackgroundStripe space={600} height={400} />
           <BackgroundStripe space={300} height={200} />
           <BackgroundStripe space={150} height={100} />
           <BackgroundStripe space={100} height={50} />
-          <BackgroundStripe space={50} height={2000} />
+          <BackgroundStripe space={50} height={2000} /> */}
         </ParallaxLayer>
         <ParallaxLayer factor={1} speed={0.6}>
           {
