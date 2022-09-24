@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const ScrollEffectWrap = styled.div`
   position: fixed;
-  top: 90px;
+  top: 85x;
   left: 0;
   overflow-y: scroll;
   height: calc(100vh - 90px);
@@ -12,21 +12,22 @@ export const ScrollEffectWrap = styled.div`
 export const ScrollEffectInner = styled.div<{ space: number }>`
   height: ${props => props.space * 100}%;
   position: absolute;
+  z-index: 3;
   top: 0;
-  left: 0;
-  width: 100%;
+  left: 5%;
+  width: 90%;
 `;
 
 const zLoopStart = (leftBound: number, rightBound: number, setupObject: EffectSetupObject, loopCount: number): { z: number, x: number } => {
   // Assume they bracket the value
 
-  const { scrollToStandAt, initSlope, startValue, standStillValue } = setupObject;
+  const { start, stand } = setupObject;
 
   const a = (one: number, two: number) => (one + two) / 2;
 
-  const getXOfCorrectSlope = (z: number) => (scrollToStandAt - z*Math.log(-z*initSlope));
-  const startLineFn = (x: number) => (startValue + initSlope * x);
-  const firstFn = (x: number, z: number) => (Math.exp(-(x-scrollToStandAt)/z) + standStillValue - 1);
+  const getXOfCorrectSlope = (z: number) => (stand.scroll - z*Math.log(-z*start.slope));
+  const startLineFn = (x: number) => (start.value + start.slope * x);
+  const firstFn = (x: number, z: number) => (Math.exp(-(x-stand.scroll)/z) + stand.value - 1);
 
   loopCount += 1;
   if (loopCount < 400) {
@@ -47,13 +48,13 @@ const zLoopStart = (leftBound: number, rightBound: number, setupObject: EffectSe
 const zLoopEnd = (leftBound: number, rightBound: number, setupObject: EffectSetupObject, loopCount: number): { z: number, x: number } => {
   // Assume they bracket the value
 
-  const { scrollToStandAt, finishSlope, scrollWithZeroValue, standStillValue } = setupObject;
+  const { stand, end } = setupObject;
 
   const a = (one: number, two: number) => (one + two) / 2;
 
-  const getXOfCorrectSlope = (z: number) => (scrollToStandAt + z*Math.log(-z*finishSlope));
-  const endLineFn = (x: number) => ((-scrollWithZeroValue + x) * finishSlope);
-  const secondFn = (x: number, z: number) => (-Math.exp((x-scrollToStandAt)/z) + standStillValue + 1);
+  const getXOfCorrectSlope = (z: number) => (stand.scroll + z*Math.log(-z*end.slope));
+  const endLineFn = (x: number) => ((-end.scroll + x) * end.slope);
+  const secondFn = (x: number, z: number) => (-Math.exp((x-stand.scroll)/z) + stand.value + 1);
 
   loopCount += 1;
   if (loopCount < 400) {
@@ -81,35 +82,38 @@ const zLoopEnd = (leftBound: number, rightBound: number, setupObject: EffectSetu
  * @param finishSlope Speed of element movement after exp curves
  * @returns X value at which transition from straight to exp line happens and Z the easing parameter
  */
-export const useEasingFunctionXandZ = (setupObject: EffectSetupObject) => {
+export const getEasingFunctionXandZ = (setupObject: EffectSetupObject): EffectInfo => {
 
   const { z: z1, x: x1 } = zLoopStart(10, 2000, setupObject, 0);
   const { z: z2, x: x2 } = zLoopEnd(10, 2000, setupObject, 0);
-  return { x1, x2, z1, z2 } ;
+  return { setupObject, x1, x2, z1, z2 } ;
 }
 
-export const easeInOut = (scroll: number, setupObject: EffectSetupObject, z1: number, z2: number, x1: number, x2: number) => {
-  const { scrollToStandAt, standStillValue, startValue, initSlope, finishSlope, scrollWithZeroValue } = setupObject;
-  if (scroll < scrollToStandAt) {
-    if (scroll < x1) return startValue + initSlope * scroll;
-    else return (Math.exp(-(scroll-scrollToStandAt)/z1) + standStillValue - 1);
+export const easeInOut = (scroll: number, effectInfo: EffectInfo) => {
+  const { start, stand, end } = effectInfo.setupObject;
+  const { x1, x2, z1, z2 } = effectInfo;
+  if (scroll < stand.scroll) {
+    if (scroll < x1) return start.value + start.slope * scroll;
+    else return (Math.exp(-(scroll-stand.scroll)/z1) + stand.value - 1);
   }
   else {
-    if (scroll > x2) return finishSlope * (-scrollWithZeroValue + scroll);
-    else return (-(Math.exp((scroll-scrollToStandAt)/z2)) + standStillValue + 1);
+    if (scroll > x2) return end.slope * (-end.scroll + scroll);
+    else return (-(Math.exp((scroll-stand.scroll)/z2)) + stand.value + 1);
   }
 }
 
-export const easeIn = (scroll: number, setupObject: EffectSetupObject, z1: number, z2: number, x1: number, x2: number) => {
-  const { scrollToStandAt, standStillValue, startValue, initSlope } = setupObject;
-  if (scroll < x1) return startValue + initSlope * scroll;
-  else return (Math.exp(-(scroll-scrollToStandAt)/z1) + standStillValue - 1);
+export const easeIn = (scroll: number, effectInfo: EffectInfo) => {
+  const { start, stand } = effectInfo.setupObject;
+  const { x1, z1 } = effectInfo;
+  if (scroll < x1) return start.value + start.slope * scroll;
+  else return (Math.exp(-(scroll-stand.scroll)/z1) + stand.scroll - 1);
 }
 
-export const easeOut = (scroll: number, setupObject: EffectSetupObject, z1: number, z2: number, x1: number, x2: number) => {
-  const { scrollToStandAt, standStillValue, finishSlope, scrollWithZeroValue } = setupObject;
-  if (scroll > x2) return finishSlope * (-scrollWithZeroValue + scroll);
-  else return (-(Math.exp((scroll-scrollToStandAt)/z2)) + standStillValue + 1);
+export const easeOut = (scroll: number, effectInfo: EffectInfo) => {
+  const { stand, end } = effectInfo.setupObject;
+  const { x2, z2 } = effectInfo;
+  if (scroll > x2) return end.slope * (-end.scroll + scroll);
+  else return (-(Math.exp((scroll-stand.scroll)/z2)) + stand.value + 1);
 }
 
 export const noEase = (scroll: number, setupObject: NoEaseObject) => {
@@ -118,12 +122,26 @@ export const noEase = (scroll: number, setupObject: NoEaseObject) => {
 }
 
 export interface EffectSetupObject {
-  startValue: number,
-  standStillValue: number,
-  scrollToStandAt: number,
-  initSlope: number,
-  finishSlope: number,
-  scrollWithZeroValue: number
+  start: {
+    value: number,
+    slope: number
+  },
+  stand: {
+    scroll: number,
+    value: number
+  },
+  end: {
+    scroll: number
+    slope: number
+  }
+}
+
+export interface EffectInfo {
+  setupObject: EffectSetupObject,
+  x1: number,
+  x2: number,
+  z1: number,
+  z2: number
 }
 
 export interface NoEaseObject {

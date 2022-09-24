@@ -1,6 +1,6 @@
 import { IParallax, Parallax, ParallaxLayer } from "@react-spring/parallax";
 import { Link } from "@remix-run/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { styles } from "~/constants/styles";
 import { useWhereAreWe } from "~/contexts/whereAreWeContext";
@@ -12,20 +12,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Question from "~/components/landing-page/question";
 import QuestionMark from "~/components/landing-page/question-mark";
 import { IconRow } from "~/components/icon-row";
-import { FaAngleDown, FaArrowDown, FaCaretDown } from "react-icons/fa";
-import { easeIn, easeInOut, easeOut, EffectSetupObject, noEase, NoEaseObject, ScrollEffectInner, ScrollEffectWrap, useEasingFunctionXandZ } from "~/components/scroll-effects";
+import { FaAngleDown, FaArrowDown, FaCaretDown, FaSearch, FaUserFriends } from "react-icons/fa";
+import { easeIn, easeInOut, easeOut, EffectSetupObject, noEase, NoEaseObject, ScrollEffectInner, ScrollEffectWrap, getEasingFunctionXandZ as getEasingInfo } from "~/components/scroll-effects";
 import { useInterval } from "~/components/scroll-effects/useInterval";
+import { useSpring, animated } from 'react-spring'
+import { config } from "aws-sdk";
 const questions = [
   {
     question:
-      "Picture this (keep on scrolling):",
-    offset: 1,
-    factor: 0.5,
-    speed: 0.4,
-  },
-  {
-    question:
-      "You are in a foreign city with your friend and want to enjoy your time. What do you do?",
+      "You are somewhere new with your friend and want to do something fun. What do you do?",
     offset: 1,
     factor: 0.5,
     speed: 0.4,
@@ -142,18 +137,19 @@ const questionMarks = [
 ];
 
 const H1 = styled.h1`
+  padding-top: 3rem;
   margin-top: 0rem;
-  margin-bottom: 2rem;
-  font-size: 8rem;
-  color: ${styles.colors.gray[50]};
+  margin-bottom: 1rem;
+  font-size: 2.625rem;
+  color: ${styles.colors.white};
   text-align: center;
 `;
 
 const H1X = styled.h1`
-  font-size: 6rem;
+  font-size: 1.5rem;
   width: 80%;
-  margin: 2rem auto;
-  color: ${styles.colors.primary};
+  margin: 0.5rem auto;
+  color: ${styles.colors.gray[30]};
   text-align: center;
 `;
 
@@ -226,14 +222,16 @@ const BackgroundStripe = styled.div<{ space: number, height: number }>`
   margin-top: ${props => props.space}px;
 `;
 
-const BigText = styled.p<{ colour: string, space: number }>`
+const BigText = styled.p<{ color: string }>`
   font-size: 4rem;
   width: 60%;
-  margin: 0 auto;
+  top: 50%;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
   font-weight: bold;
-  color: ${props => props.colour};
-  margin-top: ${props => props.space}px;
+  color: ${props => props.color};
 `;
 
 const fade = keyframes`
@@ -247,24 +245,138 @@ const FaAngleDownA = styled(FaAngleDown)`
   animation: ${fade} 1.5s linear 0s infinite;
 `;
 
+const ScrollItem = styled(animated.div).attrs(
+  (props: any): any => ({
+    style: {
+      transform: props.transform,
+      opacity: props.opacity
+    }
+  })
+)`
+  top: 0px;
+  position: fixed;
+  transition: transform 0.07s cubic-bezier(0.16, 1.03, 1, 1) 0s, opacity 0.07s cubic-bezier(0.16, 1.03, 1, 1) 0s;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+`;
+
+const Sphere = styled(ScrollItem)`
+  height: 200px;
+  width: 200px;
+  border-radius: 100px;
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: ${styles.colors.primary};
+`;
+
+const AboutHeader = styled.div`
+  background-color: ${styles.colors.primary};
+  width: 100%;
+  padding-bottom: 4rem;
+`;
+
+const AboutSubHeader = styled.div`
+  height: 100px;
+  width: 100%;
+  background-color: ${styles.colors.gray[20]};
+`;
+
+const AboutSubSubHeader = styled.div`
+  height: 500px;
+  width: 100%;
+  background-color: ${styles.colors.white};
+`;
+
+const ScrollDownIndicator = () => (
+  <div style={{ width: '100%', marginTop: '1rem' }}>
+    <H1X>Scroll down to find out!</H1X>
+    <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+      <FaAngleDownA size={24} color={styles.colors.white} style={{ animationDelay: '-1s' }} className="fade-arrow" />
+    </div>
+    <div style={{ textAlign: 'center' }}>
+      <FaAngleDownA size={24} color={styles.colors.white} style={{ animationDelay: '-0.5s' }} className="fade-arrow" />
+    </div>
+    <div style={{ textAlign: 'center' }}>
+      <FaAngleDownA size={24} color={styles.colors.white} style={{ animationDelay: '0s' }} className="fade-arrow" />
+    </div>
+    {/* <div style={{ margin: '0 auto', textAlign: 'center' }}>
+      <FaAngleDownA style={{ animationDelay: '-1s' }} className="fade-arrow" />
+      <FaAngleDownA style={{ animationDelay: '-1s' }} className="fade-arrow" />
+      <FaAngleDownA style={{ animationDelay: '-1s' }} className="fade-arrow" />
+    </div>
+    <div style={{ margin: '0 auto', textAlign: 'center' }}>
+      <FaAngleDownA style={{ animationDelay: '-0.5s' }} className="fade-arrow" />
+      <FaAngleDownA style={{ animationDelay: '-0.5s' }} className="fade-arrow" />
+      <FaAngleDownA style={{ animationDelay: '-0.5s' }} className="fade-arrow" />
+    </div>
+    <div style={{ margin: '0 auto', textAlign: 'center' }}>
+      <FaAngleDownA style={{ animationDelay: '0s' }} className="fade-arrow" />
+      <FaAngleDownA style={{ animationDelay: '0s' }} className="fade-arrow" />
+      <FaAngleDownA style={{ animationDelay: '0s' }} className="fade-arrow" />
+    </div> */}
+  </div>
+)
+
+const Card = styled.div`
+  width: 400px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  color: ${styles.colors.white};
+  background-color: ${styles.colors.primary};
+`;
+
+const QuestionCard: React.FC<React.PropsWithChildren<{title: string}>> = ({ title, children }) => (
+  <div style={{ margin: '0 auto', width: '50%' }}>
+    <Card>
+      <p style={{ fontWeight: 'bold' }}>{title}</p>
+      <p>{children}</p>
+    </Card>
+  </div>
+)
+
 export default function About() {
 
   const { setLandingPage } = useWhereAreWe();
   const scrollEffectWrap = useRef<HTMLDivElement>(null);
-  const [ scrollPosition, setScrollPosition ] = useState<number>(0);
-  const [ yScroll, setYScroll ] = useState<number>(0);
+  // const [ scrollPosition, setScrollPosition ] = useState<number>(0);
+  // const [ yScroll, setYScroll ] = useState<number>(0);
   const [ yScrollPixels, setYScrollPixels ] = useState<number>(0);
+
+  // const [styles, api] = useSpring(() => ({ config: { friction: 25, tension: 300, mass: 0.5 },to: {transform: `translate3d(0px, 200px, 0px)` }}));
+
+  const headerEffect: NoEaseObject = {
+    startValue: 85,
+    slope: -0.5
+  }
+
+  const subHeaderEffect: NoEaseObject = {
+    startValue: 480,
+    slope: -1
+  }
+
+  const subSubHeaderEffect: NoEaseObject = {
+    startValue: 580,
+    slope: -1.2
+  }
 
   React.useEffect(() => {
     setLandingPage(true);
     const handleScroll = (ev: Event) => {
-      setYScroll(() => (scrollEffectWrap.current?.scrollTop ?? 0) / (scrollEffectWrap.current?.clientHeight ?? 1));
-      setYScrollPixels(() => (scrollEffectWrap.current?.scrollTop ?? 0));
+      // setYScroll(() => (scrollEffectWrap.current?.scrollTop ?? 0) / (scrollEffectWrap.current?.clientHeight ?? 1));
+      // // @ts-ignore
+      // console.log(ev.target?.scrollTop ?? 0);
+      // // @ts-ignore
+      // api.start({ transform: `translate3d(0px, ${noEase(ev.target?.scrollTop ?? 0, titleEffect)}px, 0px)`});
+      // @ts-ignore
+      setYScrollPixels(() => (ev.target?.scrollTop ?? 0));
     };
 
-    const c = scrollEffectWrap.current;
-
     if (scrollEffectWrap.current) scrollEffectWrap.current.onscroll = handleScroll;
+
+    const c = scrollEffectWrap.current;
 
     return () => {
       setLandingPage(false);
@@ -272,199 +384,79 @@ export default function About() {
     };
   }, []);
 
-  // useInterval(() => {
-  //   setScrollPosition(s => s + 3);
-  //   if (scrollEffectWrap.current) scrollEffectWrap.current.scroll(0, scrollPosition);
-  // }, 1);
+  // We are in effect saying this:
+  // Start: [ scroll: 0, value: startValue ]
+  // Slope of initial line: initSlope
+  // StandStill: [ scroll: scrollToStandAt, value: standStillValue ]
+  // Slope of final line: finishSlope
+  // End: [ scroll: scrollWithZeroValue: 0 ]
 
-  const scrollFn = (scroll: number) => {
-    if (scroll < 800) {
-      return 1200 - scroll;
-    }
-    else if (scroll < 2000) {
-      return 400;
-    }
-    else {
-      return 2400 - scroll;
-    }
-  }
+  const titleEasingInfo = useMemo(() => getEasingInfo({
+    start: { value: -220, slope: -2 },
+    stand: { scroll: 0, value: 80 },
+    end: { scroll: 900, slope: -1 }
+  }), []);
 
-  //////////////
+  const card1EasingInfo = useMemo(() => getEasingInfo({
+    start: { value: 1100, slope: -5 },
+    stand: { scroll: 300, value: 500 },
+    end: { scroll: 700, slope: -3 }
+  }), []);
 
-  // const startValue = 1200;
-  // const standStillValue = 400;
-  // const scrollToStandAt = 1400;
-  // const initSlope = -1;
-  // const finishSlope = -1;
-  // const topOfScreenIntercept = 2400;
+  const card2EasingInfo = useMemo(() => getEasingInfo({
+    start: { value: 3000, slope: -5 },
+    stand: { scroll: 2200, value: 500 },
+    end: { scroll: 2600, slope: -3 }
+  }), []);
 
-  const effectOne: EffectSetupObject = {
-    startValue: 1000,
-    standStillValue: 200,
-    scrollToStandAt: 1600,
-    initSlope: -2,
-    finishSlope: -1,
-    scrollWithZeroValue: 2400
-  }
+  const icon1EasingInfo = useMemo(() => getEasingInfo({
+    start: { value: 1400, slope: -5 },
+    stand: { scroll: 600, value: 500 },
+    end: { scroll: 1000, slope: -2 }
+  }), []);
 
-  const effectFive: EffectSetupObject = {
-    startValue: 1080,
-    standStillValue: 500,
-    scrollToStandAt: 800,
-    initSlope: -2,
-    finishSlope: -1,
-    scrollWithZeroValue: 1600
-  }
-
-  const effectSix: EffectSetupObject = {
-    startValue: 1000,
-    standStillValue: 500,
-    scrollToStandAt: 1000,
-    initSlope: -2,
-    finishSlope: -1,
-    scrollWithZeroValue: 2200
-  }
-
-  const effectTwo: NoEaseObject = {
-    startValue: 1300,
-    slope: -1.2
-  }
-
-  const effectThree: NoEaseObject = {
-    startValue: 1400,
-    slope: -1.4
-  }
-
-  const effectFour: NoEaseObject = {
-    startValue: 1600,
-    slope: -1.6
-  }
-
-  const { x1, x2, z1, z2 } = useEasingFunctionXandZ(effectOne);
-  const { x1: x3, x2: x4, z1: z3, z2: z4 } = useEasingFunctionXandZ(effectFive);
-  const { x1: x5, x2: x6, z1: z5, z2: z6 } = useEasingFunctionXandZ(effectSix);
-
-  //////////////
+  const icon2EasingInfo = useMemo(() => getEasingInfo({
+    start: { value: 3400, slope: -5 },
+    stand: { scroll: 2600, value: 500 },
+    end: { scroll: 3500, slope: -2 }
+  }), []);
 
   return (
     <>
-    <ScrollEffectWrap ref={scrollEffectWrap}>
-      <ScrollEffectInner space={4}>
-        <div style={{ zIndex: 0, height: '3000px', width: '3000px', backgroundColor: 'blue', position: 'fixed', left: '-500px', top: '-1000px', borderRadius: '100%', transform: `scale(${Math.max(easeIn(yScrollPixels, effectOne, z1, z2, x1, x2) / 1000, 0)})` }}></div>
-        <div style={{ zIndex: 1, height: '100px', width: '500px', backgroundColor: 'green', position: 'fixed', left: '200px', top: '0px', transform: `translate3d(0px, ${noEase(yScrollPixels, effectTwo) * 1.2}px, 0px)` }}>
-          <p>Reserveroo is the shit.</p>
-        </div>
-        <div style={{ zIndex: 1, opacity: `${easeOut(yScrollPixels, effectSix, z5, z6, x5, x6) / 500}`, height: '100px', width: '500px', backgroundColor: 'green', position: 'fixed', left: '500px', top: '500px', transform: `rotate(${easeInOut(yScrollPixels, effectFive, z3, z4, x3, x4) / 3}deg)` }}>
-          <p>Reserveroo is the shit.</p>
-        </div>
-        <div style={{ zIndex: 2, height: '100px', width: '300px', backgroundColor: 'red', position: 'fixed', left: '300px', top: '0px', transform: `translate3d(0px, ${easeInOut(yScrollPixels, effectOne, z1, z2, x1, x2) * 1.2}px, 0px)` }}>
-          <p>Reserveroo is the shit.</p>
-        </div>
-        <div style={{ zIndex: 2, height: '100px', width: '300px', backgroundColor: 'yellow', position: 'fixed', left: '400px', top: '100px', transform: `translate3d(0px, ${noEase(yScrollPixels, effectTwo) * 1.2}px, 0px)` }}>
-          <p>Reserveroo is the shit.</p>
-        </div>
-        <div style={{ zIndex: 2, height: '100px', width: '300px', backgroundColor: 'pink', position: 'fixed', left: '500px', top: '200px', transform: `translate3d(0px, ${noEase(yScrollPixels, effectThree) * 1.2}px, 0px)` }}>
-          <p>Reserveroo is the shit.</p>
-        </div>
-        {/* <div style={{ height: '100px', width: '100px', backgroundColor: 'red', marginTop: '0', position: 'fixed', transform: `translate3d(100px, ${scrollFn(yScrollPixels / 5)}px, 0px)` }}></div> */}
-        {/* <div style={{ height: '100px', width: '100px', backgroundColor: 'green', marginTop: '0', position: 'fixed', transform: `translate3d(300px, ${easeInOut(yScrollPixels / 5, screenStart, screenStop, scrollStop, initialSlope, endSlope, topOfScreenIntercept, z1, z2, x1, x2)}px, 0px)` }}></div> */}
-      </ScrollEffectInner>
-    </ScrollEffectWrap>
-      {/* <Parallax pages={6.7} ref={paralaxRef}>
-        <ParallaxLayer factor={1} speed={0.3}>
-          <H1>
-            All the
-            <span style={{ color: styles.colors.busy }}> activities </span>
-            you love in
-            <span style={{ color: styles.colors.busy }}> one place</span>
-          </H1>
-          <ALink to='/places'>
-            <Button>Check out activities</Button>
-          </ALink>
-          <H1>Why was Reserveroo created?</H1>
-          <Arrow icon={faCircleArrowDown}></Arrow>
-          <p style={{ textAlign: "center" }}>Scroll down</p>
-        </ParallaxLayer>
-        {questionMarks.map((questionMark) => (
-          <QuestionMark
-            {...questionMark}
-            key={questionMark.start}
-          ></QuestionMark>
-        ))}
-        {questions.map((layer) => (
-          <Question
-            key={layer.offset}
-            question={layer.question}
-            offset={layer.offset}
-            factor={layer.factor}
-            speed={layer.speed}
-          ></Question>
-        ))}
-        <ParallaxLayer factor={1} speed={0.1} offset={0.1}>
-          <div>
-            <H1>What is Reserveroo?</H1>
-            <IconRow invertColors={true} />
-            <H1X>It's simple.<br/>It's all your favourite activities in one place.</H1X>
-            <div style={{ margin: '0 auto', textAlign: 'center' }}>
-              <p>Scroll down</p>
-              <div>
-                <FaAngleDownA style={{ animationDelay: '-1s' }} className="fade-arrow" />
-                <FaAngleDownA style={{ animationDelay: '-1s' }} className="fade-arrow" />
-                <FaAngleDownA style={{ animationDelay: '-1s' }} className="fade-arrow" />
-              </div>
-              <div>
-                <FaAngleDownA style={{ animationDelay: '-0.5s' }} className="fade-arrow" />
-                <FaAngleDownA style={{ animationDelay: '-0.5s' }} className="fade-arrow" />
-                <FaAngleDownA style={{ animationDelay: '-0.5s' }} className="fade-arrow" />
-              </div>
-              <div>
-                <FaAngleDownA style={{ animationDelay: '0s' }} className="fade-arrow" />
-                <FaAngleDownA style={{ animationDelay: '0s' }} className="fade-arrow" />
-                <FaAngleDownA style={{ animationDelay: '0s' }} className="fade-arrow" />
-              </div>
+      <ScrollEffectWrap ref={scrollEffectWrap}>
+        {/* </animated.div> */}
+        <ScrollEffectInner space={4}>
+          <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, headerEffect)}px)`} >
+            <AboutHeader>
+              <H1>What is Reserveroo?</H1>
+              <IconRow />
+              <ScrollDownIndicator />
+            </AboutHeader>
+          </ScrollItem>
+          <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, subHeaderEffect)}px)`}>
+            <AboutSubHeader />
+          </ScrollItem>
+          <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, subSubHeaderEffect)}px)`}>
+            <AboutSubSubHeader />
+          </ScrollItem>
+          <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, icon1EasingInfo)}px)`}>
+            <div style={{ margin: '0 auto', width: '50%', textAlign: 'right' }}>
+              <FaUserFriends color={styles.colors.gray[20]} size={300} />
             </div>
-          </div>
-          <div style={{ marginTop: '11000px' }}>
-            <H1>Introducing Reserveroo.</H1>
-            <IconRow invertColors={true} />
-            <H1X>Search for what you want, book right from the app and have fun!</H1X>
-          </div>
-        </ParallaxLayer>
-        <ParallaxLayer factor={1} sticky={{ start: 1, end: 2 }}>
-          <div style={{ paddingTop: '100px' }}>
-            <BackgroundStripe space={0} height={600}>
-              <BigText colour={styles.colors.white} space={0}>{questions[0].question}</BigText>
-            </BackgroundStripe>
-          </div>
-        </ParallaxLayer>
-        <ParallaxLayer factor={1} speed={0.3}>
-          {/* <BackgroundStripe space={900} height={800} />
-          <BackgroundStripe space={600} height={400} />
-          <BackgroundStripe space={300} height={200} />
-          <BackgroundStripe space={150} height={100} />
-          <BackgroundStripe space={100} height={50} />
-          <BackgroundStripe space={50} height={2000} />
-        </ParallaxLayer>
-        <ParallaxLayer factor={1} speed={0.6}>
-          {
-            questions.map((layer, i) => (
-              <BigText colour={i % 2 == 1 ? styles.colors.primary : styles.colors.white} space={i == 0 ? 1550 : i == 1 ? 950 : i == 2 ? 900 : i == 3 ? 700 : i == 4 ? 500 : i == 5 ? 300 : i == 6 ? 200 : i == 7 ? 100 : i == 8 ? 50 : i == 12 ? 1000 : 25 } key={i}>{layer.question}</BigText>
-            ))
-          }
-        </ParallaxLayer>
-        {/* <ParallaxLayer sticky={{ start: 1.8, end: 9 }}>
-          <FirstQuestionMark icon={faQuestion}></FirstQuestionMark>
-        </ParallaxLayer>
-        <ParallaxLayer sticky={{ start: 2.8, end: 9 }}>
-          <SecondQuestionMark icon={faQuestion}></SecondQuestionMark>
-        </ParallaxLayer>
-        <ParallaxLayer sticky={{ start: 3.8, end: 9 }}>
-          <ThirdQuestionMark icon={faQuestion}></ThirdQuestionMark>
-        </ParallaxLayer>
-        <ParallaxLayer sticky={{ start: 4.8, end: 9 }}>
-          <FourthQuestionMark icon={faQuestion}></FourthQuestionMark>
-        </ParallaxLayer>
-      </Parallax> */}
+          </ScrollItem>
+          <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, icon2EasingInfo)}px)`}>
+            <div style={{ margin: '0 auto', width: '50%', textAlign: 'right' }}>
+              <FaSearch color={styles.colors.gray[20]} size={300} />
+            </div>
+          </ScrollItem>
+          <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, card1EasingInfo)}px)`}>
+            <QuestionCard title={"Picture this:"}>{questions[0].question}</QuestionCard>
+          </ScrollItem>
+          <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, card2EasingInfo)}px)`}>
+            <QuestionCard title={"Picture this:"}>{questions[1].question}</QuestionCard>
+          </ScrollItem>
+        </ScrollEffectInner>
+      </ScrollEffectWrap>
     </>
   );
 }
