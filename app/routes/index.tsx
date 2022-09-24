@@ -13,6 +13,8 @@ import Question from "~/components/landing-page/question";
 import QuestionMark from "~/components/landing-page/question-mark";
 import { IconRow } from "~/components/icon-row";
 import { FaAngleDown, FaArrowDown, FaCaretDown } from "react-icons/fa";
+import { easeIn, easeInOut, easeOut, EffectSetupObject, noEase, NoEaseObject, ScrollEffectInner, ScrollEffectWrap, useEasingFunctionXandZ } from "~/components/scroll-effects";
+import { useInterval } from "~/components/scroll-effects/useInterval";
 const questions = [
   {
     question:
@@ -248,30 +250,128 @@ const FaAngleDownA = styled(FaAngleDown)`
 export default function About() {
 
   const { setLandingPage } = useWhereAreWe();
-  const paralaxRef = useRef<IParallax>(null);
+  const scrollEffectWrap = useRef<HTMLDivElement>(null);
+  const [ scrollPosition, setScrollPosition ] = useState<number>(0);
   const [ yScroll, setYScroll ] = useState<number>(0);
+  const [ yScrollPixels, setYScrollPixels ] = useState<number>(0);
 
   React.useEffect(() => {
     setLandingPage(true);
-    console.log('usef');
     const handleScroll = (ev: Event) => {
-      setYScroll(() => (paralaxRef.current?.current ?? 0) / (paralaxRef.current?.space ?? 0));
+      setYScroll(() => (scrollEffectWrap.current?.scrollTop ?? 0) / (scrollEffectWrap.current?.clientHeight ?? 1));
+      setYScrollPixels(() => (scrollEffectWrap.current?.scrollTop ?? 0));
     };
 
-    if (paralaxRef.current) paralaxRef.current.container.current.onscroll = handleScroll;
+    const c = scrollEffectWrap.current;
+
+    if (scrollEffectWrap.current) scrollEffectWrap.current.onscroll = handleScroll;
 
     return () => {
       setLandingPage(false);
-      window.removeEventListener('scroll', handleScroll);
+      if (c) c.onscroll = null;
     };
   }, []);
 
-  console.log(yScroll);
+  // useInterval(() => {
+  //   setScrollPosition(s => s + 3);
+  //   if (scrollEffectWrap.current) scrollEffectWrap.current.scroll(0, scrollPosition);
+  // }, 1);
+
+  const scrollFn = (scroll: number) => {
+    if (scroll < 800) {
+      return 1200 - scroll;
+    }
+    else if (scroll < 2000) {
+      return 400;
+    }
+    else {
+      return 2400 - scroll;
+    }
+  }
+
+  //////////////
+
+  // const startValue = 1200;
+  // const standStillValue = 400;
+  // const scrollToStandAt = 1400;
+  // const initSlope = -1;
+  // const finishSlope = -1;
+  // const topOfScreenIntercept = 2400;
+
+  const effectOne: EffectSetupObject = {
+    startValue: 1000,
+    standStillValue: 200,
+    scrollToStandAt: 1600,
+    initSlope: -2,
+    finishSlope: -1,
+    scrollWithZeroValue: 2400
+  }
+
+  const effectFive: EffectSetupObject = {
+    startValue: 1080,
+    standStillValue: 500,
+    scrollToStandAt: 800,
+    initSlope: -2,
+    finishSlope: -1,
+    scrollWithZeroValue: 1600
+  }
+
+  const effectSix: EffectSetupObject = {
+    startValue: 1000,
+    standStillValue: 500,
+    scrollToStandAt: 1000,
+    initSlope: -2,
+    finishSlope: -1,
+    scrollWithZeroValue: 2200
+  }
+
+  const effectTwo: NoEaseObject = {
+    startValue: 1300,
+    slope: -1.2
+  }
+
+  const effectThree: NoEaseObject = {
+    startValue: 1400,
+    slope: -1.4
+  }
+
+  const effectFour: NoEaseObject = {
+    startValue: 1600,
+    slope: -1.6
+  }
+
+  const { x1, x2, z1, z2 } = useEasingFunctionXandZ(effectOne);
+  const { x1: x3, x2: x4, z1: z3, z2: z4 } = useEasingFunctionXandZ(effectFive);
+  const { x1: x5, x2: x6, z1: z5, z2: z6 } = useEasingFunctionXandZ(effectSix);
+
+  //////////////
 
   return (
     <>
-      <Parallax pages={6.7} ref={paralaxRef}>
-        {/* <ParallaxLayer factor={1} speed={0.3}>
+    <ScrollEffectWrap ref={scrollEffectWrap}>
+      <ScrollEffectInner space={4}>
+        <div style={{ zIndex: 0, height: '3000px', width: '3000px', backgroundColor: 'blue', position: 'fixed', left: '-500px', top: '-1000px', borderRadius: '100%', transform: `scale(${Math.max(easeIn(yScrollPixels, effectOne, z1, z2, x1, x2) / 1000, 0)})` }}></div>
+        <div style={{ zIndex: 1, height: '100px', width: '500px', backgroundColor: 'green', position: 'fixed', left: '200px', top: '0px', transform: `translate3d(0px, ${noEase(yScrollPixels, effectTwo) * 1.2}px, 0px)` }}>
+          <p>Reserveroo is the shit.</p>
+        </div>
+        <div style={{ zIndex: 1, opacity: `${easeOut(yScrollPixels, effectSix, z5, z6, x5, x6) / 500}`, height: '100px', width: '500px', backgroundColor: 'green', position: 'fixed', left: '500px', top: '500px', transform: `rotate(${easeInOut(yScrollPixels, effectFive, z3, z4, x3, x4) / 3}deg)` }}>
+          <p>Reserveroo is the shit.</p>
+        </div>
+        <div style={{ zIndex: 2, height: '100px', width: '300px', backgroundColor: 'red', position: 'fixed', left: '300px', top: '0px', transform: `translate3d(0px, ${easeInOut(yScrollPixels, effectOne, z1, z2, x1, x2) * 1.2}px, 0px)` }}>
+          <p>Reserveroo is the shit.</p>
+        </div>
+        <div style={{ zIndex: 2, height: '100px', width: '300px', backgroundColor: 'yellow', position: 'fixed', left: '400px', top: '100px', transform: `translate3d(0px, ${noEase(yScrollPixels, effectTwo) * 1.2}px, 0px)` }}>
+          <p>Reserveroo is the shit.</p>
+        </div>
+        <div style={{ zIndex: 2, height: '100px', width: '300px', backgroundColor: 'pink', position: 'fixed', left: '500px', top: '200px', transform: `translate3d(0px, ${noEase(yScrollPixels, effectThree) * 1.2}px, 0px)` }}>
+          <p>Reserveroo is the shit.</p>
+        </div>
+        {/* <div style={{ height: '100px', width: '100px', backgroundColor: 'red', marginTop: '0', position: 'fixed', transform: `translate3d(100px, ${scrollFn(yScrollPixels / 5)}px, 0px)` }}></div> */}
+        {/* <div style={{ height: '100px', width: '100px', backgroundColor: 'green', marginTop: '0', position: 'fixed', transform: `translate3d(300px, ${easeInOut(yScrollPixels / 5, screenStart, screenStop, scrollStop, initialSlope, endSlope, topOfScreenIntercept, z1, z2, x1, x2)}px, 0px)` }}></div> */}
+      </ScrollEffectInner>
+    </ScrollEffectWrap>
+      {/* <Parallax pages={6.7} ref={paralaxRef}>
+        <ParallaxLayer factor={1} speed={0.3}>
           <H1>
             All the
             <span style={{ color: styles.colors.busy }}> activities </span>
@@ -299,7 +399,7 @@ export default function About() {
             factor={layer.factor}
             speed={layer.speed}
           ></Question>
-        ))} */}
+        ))}
         <ParallaxLayer factor={1} speed={0.1} offset={0.1}>
           <div>
             <H1>What is Reserveroo?</H1>
@@ -343,7 +443,7 @@ export default function About() {
           <BackgroundStripe space={300} height={200} />
           <BackgroundStripe space={150} height={100} />
           <BackgroundStripe space={100} height={50} />
-          <BackgroundStripe space={50} height={2000} /> */}
+          <BackgroundStripe space={50} height={2000} />
         </ParallaxLayer>
         <ParallaxLayer factor={1} speed={0.6}>
           {
@@ -363,8 +463,8 @@ export default function About() {
         </ParallaxLayer>
         <ParallaxLayer sticky={{ start: 4.8, end: 9 }}>
           <FourthQuestionMark icon={faQuestion}></FourthQuestionMark>
-        </ParallaxLayer> */}
-      </Parallax>
+        </ParallaxLayer>
+      </Parallax> */}
     </>
   );
 }
