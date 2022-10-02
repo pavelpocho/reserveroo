@@ -8176,6 +8176,7 @@ var import_styled_components57 = __toESM(require("styled-components"));
 var ScrollEffectWrap = import_styled_components57.default.div`
   position: fixed;
   top: 85x;
+  transition: opacity 0.5s;
   left: 0;
   overflow-y: scroll;
   height: calc(100vh - 90px);
@@ -8256,75 +8257,68 @@ var noEase = (scroll, setupObject) => {
 var import_react_spring = require("react-spring");
 var questions = [
   {
-    question: "You are somewhere new with your friend and want to do something fun. What do you do?",
-    offset: 1,
-    factor: 0.5,
-    speed: 0.4
+    title: "Imagine you are somewhere new with your friend and want to do something fun.",
+    question: "A game of tennis, or perhaps a round of billiards. Whatever you desire.",
+    icon: import_fa5.FaUserFriends
   },
   {
-    question: "How do you find out what activities are available? A Google search perhaps?",
-    offset: 2,
-    factor: 0.5,
-    speed: 0.4
+    title: "You can try just walking into a billiard bar.",
+    question: "But it could be full. Or empty and closed.",
+    icon: import_fa5.FaSearch
   },
   {
-    question: "Do you look at each website that pops up?",
-    offset: 3,
-    factor: 0.5,
-    speed: 0.5
+    title: "Or find one of the three local tennis places.",
+    question: "Except they all require bookings. And no one picks up the phone.",
+    icon: import_fa5.FaEye
   },
   {
-    question: "How do you know each place is legit and open?",
-    offset: 4,
-    factor: 0.5,
-    speed: 0.6
+    title: "We think it should be easier.",
+    question: "",
+    icon: import_fa5.FaQuestion
   },
   {
-    question: "Do you have to book a spot? No? Are you sure?",
-    offset: 5,
-    factor: 0.5,
-    speed: 0.7
-  },
-  { question: "How do you book a spot?", offset: 6, factor: 0.5, speed: 0.8 },
-  {
-    question: "No booking system. Do you call them?",
-    offset: 7,
-    factor: 0.5,
-    speed: 0.9
+    title: "Reserveroo will let you see all the local  leisure activities. Wherever you happen to be.",
+    question: "",
+    icon: import_fa5.FaCalendarAlt
   },
   {
-    question: "Their phone is busy. What now?",
-    offset: 8,
-    factor: 0.5,
-    speed: 1.1
+    title: "And you can book with a single click.",
+    question: "",
+    icon: import_fa5.FaQuestionCircle
   },
   {
+    title: "No learning the local way of doing things.",
+    question: "",
+    icon: import_fa5.FaPhone
+  },
+  {
+    title: "No phone calls required.",
+    question: "",
+    icon: import_fa5.FaPhoneSlash
+  },
+  {
+    title: "What now?",
     question: "Keep on trying? You hate calling people...",
-    offset: 8,
-    factor: 0.5,
-    speed: 1.1
+    icon: import_fa5.FaRedoAlt
   },
   {
+    title: "This is not fun..",
     question: "So what? Email them?",
-    offset: 8,
-    factor: 0.5,
-    speed: 1.1
+    icon: import_fa5.FaMailBulk
   },
   {
+    title: "Maybe?",
     question: "No that's pointless, they won't reply in time...",
-    offset: 8,
-    factor: 0.5,
-    speed: 1.1
+    icon: import_fa5.FaSadCry
   },
   {
+    title: "Hold on a second!",
     question: "This all seems needlessly complicated.",
-    offset: 8,
-    factor: 0.5,
-    speed: 1.1
+    icon: import_fa5.FaBackward
   }
 ];
 var H1 = import_styled_components58.default.h1`
-  padding-top: 3rem;
+  padding-top: 12%;
   margin-top: 0rem;
   margin-bottom: 1rem;
   font-size: 2.625rem;
@@ -8395,23 +8389,6 @@ var FourthQuestionMark = (0, import_styled_components58.default)(import_react_fo
   transform: rotate(-25deg);
   position: absolute;
 `;
-var BackgroundStripe = import_styled_components58.default.div`
-  width: 100%;
-  height: ${(props) => props.height}px;
-  background-color: ${styles.colors.primary};
-  margin-top: ${(props) => props.space}px;
-`;
-var BigText = import_styled_components58.default.p`
-  font-size: 4rem;
-  width: 60%;
-  top: 50%;
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  font-weight: bold;
-  color: ${(props) => props.color};
-`;
 var fade = import_styled_components58.keyframes`
   0% { opacity: 0 }
   30% { opacity: 1 }
@@ -8421,15 +8398,25 @@ var fade = import_styled_components58.keyframes`
 var FaAngleDownA = (0, import_styled_components58.default)(import_fa5.FaAngleDown)`
   animation: ${fade} 1.5s linear 0s infinite;
 `;
-var ScrollItem = (0, import_styled_components58.default)(import_react_spring.animated.div).attrs((props) => ({
-  style: {
-    transform: props.transform,
-    opacity: props.opacity
-  }
-}))`
+var ScrollItem = (0, import_styled_components58.default)(import_react_spring.animated.div).attrs((props) => {
+  const sp = props.transform.split(",")[1].split("px")[0];
+  if (sp < 1500 && sp > -800) {
+    return {
+      style: {
+        transform: props.transform,
+        opacity: props.opacity,
+        transition: "transform 0.05s linear 0s, opacity 0.05s linear 0s"
+      }
+    };
+  } else
+    return {
+      style: {
+        display: "none"
+      }
+    };
+})`
   top: 0px;
   position: fixed;
-  transition: transform 0.07s cubic-bezier(0.16, 1.03, 1, 1) 0s, opacity 0.07s cubic-bezier(0.16, 1.03, 1, 1) 0s;
   left: 0px;
   width: 100%;
   height: 100%;
@@ -8450,17 +8437,27 @@ var AboutHeader = import_styled_components58.default.div`
   padding-bottom: 4rem;
 `;
 var AboutSubHeader = import_styled_components58.default.div`
-  height: 100px;
+  height: 300px;
   width: 100%;
+  box-shadow: 0px -2px 24px -12px #33333399;
   background-color: ${styles.colors.gray[20]};
 `;
 var AboutSubSubHeader = import_styled_components58.default.div`
-  height: 500px;
+  height: 80%;
   width: 100%;
+  top: 0;
+  position: absolute;
   background-color: ${styles.colors.white};
 `;
+var PurpleSection = import_styled_components58.default.div`
+  height: 600px;
+  width: 100%;
+  top: 0;
+  position: absolute;
+  background-color: ${styles.colors.primary};
+`;
 var ScrollDownIndicator = () => /* @__PURE__ */ import_react97.default.createElement("div", {
-  style: { width: "100%", marginTop: "1rem" }
+  style: { width: "100%", marginTop: "15%" }
 }, /* @__PURE__ */ import_react97.default.createElement(H1X, null, "Scroll down to find out!"), /* @__PURE__ */ import_react97.default.createElement("div", {
   style: { textAlign: "center", marginTop: "2rem" }
 }, /* @__PURE__ */ import_react97.default.createElement(FaAngleDownA, {
@@ -8484,39 +8481,90 @@ var ScrollDownIndicator = () => /* @__PURE__ */ import_react97.default.createEle
   className: "fade-arrow"
 })));
 var Card = import_styled_components58.default.div`
-  width: 400px;
   padding: 12px 24px;
   border-radius: 12px;
-  color: ${styles.colors.white};
-  background-color: ${styles.colors.primary};
+  max-width: 576px;
+  color: ${styles.colors.black};
+  /* background-color: ${styles.colors.primary}; */
 `;
-var QuestionCard = ({ title, children }) => /* @__PURE__ */ import_react97.default.createElement("div", {
-  style: { margin: "0 auto", width: "50%" }
-}, /* @__PURE__ */ import_react97.default.createElement(Card, null, /* @__PURE__ */ import_react97.default.createElement("p", {
-  style: { fontWeight: "bold" }
-}, title), /* @__PURE__ */ import_react97.default.createElement("p", null, children)));
+var QuestionCard = ({ title, children, white }) => {
+  return /* @__PURE__ */ import_react97.default.createElement("div", {
+    style: { margin: "12rem auto", maxWidth: "938px", zIndex: 2, position: "relative", display: "flex" }
+  }, /* @__PURE__ */ import_react97.default.createElement(Card, null, /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: white ? styles.colors.white : styles.colors.primary }
+  }, title), /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { fontSize: "1rem", fontWeight: "400", marginTop: "0.5rem", color: white ? styles.colors.white : styles.colors.black }
+  }, children)));
+};
 function About2() {
   const { setLandingPage } = useWhereAreWe();
   const scrollEffectWrap = (0, import_react97.useRef)(null);
+  const requestRef = (0, import_react97.useRef)(null);
+  const [screenHeight, setScreenHeight] = (0, import_react97.useState)(-1);
   const [yScrollPixels, setYScrollPixels] = (0, import_react97.useState)(0);
   const headerEffect = {
     startValue: 85,
     slope: -0.5
   };
   const subHeaderEffect = {
-    startValue: 480,
+    startValue: screenHeight * 0.78,
     slope: -1
   };
   const subSubHeaderEffect = {
-    startValue: 580,
+    startValue: screenHeight * 0.88,
+    slope: -1.1
+  };
+  const purpleSectionEffect = {
+    startValue: screenHeight * 1.5,
     slope: -1.2
   };
+  const subHeaderEasing = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
+    start: { value: screenHeight * 0.78, slope: -1.5 },
+    stand: { scroll: 800, value: 0 },
+    end: { scroll: 1500, slope: -1 }
+  }), [screenHeight]);
+  const subSubHeaderEasing = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
+    start: { value: screenHeight * 0.88, slope: -1.7 },
+    stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
+    end: { scroll: screenHeight * 0.82, slope: -1.7 }
+  }), [screenHeight]);
+  const subSubHeaderBlobEasing = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
+    start: { value: screenHeight * 0.92, slope: -1.8 },
+    stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
+    end: { scroll: screenHeight * 0.82, slope: -2 }
+  }), [screenHeight]);
+  const subSubHeaderIconsEasing = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
+    start: { value: screenHeight * 0.96, slope: -1.9 },
+    stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
+    end: { scroll: screenHeight * 0.82, slope: -2.1 }
+  }), [screenHeight]);
+  const purpleSectionIconEasings = (0, import_react97.useMemo)(() => [...Array(10).keys()].map((i) => getEasingFunctionXandZ({
+    start: { value: screenHeight * 0.9 + (Math.random() - 0.5) * 0.8, slope: -1.2 },
+    stand: { scroll: screenHeight * 0.7, value: 0.8 * screenHeight },
+    end: { scroll: screenHeight * 1.2 + (Math.random() - 0.5) * 0.2, slope: -2.1 + (Math.random() - 0.5) * 0.8 }
+  })), [screenHeight]);
+  const dd = {
+    startValue: screenHeight * 2.2,
+    slope: -1.3
+  };
+  const explanationSection = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
+    start: { value: screenHeight * 1.4, slope: -1 },
+    stand: { scroll: screenHeight * 1.5, value: 0.3 * screenHeight },
+    end: { scroll: screenHeight * 1.8, slope: -1.2 }
+  }), [screenHeight]);
   import_react97.default.useEffect(() => {
     setLandingPage(true);
+    setScreenHeight(screen.height);
     const handleScroll = (ev) => {
-      setYScrollPixels(() => {
-        var _a;
-        return ((_a = ev.target) == null ? void 0 : _a.scrollTop) ?? 0;
+      if (requestRef.current != null) {
+        cancelAnimationFrame(requestRef.current);
+        requestRef.current = null;
+      }
+      requestAnimationFrame(() => {
+        setYScrollPixels(() => {
+          var _a;
+          return ((_a = ev.target) == null ? void 0 : _a.scrollTop) ?? 0;
+        });
       });
     };
     if (scrollEffectWrap.current)
@@ -8528,68 +8576,122 @@ function About2() {
         c.onscroll = null;
     };
   }, []);
-  const titleEasingInfo = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
-    start: { value: -220, slope: -2 },
-    stand: { scroll: 0, value: 80 },
-    end: { scroll: 900, slope: -1 }
-  }), []);
-  const card1EasingInfo = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
-    start: { value: 1100, slope: -5 },
-    stand: { scroll: 300, value: 500 },
-    end: { scroll: 700, slope: -3 }
-  }), []);
-  const card2EasingInfo = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
-    start: { value: 3e3, slope: -5 },
-    stand: { scroll: 2200, value: 500 },
-    end: { scroll: 2600, slope: -3 }
-  }), []);
-  const icon1EasingInfo = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
-    start: { value: 1400, slope: -5 },
-    stand: { scroll: 600, value: 500 },
-    end: { scroll: 1e3, slope: -2 }
-  }), []);
-  const icon2EasingInfo = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
-    start: { value: 3400, slope: -5 },
-    stand: { scroll: 2600, value: 500 },
-    end: { scroll: 3500, slope: -2 }
-  }), []);
+  const randomPositions = (0, import_react97.useMemo)(() => [
+    [0, 0, 20],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2]
+  ], []);
   return /* @__PURE__ */ import_react97.default.createElement(import_react97.default.Fragment, null, /* @__PURE__ */ import_react97.default.createElement(ScrollEffectWrap, {
+    style: screenHeight == -1 ? { opacity: 0 } : { opacity: 1 },
     ref: scrollEffectWrap
   }, /* @__PURE__ */ import_react97.default.createElement(ScrollEffectInner, {
-    space: 4
-  }, /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+    space: 10
+  }), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
     transform: `translate(0px, ${noEase(yScrollPixels, headerEffect)}px)`
   }, /* @__PURE__ */ import_react97.default.createElement(AboutHeader, null, /* @__PURE__ */ import_react97.default.createElement(H1, null, "What is Reserveroo?"), /* @__PURE__ */ import_react97.default.createElement(IconRow, null), /* @__PURE__ */ import_react97.default.createElement(ScrollDownIndicator, null))), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
-    transform: `translate(0px, ${noEase(yScrollPixels, subHeaderEffect)}px)`
+    transform: `translate(0px, ${easeInOut(yScrollPixels, subHeaderEasing)}px)`
   }, /* @__PURE__ */ import_react97.default.createElement(AboutSubHeader, null)), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
-    transform: `translate(0px, ${noEase(yScrollPixels, subSubHeaderEffect)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement(AboutSubSubHeader, null)), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
-    transform: `translate(0px, ${easeInOut(yScrollPixels, icon1EasingInfo)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
-    style: { margin: "0 auto", width: "50%", textAlign: "right" }
-  }, /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaUserFriends, {
-    color: styles.colors.gray[20],
-    size: 300
-  }))), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
-    transform: `translate(0px, ${easeInOut(yScrollPixels, icon2EasingInfo)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
-    style: { margin: "0 auto", width: "50%", textAlign: "right" }
-  }, /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaSearch, {
-    color: styles.colors.gray[20],
-    size: 300
-  }))), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
-    transform: `translate(0px, ${easeInOut(yScrollPixels, card1EasingInfo)}px)`
+    transform: `translate(0px, ${easeInOut(yScrollPixels, subSubHeaderEasing)}px)`
   }, /* @__PURE__ */ import_react97.default.createElement(QuestionCard, {
-    title: "Picture this:"
-  }, questions[0].question)), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
-    transform: `translate(0px, ${easeInOut(yScrollPixels, card2EasingInfo)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement(QuestionCard, {
-    title: "Picture this:"
-  }, questions[1].question)))));
+    white: false,
+    title: questions[0].title
+  }, questions[0].question), /* @__PURE__ */ import_react97.default.createElement(AboutSubSubHeader, null)), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+    transform: `translate(0px, ${easeInOut(yScrollPixels, subSubHeaderBlobEasing)}px)`
+  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+    style: { position: "relative", maxWidth: "936px", margin: "12rem auto" }
+  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+    style: { position: "absolute", right: "0", top: "0", width: "322px" }
+  }, /* @__PURE__ */ import_react97.default.createElement("svg", {
+    width: "322",
+    height: "260",
+    viewBox: "0 0 322 260",
+    fill: "none",
+    xmlns: "http://www.w3.org/2000/svg"
+  }, /* @__PURE__ */ import_react97.default.createElement("path", {
+    d: "M298.961 52.0567C267.327 19.5504 237.601 21.3634 192.442 14.8109C192.442 14.8109 106.606 1.36085 77.9936 1.36101C49.3814 1.36116 9.73876 -4.50162 4.22285 31.0199C-1.34129 66.8519 0.392164 55.3865 8.70401 90.6821C19.4841 136.459 -11.2671 162.591 16.288 200.695C40.3495 233.968 54.8386 244.056 94.5404 254.495C140.747 266.643 178.225 252.4 222.088 233.458C273.136 211.413 290.801 196.691 306.89 143.447C320.644 97.9325 332.117 86.1257 298.961 52.0567Z",
+    fill: "#2E294E",
+    stroke: "#F1F1F1"
+  }))))), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+    transform: `translate(0px, ${easeInOut(yScrollPixels, subSubHeaderIconsEasing)}px)`
+  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+    style: { position: "relative", maxWidth: "936px", margin: "12rem auto" }
+  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+    style: { position: "absolute", right: "0", top: "0", width: "322px" }
+  }, /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaVolleyballBall, {
+    color: styles.colors.white,
+    size: 54,
+    style: { position: "absolute", top: "35px", left: "40px" }
+  }), /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaTableTennis, {
+    color: styles.colors.white,
+    size: 54,
+    style: { position: "absolute", top: "95px", left: "110px" }
+  }), /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaGolfBall, {
+    color: styles.colors.white,
+    size: 54,
+    style: { position: "absolute", top: "155px", left: "180px" }
+  }), /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaSwimmer, {
+    color: styles.colors.white,
+    size: 54,
+    style: { position: "absolute", top: "165px", left: "65px" }
+  }), /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaBowlingBall, {
+    color: styles.colors.white,
+    size: 54,
+    style: { position: "absolute", top: "55px", left: "200px" }
+  })))), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+    transform: `translate(0px, ${easeInOut(yScrollPixels, explanationSection)}px)`
+  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+    style: { margin: "4rem auto 4rem", maxWidth: "936px" }
+  }, /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { textAlign: "center", fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.primary }
+  }, questions[4].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { textAlign: "center", fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.primary }
+  }, questions[5].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { textAlign: "center", fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.primary }
+  }, questions[6].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { textAlign: "center", fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.primary }
+  }, questions[7].title)), /* @__PURE__ */ import_react97.default.createElement(IconRow, {
+    invertColors: true
+  })), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+    transform: `translate(0px, ${noEase(yScrollPixels, purpleSectionEffect)}px)`
+  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+    style: { display: "flex", maxWidth: "936px", margin: "5% auto", position: "relative", zIndex: 2, alignItems: "center" }
+  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+    style: { flexShrink: "1", maxWidth: "786px" }
+  }, /* @__PURE__ */ import_react97.default.createElement(Card, null, /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.white }
+  }, questions[1].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { fontSize: "1rem", fontWeight: "400", marginTop: "0.5rem", color: styles.colors.white }
+  }, questions[1].question)), /* @__PURE__ */ import_react97.default.createElement(Card, null, /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.white }
+  }, questions[2].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { fontSize: "1rem", fontWeight: "400", marginTop: "0.5rem", color: styles.colors.white }
+  }, questions[2].question)), /* @__PURE__ */ import_react97.default.createElement(Card, null, /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.white }
+  }, questions[3].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+    style: { fontSize: "1rem", fontWeight: "400", marginTop: "0.5rem", color: styles.colors.white }
+  }, questions[3].question)))), /* @__PURE__ */ import_react97.default.createElement(PurpleSection, null)), [...Array(10).keys()].map((i) => /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+    key: i,
+    transform: `translate(0px, ${easeInOut(yScrollPixels, purpleSectionIconEasings[i])}px)`
+  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+    style: { position: "relative", maxWidth: "936px", margin: "12rem auto" }
+  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+    style: { position: "absolute", right: "0", top: "0", width: "322px" }
+  }, /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaQuestionCircle, {
+    size: randomPositions[i][2],
+    color: styles.colors.white,
+    style: { transform: `rotate(${randomPositions[i][3] / Math.PI * 180}deg)`, position: "absolute", top: `${randomPositions[i][1]}`, left: `${randomPositions[i][0]}px` }
+  })))))));
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "d35205ac", "entry": { "module": "/build/entry.client-IHW3J2V2.js", "imports": ["/build/_shared/chunk-FKVNPCUN.js", "/build/_shared/chunk-4ZPJ7ZPH.js", "/build/_shared/chunk-FN7GJDOI.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-ZADAWIPM.js", "imports": ["/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-ADJG7KXP.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId": { "id": "routes/$placeId", "parentId": "root", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId-42I3BZVW.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/index": { "id": "routes/$placeId/index", "parentId": "routes/$placeId", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/$placeId/index-4DEYZ7CM.js", "imports": ["/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/reserve": { "id": "routes/$placeId/reserve", "parentId": "routes/$placeId", "path": "reserve", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId/reserve-3CDPQO7Z.js", "imports": ["/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-SJGNZCZF.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin": { "id": "routes/admin", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin-5Y6MFIMP.js", "imports": ["/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories": { "id": "routes/admin/categories", "parentId": "routes/admin", "path": "categories", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories-Z66YEFR7.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/$categoryId": { "id": "routes/admin/categories/$categoryId", "parentId": "routes/admin/categories", "path": ":categoryId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/$categoryId-7Y54MTVY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/index": { "id": "routes/admin/categories/index", "parentId": "routes/admin/categories", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/categories/index-ZMS23OUI.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/new": { "id": "routes/admin/categories/new", "parentId": "routes/admin/categories", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/new-5FEGZYJY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies": { "id": "routes/admin/companies", "parentId": "routes/admin", "path": "companies", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies-MGDRJYXX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/$companyId": { "id": "routes/admin/companies/$companyId", "parentId": "routes/admin/companies", "path": ":companyId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/$companyId-UGRQMAEZ.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/index": { "id": "routes/admin/companies/index", "parentId": "routes/admin/companies", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/companies/index-SRV7RBEB.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/new": { "id": "routes/admin/companies/new", "parentId": "routes/admin/companies", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/new-55YN7JTT.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations": { "id": "routes/admin/locations", "parentId": "routes/admin", "path": "locations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations-YK6MJBBR.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/$locationId": { "id": "routes/admin/locations/$locationId", "parentId": "routes/admin/locations", "path": ":locationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/$locationId-NZPRQJJH.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/index": { "id": "routes/admin/locations/index", "parentId": "routes/admin/locations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/locations/index-74HGNSZS.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/new": { "id": "routes/admin/locations/new", "parentId": "routes/admin/locations", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/new-MFKYHSQV.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places": { "id": "routes/admin/places", "parentId": "routes/admin", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places-DTZZ753K.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/$placeId": { "id": "routes/admin/places/$placeId", "parentId": "routes/admin/places", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/$placeId-IMGSLEGW.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/index": { "id": "routes/admin/places/index", "parentId": "routes/admin/places", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/places/index-ITIOSNCI.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/new": { "id": "routes/admin/places/new", "parentId": "routes/admin/places", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/new-XNCWI2XN.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/$reservableTypeId": { "id": "routes/admin/reservableTypes/$reservableTypeId", "parentId": "routes/admin", "path": "reservableTypes/:reservableTypeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/$reservableTypeId-IZG64SI2.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/index": { "id": "routes/admin/reservableTypes/index", "parentId": "routes/admin", "path": "reservableTypes", "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/index-5V73L7PL.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/new": { "id": "routes/admin/reservableTypes/new", "parentId": "routes/admin", "path": "reservableTypes/new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/new-UGCPTN4J.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations": { "id": "routes/admin/reservations", "parentId": "routes/admin", "path": "reservations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations-Y5L3M25S.js", "imports": ["/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/$reservationId": { "id": "routes/admin/reservations/$reservationId", "parentId": "routes/admin/reservations", "path": ":reservationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/$reservationId-V6EADIMN.js", "imports": ["/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/index": { "id": "routes/admin/reservations/index", "parentId": "routes/admin/reservations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/index-QU3YMRAT.js", "imports": ["/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags": { "id": "routes/admin/tags", "parentId": "routes/admin", "path": "tags", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags-YY5X2N6Z.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/$tagId": { "id": "routes/admin/tags/$tagId", "parentId": "routes/admin/tags", "path": ":tagId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/$tagId-CMLD73RM.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/index": { "id": "routes/admin/tags/index", "parentId": "routes/admin/tags", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/tags/index-3KHD5ATQ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/new": { "id": "routes/admin/tags/new", "parentId": "routes/admin/tags", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/new-WF27CYEE.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate": { "id": "routes/authenticate", "parentId": "root", "path": "authenticate", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate-WTT7N4TV.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/login": { "id": "routes/authenticate/login", "parentId": "routes/authenticate", "path": "login", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/login-4N6H62CB.js", "imports": ["/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/register": { "id": "routes/authenticate/register", "parentId": "routes/authenticate", "path": "register", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/register-N7TOHXU7.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/doneVerifyingEmail": { "id": "routes/doneVerifyingEmail", "parentId": "root", "path": "doneVerifyingEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/doneVerifyingEmail-HNE3JJI5.js", "imports": ["/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-2EQ62OXK.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/logout": { "id": "routes/logout", "parentId": "root", "path": "logout", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/logout-XMXFMUNS.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/places": { "id": "routes/places", "parentId": "root", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/places-IZ2GEH52.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile-5BUSPYID.js", "imports": ["/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/cancelReservation": { "id": "routes/profile/cancelReservation", "parentId": "routes/profile", "path": "cancelReservation", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/cancelReservation-U6TMHVQX.js", "imports": ["/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-FTM4DERH.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/delete": { "id": "routes/profile/delete", "parentId": "routes/profile", "path": "delete", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/delete-5CP75NND.js", "imports": void 0, "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/edit": { "id": "routes/profile/edit", "parentId": "routes/profile", "path": "edit", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/edit-SRI2A6A4.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/index": { "id": "routes/profile/index", "parentId": "routes/profile", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/profile/index-JGCYGICE.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/forgot": { "id": "routes/pwd/forgot", "parentId": "root", "path": "pwd/forgot", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/forgot-5P5YFJ67.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/reset": { "id": "routes/pwd/reset", "parentId": "root", "path": "pwd/reset", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/reset-IT65K7OZ.js", "imports": ["/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/search": { "id": "routes/search", "parentId": "root", "path": "search", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/search-KAKQTEDV.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/verifyEmail": { "id": "routes/verifyEmail", "parentId": "root", "path": "verifyEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/verifyEmail-TEECSU3W.js", "imports": ["/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-D35205AC.js" };
+var assets_manifest_default = { "version": "53099d5a", "entry": { "module": "/build/entry.client-IHW3J2V2.js", "imports": ["/build/_shared/chunk-FKVNPCUN.js", "/build/_shared/chunk-4ZPJ7ZPH.js", "/build/_shared/chunk-FN7GJDOI.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-4AKSC27V.js", "imports": ["/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-SMOIW27M.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId": { "id": "routes/$placeId", "parentId": "root", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId-42I3BZVW.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/index": { "id": "routes/$placeId/index", "parentId": "routes/$placeId", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/$placeId/index-4DEYZ7CM.js", "imports": ["/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/reserve": { "id": "routes/$placeId/reserve", "parentId": "routes/$placeId", "path": "reserve", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId/reserve-3CDPQO7Z.js", "imports": ["/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-SJGNZCZF.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin": { "id": "routes/admin", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin-5Y6MFIMP.js", "imports": ["/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories": { "id": "routes/admin/categories", "parentId": "routes/admin", "path": "categories", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories-Z66YEFR7.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/$categoryId": { "id": "routes/admin/categories/$categoryId", "parentId": "routes/admin/categories", "path": ":categoryId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/$categoryId-7Y54MTVY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/index": { "id": "routes/admin/categories/index", "parentId": "routes/admin/categories", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/categories/index-ZMS23OUI.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/new": { "id": "routes/admin/categories/new", "parentId": "routes/admin/categories", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/new-5FEGZYJY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies": { "id": "routes/admin/companies", "parentId": "routes/admin", "path": "companies", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies-MGDRJYXX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/$companyId": { "id": "routes/admin/companies/$companyId", "parentId": "routes/admin/companies", "path": ":companyId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/$companyId-UGRQMAEZ.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/index": { "id": "routes/admin/companies/index", "parentId": "routes/admin/companies", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/companies/index-SRV7RBEB.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/new": { "id": "routes/admin/companies/new", "parentId": "routes/admin/companies", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/new-55YN7JTT.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations": { "id": "routes/admin/locations", "parentId": "routes/admin", "path": "locations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations-YK6MJBBR.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/$locationId": { "id": "routes/admin/locations/$locationId", "parentId": "routes/admin/locations", "path": ":locationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/$locationId-NZPRQJJH.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/index": { "id": "routes/admin/locations/index", "parentId": "routes/admin/locations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/locations/index-74HGNSZS.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/new": { "id": "routes/admin/locations/new", "parentId": "routes/admin/locations", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/new-MFKYHSQV.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places": { "id": "routes/admin/places", "parentId": "routes/admin", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places-DTZZ753K.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/$placeId": { "id": "routes/admin/places/$placeId", "parentId": "routes/admin/places", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/$placeId-IMGSLEGW.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/index": { "id": "routes/admin/places/index", "parentId": "routes/admin/places", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/places/index-ITIOSNCI.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/new": { "id": "routes/admin/places/new", "parentId": "routes/admin/places", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/new-XNCWI2XN.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/$reservableTypeId": { "id": "routes/admin/reservableTypes/$reservableTypeId", "parentId": "routes/admin", "path": "reservableTypes/:reservableTypeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/$reservableTypeId-IZG64SI2.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/index": { "id": "routes/admin/reservableTypes/index", "parentId": "routes/admin", "path": "reservableTypes", "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/index-5V73L7PL.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/new": { "id": "routes/admin/reservableTypes/new", "parentId": "routes/admin", "path": "reservableTypes/new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/new-UGCPTN4J.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations": { "id": "routes/admin/reservations", "parentId": "routes/admin", "path": "reservations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations-Y5L3M25S.js", "imports": ["/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/$reservationId": { "id": "routes/admin/reservations/$reservationId", "parentId": "routes/admin/reservations", "path": ":reservationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/$reservationId-V6EADIMN.js", "imports": ["/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/index": { "id": "routes/admin/reservations/index", "parentId": "routes/admin/reservations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/index-QU3YMRAT.js", "imports": ["/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags": { "id": "routes/admin/tags", "parentId": "routes/admin", "path": "tags", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags-YY5X2N6Z.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/$tagId": { "id": "routes/admin/tags/$tagId", "parentId": "routes/admin/tags", "path": ":tagId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/$tagId-CMLD73RM.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/index": { "id": "routes/admin/tags/index", "parentId": "routes/admin/tags", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/tags/index-3KHD5ATQ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/new": { "id": "routes/admin/tags/new", "parentId": "routes/admin/tags", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/new-WF27CYEE.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate": { "id": "routes/authenticate", "parentId": "root", "path": "authenticate", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate-WTT7N4TV.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/login": { "id": "routes/authenticate/login", "parentId": "routes/authenticate", "path": "login", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/login-4N6H62CB.js", "imports": ["/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/register": { "id": "routes/authenticate/register", "parentId": "routes/authenticate", "path": "register", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/register-N7TOHXU7.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/doneVerifyingEmail": { "id": "routes/doneVerifyingEmail", "parentId": "root", "path": "doneVerifyingEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/doneVerifyingEmail-HNE3JJI5.js", "imports": ["/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-CW35QQSM.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/logout": { "id": "routes/logout", "parentId": "root", "path": "logout", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/logout-XMXFMUNS.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/places": { "id": "routes/places", "parentId": "root", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/places-IZ2GEH52.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile-5BUSPYID.js", "imports": ["/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/cancelReservation": { "id": "routes/profile/cancelReservation", "parentId": "routes/profile", "path": "cancelReservation", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/cancelReservation-U6TMHVQX.js", "imports": ["/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-FTM4DERH.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/delete": { "id": "routes/profile/delete", "parentId": "routes/profile", "path": "delete", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/delete-5CP75NND.js", "imports": void 0, "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/edit": { "id": "routes/profile/edit", "parentId": "routes/profile", "path": "edit", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/edit-SRI2A6A4.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/index": { "id": "routes/profile/index", "parentId": "routes/profile", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/profile/index-JGCYGICE.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/forgot": { "id": "routes/pwd/forgot", "parentId": "root", "path": "pwd/forgot", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/forgot-ZHXUCPKQ.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/reset": { "id": "routes/pwd/reset", "parentId": "root", "path": "pwd/reset", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/reset-QT7ECDIM.js", "imports": ["/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/search": { "id": "routes/search", "parentId": "root", "path": "search", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/search-KAKQTEDV.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/verifyEmail": { "id": "routes/verifyEmail", "parentId": "root", "path": "verifyEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/verifyEmail-LNVIAKNX.js", "imports": ["/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-53099D5A.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };

@@ -1,6 +1,6 @@
 import { IParallax, Parallax, ParallaxLayer } from "@react-spring/parallax";
 import { Link } from "@remix-run/react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { styles } from "~/constants/styles";
 import { useWhereAreWe } from "~/contexts/whereAreWeContext";
@@ -12,80 +12,72 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Question from "~/components/landing-page/question";
 import QuestionMark from "~/components/landing-page/question-mark";
 import { IconRow } from "~/components/icon-row";
-import { FaAngleDown, FaArrowDown, FaCaretDown, FaSearch, FaUserFriends } from "react-icons/fa";
+import { FaAngleDown, FaArrowDown, FaBackward, FaBowlingBall, FaBroom, FaCalendarAlt, FaCaretDown, FaEye, FaGolfBall, FaMailBulk, FaPhone, FaPhoneSlash, FaQuestion, FaQuestionCircle, FaRedo, FaRedoAlt, FaSadCry, FaSadTear, FaSearch, FaSwimmer, FaTableTennis, FaUserFriends, FaVolleyballBall, FaWeight } from "react-icons/fa";
 import { easeIn, easeInOut, easeOut, EffectSetupObject, noEase, NoEaseObject, ScrollEffectInner, ScrollEffectWrap, getEasingFunctionXandZ as getEasingInfo } from "~/components/scroll-effects";
 import { useInterval } from "~/components/scroll-effects/useInterval";
 import { useSpring, animated } from 'react-spring'
 import { config } from "aws-sdk";
 const questions = [
   {
-    question:
-      "You are somewhere new with your friend and want to do something fun. What do you do?",
-    offset: 1,
-    factor: 0.5,
-    speed: 0.4,
+    title: "Imagine you are somewhere new with your friend and want to do something fun.",
+    question: "A game of tennis, or perhaps a round of billiards. Whatever you desire.",
+    icon: FaUserFriends
   },
   {
-    question:
-      "How do you find out what activities are available? A Google search perhaps?",
-    offset: 2,
-    factor: 0.5,
-    speed: 0.4,
+    title: "You can try just walking into a billiard bar.",
+    question: "But it could be full. Or empty and closed.",
+    icon: FaSearch
   },
   {
-    question: "Do you look at each website that pops up?",
-    offset: 3,
-    factor: 0.5,
-    speed: 0.5,
+    title: "Or find one of the three local tennis places.",
+    question: "Except they all require bookings. And no one picks up the phone.",
+    icon: FaEye
   },
   {
-    question: "How do you know each place is legit and open?",
-    offset: 4,
-    factor: 0.5,
-    speed: 0.6,
+    title: "We think it should be easier.",
+    question: "",
+    icon: FaQuestion
   },
   {
-    question: "Do you have to book a spot? No? Are you sure?",
-    offset: 5,
-    factor: 0.5,
-    speed: 0.7,
-  },
-  { question: "How do you book a spot?", offset: 6, factor: 0.5, speed: 0.8 },
-  {
-    question: "No booking system. Do you call them?",
-    offset: 7,
-    factor: 0.5,
-    speed: 0.9,
+    title: "Reserveroo will let you see all the local  leisure activities. Wherever you happen to be.",
+    question: "",
+    icon: FaCalendarAlt
   },
   {
-    question: "Their phone is busy. What now?",
-    offset: 8,
-    factor: 0.5,
-    speed: 1.1,
+    title: "And you can book with a single click.",
+    question: "",
+    icon: FaQuestionCircle
   },
   {
+    title: "No learning the local way of doing things.",
+    question: "",
+    icon: FaPhone
+  },
+  {
+    title: "No phone calls required.",
+    question: "",
+    icon: FaPhoneSlash
+  },
+  {
+    title: "What now?",
     question: "Keep on trying? You hate calling people...",
-    offset: 8,
-    factor: 0.5,
-    speed: 1.1,
+    icon: FaRedoAlt
   },
   {
+    title: "This is not fun..",
     question: "So what? Email them?",
-    offset: 8,
-    factor: 0.5,
-    speed: 1.1,
+    icon: FaMailBulk
   },
   {
+    title: "Maybe?",
     question: "No that's pointless, they won't reply in time...",
-    offset: 8,
-    factor: 0.5,
-    speed: 1.1,
+    icon: FaSadCry
   },
   {
+    title: "Hold on a second!",
     question: "This all seems needlessly complicated.",
-    offset: 8,
-    factor: 0.5,
-    speed: 1.1,
+    icon: FaBackward
+    
   },
 ];
 
@@ -137,7 +129,7 @@ const questionMarks = [
 ];
 
 const H1 = styled.h1`
-  padding-top: 3rem;
+  padding-top: 12%;
   margin-top: 0rem;
   margin-bottom: 1rem;
   font-size: 2.625rem;
@@ -215,24 +207,24 @@ const FourthQuestionMark = styled(FontAwesomeIcon)`
   position: absolute;
 `;
 
-const BackgroundStripe = styled.div<{ space: number, height: number }>`
-  width: 100%;
-  height: ${props => props.height}px;
-  background-color: ${styles.colors.primary};
-  margin-top: ${props => props.space}px;
-`;
+// const BackgroundStripe = styled.div<{ space: number, height: number }>`
+//   width: 100%;
+//   height: ${props => props.height}px;
+//   background-color: ${styles.colors.primary};
+//   margin-top: ${props => props.space}px;
+// `;
 
-const BigText = styled.p<{ color: string }>`
-  font-size: 4rem;
-  width: 60%;
-  top: 50%;
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  font-weight: bold;
-  color: ${props => props.color};
-`;
+// const BigText = styled.p<{ color: string }>`
+//   font-size: 4rem;
+//   width: 60%;
+//   top: 50%;
+//   position: fixed;
+//   left: 50%;
+//   transform: translateX(-50%);
+//   text-align: center;
+//   font-weight: bold;
+//   color: ${props => props.color};
+// `;
 
 const fade = keyframes`
   0% { opacity: 0 }
@@ -246,16 +238,25 @@ const FaAngleDownA = styled(FaAngleDown)`
 `;
 
 const ScrollItem = styled(animated.div).attrs(
-  (props: any): any => ({
-    style: {
-      transform: props.transform,
-      opacity: props.opacity
+  (props: any): any => {
+    const sp = props.transform.split(',')[1].split('px')[0];
+    if (sp < 1500 && sp > -800) {
+      return {
+        style: {
+          transform: props.transform,
+          opacity: props.opacity,
+          transition: 'transform 0.05s linear 0s, opacity 0.05s linear 0s'
+        }
+      }
+    } else return {
+      style: {
+        display: 'none'
+      }
     }
-  })
+  }
 )`
   top: 0px;
   position: fixed;
-  transition: transform 0.07s cubic-bezier(0.16, 1.03, 1, 1) 0s, opacity 0.07s cubic-bezier(0.16, 1.03, 1, 1) 0s;
   left: 0px;
   width: 100%;
   height: 100%;
@@ -279,19 +280,30 @@ const AboutHeader = styled.div`
 `;
 
 const AboutSubHeader = styled.div`
-  height: 100px;
+  height: 300px;
   width: 100%;
+  box-shadow: 0px -2px 24px -12px #33333399;
   background-color: ${styles.colors.gray[20]};
 `;
 
 const AboutSubSubHeader = styled.div`
-  height: 500px;
+  height: 80%;
   width: 100%;
+  top: 0;
+  position: absolute;
   background-color: ${styles.colors.white};
 `;
 
+const PurpleSection = styled.div`
+  height: 600px;
+  width: 100%;
+  top: 0;
+  position: absolute;
+  background-color: ${styles.colors.primary};
+`;
+
 const ScrollDownIndicator = () => (
-  <div style={{ width: '100%', marginTop: '1rem' }}>
+  <div style={{ width: '100%', marginTop: '15%' }}>
     <H1X>Scroll down to find out!</H1X>
     <div style={{ textAlign: 'center', marginTop: '2rem' }}>
       <FaAngleDownA size={24} color={styles.colors.white} style={{ animationDelay: '-1s' }} className="fade-arrow" />
@@ -321,26 +333,29 @@ const ScrollDownIndicator = () => (
 )
 
 const Card = styled.div`
-  width: 400px;
   padding: 12px 24px;
   border-radius: 12px;
-  color: ${styles.colors.white};
-  background-color: ${styles.colors.primary};
+  max-width: 576px;
+  color: ${styles.colors.black};
+  /* background-color: ${styles.colors.primary}; */
 `;
 
-const QuestionCard: React.FC<React.PropsWithChildren<{title: string}>> = ({ title, children }) => (
-  <div style={{ margin: '0 auto', width: '50%' }}>
+const QuestionCard: React.FC<React.PropsWithChildren<{title: string, white: boolean}>> = ({ title, children, white }) => {
+
+  return <div style={{ margin: '12rem auto', maxWidth: '938px', zIndex: 2, position: 'relative', display: 'flex' }}>
     <Card>
-      <p style={{ fontWeight: 'bold' }}>{title}</p>
-      <p>{children}</p>
+      <p style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: white ? styles.colors.white : styles.colors.primary }}>{title}</p>
+      <p style={{ fontSize: '1rem', fontWeight: '400', marginTop: '0.5rem', color: white ? styles.colors.white : styles.colors.black }}>{children}</p>
     </Card>
   </div>
-)
+}
 
 export default function About() {
 
   const { setLandingPage } = useWhereAreWe();
   const scrollEffectWrap = useRef<HTMLDivElement>(null);
+  const requestRef = useRef<number | null>(null);
+  const [ screenHeight, setScreenHeight ] = useState<number>(-1);
   // const [ scrollPosition, setScrollPosition ] = useState<number>(0);
   // const [ yScroll, setYScroll ] = useState<number>(0);
   const [ yScrollPixels, setYScrollPixels ] = useState<number>(0);
@@ -353,25 +368,71 @@ export default function About() {
   }
 
   const subHeaderEffect: NoEaseObject = {
-    startValue: 480,
+    startValue: screenHeight * 0.78,
     slope: -1
   }
 
   const subSubHeaderEffect: NoEaseObject = {
-    startValue: 580,
+    startValue: screenHeight * 0.88,
+    slope: -1.1
+  }
+
+  const purpleSectionEffect: NoEaseObject = {
+    startValue: screenHeight * 1.5,
     slope: -1.2
   }
 
+  const subHeaderEasing = useMemo(() => getEasingInfo({
+    start: { value: screenHeight * 0.78, slope: -1.5 },
+    stand: { scroll: 800, value: 0 },
+    end: { scroll: 1500, slope: -1 }
+  }), [screenHeight]);
+
+  const subSubHeaderEasing = useMemo(() => getEasingInfo({
+    start: { value: screenHeight * 0.88, slope: -1.7 },
+    stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
+    end: { scroll: screenHeight * 0.82, slope: -1.7 }
+  }), [screenHeight]);
+  const subSubHeaderBlobEasing = useMemo(() => getEasingInfo({
+    start: { value: screenHeight * 0.92, slope: -1.8 },
+    stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
+    end: { scroll: screenHeight * 0.82, slope: -2 }
+  }), [screenHeight]);
+  const subSubHeaderIconsEasing = useMemo(() => getEasingInfo({
+    start: { value: screenHeight * 0.96, slope: -1.9 },
+    stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
+    end: { scroll: screenHeight * 0.82, slope: -2.1 }
+  }), [screenHeight]);
+
+  const purpleSectionIconEasings = useMemo(() => ([...Array(10).keys()].map((i) => getEasingInfo({
+    start: { value: screenHeight * 0.9 + ((Math.random() - 0.5) * 0.8), slope: -1.2 },
+    stand: { scroll: screenHeight * 0.7, value: 0.8 * screenHeight },
+    end: { scroll: screenHeight * 1.2 + ((Math.random() - 0.5) * 0.2), slope: -2.1 + ((Math.random() - 0.5) * 0.8) }
+  }))), [screenHeight]);
+
+  const dd: NoEaseObject = {
+    startValue: screenHeight * 2.2,
+    slope: -1.3
+  }
+
+  const explanationSection = useMemo(() => getEasingInfo({
+    start: { value: screenHeight * 1.4, slope: -1 },
+    stand: { scroll: screenHeight * 1.5, value: 0.3 * screenHeight },
+    end: { scroll: screenHeight * 1.8, slope: -1.2 }
+  }), [screenHeight]);
+
   React.useEffect(() => {
     setLandingPage(true);
+    setScreenHeight(screen.height);
     const handleScroll = (ev: Event) => {
-      // setYScroll(() => (scrollEffectWrap.current?.scrollTop ?? 0) / (scrollEffectWrap.current?.clientHeight ?? 1));
-      // // @ts-ignore
-      // console.log(ev.target?.scrollTop ?? 0);
-      // // @ts-ignore
-      // api.start({ transform: `translate3d(0px, ${noEase(ev.target?.scrollTop ?? 0, titleEffect)}px, 0px)`});
-      // @ts-ignore
-      setYScrollPixels(() => (ev.target?.scrollTop ?? 0));
+      if (requestRef.current != null) {
+        cancelAnimationFrame(requestRef.current);
+        requestRef.current = null;
+      }
+      requestAnimationFrame(() => {
+        // @ts-ignore
+        setYScrollPixels(() => (ev.target?.scrollTop ?? 0));
+      })
     };
 
     if (scrollEffectWrap.current) scrollEffectWrap.current.onscroll = handleScroll;
@@ -384,78 +445,96 @@ export default function About() {
     };
   }, []);
 
-  // We are in effect saying this:
-  // Start: [ scroll: 0, value: startValue ]
-  // Slope of initial line: initSlope
-  // StandStill: [ scroll: scrollToStandAt, value: standStillValue ]
-  // Slope of final line: finishSlope
-  // End: [ scroll: scrollWithZeroValue: 0 ]
-
-  const titleEasingInfo = useMemo(() => getEasingInfo({
-    start: { value: -220, slope: -2 },
-    stand: { scroll: 0, value: 80 },
-    end: { scroll: 900, slope: -1 }
-  }), []);
-
-  const card1EasingInfo = useMemo(() => getEasingInfo({
-    start: { value: 1100, slope: -5 },
-    stand: { scroll: 300, value: 500 },
-    end: { scroll: 700, slope: -3 }
-  }), []);
-
-  const card2EasingInfo = useMemo(() => getEasingInfo({
-    start: { value: 3000, slope: -5 },
-    stand: { scroll: 2200, value: 500 },
-    end: { scroll: 2600, slope: -3 }
-  }), []);
-
-  const icon1EasingInfo = useMemo(() => getEasingInfo({
-    start: { value: 1400, slope: -5 },
-    stand: { scroll: 600, value: 500 },
-    end: { scroll: 1000, slope: -2 }
-  }), []);
-
-  const icon2EasingInfo = useMemo(() => getEasingInfo({
-    start: { value: 3400, slope: -5 },
-    stand: { scroll: 2600, value: 500 },
-    end: { scroll: 3500, slope: -2 }
-  }), []);
-
+  const randomPositions = useMemo(() => ([
+    [0, 0, 20],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2]
+  ]), []);
+  
   return (
     <>
-      <ScrollEffectWrap ref={scrollEffectWrap}>
+      <ScrollEffectWrap style={ screenHeight == -1 ? { opacity: 0 } : { opacity: 1 }} ref={scrollEffectWrap}>
         {/* </animated.div> */}
-        <ScrollEffectInner space={4}>
-          <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, headerEffect)}px)`} >
-            <AboutHeader>
-              <H1>What is Reserveroo?</H1>
-              <IconRow />
-              <ScrollDownIndicator />
-            </AboutHeader>
-          </ScrollItem>
-          <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, subHeaderEffect)}px)`}>
-            <AboutSubHeader />
-          </ScrollItem>
-          <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, subSubHeaderEffect)}px)`}>
-            <AboutSubSubHeader />
-          </ScrollItem>
-          <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, icon1EasingInfo)}px)`}>
-            <div style={{ margin: '0 auto', width: '50%', textAlign: 'right' }}>
-              <FaUserFriends color={styles.colors.gray[20]} size={300} />
-            </div>
-          </ScrollItem>
-          <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, icon2EasingInfo)}px)`}>
-            <div style={{ margin: '0 auto', width: '50%', textAlign: 'right' }}>
-              <FaSearch color={styles.colors.gray[20]} size={300} />
-            </div>
-          </ScrollItem>
-          <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, card1EasingInfo)}px)`}>
-            <QuestionCard title={"Picture this:"}>{questions[0].question}</QuestionCard>
-          </ScrollItem>
-          <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, card2EasingInfo)}px)`}>
-            <QuestionCard title={"Picture this:"}>{questions[1].question}</QuestionCard>
-          </ScrollItem>
+        <ScrollEffectInner space={10}>
         </ScrollEffectInner>
+        <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, headerEffect)}px)`} >
+          <AboutHeader>
+            <H1>What is Reserveroo?</H1>
+            <IconRow />
+            <ScrollDownIndicator />
+          </AboutHeader>
+        </ScrollItem>
+        <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, subHeaderEasing)}px)`}>
+          <AboutSubHeader />
+        </ScrollItem>
+        <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderEasing)}px)`}>
+          <QuestionCard white={false} title={questions[0].title}>{questions[0].question}</QuestionCard>
+          <AboutSubSubHeader />
+        </ScrollItem>
+        <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderBlobEasing)}px)`}>
+          <div style={{ position: 'relative', maxWidth: '936px', margin: '12rem auto' }}>
+            <div style={{ position: 'absolute', right: '0', top: '0', width: '322px' }}>
+              <svg width="322" height="260" viewBox="0 0 322 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M298.961 52.0567C267.327 19.5504 237.601 21.3634 192.442 14.8109C192.442 14.8109 106.606 1.36085 77.9936 1.36101C49.3814 1.36116 9.73876 -4.50162 4.22285 31.0199C-1.34129 66.8519 0.392164 55.3865 8.70401 90.6821C19.4841 136.459 -11.2671 162.591 16.288 200.695C40.3495 233.968 54.8386 244.056 94.5404 254.495C140.747 266.643 178.225 252.4 222.088 233.458C273.136 211.413 290.801 196.691 306.89 143.447C320.644 97.9325 332.117 86.1257 298.961 52.0567Z" fill="#2E294E" stroke="#F1F1F1"/>
+              </svg>
+            </div>
+          </div>
+        </ScrollItem>
+        <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderIconsEasing)}px)`}>
+          <div style={{ position: 'relative', maxWidth: '936px', margin: '12rem auto' }}>
+            <div style={{ position: 'absolute', right: '0', top: '0', width: '322px' }}>
+              <FaVolleyballBall color={styles.colors.white} size={54} style={{ position: 'absolute', top: '35px', left: '40px' }} />
+              <FaTableTennis color={styles.colors.white} size={54} style={{ position: 'absolute', top: '95px', left: '110px' }} />
+              <FaGolfBall color={styles.colors.white} size={54} style={{ position: 'absolute', top: '155px', left: '180px' }} />
+              <FaSwimmer color={styles.colors.white} size={54} style={{ position: 'absolute', top: '165px', left: '65px' }} />
+              <FaBowlingBall color={styles.colors.white} size={54} style={{ position: 'absolute', top: '55px', left: '200px' }} />
+            </div>
+          </div>
+        </ScrollItem>
+        <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, explanationSection)}px)`}>
+          <div style={{ margin: '4rem auto 4rem', maxWidth: '936px' }}>
+            <p style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.primary }}>{questions[4].title}</p>
+            <p style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.primary }}>{questions[5].title}</p>
+            <p style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.primary }}>{questions[6].title}</p>
+            <p style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.primary }}>{questions[7].title}</p>
+          </div>
+          <IconRow invertColors={true} />
+        </ScrollItem>
+        <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, purpleSectionEffect)}px)`}>
+          <div style={{ display: 'flex', maxWidth: '936px', margin: '5% auto', position: 'relative', zIndex: 2, alignItems: 'center' }}>
+            <div style={{ flexShrink: '1', maxWidth: '786px' }}>
+              <Card>
+                <p style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.white }}>{questions[1].title}</p>
+                <p style={{ fontSize: '1rem', fontWeight: '400', marginTop: '0.5rem', color: styles.colors.white }}>{questions[1].question}</p>
+              </Card>
+              <Card>
+                <p style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.white }}>{questions[2].title}</p>
+                <p style={{ fontSize: '1rem', fontWeight: '400', marginTop: '0.5rem', color: styles.colors.white }}>{questions[2].question}</p>
+              </Card>
+              <Card>
+                <p style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.white }}>{questions[3].title}</p>
+                <p style={{ fontSize: '1rem', fontWeight: '400', marginTop: '0.5rem', color: styles.colors.white }}>{questions[3].question}</p>
+              </Card>
+            </div>
+          </div>
+          <PurpleSection />
+        </ScrollItem>
+        { [...Array(10).keys()].map(i => (
+          <ScrollItem key={i} transform={`translate(0px, ${easeInOut(yScrollPixels, purpleSectionIconEasings[i])}px)`}>
+            <div style={{ position: 'relative', maxWidth: '936px', margin: '12rem auto' }}>
+              <div style={{ position: 'absolute', right: '0', top: '0', width: '322px' }}>
+              <FaQuestionCircle size={randomPositions[i][2]} color={styles.colors.white} style={{ transform: `rotate(${randomPositions[i][3] / Math.PI * 180}deg)`, position: 'absolute', top: `${randomPositions[i][1]}`, left: `${randomPositions[i][0]}px` }} />
+              </div>
+            </div>
+          </ScrollItem>
+        )) }
       </ScrollEffectWrap>
     </>
   );

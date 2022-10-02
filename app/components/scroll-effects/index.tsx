@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const ScrollEffectWrap = styled.div`
   position: fixed;
   top: 85x;
+  transition: opacity 0.5s;
   left: 0;
   overflow-y: scroll;
   height: calc(100vh - 90px);
