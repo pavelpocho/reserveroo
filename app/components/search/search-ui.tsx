@@ -1,5 +1,5 @@
 import { Form } from "@remix-run/react";
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import CircleInfoIcon from "~/assets/icons/CircleInfo";
 import SearchIcon from "~/assets/icons/Search";
@@ -61,6 +61,18 @@ export const TagCategoryButton = styled.button<{ selected: boolean, noCursor?: b
   box-shadow: ${styles.shadows[2]};
   border: none;
   cursor: ${props => props.noCursor ? '' : 'pointer'};
+`;
+
+const ShowMoreButton = styled.button`
+  height: 1.875rem;
+  padding: 0 1rem;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border-radius: 0.375rem;
+  color: ${styles.colors.white};
+  background-color: transparent;
+  border: 1px solid white;
+  cursor: pointer;
 `;
 
 const Flex = styled.div<{ narrowView: boolean }>`
@@ -140,10 +152,16 @@ const InputFieldWrap = styled.div<{ narrowView: boolean }>`
 
 export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tags, categories, narrowView }) => {
 
+  function getSelectedTags(t: TagWithTexts) {
+      const isTagInSelectedTags = selectedTags.find(st => st.id == t.id);
+      return isTagInSelectedTags ? selectedTags.filter(st => st.id != t.id) : [...selectedTags, t];
+  }
+
   const locationCityCountry = searchParams.get('selectedLocation');
   const tagIds = searchParams.getAll('tags[]');
   const categoryIds = searchParams.getAll('categories[]');
-  const [ selectedTags, setSelectedTags ] = React.useState<TagWithTexts[]>(tags.filter(t => tagIds.includes(t.id)));
+  const [ selectedTags, setSelectedTags ] = useState<TagWithTexts[]>(tags.filter(t => tagIds.includes(t.id)));
+  const [showAllTags, setShowAllTags] = useState<boolean>(false);
   const { lang } = useLangs();
 
   const defaultLocation = locations.find(l => l.cityCountry == locationCityCountry);
@@ -153,6 +171,8 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
 
   const defaultCategories = categoryIds.map(ci => categories.find(c => c.id == ci));
   const defaultCategoryNames = defaultCategories.every(c => c != null) ? defaultCategories.map(c => c?.multiLangName ? `${c.multiLangName[lang]}` : null) : [];
+
+  const MAX_NUMBER_OF_TAGS_SHOWN = 5;
 
   const getLocationDescription = (l: LocationWithEverything) => `${l.multiLangCity ? l.multiLangCity[lang] : ''}, ${l.multiLangCountry ? l.multiLangCountry[lang] : ''}`;
 
@@ -169,7 +189,7 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
             defaultValueAndText={locationCityCountry && defaultLocationName ? {
               value: locationCityCountry,
               text: defaultLocationName
-            } : null} 
+            } : null}
           />
         </InputFieldWrap>
         <LargeSpacer narrowView={narrowView ?? false}></LargeSpacer>
@@ -189,18 +209,19 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
         <Title>Tags</Title>
         <InfoButton helpText='Tags show additional attractive aspects of a place.' />
         {
-          tags.map(t => <TagCategoryButton selected={!!selectedTags.find(st => st.id == t.id)} onClick={(e) => {
+          tags.slice(0, showAllTags ? tags.length - 1 : MAX_NUMBER_OF_TAGS_SHOWN)
+              .map(t =>
+              <TagCategoryButton selected={!!selectedTags.find(st => st.id == t.id)} onClick={(e) => {
             e.preventDefault();
-            setSelectedTags(() => {
-              if (selectedTags.find(st => st.id == t.id)) {
-                return selectedTags.filter(st => st.id != t.id);
-              }
-              else {
-                return [...selectedTags, t];
-              }
-            })
+            setSelectedTags(() => getSelectedTags(t));
           }} key={t.id}>{t.multiLangName && t.multiLangName[lang]}</TagCategoryButton>)
         }
+        {tags.length > MAX_NUMBER_OF_TAGS_SHOWN && <ShowMoreButton onClick={e => {
+          e.preventDefault();
+          setShowAllTags(!showAllTags);
+        }}>
+        {showAllTags ? '– Show Less' : '+ Show All'}
+      </ShowMoreButton>}
       </TagFlex>
       <SearchBar defaultValue={searchParams.get('searchTerm') ?? ''}></SearchBar>
       <IdInput name='page' value='1'></IdInput>
