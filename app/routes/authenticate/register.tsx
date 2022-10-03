@@ -142,7 +142,20 @@ const CheckboxLabel = styled.label`
   gap: 0.5rem;
 `;
 
+const TermsAndConditionsLink = styled.a`
+  cursor: pointer;
+  text-decoration: underline 1px blue;
+  color: blue;
+  margin-left: -3px;
+  margin-right: -7px;
+`;
+
 export default function RegisterComponent() {
+
+  async function openTermsAndConditions (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+    e.preventDefault();
+    window.open('../terms-and-conditions.pdf');
+  }
 
   const [searchParams, setSearchParams ] = useSearchParams();
   const { fields, fieldErrors, formError } = useActionData<AuthActionData>() ?? { fieldErrors: {}, fields: {} };
@@ -187,9 +200,7 @@ export default function RegisterComponent() {
         { !validPhone && <ErrorLabel>Invalid phone</ErrorLabel> }
       </RelativeWrap>
       { fieldErrors?.phone && <FormError>{fieldErrors.phone}</FormError> }
-      <ConditionsText style={{ marginBottom: '1rem' }}>By creating an account, you agree with us sending you necessary email corespondence. (Password resets, confirmation emails, etc.)</ConditionsText>
-      <ConditionsText style={{ marginBottom: '1rem' }}>Your details (name, email, phone) may be shared with those places where you make reservations.</ConditionsText>
-      <CheckboxLabel style={{ marginBottom: '1rem' }}><input type='checkbox' checked={agree} onChange={(e) => {setAgree(e.currentTarget.checked)}} />I agree with the above terms.</CheckboxLabel>
+      <CheckboxLabel style={{ marginBottom: '1rem' }}><input type='checkbox' checked={agree} onChange={(e) => {setAgree(e.currentTarget.checked)}} />I agree with the<TermsAndConditionsLink onClick={e => openTermsAndConditions(e)}>terms and conditions</TermsAndConditionsLink>.</CheckboxLabel>
       { formError && <FormError>{formError}</FormError> }
       <MainButtonBtn style={{ marginBottom: '1rem' }} disabled={
         !validEmail || !validPhone || !agree
