@@ -699,6 +699,14 @@ function getClient() {
 }
 
 // app/models/user.server.ts
+var getUserListForAttendance = async () => await prisma.user.findMany({
+  where: {},
+  include: { reservationGroups: {
+    select: {
+      attended: true
+    }
+  } }
+});
 var getUserId = async ({ username }) => await prisma.user.findUnique({
   where: { username },
   select: {
@@ -837,13 +845,12 @@ var createUser = async ({
   data: { username, passwordHash, email, phone, firstName, lastName },
   select: { id: true, passwordHash: true }
 });
-var updateUser = async ({ id, firstName, lastName, username, email, phone }) => await prisma.user.update({
+var updateUser = async ({ id, firstName, lastName, username, phone }) => await prisma.user.update({
   where: {
     id
   },
   data: {
     username,
-    email,
     firstName,
     lastName,
     phone
@@ -2148,6 +2155,17 @@ var TagCategoryButton = import_styled_components15.default.button`
   border: none;
   cursor: ${(props) => props.noCursor ? "" : "pointer"};
 `;
+var ShowMoreButton = import_styled_components15.default.button`
+  height: 1.875rem;
+  padding: 0 1rem;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border-radius: 0.375rem;
+  color: ${styles.colors.white};
+  background-color: transparent;
+  border: 1px solid white;
+  cursor: pointer;
+`;
 var Flex = import_styled_components15.default.div`
   display: grid;
   align-items: center;
@@ -2217,15 +2235,21 @@ var InputFieldWrap = import_styled_components15.default.div`
   ` : ""}
 `;
 var SearchUI = ({ searchParams, locations, tags, categories, narrowView }) => {
+  function getSelectedTags(t) {
+    const isTagInSelectedTags = selectedTags.find((st) => st.id == t.id);
+    return isTagInSelectedTags ? selectedTags.filter((st) => st.id != t.id) : [...selectedTags, t];
+  }
   const locationCityCountry = searchParams.get("selectedLocation");
   const tagIds = searchParams.getAll("tags[]");
   const categoryIds = searchParams.getAll("categories[]");
-  const [selectedTags, setSelectedTags] = import_react24.default.useState(tags.filter((t) => tagIds.includes(t.id)));
+  const [selectedTags, setSelectedTags] = (0, import_react24.useState)(tags.filter((t) => tagIds.includes(t.id)));
+  const [showAllTags, setShowAllTags] = (0, import_react24.useState)(false);
   const { lang } = useLangs();
   const defaultLocation = locations.find((l) => l.cityCountry == locationCityCountry);
   const defaultLocationName = (defaultLocation == null ? void 0 : defaultLocation.multiLangCity) && (defaultLocation == null ? void 0 : defaultLocation.multiLangCountry) ? `${defaultLocation.multiLangCity[lang]}, ${defaultLocation.multiLangCountry[lang]}` : null;
   const defaultCategories = categoryIds.map((ci) => categories.find((c) => c.id == ci));
   const defaultCategoryNames = defaultCategories.every((c) => c != null) ? defaultCategories.map((c) => (c == null ? void 0 : c.multiLangName) ? `${c.multiLangName[lang]}` : null) : [];
+  const MAX_NUMBER_OF_TAGS_SHOWN = 5;
   const getLocationDescription = (l) => `${l.multiLangCity ? l.multiLangCity[lang] : ""}, ${l.multiLangCountry ? l.multiLangCountry[lang] : ""}`;
   return /* @__PURE__ */ import_react24.default.createElement(Wrap8, {
     narrowView: narrowView ?? false
@@ -2266,20 +2290,19 @@ var SearchUI = ({ searchParams, locations, tags, categories, narrowView }) => {
     readOnly: true
   })), /* @__PURE__ */ import_react24.default.createElement(TagFlex, null, /* @__PURE__ */ import_react24.default.createElement(Title3, null, "Tags"), /* @__PURE__ */ import_react24.default.createElement(info_button_default, {
     helpText: "Tags show additional attractive aspects of a place."
-  }), tags.map((t) => /* @__PURE__ */ import_react24.default.createElement(TagCategoryButton, {
+  }), tags.slice(0, showAllTags ? tags.length : MAX_NUMBER_OF_TAGS_SHOWN).map((t) => /* @__PURE__ */ import_react24.default.createElement(TagCategoryButton, {
     selected: !!selectedTags.find((st) => st.id == t.id),
     onClick: (e) => {
       e.preventDefault();
-      setSelectedTags(() => {
-        if (selectedTags.find((st) => st.id == t.id)) {
-          return selectedTags.filter((st) => st.id != t.id);
-        } else {
-          return [...selectedTags, t];
-        }
-      });
+      setSelectedTags(() => getSelectedTags(t));
     },
     key: t.id
-  }, t.multiLangName && t.multiLangName[lang]))), /* @__PURE__ */ import_react24.default.createElement(SearchBar, {
+  }, t.multiLangName && t.multiLangName[lang])), tags.length > MAX_NUMBER_OF_TAGS_SHOWN && /* @__PURE__ */ import_react24.default.createElement(ShowMoreButton, {
+    onClick: (e) => {
+      e.preventDefault();
+      setShowAllTags(!showAllTags);
+    }
+  }, showAllTags ? "\u2013 Show Less" : "+ Show All")), /* @__PURE__ */ import_react24.default.createElement(SearchBar, {
     defaultValue: searchParams.get("searchTerm") ?? ""
   }), /* @__PURE__ */ import_react24.default.createElement(IdInput, {
     name: "page",
@@ -2766,13 +2789,7 @@ var AccountSummary = ({ editing, user, fieldErrors, fields, formError }) => {
   }) : /* @__PURE__ */ import_react29.default.createElement(Value, null, user == null ? void 0 : user.firstName), (fieldErrors == null ? void 0 : fieldErrors.firstName) && /* @__PURE__ */ import_react29.default.createElement(FormError, null, fieldErrors.firstName)), /* @__PURE__ */ import_react29.default.createElement("div", null, /* @__PURE__ */ import_react29.default.createElement(SectionTitle, null, "Last Name"), editing ? /* @__PURE__ */ import_react29.default.createElement(TextInput, {
     name: "lastName",
     defaultValue: (fields == null ? void 0 : fields.lastName) ?? (user == null ? void 0 : user.lastName)
-  }) : /* @__PURE__ */ import_react29.default.createElement(Value, null, user == null ? void 0 : user.lastName), (fieldErrors == null ? void 0 : fieldErrors.lastName) && /* @__PURE__ */ import_react29.default.createElement(FormError, null, fieldErrors.lastName)), /* @__PURE__ */ import_react29.default.createElement("div", null, /* @__PURE__ */ import_react29.default.createElement(SectionTitle, null, "Email"), editing ? /* @__PURE__ */ import_react29.default.createElement(TextInput, {
-    setValue: (s) => {
-      setValidEmail(isValidEmail(s));
-    },
-    name: "email",
-    defaultValue: (fields == null ? void 0 : fields.email) ?? (user == null ? void 0 : user.email)
-  }) : /* @__PURE__ */ import_react29.default.createElement(Value, null, user == null ? void 0 : user.email), editing && !validEmail && /* @__PURE__ */ import_react29.default.createElement(ErrorLabel, null, "Invalid email"), (fieldErrors == null ? void 0 : fieldErrors.email) && /* @__PURE__ */ import_react29.default.createElement(FormError, null, fieldErrors.email)), /* @__PURE__ */ import_react29.default.createElement("div", null, /* @__PURE__ */ import_react29.default.createElement(SectionTitle, null, "Phone"), editing ? /* @__PURE__ */ import_react29.default.createElement(TextInput, {
+  }) : /* @__PURE__ */ import_react29.default.createElement(Value, null, user == null ? void 0 : user.lastName), (fieldErrors == null ? void 0 : fieldErrors.lastName) && /* @__PURE__ */ import_react29.default.createElement(FormError, null, fieldErrors.lastName)), /* @__PURE__ */ import_react29.default.createElement("div", null, /* @__PURE__ */ import_react29.default.createElement(SectionTitle, null, "Email"), /* @__PURE__ */ import_react29.default.createElement(Value, null, user == null ? void 0 : user.email)), /* @__PURE__ */ import_react29.default.createElement("div", null, /* @__PURE__ */ import_react29.default.createElement(SectionTitle, null, "Phone"), editing ? /* @__PURE__ */ import_react29.default.createElement(TextInput, {
     setValue: (s) => {
       setValidPhone(isValidPhone(s));
     },
@@ -2846,7 +2863,18 @@ var CheckboxLabel = import_styled_components20.default.label`
   display: flex;
   gap: 0.5rem;
 `;
+var TermsAndConditionsLink = import_styled_components20.default.a`
+  cursor: pointer;
+  text-decoration: underline 1px blue;
+  color: blue;
+  margin-left: -3px;
+  margin-right: -7px;
+`;
 function RegisterComponent() {
+  async function openTermsAndConditions(e) {
+    e.preventDefault();
+    window.open("../terms-and-conditions.pdf");
+  }
   const [searchParams, setSearchParams] = (0, import_react30.useSearchParams)();
   const { fields, fieldErrors, formError } = (0, import_react30.useActionData)() ?? { fieldErrors: {}, fields: {} };
   const t = (0, import_react30.useTransition)();
@@ -2919,11 +2947,7 @@ function RegisterComponent() {
     title: "Phone Number",
     name: "phone",
     defaultValue: (fields == null ? void 0 : fields.phone) ?? ""
-  }), !validPhone && /* @__PURE__ */ import_react31.default.createElement(ErrorLabel, null, "Invalid phone")), (fieldErrors == null ? void 0 : fieldErrors.phone) && /* @__PURE__ */ import_react31.default.createElement(FormError, null, fieldErrors.phone), /* @__PURE__ */ import_react31.default.createElement(ConditionsText, {
-    style: { marginBottom: "1rem" }
-  }, "By creating an account, you agree with us sending you necessary email corespondence. (Password resets, confirmation emails, etc.)"), /* @__PURE__ */ import_react31.default.createElement(ConditionsText, {
-    style: { marginBottom: "1rem" }
-  }, "Your details (name, email, phone) may be shared with those places where you make reservations."), /* @__PURE__ */ import_react31.default.createElement(CheckboxLabel, {
+  }), !validPhone && /* @__PURE__ */ import_react31.default.createElement(ErrorLabel, null, "Invalid phone")), (fieldErrors == null ? void 0 : fieldErrors.phone) && /* @__PURE__ */ import_react31.default.createElement(FormError, null, fieldErrors.phone), /* @__PURE__ */ import_react31.default.createElement(CheckboxLabel, {
     style: { marginBottom: "1rem" }
   }, /* @__PURE__ */ import_react31.default.createElement("input", {
     type: "checkbox",
@@ -2931,7 +2955,9 @@ function RegisterComponent() {
     onChange: (e) => {
       setAgree(e.currentTarget.checked);
     }
-  }), "I agree with the above terms."), formError && /* @__PURE__ */ import_react31.default.createElement(FormError, null, formError), /* @__PURE__ */ import_react31.default.createElement(MainButtonBtn, {
+  }), "I agree with the", /* @__PURE__ */ import_react31.default.createElement(TermsAndConditionsLink, {
+    onClick: (e) => openTermsAndConditions(e)
+  }, "terms and conditions"), "."), formError && /* @__PURE__ */ import_react31.default.createElement(FormError, null, formError), /* @__PURE__ */ import_react31.default.createElement(MainButtonBtn, {
     style: { marginBottom: "1rem" },
     disabled: !validEmail || !validPhone || !agree,
     onClick: (e) => {
@@ -4853,6 +4879,12 @@ var getReservationGroupForConfirmationEmail = async ({ id }) => await prisma.res
     }
   }
 });
+var setRGAttendance = async ({ id, attended }) => await prisma.reservationGroup.update({
+  where: { id },
+  data: {
+    attended
+  }
+});
 var getReservationGroupList = async () => await prisma.reservationGroup.findMany({
   include: {
     user: true,
@@ -5279,7 +5311,7 @@ var OpeningDay = import_styled_components29.default.p`
   font-size: 0.75rem;
   margin: 0;
 `;
-var OpeningTime = import_styled_components29.default.p`
+var OpeningTimeComponent = import_styled_components29.default.p`
   font-size: 1rem;
   margin: 0;
   &::first-letter {
@@ -5339,7 +5371,7 @@ function PlaceDetails({}) {
     style: { alignItems: "flex-start" }
   }, /* @__PURE__ */ React.createElement(DetailsWrap, null, /* @__PURE__ */ React.createElement(Title9, null, "Description"), /* @__PURE__ */ React.createElement(Desc, null, place.description != "" ? place.description : /* @__PURE__ */ React.createElement("i", null, "No description")), /* @__PURE__ */ React.createElement(Title9, null, "How do I get there?"), /* @__PURE__ */ React.createElement(Desc, null, place.howToGetThere != "" ? place.howToGetThere : /* @__PURE__ */ React.createElement("i", null, "Just follow Google Maps :)"))), /* @__PURE__ */ React.createElement(TimesWrap, null, /* @__PURE__ */ React.createElement(Title9, null, "Opening Times"), /* @__PURE__ */ React.createElement(TimesGrid, null, place.openingTimes ? place.openingTimes.sort((a, b) => a.day - b.day).map((o) => /* @__PURE__ */ React.createElement("div", {
     key: o.id
-  }, /* @__PURE__ */ React.createElement(OpeningDay, null, daysOfWeek[o.day].split("")[0].toUpperCase() + daysOfWeek[o.day].split("").slice(1).join("")), /* @__PURE__ */ React.createElement(OpeningTime, null, timeStr(o.open), " - ", timeStr(o.close)))) : null))), place.galleryPicUrls.length > 0 && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Title9, null, "Gallery"), /* @__PURE__ */ React.createElement(Gallery, null, place.galleryPicUrls.map((p, i) => /* @__PURE__ */ React.createElement(GalleryImage, {
+  }, /* @__PURE__ */ React.createElement(OpeningDay, null, daysOfWeek[o.day].split("")[0].toUpperCase() + daysOfWeek[o.day].split("").slice(1).join("")), /* @__PURE__ */ React.createElement(OpeningTimeComponent, null, timeStr(o.open), " - ", timeStr(o.close)))) : null))), place.galleryPicUrls.length > 0 && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Title9, null, "Gallery"), /* @__PURE__ */ React.createElement(Gallery, null, place.galleryPicUrls.map((p, i) => /* @__PURE__ */ React.createElement(GalleryImage, {
     key: i,
     src: p
   })))));
@@ -5717,40 +5749,33 @@ var action10 = async ({ request }) => {
   const firstName = getFormItem("firstName");
   const lastName = getFormItem("lastName");
   const username = getFormItem("username");
-  const email = getFormItem("email");
   const phone = getFormItem("phone");
   const fields = {
     username: username ?? "",
     firstName: firstName ?? "",
     lastName: lastName ?? "",
-    email: email ?? "",
     phone: phone ?? ""
   };
   const un = await checkForUserByUsername({ username });
-  const ee = await checkForUserByEmail({ email });
   const ep = await checkForUserByPhone({ phone });
   const existingUsername = un != null && un.id != id;
-  const existingEmail = ee != null && ee.id != id;
   const existingPhone = ep != null && ep.id != id;
   const usernameError = username == null || username.length == 0 ? "Please set a username" : !!existingUsername ? "This username is already taken." : username.length < 4 ? "Your username has to be at least 4 characters long" : username.length > 16 ? "Your username has to be at most 16 characters long" : null;
-  const emailError = email == null || email.length == 0 ? "Email cannot be empty" : !isValidEmail(email) ? "This email address is invalid" : !!existingEmail ? "This email address is already registered" : null;
   const phoneError = phone == null || phone.length == 0 ? "Phone number cannot be empty" : !isValidPhone(phone) ? "This phone number is invalid" : !!existingPhone ? "This phone number is already registered" : null;
   const lastNameError = firstName == null || firstName == "" || lastName == null || lastName == "" ? "You must provide your first and last names" : null;
-  if (usernameError || lastNameError || emailError || phoneError) {
+  if (usernameError || lastNameError || phoneError) {
     return badRequest5({ fields, formError: "Please check your details", fieldErrors: {
       username: usernameError,
       lastName: lastNameError,
-      email: emailError,
       phone: phoneError
     } });
   }
-  if (id && firstName && lastName && username && email && phone) {
+  if (id && firstName && lastName && username && phone) {
     await updateUser({
       id,
       firstName,
       lastName,
       username,
-      email,
       phone
     });
     return (0, import_server_runtime11.redirect)("/profile");
@@ -6469,7 +6494,9 @@ function Admin() {
     to: "/admin/locations"
   }, "Locations"), /* @__PURE__ */ React.createElement(TabButton, {
     to: "/admin/reservableTypes"
-  }, "Reservable types")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(import_react59.Outlet, null)));
+  }, "Reservable types"), /* @__PURE__ */ React.createElement(TabButton, {
+    to: "/admin/users"
+  }, "User stats")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(import_react59.Outlet, null)));
 }
 
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservableTypes/$reservableTypeId.tsx
@@ -6774,15 +6801,38 @@ function EditReservation() {
   }));
 }
 
+// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservations/setAttendance.tsx
+var setAttendance_exports = {};
+__export(setAttendance_exports, {
+  action: () => action15,
+  default: () => SetAttendance
+});
+var import_server_runtime18 = require("@remix-run/server-runtime");
+var action15 = async ({ request }) => {
+  var _a, _b;
+  const formData = await request.formData();
+  const reservationGroupId = (_a = formData.get("rgId")) == null ? void 0 : _a.toString();
+  const attended = (_b = formData.get("attended")) == null ? void 0 : _b.toString();
+  if (reservationGroupId === "" || reservationGroupId == null || attended === null) {
+    return (0, import_server_runtime18.redirect)("/admin/reservations", {});
+  }
+  await setRGAttendance({ id: reservationGroupId, attended: attended === "t" });
+  return (0, import_server_runtime18.redirect)("/admin/reservations", {});
+};
+function SetAttendance() {
+  return /* @__PURE__ */ React.createElement(React.Fragment, null);
+}
+
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservations/index.tsx
 var reservations_exports2 = {};
 __export(reservations_exports2, {
-  action: () => action15,
+  action: () => action16,
   default: () => ReservationAdminList,
   loader: () => loader23
 });
 var import_react68 = require("@remix-run/react");
-var import_server_runtime18 = require("@remix-run/server-runtime");
+var import_server_runtime19 = require("@remix-run/server-runtime");
+var import_react69 = require("react");
 var import_styled_components43 = __toESM(require("styled-components"));
 
 // app/components/admin/reservation-group-summary.tsx
@@ -6869,6 +6919,13 @@ var AdminReservationGroupSummary = ({ reservationGroup: rg }) => {
     text: "Set as unavailable",
     value: "unavailable"
   }];
+  const attendedOptions = [{
+    text: "Yes",
+    value: "t"
+  }, {
+    text: "No",
+    value: "f"
+  }];
   if (!!rg.reservations.find((r) => r.backup)) {
     actions.push({
       text: "Confirm backup",
@@ -6892,7 +6949,17 @@ var AdminReservationGroupSummary = ({ reservationGroup: rg }) => {
   }), /* @__PURE__ */ import_react67.default.createElement(IdInput, {
     name: "rgId",
     value: rg.id
-  }), /* @__PURE__ */ import_react67.default.createElement("p", null, 'Select a status in the input above and then hit "Update status". This WILL SEND AN EMAIL to the user!'), /* @__PURE__ */ import_react67.default.createElement(UpdateStatus, null, "Update status")), /* @__PURE__ */ import_react67.default.createElement(import_react66.Link, {
+  }), /* @__PURE__ */ import_react67.default.createElement("p", null, 'Select a status in the input above and then hit "Update status". This WILL SEND AN EMAIL to the user!'), /* @__PURE__ */ import_react67.default.createElement(UpdateStatus, null, "Update status")), /* @__PURE__ */ import_react67.default.createElement(import_react66.Form, {
+    method: "post",
+    action: "/admin/reservations/setAttendance"
+  }, /* @__PURE__ */ import_react67.default.createElement(SingleSelectorInput, {
+    name: "attended",
+    possibleValuesAndTexts: attendedOptions,
+    defaultValueAndText: { text: rg.attended === true ? "Yes" : rg.attended === false ? "No" : "Unset", value: rg.attended === true ? "t" : rg.attended === false ? "f" : "" }
+  }), /* @__PURE__ */ import_react67.default.createElement(IdInput, {
+    name: "rgId",
+    value: rg.id
+  }), /* @__PURE__ */ import_react67.default.createElement("p", null, "Select an attendance if we for example know a person didn't show up..."), /* @__PURE__ */ import_react67.default.createElement(UpdateStatus, null, "Update attendance")), /* @__PURE__ */ import_react67.default.createElement(import_react66.Link, {
     to: `/admin/reservations/${rg.id}`
   }, "Edit"))));
 };
@@ -6900,28 +6967,28 @@ var AdminReservationGroupSummary = ({ reservationGroup: rg }) => {
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservations/index.tsx
 var loader23 = async () => {
   const reservationGroups = await getReservationGroupList();
-  return (0, import_server_runtime18.json)({ reservationGroups });
+  return (0, import_server_runtime19.json)({ reservationGroups });
 };
-var action15 = async ({ request }) => {
+var action16 = async ({ request }) => {
   var _a, _b, _c, _d;
   const formData = await request.formData();
   const reservationGroupId = (_a = formData.get("rgId")) == null ? void 0 : _a.toString();
-  const action26 = (_b = formData.get("action")) == null ? void 0 : _b.toString();
-  if (!reservationGroupId || !action26) {
+  const action28 = (_b = formData.get("action")) == null ? void 0 : _b.toString();
+  if (!reservationGroupId || !action28) {
     return {};
   }
   const reservationGroup = await getReservationGroupForConfirmationEmail({ id: reservationGroupId });
   const promises = [];
   reservationGroup == null ? void 0 : reservationGroup.reservations.forEach((r) => {
-    if (action26 == "confirm_preferred") {
+    if (action28 == "confirm_preferred") {
       if (!r.backup) {
         promises.push(setStatusOfReservation({ id: r.id, status: 1 /* Confirmed */ }));
       } else {
         promises.push(setStatusOfReservation({ id: r.id, status: 3 /* Cancelled */ }));
       }
-    } else if (action26 == "unavailable") {
+    } else if (action28 == "unavailable") {
       promises.push(setStatusOfReservation({ id: r.id, status: 2 /* Rejected */ }));
-    } else if (action26 == "confirm_backup") {
+    } else if (action28 == "confirm_backup") {
       if (r.backup) {
         promises.push(setStatusOfReservation({ id: r.id, status: 1 /* Confirmed */ }));
       } else {
@@ -6952,7 +7019,7 @@ var action15 = async ({ request }) => {
     }
   });
   if ((reservationGroup == null ? void 0 : reservationGroup.user) && ((_c = reservationGroup == null ? void 0 : reservationGroup.reservations[0].reservable) == null ? void 0 : _c.place)) {
-    await sendStatusUpdateEmail(getBaseUrl(request), (_d = reservationGroup == null ? void 0 : reservationGroup.user) == null ? void 0 : _d.email, action26, reservationGroup.reservations[0].reservable.place.name, typesWithAmount);
+    await sendStatusUpdateEmail(getBaseUrl(request), (_d = reservationGroup == null ? void 0 : reservationGroup.user) == null ? void 0 : _d.email, action28, reservationGroup.reservations[0].reservable.place.name, typesWithAmount);
   }
   return {};
 };
@@ -6961,10 +7028,25 @@ var Title17 = import_styled_components43.default.h4`
 `;
 function ReservationAdminList() {
   const { reservationGroups } = (0, import_react68.useLoaderData)();
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Title17, null, "Reservations"), reservationGroups.map((rg) => /* @__PURE__ */ React.createElement(AdminReservationGroupSummary, {
-    key: rg.id,
-    reservationGroup: rg
-  })));
+  const [showPast, setShowPast] = (0, import_react69.useState)(false);
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Title17, null, "Reservations"), /* @__PURE__ */ React.createElement("button", {
+    onClick: () => {
+      setShowPast(false);
+    }
+  }, "Show upcoming"), /* @__PURE__ */ React.createElement("button", {
+    onClick: () => {
+      setShowPast(true);
+    }
+  }, "Show past"), reservationGroups.map((rg) => {
+    if (rg.reservations.length > 0 && new Date(rg.reservations[0].end).getTime() < new Date().getTime() && showPast || rg.reservations.length > 0 && new Date(rg.reservations[0].end).getTime() > new Date().getTime() && !showPast) {
+      return /* @__PURE__ */ React.createElement(AdminReservationGroupSummary, {
+        key: rg.id,
+        reservationGroup: rg
+      });
+    } else {
+      return null;
+    }
+  }));
 }
 
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/categories.tsx
@@ -6973,31 +7055,31 @@ __export(categories_exports, {
   default: () => CompaniesAdmin,
   loader: () => loader24
 });
-var import_react69 = require("@remix-run/react");
+var import_react70 = require("@remix-run/react");
 var loader24 = async ({ request, params }) => {
   return {};
 };
 function CompaniesAdmin() {
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "CATEGORY ADMIN"), /* @__PURE__ */ React.createElement(import_react69.Outlet, null));
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "CATEGORY ADMIN"), /* @__PURE__ */ React.createElement(import_react70.Outlet, null));
 }
 
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/categories/$categoryId.tsx
 var categoryId_exports = {};
 __export(categoryId_exports, {
-  action: () => action16,
+  action: () => action17,
   default: () => AdminCategoryDetail,
   loader: () => loader25
 });
-var import_react70 = require("@remix-run/react");
-var import_server_runtime19 = require("@remix-run/server-runtime");
+var import_react71 = require("@remix-run/react");
+var import_server_runtime20 = require("@remix-run/server-runtime");
 var import_styled_components44 = __toESM(require("styled-components"));
 var loader25 = async ({ request, params }) => {
   if (!params.categoryId)
-    return (0, import_server_runtime19.json)({});
+    return (0, import_server_runtime20.json)({});
   const x = { category: await getCategory({ id: params.categoryId }) };
-  return (0, import_server_runtime19.json)({ category: await getCategory({ id: params.categoryId }) });
+  return (0, import_server_runtime20.json)({ category: await getCategory({ id: params.categoryId }) });
 };
-var action16 = async ({ request }) => {
+var action17 = async ({ request }) => {
   const { getFormItem, getFormItems } = await getFormEssentials(request);
   const category = {
     id: "-1",
@@ -7005,16 +7087,16 @@ var action16 = async ({ request }) => {
     english: getFormItem("nameEnglish")
   };
   await updateCategory({ multiLangName: category, id: getFormItem("id") });
-  return (0, import_server_runtime19.redirect)("/admin/categories");
+  return (0, import_server_runtime20.redirect)("/admin/categories");
 };
 var ArrayInputWrap2 = import_styled_components44.default.div`
   display: flex;
 `;
 function AdminCategoryDetail() {
   var _a, _b;
-  const { category } = (0, import_react70.useLoaderData)();
+  const { category } = (0, import_react71.useLoaderData)();
   const { lang } = useLangs();
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "CATEGORY ", (category == null ? void 0 : category.multiLangName) && (category == null ? void 0 : category.multiLangName[lang])), /* @__PURE__ */ React.createElement(import_react70.Form, {
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "CATEGORY ", (category == null ? void 0 : category.multiLangName) && (category == null ? void 0 : category.multiLangName[lang])), /* @__PURE__ */ React.createElement(import_react71.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(IdInput, {
     name: "id",
@@ -7038,19 +7120,19 @@ __export(categories_exports2, {
   default: () => CategoriesAdminIndex2,
   loader: () => loader26
 });
-var import_react71 = require("@remix-run/react");
+var import_react72 = require("@remix-run/react");
 var loader26 = async ({ request, params }) => {
   const categories = await getCategoryList({ nameFragment: params.categoryId ?? "" });
   return { categories };
 };
 function CategoriesAdminIndex2() {
-  const { categories } = (0, import_react71.useLoaderData)();
+  const { categories } = (0, import_react72.useLoaderData)();
   const { lang } = useLangs();
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, categories.map((c) => /* @__PURE__ */ React.createElement("div", {
     key: c.id
-  }, /* @__PURE__ */ React.createElement("p", null, "Name: ", c.multiLangName && c.multiLangName[lang]), /* @__PURE__ */ React.createElement(import_react71.Link, {
+  }, /* @__PURE__ */ React.createElement("p", null, "Name: ", c.multiLangName && c.multiLangName[lang]), /* @__PURE__ */ React.createElement(import_react72.Link, {
     to: `/admin/categories/${c.id}`
-  }, "View / Edit"))), /* @__PURE__ */ React.createElement(import_react71.Link, {
+  }, "View / Edit"))), /* @__PURE__ */ React.createElement(import_react72.Link, {
     to: "/admin/categories/new"
   }, "New category")));
 }
@@ -7058,17 +7140,17 @@ function CategoriesAdminIndex2() {
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/categories/new.tsx
 var new_exports2 = {};
 __export(new_exports2, {
-  action: () => action17,
+  action: () => action18,
   default: () => AdminCompanyDetail2,
   loader: () => loader27
 });
-var import_react72 = require("@remix-run/react");
-var import_server_runtime20 = require("@remix-run/server-runtime");
+var import_react73 = require("@remix-run/react");
+var import_server_runtime21 = require("@remix-run/server-runtime");
 var import_styled_components45 = __toESM(require("styled-components"));
 var loader27 = async ({ request, params }) => {
   return {};
 };
-var action17 = async ({ request }) => {
+var action18 = async ({ request }) => {
   const { getFormItem, getFormItems } = await getFormEssentials(request);
   const category = {
     id: "-1",
@@ -7079,15 +7161,15 @@ var action17 = async ({ request }) => {
     return badRequest({ field: { nameCzech: category.czech, nameEnglish: category.english } });
   }
   await createCategory({ multiLangName: category });
-  return (0, import_server_runtime20.redirect)("/admin/categories");
+  return (0, import_server_runtime21.redirect)("/admin/categories");
 };
 var ArrayInputWrap3 = import_styled_components45.default.div`
   display: flex;
 `;
 function AdminCompanyDetail2() {
   var _a, _b, _c;
-  const a = (0, import_react72.useActionData)();
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "CATEGORY ", ((_a = a == null ? void 0 : a.field) == null ? void 0 : _a.nameEnglish) ?? ""), /* @__PURE__ */ React.createElement(import_react72.Form, {
+  const a = (0, import_react73.useActionData)();
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "CATEGORY ", ((_a = a == null ? void 0 : a.field) == null ? void 0 : _a.nameEnglish) ?? ""), /* @__PURE__ */ React.createElement(import_react73.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(IdInput, {
     name: "id",
@@ -7111,25 +7193,25 @@ __export(companies_exports, {
   default: () => CompaniesAdmin2,
   loader: () => loader28
 });
-var import_react73 = require("@remix-run/react");
+var import_react74 = require("@remix-run/react");
 var loader28 = async ({ request, params }) => {
   return {};
 };
 function CompaniesAdmin2() {
-  const { companies } = (0, import_react73.useLoaderData)();
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "COMPANY ADMIN"), /* @__PURE__ */ React.createElement(import_react73.Outlet, null));
+  const { companies } = (0, import_react74.useLoaderData)();
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "COMPANY ADMIN"), /* @__PURE__ */ React.createElement(import_react74.Outlet, null));
 }
 
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/companies/$companyId.tsx
 var companyId_exports = {};
 __export(companyId_exports, {
-  action: () => action18,
+  action: () => action19,
   default: () => AdminCompanyDetail3,
   loader: () => loader29
 });
-var import_react74 = require("@remix-run/react");
-var import_server_runtime21 = require("@remix-run/server-runtime");
-var import_react75 = require("react");
+var import_react75 = require("@remix-run/react");
+var import_server_runtime22 = require("@remix-run/server-runtime");
+var import_react76 = require("react");
 var import_styled_components46 = __toESM(require("styled-components"));
 
 // app/models/company.server.ts
@@ -7162,26 +7244,26 @@ var updateCompany = async ({ id, name: name3 }) => await prisma.company.update({
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/companies/$companyId.tsx
 var loader29 = async ({ request, params }) => {
   if (!params.companyId)
-    return (0, import_server_runtime21.json)({});
+    return (0, import_server_runtime22.json)({});
   const x = { company: await getCompany({ id: params.companyId }) };
-  return (0, import_server_runtime21.json)({ company: await getCompany({ id: params.companyId }) });
+  return (0, import_server_runtime22.json)({ company: await getCompany({ id: params.companyId }) });
 };
-var action18 = async ({ request }) => {
+var action19 = async ({ request }) => {
   const { getFormItem, getFormItems } = await getFormEssentials(request);
   const company = {
     id: getFormItem("id"),
     name: getFormItem("name")
   };
   await updateCompany(company);
-  return (0, import_server_runtime21.redirect)("/admin/companies");
+  return (0, import_server_runtime22.redirect)("/admin/companies");
 };
 var ArrayInputWrap4 = import_styled_components46.default.div`
   display: flex;
 `;
 function AdminCompanyDetail3() {
-  const { company: defaultPlace } = (0, import_react74.useLoaderData)();
-  const [company, setCompany] = (0, import_react75.useState)(defaultPlace);
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "COMPANY ", company.name), /* @__PURE__ */ React.createElement(import_react74.Form, {
+  const { company: defaultPlace } = (0, import_react75.useLoaderData)();
+  const [company, setCompany] = (0, import_react76.useState)(defaultPlace);
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "COMPANY ", company.name), /* @__PURE__ */ React.createElement(import_react75.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(IdInput, {
     name: "id",
@@ -7201,18 +7283,18 @@ __export(companies_exports2, {
   default: () => CompaniesAdminIndex,
   loader: () => loader30
 });
-var import_react76 = require("@remix-run/react");
+var import_react77 = require("@remix-run/react");
 var loader30 = async ({ request, params }) => {
   const companies = await getCompanyList({ name: params.companyId ?? "" });
   return { companies };
 };
 function CompaniesAdminIndex() {
-  const { companies } = (0, import_react76.useLoaderData)();
+  const { companies } = (0, import_react77.useLoaderData)();
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, companies.map((c) => /* @__PURE__ */ React.createElement("div", {
     key: c.id
-  }, /* @__PURE__ */ React.createElement("p", null, "Name: ", c.name), /* @__PURE__ */ React.createElement(import_react76.Link, {
+  }, /* @__PURE__ */ React.createElement("p", null, "Name: ", c.name), /* @__PURE__ */ React.createElement(import_react77.Link, {
     to: `/admin/companies/${c.id}`
-  }, "View / Edit"))), /* @__PURE__ */ React.createElement(import_react76.Link, {
+  }, "View / Edit"))), /* @__PURE__ */ React.createElement(import_react77.Link, {
     to: "/admin/companies/new"
   }, "New company")));
 }
@@ -7220,17 +7302,17 @@ function CompaniesAdminIndex() {
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/companies/new.tsx
 var new_exports3 = {};
 __export(new_exports3, {
-  action: () => action19,
+  action: () => action20,
   default: () => AdminCompanyDetail4,
   loader: () => loader31
 });
-var import_react77 = require("@remix-run/react");
-var import_server_runtime22 = require("@remix-run/server-runtime");
+var import_react78 = require("@remix-run/react");
+var import_server_runtime23 = require("@remix-run/server-runtime");
 var import_styled_components47 = __toESM(require("styled-components"));
 var loader31 = async ({ request, params }) => {
   return {};
 };
-var action19 = async ({ request }) => {
+var action20 = async ({ request }) => {
   const { getFormItem, getFormItems } = await getFormEssentials(request);
   const company = {
     id: getFormItem("id"),
@@ -7240,16 +7322,16 @@ var action19 = async ({ request }) => {
     return badRequest({ field: { name: company.name } });
   }
   await createCompany(company);
-  return (0, import_server_runtime22.redirect)("/admin/companies");
+  return (0, import_server_runtime23.redirect)("/admin/companies");
 };
 var ArrayInputWrap5 = import_styled_components47.default.div`
   display: flex;
 `;
 function AdminCompanyDetail4() {
   var _a;
-  const a = (0, import_react77.useActionData)();
+  const a = (0, import_react78.useActionData)();
   const company = { id: "-1", name: (_a = a == null ? void 0 : a.field) == null ? void 0 : _a.name };
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "COMPANY ", company.name), /* @__PURE__ */ React.createElement(import_react77.Form, {
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "COMPANY ", company.name), /* @__PURE__ */ React.createElement(import_react78.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(IdInput, {
     name: "id",
@@ -7269,30 +7351,30 @@ __export(locations_exports, {
   default: () => TagAdmin,
   loader: () => loader32
 });
-var import_react78 = require("@remix-run/react");
+var import_react79 = require("@remix-run/react");
 var loader32 = async ({ request, params }) => {
   return {};
 };
 function TagAdmin() {
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "LOCATION ADMIN"), /* @__PURE__ */ React.createElement(import_react78.Outlet, null));
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "LOCATION ADMIN"), /* @__PURE__ */ React.createElement(import_react79.Outlet, null));
 }
 
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/locations/$locationId.tsx
 var locationId_exports = {};
 __export(locationId_exports, {
-  action: () => action20,
+  action: () => action21,
   default: () => AdminLocationDetail,
   loader: () => loader33
 });
-var import_react79 = require("@remix-run/react");
-var import_server_runtime23 = require("@remix-run/server-runtime");
+var import_react80 = require("@remix-run/react");
+var import_server_runtime24 = require("@remix-run/server-runtime");
 var import_styled_components48 = __toESM(require("styled-components"));
 var loader33 = async ({ request, params }) => {
   if (!params.locationId)
-    return (0, import_server_runtime23.json)({});
-  return (0, import_server_runtime23.json)({ location: await getLocation({ id: params.locationId }) });
+    return (0, import_server_runtime24.json)({});
+  return (0, import_server_runtime24.json)({ location: await getLocation({ id: params.locationId }) });
 };
-var action20 = async ({ request }) => {
+var action21 = async ({ request }) => {
   const { getFormItem, getFormItems } = await getFormEssentials(request);
   const location = {
     id: getFormItem("id"),
@@ -7308,16 +7390,16 @@ var action20 = async ({ request }) => {
     }
   };
   await updateLocation(location);
-  return (0, import_server_runtime23.redirect)("/admin/locations");
+  return (0, import_server_runtime24.redirect)("/admin/locations");
 };
 var ArrayInputWrap6 = import_styled_components48.default.div`
   display: flex;
 `;
 function AdminLocationDetail() {
   var _a, _b, _c, _d;
-  const { location } = (0, import_react79.useLoaderData)();
+  const { location } = (0, import_react80.useLoaderData)();
   const { lang } = useLangs();
-  return location && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "LOCATION: ", (location == null ? void 0 : location.multiLangCity) && (location == null ? void 0 : location.multiLangCity[lang]), " in ", (location == null ? void 0 : location.multiLangCountry) && (location == null ? void 0 : location.multiLangCountry[lang])), /* @__PURE__ */ React.createElement(import_react79.Form, {
+  return location && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "LOCATION: ", (location == null ? void 0 : location.multiLangCity) && (location == null ? void 0 : location.multiLangCity[lang]), " in ", (location == null ? void 0 : location.multiLangCountry) && (location == null ? void 0 : location.multiLangCountry[lang])), /* @__PURE__ */ React.createElement(import_react80.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(IdInput, {
     name: "id",
@@ -7349,19 +7431,19 @@ __export(locations_exports2, {
   default: () => CompaniesAdminIndex2,
   loader: () => loader34
 });
-var import_react80 = require("@remix-run/react");
+var import_react81 = require("@remix-run/react");
 var loader34 = async ({ request, params }) => {
   const locations = await getAllLocations();
   return { locations };
 };
 function CompaniesAdminIndex2() {
-  const { locations } = (0, import_react80.useLoaderData)();
+  const { locations } = (0, import_react81.useLoaderData)();
   const { lang } = useLangs();
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, locations.map((l) => /* @__PURE__ */ React.createElement("div", {
     key: l.id
-  }, /* @__PURE__ */ React.createElement("p", null, "City: ", l.multiLangCity && l.multiLangCity[lang]), /* @__PURE__ */ React.createElement("p", null, "Country: ", l.multiLangCountry && l.multiLangCountry[lang]), /* @__PURE__ */ React.createElement(import_react80.Link, {
+  }, /* @__PURE__ */ React.createElement("p", null, "City: ", l.multiLangCity && l.multiLangCity[lang]), /* @__PURE__ */ React.createElement("p", null, "Country: ", l.multiLangCountry && l.multiLangCountry[lang]), /* @__PURE__ */ React.createElement(import_react81.Link, {
     to: `/admin/locations/${l.id}`
-  }, "View / Edit"))), /* @__PURE__ */ React.createElement(import_react80.Link, {
+  }, "View / Edit"))), /* @__PURE__ */ React.createElement(import_react81.Link, {
     to: "/admin/locations/new"
   }, "New location")));
 }
@@ -7369,17 +7451,17 @@ function CompaniesAdminIndex2() {
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/locations/new.tsx
 var new_exports4 = {};
 __export(new_exports4, {
-  action: () => action21,
+  action: () => action22,
   default: () => AdminLocationNew,
   loader: () => loader35
 });
-var import_react81 = require("@remix-run/react");
-var import_server_runtime24 = require("@remix-run/server-runtime");
+var import_react82 = require("@remix-run/react");
+var import_server_runtime25 = require("@remix-run/server-runtime");
 var import_styled_components49 = __toESM(require("styled-components"));
 var loader35 = async ({ request, params }) => {
   return {};
 };
-var action21 = async ({ request }) => {
+var action22 = async ({ request }) => {
   const { getFormItem, getFormItems } = await getFormEssentials(request);
   const location = {
     multiLangCity: {
@@ -7402,15 +7484,15 @@ var action21 = async ({ request }) => {
     } });
   }
   await createLocation(location);
-  return (0, import_server_runtime24.redirect)("/admin/locations");
+  return (0, import_server_runtime25.redirect)("/admin/locations");
 };
 var ArrayInputWrap7 = import_styled_components49.default.div`
   display: flex;
 `;
 function AdminLocationNew() {
   var _a, _b, _c, _d, _e;
-  const a = (0, import_react81.useActionData)();
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "TAG ", (_a = a == null ? void 0 : a.field) == null ? void 0 : _a.cityEnglish), /* @__PURE__ */ React.createElement(import_react81.Form, {
+  const a = (0, import_react82.useActionData)();
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "TAG ", (_a = a == null ? void 0 : a.field) == null ? void 0 : _a.cityEnglish), /* @__PURE__ */ React.createElement(import_react82.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(IdInput, {
     name: "id",
@@ -7442,27 +7524,27 @@ __export(places_exports2, {
   default: () => PlacesAdmin,
   loader: () => loader36
 });
-var import_react82 = require("@remix-run/react");
+var import_react83 = require("@remix-run/react");
 var loader36 = async () => {
   return {};
 };
 function PlacesAdmin() {
-  const { places } = (0, import_react82.useLoaderData)();
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "PLACE ADMIN"), /* @__PURE__ */ React.createElement(import_react82.Outlet, null));
+  const { places } = (0, import_react83.useLoaderData)();
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "PLACE ADMIN"), /* @__PURE__ */ React.createElement(import_react83.Outlet, null));
 }
 
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/places/$placeId.tsx
 var placeId_exports3 = {};
 __export(placeId_exports3, {
-  action: () => action22,
+  action: () => action23,
   default: () => AdminPlaceDetail,
   loader: () => loader37
 });
 var import_node7 = require("@remix-run/node");
-var import_react87 = require("@remix-run/react");
-var import_server_runtime25 = require("@remix-run/server-runtime");
-var import_react88 = __toESM(require("react"));
-var import_react89 = require("react");
+var import_react88 = require("@remix-run/react");
+var import_server_runtime26 = require("@remix-run/server-runtime");
+var import_react89 = __toESM(require("react"));
+var import_react90 = require("react");
 var import_styled_components53 = __toESM(require("styled-components"));
 
 // app/components/button.tsx
@@ -7478,16 +7560,16 @@ var Button2 = ({ children, onClick }) => /* @__PURE__ */ React.createElement(But
 }, children);
 
 // app/components/inputs/ArrayInput.tsx
-var import_react83 = __toESM(require("react"));
+var import_react84 = __toESM(require("react"));
 var ArrayInput = ({ onAdd, deletedIdsName, deletedIds, arrayTitle, children, addButtonText }) => {
-  return /* @__PURE__ */ import_react83.default.createElement("div", null, /* @__PURE__ */ import_react83.default.createElement("label", null, arrayTitle), deletedIdsName && deletedIds ? deletedIds.map((id) => /* @__PURE__ */ import_react83.default.createElement("input", {
+  return /* @__PURE__ */ import_react84.default.createElement("div", null, /* @__PURE__ */ import_react84.default.createElement("label", null, arrayTitle), deletedIdsName && deletedIds ? deletedIds.map((id) => /* @__PURE__ */ import_react84.default.createElement("input", {
     key: id,
     name: deletedIdsName,
     type: "text",
     readOnly: true,
     value: id,
     hidden: true
-  })) : null, children, onAdd && addButtonText && /* @__PURE__ */ import_react83.default.createElement("button", {
+  })) : null, children, onAdd && addButtonText && /* @__PURE__ */ import_react84.default.createElement("button", {
     onClick: (e) => {
       e.preventDefault();
       onAdd(e);
@@ -7496,12 +7578,12 @@ var ArrayInput = ({ onAdd, deletedIdsName, deletedIds, arrayTitle, children, add
 };
 
 // app/components/inputs/ImageInput.tsx
-var import_react84 = __toESM(require("react"));
+var import_react85 = __toESM(require("react"));
 var ImageInput = ({ name: name3, hidden, onChange }) => {
-  const [hasValue, setHasValue] = (0, import_react84.useState)(false);
-  return /* @__PURE__ */ import_react84.default.createElement("div", {
+  const [hasValue, setHasValue] = (0, import_react85.useState)(false);
+  return /* @__PURE__ */ import_react85.default.createElement("div", {
     style: { visibility: hidden ? "hidden" : "visible" }
-  }, /* @__PURE__ */ import_react84.default.createElement("input", {
+  }, /* @__PURE__ */ import_react85.default.createElement("input", {
     type: "file",
     name: hasValue ? name3 : "",
     accept: ".png,.jpg,.jpeg,.webp,.gif",
@@ -7514,7 +7596,7 @@ var ImageInput = ({ name: name3, hidden, onChange }) => {
 };
 
 // app/components/inputs/NumberInput.tsx
-var import_react85 = __toESM(require("react"));
+var import_react86 = __toESM(require("react"));
 var import_styled_components51 = __toESM(require("styled-components"));
 var NumberInputField = import_styled_components51.default.input`
   font-size: 0.8rem;
@@ -7528,8 +7610,8 @@ var NumberInputField = import_styled_components51.default.input`
   }
 `;
 var NumberInput = ({ name: name3, title, defaultValue }) => {
-  const [value, setValue] = import_react85.default.useState(defaultValue);
-  return /* @__PURE__ */ import_react85.default.createElement("div", null, /* @__PURE__ */ import_react85.default.createElement("label", null, title), /* @__PURE__ */ import_react85.default.createElement(NumberInputField, {
+  const [value, setValue] = import_react86.default.useState(defaultValue);
+  return /* @__PURE__ */ import_react86.default.createElement("div", null, /* @__PURE__ */ import_react86.default.createElement("label", null, title), /* @__PURE__ */ import_react86.default.createElement(NumberInputField, {
     type: "text",
     value: (value == null ? void 0 : value.toString()) ?? "",
     onChange: (e) => {
@@ -7539,7 +7621,7 @@ var NumberInput = ({ name: name3, title, defaultValue }) => {
         setValue(parseInt(e.currentTarget.value));
       }
     }
-  }), /* @__PURE__ */ import_react85.default.createElement("input", {
+  }), /* @__PURE__ */ import_react86.default.createElement("input", {
     name: name3,
     type: "number",
     readOnly: true,
@@ -7549,7 +7631,7 @@ var NumberInput = ({ name: name3, title, defaultValue }) => {
 };
 
 // app/components/inputs/TimeInput.tsx
-var import_react86 = __toESM(require("react"));
+var import_react87 = __toESM(require("react"));
 var import_styled_components52 = __toESM(require("styled-components"));
 var isTimePossible = (value) => {
   return /^(?:(?:[0-1]|$)(?:\d|$)|(?:[2]|$)(?:[0-3]|$))(?::|$)(?:(?:[0-5]|$)(?:\d|$))$/.test(value);
@@ -7570,19 +7652,19 @@ var TimeInputField = import_styled_components52.default.input`
   }
 `;
 var TimeInput = ({ name: name3, defaultValue, title }) => {
-  const [value, setValue] = import_react86.default.useState(defaultValue ? getStringTimeValue(defaultValue) : "");
-  const [isValid, setIsValid] = import_react86.default.useState(isTimeValid(value));
-  import_react86.default.useEffect(() => {
+  const [value, setValue] = import_react87.default.useState(defaultValue ? getStringTimeValue(defaultValue) : "");
+  const [isValid, setIsValid] = import_react87.default.useState(isTimeValid(value));
+  import_react87.default.useEffect(() => {
     setIsValid(isTimeValid(value));
   }, [value]);
-  return /* @__PURE__ */ import_react86.default.createElement("div", null, /* @__PURE__ */ import_react86.default.createElement("label", null, title), /* @__PURE__ */ import_react86.default.createElement(TimeInputField, {
+  return /* @__PURE__ */ import_react87.default.createElement("div", null, /* @__PURE__ */ import_react87.default.createElement("label", null, title), /* @__PURE__ */ import_react87.default.createElement(TimeInputField, {
     type: "text",
     value,
     onChange: (e) => {
       if (isTimePossible(e.currentTarget.value))
         setValue(e.currentTarget.value);
     }
-  }), /* @__PURE__ */ import_react86.default.createElement("input", {
+  }), /* @__PURE__ */ import_react87.default.createElement("input", {
     name: name3,
     type: "time",
     readOnly: true,
@@ -7631,8 +7713,8 @@ var deleteImageFromS3 = async (key) => {
 var import_crypto3 = __toESM(require("crypto"));
 var loader37 = async ({ request, params }) => {
   if (!params.placeId)
-    return (0, import_server_runtime25.json)({});
-  return (0, import_server_runtime25.json)({
+    return (0, import_server_runtime26.json)({});
+  return (0, import_server_runtime26.json)({
     place: await getPlace({ id: params.placeId }),
     companies: await getCompanyList({ name: "" }),
     tags: await getTagList({ nameFragment: "" }),
@@ -7641,7 +7723,7 @@ var loader37 = async ({ request, params }) => {
     locations: await getLocationList({ cityCountry: "" })
   });
 };
-var action22 = async ({ request }) => {
+var action23 = async ({ request }) => {
   const getFormItem = (name3) => {
     var _a;
     return ((_a = imgForm.get(name3)) == null ? void 0 : _a.toString()) ?? "";
@@ -7721,19 +7803,19 @@ var action22 = async ({ request }) => {
       promises.push(deleteImageFromS3(k));
     });
   await Promise.all(promises);
-  return (0, import_server_runtime25.redirect)("/admin/places");
+  return (0, import_server_runtime26.redirect)("/admin/places");
 };
 var ArrayInputWrap8 = import_styled_components53.default.div`
   display: flex;
 `;
 function AdminPlaceDetail() {
   var _a, _b, _c, _d, _e;
-  const { place: defaultPlace, companies, tags, locations, categories, reservableTypes } = (0, import_react87.useLoaderData)();
-  const [place, setPlace] = (0, import_react89.useState)(defaultPlace);
-  const [deletedReservables, setDeletedReservables] = (0, import_react89.useState)([]);
-  const [deletedGalleryImages, setDeletedGalleryImages] = (0, import_react89.useState)([]);
-  const [addedImages, setAddedImages] = (0, import_react89.useState)(1);
-  const [nextReservableId, setNextReservableId] = (0, import_react89.useState)(1);
+  const { place: defaultPlace, companies, tags, locations, categories, reservableTypes } = (0, import_react88.useLoaderData)();
+  const [place, setPlace] = (0, import_react90.useState)(defaultPlace);
+  const [deletedReservables, setDeletedReservables] = (0, import_react90.useState)([]);
+  const [deletedGalleryImages, setDeletedGalleryImages] = (0, import_react90.useState)([]);
+  const [addedImages, setAddedImages] = (0, import_react90.useState)(1);
+  const [nextReservableId, setNextReservableId] = (0, import_react90.useState)(1);
   const daysOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
   const deleteReservable2 = (e, id) => {
     if (id.length === 36) {
@@ -7771,50 +7853,50 @@ function AdminPlaceDetail() {
     }
     return "";
   };
-  return /* @__PURE__ */ import_react88.default.createElement("div", null, /* @__PURE__ */ import_react88.default.createElement(import_react87.Form, {
+  return /* @__PURE__ */ import_react89.default.createElement("div", null, /* @__PURE__ */ import_react89.default.createElement(import_react88.Form, {
     method: "post",
     encType: "multipart/form-data"
-  }, /* @__PURE__ */ import_react88.default.createElement(IdInput, {
+  }, /* @__PURE__ */ import_react89.default.createElement(IdInput, {
     name: "id",
     value: place == null ? void 0 : place.id
-  }), /* @__PURE__ */ import_react88.default.createElement(TextInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(TextInput, {
     name: "name",
     title: "Name",
     defaultValue: place == null ? void 0 : place.name
-  }), /* @__PURE__ */ import_react88.default.createElement(TextInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(TextInput, {
     name: "description",
     title: "Description",
     defaultValue: place == null ? void 0 : place.description
-  }), /* @__PURE__ */ import_react88.default.createElement(TextInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(TextInput, {
     name: "street",
     title: "Street",
     defaultValue: (place == null ? void 0 : place.street) ?? ""
-  }), /* @__PURE__ */ import_react88.default.createElement(TextInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(TextInput, {
     name: "city",
     title: "City",
     defaultValue: (place == null ? void 0 : place.city) ?? ""
-  }), /* @__PURE__ */ import_react88.default.createElement(TextInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(TextInput, {
     name: "postCode",
     title: "Postcode",
     defaultValue: (place == null ? void 0 : place.postCode) ?? ""
-  }), /* @__PURE__ */ import_react88.default.createElement(TextInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(TextInput, {
     name: "howToGetThere",
     title: "How to get here?",
     defaultValue: (place == null ? void 0 : place.howToGetThere) ?? ""
-  }), /* @__PURE__ */ import_react88.default.createElement("select", {
+  }), /* @__PURE__ */ import_react89.default.createElement("select", {
     name: "hidden",
     defaultValue: place.hidden ? "1" : "0"
-  }, /* @__PURE__ */ import_react88.default.createElement("option", {
+  }, /* @__PURE__ */ import_react89.default.createElement("option", {
     value: "1"
-  }, "Hidden"), /* @__PURE__ */ import_react88.default.createElement("option", {
+  }, "Hidden"), /* @__PURE__ */ import_react89.default.createElement("option", {
     value: "0"
-  }, "Not hidden")), /* @__PURE__ */ import_react88.default.createElement("select", {
+  }, "Not hidden")), /* @__PURE__ */ import_react89.default.createElement("select", {
     name: "companyId",
     defaultValue: (place == null ? void 0 : place.companyId) ?? ""
-  }, companies.map((c) => /* @__PURE__ */ import_react88.default.createElement("option", {
+  }, companies.map((c) => /* @__PURE__ */ import_react89.default.createElement("option", {
     key: c.id,
     value: c.id
-  }, c.name))), /* @__PURE__ */ import_react88.default.createElement(ArrayInput, {
+  }, c.name))), /* @__PURE__ */ import_react89.default.createElement(ArrayInput, {
     arrayTitle: "Reservables",
     deletedIdsName: "deletedReservable[]",
     deletedIds: deletedReservables,
@@ -7822,99 +7904,99 @@ function AdminPlaceDetail() {
       addReservable(e);
     },
     addButtonText: "Add new reservable"
-  }, place.reservables.map((r) => /* @__PURE__ */ import_react88.default.createElement(ArrayInputWrap8, {
+  }, place.reservables.map((r) => /* @__PURE__ */ import_react89.default.createElement(ArrayInputWrap8, {
     key: r.id + r.createdAt
-  }, /* @__PURE__ */ import_react88.default.createElement(IdInput, {
+  }, /* @__PURE__ */ import_react89.default.createElement(IdInput, {
     name: "reservableId[]",
     value: r.id
-  }), /* @__PURE__ */ import_react88.default.createElement(TextInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(TextInput, {
     title: "Reservable name",
     name: "reservableName[]",
     defaultValue: r.name
-  }), /* @__PURE__ */ import_react88.default.createElement(NumberInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(NumberInput, {
     title: "Minimum reservation interval (minutes)",
     name: "minimumReservationTime[]",
     defaultValue: r.minimumReservationTime
-  }), /* @__PURE__ */ import_react88.default.createElement(NumberInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(NumberInput, {
     title: "Reservations per slot",
     name: "reservationsPerSlot[]",
     defaultValue: r.reservationsPerSlot
-  }), /* @__PURE__ */ import_react88.default.createElement(NumberInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(NumberInput, {
     title: "Reservable days ahead",
     name: "reservableDaysAhead[]",
     defaultValue: r.reservableDaysAhead
-  }), /* @__PURE__ */ import_react88.default.createElement(SingleSelectorInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(SingleSelectorInput, {
     defaultValueAndText: r.reservableTypeId ? { value: r.reservableTypeId, text: findReservableTypeName(r.reservableTypeId) } : null,
     title: "Reservable type",
     name: "reservableTypeId[]",
     possibleValuesAndTexts: reservableTypes.map((rt) => ({ value: rt.id, text: rt.multiLangName ? rt.multiLangName[lang] : "" }))
-  }), /* @__PURE__ */ import_react88.default.createElement(Button2, {
+  }), /* @__PURE__ */ import_react89.default.createElement(Button2, {
     onClick: (e) => {
       deleteReservable2(e, r.id);
     }
-  }, "Delete")))), /* @__PURE__ */ import_react88.default.createElement(ArrayInput, {
+  }, "Delete")))), /* @__PURE__ */ import_react89.default.createElement(ArrayInput, {
     arrayTitle: "Opening times"
-  }, place.openingTimes.sort((a, b) => a.day - b.day).map((t) => /* @__PURE__ */ import_react88.default.createElement(ArrayInputWrap8, {
+  }, place.openingTimes.sort((a, b) => a.day - b.day).map((t) => /* @__PURE__ */ import_react89.default.createElement(ArrayInputWrap8, {
     key: t.id
-  }, /* @__PURE__ */ import_react88.default.createElement("p", null, daysOfWeek[t.day]), /* @__PURE__ */ import_react88.default.createElement(IdInput, {
+  }, /* @__PURE__ */ import_react89.default.createElement("p", null, daysOfWeek[t.day]), /* @__PURE__ */ import_react89.default.createElement(IdInput, {
     name: "openingTime[]",
     value: `${t.id}`
-  }), /* @__PURE__ */ import_react88.default.createElement(IdInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(IdInput, {
     name: "day[]",
     value: `${t.day}`
-  }), /* @__PURE__ */ import_react88.default.createElement(TimeInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(TimeInput, {
     title: "Open:",
     name: "open[]",
     defaultValue: new Date(t.open)
-  }), /* @__PURE__ */ import_react88.default.createElement(TimeInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(TimeInput, {
     title: "Close:",
     name: "close[]",
     defaultValue: new Date(t.close)
-  })))), /* @__PURE__ */ import_react88.default.createElement(MultiSelectorInput, {
+  })))), /* @__PURE__ */ import_react89.default.createElement(MultiSelectorInput, {
     possibleValuesAndTexts: tags.map((t) => ({ value: t.id, text: t.multiLangName ? t.multiLangName[lang] : "" })),
     defaultValuesAndTexts: place.tags.map((t) => ({ value: t.id, text: t.multiLangName ? t.multiLangName[lang] : "" })),
     removedName: "removedTagIds[]",
     addedName: "addedTagIds[]"
-  }), /* @__PURE__ */ import_react88.default.createElement(MultiSelectorInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(MultiSelectorInput, {
     possibleValuesAndTexts: categories.map((c) => ({ value: c.id, text: c.multiLangName ? c.multiLangName[lang] : "" })),
     defaultValuesAndTexts: place.categories.map((c) => ({ value: c.id, text: c.multiLangName ? c.multiLangName[lang] : "" })),
     removedName: "removedCategoryIds[]",
     addedName: "addedCategoryIds[]"
-  }), /* @__PURE__ */ import_react88.default.createElement(SingleSelectorInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement(SingleSelectorInput, {
     possibleValuesAndTexts: locations.map((l) => ({ value: l.id, text: `${l.multiLangCity ? l.multiLangCity[lang] : ""}, ${l.multiLangCountry ? l.multiLangCountry[lang] : ""}` })),
     name: "locationId",
     defaultValueAndText: {
       value: ((_a = place.Location) == null ? void 0 : _a.id) ?? "",
       text: place.Location ? `${((_b = place.Location) == null ? void 0 : _b.multiLangCity) ? (_c = place.Location) == null ? void 0 : _c.multiLangCity[lang] : ""}, ${((_d = place.Location) == null ? void 0 : _d.multiLangCountry) ? (_e = place.Location) == null ? void 0 : _e.multiLangCountry[lang] : ""}` : ""
     }
-  }), /* @__PURE__ */ import_react88.default.createElement("p", null, "Profile picture"), place.profilePicUrl && /* @__PURE__ */ import_react88.default.createElement("img", {
+  }), /* @__PURE__ */ import_react89.default.createElement("p", null, "Profile picture"), place.profilePicUrl && /* @__PURE__ */ import_react89.default.createElement("img", {
     loading: "lazy",
     style: { height: "120px", width: "120px" },
     src: place.profilePicUrl
-  }), /* @__PURE__ */ import_react88.default.createElement("p", null, "Replace:"), /* @__PURE__ */ import_react88.default.createElement(ImageInput, {
+  }), /* @__PURE__ */ import_react89.default.createElement("p", null, "Replace:"), /* @__PURE__ */ import_react89.default.createElement(ImageInput, {
     name: "profilePic"
-  }), /* @__PURE__ */ import_react88.default.createElement("p", null, "Gallery pictures"), place.galleryPicUrls.map((g, i) => !deletedGalleryImages.includes(g) && /* @__PURE__ */ import_react88.default.createElement("div", {
+  }), /* @__PURE__ */ import_react89.default.createElement("p", null, "Gallery pictures"), place.galleryPicUrls.map((g, i) => !deletedGalleryImages.includes(g) && /* @__PURE__ */ import_react89.default.createElement("div", {
     key: i
-  }, /* @__PURE__ */ import_react88.default.createElement("img", {
+  }, /* @__PURE__ */ import_react89.default.createElement("img", {
     loading: "lazy",
     style: { height: "120px", width: "120px" },
     src: g ?? ""
-  }), /* @__PURE__ */ import_react88.default.createElement(Button2, {
+  }), /* @__PURE__ */ import_react89.default.createElement(Button2, {
     onClick: () => {
       setDeletedGalleryImages([...deletedGalleryImages, g]);
     }
-  }, "Delete"))), deletedGalleryImages.map((d, i) => /* @__PURE__ */ import_react88.default.createElement(IdInput, {
+  }, "Delete"))), deletedGalleryImages.map((d, i) => /* @__PURE__ */ import_react89.default.createElement(IdInput, {
     key: i,
     name: "deletedGalleryPicUrls[]",
     value: d
-  })), [...Array(addedImages).keys()].map((i) => /* @__PURE__ */ import_react88.default.createElement(ImageInput, {
+  })), [...Array(addedImages).keys()].map((i) => /* @__PURE__ */ import_react89.default.createElement(ImageInput, {
     onChange: (value) => {
       if (value != "")
         setAddedImages(addedImages + 1);
     },
     key: i,
     name: "galleryPic[]"
-  })), /* @__PURE__ */ import_react88.default.createElement("input", {
+  })), /* @__PURE__ */ import_react89.default.createElement("input", {
     type: "submit"
   })));
 }
@@ -7925,21 +8007,21 @@ __export(places_exports3, {
   default: () => PlacesAdminIndex,
   loader: () => loader38
 });
-var import_react90 = require("@remix-run/react");
+var import_react91 = require("@remix-run/react");
 var loader38 = async () => {
   const places = await getAllPlaces();
   return { places };
 };
 function PlacesAdminIndex() {
-  const { places } = (0, import_react90.useLoaderData)();
+  const { places } = (0, import_react91.useLoaderData)();
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, places.map((p) => {
     var _a;
     return /* @__PURE__ */ React.createElement("div", {
       key: p.id
-    }, /* @__PURE__ */ React.createElement("p", null, "Name (Company): ", p.name, " (", (_a = p.company) == null ? void 0 : _a.name, ")"), /* @__PURE__ */ React.createElement(import_react90.Link, {
+    }, /* @__PURE__ */ React.createElement("p", null, "Name (Company): ", p.name, " (", (_a = p.company) == null ? void 0 : _a.name, ")"), /* @__PURE__ */ React.createElement(import_react91.Link, {
       to: `/admin/places/${p.id}`
     }, "View / Edit"));
-  })), /* @__PURE__ */ React.createElement(import_react90.Link, {
+  })), /* @__PURE__ */ React.createElement(import_react91.Link, {
     to: "/admin/places/new"
   }, "New Place"));
 }
@@ -7947,17 +8029,17 @@ function PlacesAdminIndex() {
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/places/new.tsx
 var new_exports5 = {};
 __export(new_exports5, {
-  action: () => action23,
+  action: () => action24,
   default: () => AdminPlaceDetail2,
   loader: () => loader39
 });
-var import_react91 = require("@remix-run/react");
-var import_server_runtime26 = require("@remix-run/server-runtime");
+var import_react92 = require("@remix-run/react");
+var import_server_runtime27 = require("@remix-run/server-runtime");
 var import_styled_components54 = __toESM(require("styled-components"));
 var loader39 = async ({ request, params }) => {
-  return (0, import_server_runtime26.json)({ companies: await getCompanyList({ name: "" }) });
+  return (0, import_server_runtime27.json)({ companies: await getCompanyList({ name: "" }) });
 };
-var action23 = async ({ request }) => {
+var action24 = async ({ request }) => {
   const { getFormItem } = await getFormEssentials(request);
   const place = {
     name: getFormItem("placeName"),
@@ -7974,17 +8056,17 @@ var action23 = async ({ request }) => {
     placeId: createdPlace.id
   }));
   await Promise.all(openingTimes.sort((a, b) => a.day - b.day).map((o) => createOpeningTime(o)));
-  return (0, import_server_runtime26.redirect)("/admin/places");
+  return (0, import_server_runtime27.redirect)("/admin/places");
 };
 var ArrayInputWrap9 = import_styled_components54.default.div`
   display: flex;
 `;
 function AdminPlaceDetail2() {
   var _a;
-  const a = (0, import_react91.useActionData)();
-  const { companies } = (0, import_react91.useLoaderData)();
+  const a = (0, import_react92.useActionData)();
+  const { companies } = (0, import_react92.useLoaderData)();
   const company = { id: "-1", name: (_a = a == null ? void 0 : a.field) == null ? void 0 : _a.name };
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "COMPANY ", company.name), /* @__PURE__ */ React.createElement(import_react91.Form, {
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "COMPANY ", company.name), /* @__PURE__ */ React.createElement(import_react92.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(TextInput, {
     name: "placeName",
@@ -8000,37 +8082,162 @@ function AdminPlaceDetail2() {
   })));
 }
 
+// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/users.tsx
+var users_exports = {};
+__export(users_exports, {
+  default: () => CompaniesAdmin3,
+  loader: () => loader40
+});
+var import_react93 = require("@remix-run/react");
+var loader40 = async ({ request, params }) => {
+  return {};
+};
+function CompaniesAdmin3() {
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "USER (ATTENDANCE) ADMIN"), /* @__PURE__ */ React.createElement(import_react93.Outlet, null));
+}
+
+// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/users/index.tsx
+var users_exports2 = {};
+__export(users_exports2, {
+  action: () => action25,
+  default: () => ReservationAdminList2,
+  loader: () => loader41
+});
+var import_react94 = require("@remix-run/react");
+var import_server_runtime28 = require("@remix-run/server-runtime");
+var import_styled_components56 = __toESM(require("styled-components"));
+
+// app/components/admin/user-stat-summary.tsx
+var import_styled_components55 = __toESM(require("styled-components"));
+var Wrap22 = import_styled_components55.default.div`
+  display: flex;
+  gap: 2rem;
+`;
+var Title18 = import_styled_components55.default.p`
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin: 0;
+  margin-top: 1rem;
+  color: ${styles.colors.action};
+`;
+var Value6 = import_styled_components55.default.p`
+  font-size: 1.2rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0;
+`;
+var Card = import_styled_components55.default.div`
+  margin: 0.2rem;
+  width: 100%;
+  padding: 1rem;
+`;
+var UserReservationSummary = ({ user }) => {
+  const attended = user.reservationGroups.filter((g) => g.attended === true).length;
+  const missed = user.reservationGroups.filter((g) => g.attended === false).length;
+  const total = user.reservationGroups.length;
+  return /* @__PURE__ */ React.createElement(Wrap22, null, /* @__PURE__ */ React.createElement(Card, null, /* @__PURE__ */ React.createElement(Title18, null, user.username), /* @__PURE__ */ React.createElement(Value6, null, "Attended: ", attended), /* @__PURE__ */ React.createElement(Value6, null, "Missed: ", missed), /* @__PURE__ */ React.createElement(Value6, null, "Unknown: ", total - missed - attended), /* @__PURE__ */ React.createElement(Value6, null, "Total: ", total)));
+};
+
+// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/users/index.tsx
+var loader41 = async () => {
+  const users = await getUserListForAttendance();
+  return (0, import_server_runtime28.json)({ users: users.map((u) => ({ username: u.username, reservationGroups: u.reservationGroups })) });
+};
+var action25 = async ({ request }) => {
+  var _a, _b, _c, _d;
+  const formData = await request.formData();
+  const reservationGroupId = (_a = formData.get("rgId")) == null ? void 0 : _a.toString();
+  const action28 = (_b = formData.get("action")) == null ? void 0 : _b.toString();
+  if (!reservationGroupId || !action28) {
+    return {};
+  }
+  const reservationGroup = await getReservationGroupForConfirmationEmail({ id: reservationGroupId });
+  const promises = [];
+  reservationGroup == null ? void 0 : reservationGroup.reservations.forEach((r) => {
+    if (action28 == "confirm_preferred") {
+      if (!r.backup) {
+        promises.push(setStatusOfReservation({ id: r.id, status: 1 /* Confirmed */ }));
+      } else {
+        promises.push(setStatusOfReservation({ id: r.id, status: 3 /* Cancelled */ }));
+      }
+    } else if (action28 == "unavailable") {
+      promises.push(setStatusOfReservation({ id: r.id, status: 2 /* Rejected */ }));
+    } else if (action28 == "confirm_backup") {
+      if (r.backup) {
+        promises.push(setStatusOfReservation({ id: r.id, status: 1 /* Confirmed */ }));
+      } else {
+        promises.push(setStatusOfReservation({ id: r.id, status: 2 /* Rejected */ }));
+      }
+    }
+  });
+  await Promise.all(promises);
+  const reservablesWithBackup = (reservationGroup == null ? void 0 : reservationGroup.reservations.filter((r) => !r.backup).map((x) => x.reservable).map((r, i) => ({
+    reservable: r,
+    backup: false
+  }))) ?? [];
+  const typesWithAmount = [];
+  const reservableTypes = reservablesWithBackup.map((r) => {
+    var _a2;
+    return (_a2 = r == null ? void 0 : r.reservable) == null ? void 0 : _a2.ReservableType;
+  });
+  reservableTypes.forEach((rt) => {
+    var _a2;
+    let cur = typesWithAmount.find((t) => {
+      var _a3;
+      return t.type == ((_a3 = rt == null ? void 0 : rt.multiLangName) == null ? void 0 : _a3.english);
+    });
+    if (cur) {
+      cur.amount += 1;
+    } else {
+      typesWithAmount.push({ amount: 1, type: ((_a2 = rt == null ? void 0 : rt.multiLangName) == null ? void 0 : _a2.english) ?? "" });
+    }
+  });
+  if ((reservationGroup == null ? void 0 : reservationGroup.user) && ((_c = reservationGroup == null ? void 0 : reservationGroup.reservations[0].reservable) == null ? void 0 : _c.place)) {
+    await sendStatusUpdateEmail(getBaseUrl(request), (_d = reservationGroup == null ? void 0 : reservationGroup.user) == null ? void 0 : _d.email, action28, reservationGroup.reservations[0].reservable.place.name, typesWithAmount);
+  }
+  return {};
+};
+var Title19 = import_styled_components56.default.h4`
+  
+`;
+function ReservationAdminList2() {
+  const { users } = (0, import_react94.useLoaderData)();
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Title19, null, "Users"), users.map((user, i) => /* @__PURE__ */ React.createElement(UserReservationSummary, {
+    key: i,
+    user
+  })));
+}
+
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/tags.tsx
 var tags_exports = {};
 __export(tags_exports, {
   default: () => TagAdmin2,
-  loader: () => loader40
+  loader: () => loader42
 });
-var import_react92 = require("@remix-run/react");
-var loader40 = async ({ request, params }) => {
+var import_react95 = require("@remix-run/react");
+var loader42 = async ({ request, params }) => {
   return {};
 };
 function TagAdmin2() {
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "TAG ADMIN"), /* @__PURE__ */ React.createElement(import_react92.Outlet, null));
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, "TAG ADMIN"), /* @__PURE__ */ React.createElement(import_react95.Outlet, null));
 }
 
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/tags/$tagId.tsx
 var tagId_exports = {};
 __export(tagId_exports, {
-  action: () => action24,
+  action: () => action26,
   default: () => AdminTagDetail,
-  loader: () => loader41
+  loader: () => loader43
 });
-var import_react93 = require("@remix-run/react");
-var import_server_runtime27 = require("@remix-run/server-runtime");
-var import_styled_components55 = __toESM(require("styled-components"));
-var loader41 = async ({ request, params }) => {
+var import_react96 = require("@remix-run/react");
+var import_server_runtime29 = require("@remix-run/server-runtime");
+var import_styled_components57 = __toESM(require("styled-components"));
+var loader43 = async ({ request, params }) => {
   if (!params.tagId)
-    return (0, import_server_runtime27.json)({});
+    return (0, import_server_runtime29.json)({});
   const x = { tag: await getTag({ id: params.tagId }) };
-  return (0, import_server_runtime27.json)({ tag: await getTag({ id: params.tagId }) });
+  return (0, import_server_runtime29.json)({ tag: await getTag({ id: params.tagId }) });
 };
-var action24 = async ({ request }) => {
+var action26 = async ({ request }) => {
   const { getFormItem, getFormItems } = await getFormEssentials(request);
   const tag = {
     id: getFormItem("id"),
@@ -8038,15 +8245,15 @@ var action24 = async ({ request }) => {
     multiLangDesc: { id: "-1", czech: getFormItem("descriptionCzech"), english: getFormItem("nameEnglish") }
   };
   await updateTag(tag);
-  return (0, import_server_runtime27.redirect)("/admin/tags");
+  return (0, import_server_runtime29.redirect)("/admin/tags");
 };
-var ArrayInputWrap10 = import_styled_components55.default.div`
+var ArrayInputWrap10 = import_styled_components57.default.div`
   display: flex;
 `;
 function AdminTagDetail() {
   var _a, _b, _c, _d, _e;
-  const { tag } = (0, import_react93.useLoaderData)();
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "TAG: ", (_a = tag.multiLangName) == null ? void 0 : _a.czech), /* @__PURE__ */ React.createElement(import_react93.Form, {
+  const { tag } = (0, import_react96.useLoaderData)();
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "TAG: ", (_a = tag.multiLangName) == null ? void 0 : _a.czech), /* @__PURE__ */ React.createElement(import_react96.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(IdInput, {
     name: "id",
@@ -8076,21 +8283,21 @@ function AdminTagDetail() {
 var tags_exports2 = {};
 __export(tags_exports2, {
   default: () => CompaniesAdminIndex3,
-  loader: () => loader42
+  loader: () => loader44
 });
-var import_react94 = require("@remix-run/react");
-var loader42 = async ({ request, params }) => {
+var import_react97 = require("@remix-run/react");
+var loader44 = async ({ request, params }) => {
   const tags = await getAllTags();
   return { tags };
 };
 function CompaniesAdminIndex3() {
-  const { tags } = (0, import_react94.useLoaderData)();
+  const { tags } = (0, import_react97.useLoaderData)();
   const { lang } = useLangs();
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, tags.map((t) => /* @__PURE__ */ React.createElement("div", {
     key: t.id
-  }, /* @__PURE__ */ React.createElement("p", null, "Name: ", t.multiLangName && t.multiLangName[lang]), /* @__PURE__ */ React.createElement("p", null, "Description: ", t.multiLangDesc && t.multiLangDesc[lang]), /* @__PURE__ */ React.createElement(import_react94.Link, {
+  }, /* @__PURE__ */ React.createElement("p", null, "Name: ", t.multiLangName && t.multiLangName[lang]), /* @__PURE__ */ React.createElement("p", null, "Description: ", t.multiLangDesc && t.multiLangDesc[lang]), /* @__PURE__ */ React.createElement(import_react97.Link, {
     to: `/admin/tags/${t.id}`
-  }, "View / Edit"))), /* @__PURE__ */ React.createElement(import_react94.Link, {
+  }, "View / Edit"))), /* @__PURE__ */ React.createElement(import_react97.Link, {
     to: "/admin/tags/new"
   }, "New tag")));
 }
@@ -8098,17 +8305,17 @@ function CompaniesAdminIndex3() {
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/tags/new.tsx
 var new_exports6 = {};
 __export(new_exports6, {
-  action: () => action25,
+  action: () => action27,
   default: () => AdminTagNew,
-  loader: () => loader43
+  loader: () => loader45
 });
-var import_react95 = require("@remix-run/react");
-var import_server_runtime28 = require("@remix-run/server-runtime");
-var import_styled_components56 = __toESM(require("styled-components"));
-var loader43 = async ({ request, params }) => {
+var import_react98 = require("@remix-run/react");
+var import_server_runtime30 = require("@remix-run/server-runtime");
+var import_styled_components58 = __toESM(require("styled-components"));
+var loader45 = async ({ request, params }) => {
   return {};
 };
-var action25 = async ({ request }) => {
+var action27 = async ({ request }) => {
   const { getFormItem, getFormItems } = await getFormEssentials(request);
   const tag = {
     multiLangName: {
@@ -8126,15 +8333,15 @@ var action25 = async ({ request }) => {
     return badRequest({ field: { nameCzech: tag.multiLangName.czech, nameEnglish: tag.multiLangName.english, descriptionCzech: tag.multiLangDesc.czech, descriptionEnglish: tag.multiLangDesc.english } });
   }
   await createTag(tag);
-  return (0, import_server_runtime28.redirect)("/admin/tags");
+  return (0, import_server_runtime30.redirect)("/admin/tags");
 };
-var ArrayInputWrap11 = import_styled_components56.default.div`
+var ArrayInputWrap11 = import_styled_components58.default.div`
   display: flex;
 `;
 function AdminTagNew() {
   var _a, _b, _c, _d, _e;
-  const a = (0, import_react95.useActionData)();
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "TAG ", (_a = a == null ? void 0 : a.field) == null ? void 0 : _a.nameCzech), /* @__PURE__ */ React.createElement(import_react95.Form, {
+  const a = (0, import_react98.useActionData)();
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "TAG ", (_a = a == null ? void 0 : a.field) == null ? void 0 : _a.nameCzech), /* @__PURE__ */ React.createElement(import_react98.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(IdInput, {
     name: "id",
@@ -8165,15 +8372,15 @@ var routes_exports = {};
 __export(routes_exports, {
   default: () => About2
 });
-var import_react96 = require("@remix-run/react");
-var import_react97 = __toESM(require("react"));
-var import_styled_components58 = __toESM(require("styled-components"));
+var import_react99 = require("@remix-run/react");
+var import_react100 = __toESM(require("react"));
+var import_styled_components60 = __toESM(require("styled-components"));
 var import_react_fontawesome = require("@fortawesome/react-fontawesome");
 var import_fa5 = require("react-icons/fa");
 
 // app/components/scroll-effects/index.tsx
-var import_styled_components57 = __toESM(require("styled-components"));
-var ScrollEffectWrap = import_styled_components57.default.div`
+var import_styled_components59 = __toESM(require("styled-components"));
+var ScrollEffectWrap = import_styled_components59.default.div`
   position: fixed;
   top: 85x;
   transition: opacity 0.5s;
@@ -8182,7 +8389,7 @@ var ScrollEffectWrap = import_styled_components57.default.div`
   height: calc(100vh - 90px);
   width: 100vw;
 `;
-var ScrollEffectInner = import_styled_components57.default.div`
+var ScrollEffectInner = import_styled_components59.default.div`
   height: ${(props) => props.space * 100}%;
   position: absolute;
   z-index: 3;
@@ -8317,7 +8524,7 @@ var questions = [
     icon: import_fa5.FaBackward
   }
 ];
-var H1 = import_styled_components58.default.h1`
+var H1 = import_styled_components60.default.h1`
   padding-top: 12%;
   margin-top: 0rem;
   margin-bottom: 1rem;
@@ -8325,14 +8532,14 @@ var H1 = import_styled_components58.default.h1`
   color: ${styles.colors.white};
   text-align: center;
 `;
-var H1X = import_styled_components58.default.h1`
+var H1X = import_styled_components60.default.h1`
   font-size: 1.5rem;
   width: 80%;
   margin: 0.5rem auto;
   color: ${styles.colors.gray[30]};
   text-align: center;
 `;
-var Button3 = import_styled_components58.default.button`
+var Button3 = import_styled_components60.default.button`
   color: ${styles.colors.white};
   background-color: ${styles.colors.primary};
   border-radius: 0.4rem;
@@ -8342,7 +8549,7 @@ var Button3 = import_styled_components58.default.button`
   display: block;
   border: none;
 `;
-var Wrapper = import_styled_components58.default.h1`
+var Wrapper = import_styled_components60.default.h1`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8352,53 +8559,53 @@ var Wrapper = import_styled_components58.default.h1`
   color: ${styles.colors.primary};
   background-color: ${styles.colors.gray};
 `;
-var ALink = (0, import_styled_components58.default)(import_react96.Link)`
+var ALink = (0, import_styled_components60.default)(import_react99.Link)`
   text-decoration: none;
 `;
-var Arrow = (0, import_styled_components58.default)(import_react_fontawesome.FontAwesomeIcon)`
+var Arrow = (0, import_styled_components60.default)(import_react_fontawesome.FontAwesomeIcon)`
   display: flex;
   margin: 0 auto;
   font-size: 2.5rem;
   color: ${styles.colors.primary};
 `;
-var FirstQuestionMark = (0, import_styled_components58.default)(import_react_fontawesome.FontAwesomeIcon)`
+var FirstQuestionMark = (0, import_styled_components60.default)(import_react_fontawesome.FontAwesomeIcon)`
   right: 5rem;
   margin-top: 3rem;
   font-size: 2.5rem;
   transform: rotate(25deg);
   position: absolute;
 `;
-var SecondQuestionMark = (0, import_styled_components58.default)(import_react_fontawesome.FontAwesomeIcon)`
+var SecondQuestionMark = (0, import_styled_components60.default)(import_react_fontawesome.FontAwesomeIcon)`
   left: 10rem;
   margin-top: 5rem;
   font-size: 2.5rem;
   transform: rotate(-25deg);
   position: absolute;
 `;
-var ThirdQuestionMark = (0, import_styled_components58.default)(import_react_fontawesome.FontAwesomeIcon)`
+var ThirdQuestionMark = (0, import_styled_components60.default)(import_react_fontawesome.FontAwesomeIcon)`
   left: 15rem;
   margin-top: 25rem;
   font-size: 2.5rem;
   transform: rotate(25deg);
   position: absolute;
 `;
-var FourthQuestionMark = (0, import_styled_components58.default)(import_react_fontawesome.FontAwesomeIcon)`
+var FourthQuestionMark = (0, import_styled_components60.default)(import_react_fontawesome.FontAwesomeIcon)`
   right: 20rem;
   margin-top: 20rem;
   font-size: 2.5rem;
   transform: rotate(-25deg);
   position: absolute;
 `;
-var fade = import_styled_components58.keyframes`
+var fade = import_styled_components60.keyframes`
   0% { opacity: 0 }
   30% { opacity: 1 }
   60% { opacity: 0 }
   100% { opacity: 0 }
 `;
-var FaAngleDownA = (0, import_styled_components58.default)(import_fa5.FaAngleDown)`
+var FaAngleDownA = (0, import_styled_components60.default)(import_fa5.FaAngleDown)`
   animation: ${fade} 1.5s linear 0s infinite;
 `;
-var ScrollItem = (0, import_styled_components58.default)(import_react_spring.animated.div).attrs((props) => {
+var ScrollItem = (0, import_styled_components60.default)(import_react_spring.animated.div).attrs((props) => {
   const sp = props.transform.split(",")[1].split("px")[0];
   if (sp < 1500 && sp > -800) {
     return {
@@ -8421,7 +8628,7 @@ var ScrollItem = (0, import_styled_components58.default)(import_react_spring.ani
   width: 100%;
   height: 100%;
 `;
-var Sphere = (0, import_styled_components58.default)(ScrollItem)`
+var Sphere = (0, import_styled_components60.default)(ScrollItem)`
   height: 200px;
   width: 200px;
   border-radius: 100px;
@@ -8431,56 +8638,56 @@ var Sphere = (0, import_styled_components58.default)(ScrollItem)`
   transform: translateX(-50%);
   background-color: ${styles.colors.primary};
 `;
-var AboutHeader = import_styled_components58.default.div`
+var AboutHeader = import_styled_components60.default.div`
   background-color: ${styles.colors.primary};
   width: 100%;
   padding-bottom: 4rem;
 `;
-var AboutSubHeader = import_styled_components58.default.div`
+var AboutSubHeader = import_styled_components60.default.div`
   height: 300px;
   width: 100%;
   box-shadow: 0px -2px 24px -12px #33333399;
   background-color: ${styles.colors.gray[20]};
 `;
-var AboutSubSubHeader = import_styled_components58.default.div`
+var AboutSubSubHeader = import_styled_components60.default.div`
   height: 80%;
   width: 100%;
   top: 0;
   position: absolute;
   background-color: ${styles.colors.white};
 `;
-var PurpleSection = import_styled_components58.default.div`
+var PurpleSection = import_styled_components60.default.div`
   height: 600px;
   width: 100%;
   top: 0;
   position: absolute;
   background-color: ${styles.colors.primary};
 `;
-var ScrollDownIndicator = () => /* @__PURE__ */ import_react97.default.createElement("div", {
+var ScrollDownIndicator = () => /* @__PURE__ */ import_react100.default.createElement("div", {
   style: { width: "100%", marginTop: "15%" }
-}, /* @__PURE__ */ import_react97.default.createElement(H1X, null, "Scroll down to find out!"), /* @__PURE__ */ import_react97.default.createElement("div", {
+}, /* @__PURE__ */ import_react100.default.createElement(H1X, null, "Scroll down to find out!"), /* @__PURE__ */ import_react100.default.createElement("div", {
   style: { textAlign: "center", marginTop: "2rem" }
-}, /* @__PURE__ */ import_react97.default.createElement(FaAngleDownA, {
+}, /* @__PURE__ */ import_react100.default.createElement(FaAngleDownA, {
   size: 24,
   color: styles.colors.white,
   style: { animationDelay: "-1s" },
   className: "fade-arrow"
-})), /* @__PURE__ */ import_react97.default.createElement("div", {
+})), /* @__PURE__ */ import_react100.default.createElement("div", {
   style: { textAlign: "center" }
-}, /* @__PURE__ */ import_react97.default.createElement(FaAngleDownA, {
+}, /* @__PURE__ */ import_react100.default.createElement(FaAngleDownA, {
   size: 24,
   color: styles.colors.white,
   style: { animationDelay: "-0.5s" },
   className: "fade-arrow"
-})), /* @__PURE__ */ import_react97.default.createElement("div", {
+})), /* @__PURE__ */ import_react100.default.createElement("div", {
   style: { textAlign: "center" }
-}, /* @__PURE__ */ import_react97.default.createElement(FaAngleDownA, {
+}, /* @__PURE__ */ import_react100.default.createElement(FaAngleDownA, {
   size: 24,
   color: styles.colors.white,
   style: { animationDelay: "0s" },
   className: "fade-arrow"
 })));
-var Card = import_styled_components58.default.div`
+var Card2 = import_styled_components60.default.div`
   padding: 12px 24px;
   border-radius: 12px;
   max-width: 576px;
@@ -8488,20 +8695,20 @@ var Card = import_styled_components58.default.div`
   /* background-color: ${styles.colors.primary}; */
 `;
 var QuestionCard = ({ title, children, white }) => {
-  return /* @__PURE__ */ import_react97.default.createElement("div", {
+  return /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { margin: "12rem auto", maxWidth: "938px", zIndex: 2, position: "relative", display: "flex" }
-  }, /* @__PURE__ */ import_react97.default.createElement(Card, null, /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, /* @__PURE__ */ import_react100.default.createElement(Card2, null, /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: white ? styles.colors.white : styles.colors.primary }
-  }, title), /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, title), /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { fontSize: "1rem", fontWeight: "400", marginTop: "0.5rem", color: white ? styles.colors.white : styles.colors.black }
   }, children)));
 };
 function About2() {
   const { setLandingPage } = useWhereAreWe();
-  const scrollEffectWrap = (0, import_react97.useRef)(null);
-  const requestRef = (0, import_react97.useRef)(null);
-  const [screenHeight, setScreenHeight] = (0, import_react97.useState)(-1);
-  const [yScrollPixels, setYScrollPixels] = (0, import_react97.useState)(0);
+  const scrollEffectWrap = (0, import_react100.useRef)(null);
+  const requestRef = (0, import_react100.useRef)(null);
+  const [screenHeight, setScreenHeight] = (0, import_react100.useState)(-1);
+  const [yScrollPixels, setYScrollPixels] = (0, import_react100.useState)(0);
   const headerEffect = {
     startValue: 85,
     slope: -0.5
@@ -8518,27 +8725,27 @@ function About2() {
     startValue: screenHeight * 1.5,
     slope: -1.2
   };
-  const subHeaderEasing = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
+  const subHeaderEasing = (0, import_react100.useMemo)(() => getEasingFunctionXandZ({
     start: { value: screenHeight * 0.78, slope: -1.5 },
     stand: { scroll: 800, value: 0 },
     end: { scroll: 1500, slope: -1 }
   }), [screenHeight]);
-  const subSubHeaderEasing = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
+  const subSubHeaderEasing = (0, import_react100.useMemo)(() => getEasingFunctionXandZ({
     start: { value: screenHeight * 0.88, slope: -1.7 },
     stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
     end: { scroll: screenHeight * 0.82, slope: -1.7 }
   }), [screenHeight]);
-  const subSubHeaderBlobEasing = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
+  const subSubHeaderBlobEasing = (0, import_react100.useMemo)(() => getEasingFunctionXandZ({
     start: { value: screenHeight * 0.92, slope: -1.8 },
     stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
     end: { scroll: screenHeight * 0.82, slope: -2 }
   }), [screenHeight]);
-  const subSubHeaderIconsEasing = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
+  const subSubHeaderIconsEasing = (0, import_react100.useMemo)(() => getEasingFunctionXandZ({
     start: { value: screenHeight * 0.96, slope: -1.9 },
     stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
     end: { scroll: screenHeight * 0.82, slope: -2.1 }
   }), [screenHeight]);
-  const purpleSectionIconEasings = (0, import_react97.useMemo)(() => [...Array(10).keys()].map((i) => getEasingFunctionXandZ({
+  const purpleSectionIconEasings = (0, import_react100.useMemo)(() => [...Array(10).keys()].map((i) => getEasingFunctionXandZ({
     start: { value: screenHeight * 0.9 + (Math.random() - 0.5) * 0.8, slope: -1.2 },
     stand: { scroll: screenHeight * 0.7, value: 0.8 * screenHeight },
     end: { scroll: screenHeight * 1.2 + (Math.random() - 0.5) * 0.2, slope: -2.1 + (Math.random() - 0.5) * 0.8 }
@@ -8547,12 +8754,12 @@ function About2() {
     startValue: screenHeight * 2.2,
     slope: -1.3
   };
-  const explanationSection = (0, import_react97.useMemo)(() => getEasingFunctionXandZ({
+  const explanationSection = (0, import_react100.useMemo)(() => getEasingFunctionXandZ({
     start: { value: screenHeight * 1.4, slope: -1 },
     stand: { scroll: screenHeight * 1.5, value: 0.3 * screenHeight },
     end: { scroll: screenHeight * 1.8, slope: -1.2 }
   }), [screenHeight]);
-  import_react97.default.useEffect(() => {
+  import_react100.default.useEffect(() => {
     setLandingPage(true);
     setScreenHeight(screen.height);
     const handleScroll = (ev) => {
@@ -8576,7 +8783,7 @@ function About2() {
         c.onscroll = null;
     };
   }, []);
-  const randomPositions = (0, import_react97.useMemo)(() => [
+  const randomPositions = (0, import_react100.useMemo)(() => [
     [0, 0, 20],
     [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
     [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
@@ -8588,102 +8795,102 @@ function About2() {
     [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
     [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2]
   ], []);
-  return /* @__PURE__ */ import_react97.default.createElement(import_react97.default.Fragment, null, /* @__PURE__ */ import_react97.default.createElement(ScrollEffectWrap, {
+  return /* @__PURE__ */ import_react100.default.createElement(import_react100.default.Fragment, null, /* @__PURE__ */ import_react100.default.createElement(ScrollEffectWrap, {
     style: screenHeight == -1 ? { opacity: 0 } : { opacity: 1 },
     ref: scrollEffectWrap
-  }, /* @__PURE__ */ import_react97.default.createElement(ScrollEffectInner, {
+  }, /* @__PURE__ */ import_react100.default.createElement(ScrollEffectInner, {
     space: 10
-  }), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+  }), /* @__PURE__ */ import_react100.default.createElement(ScrollItem, {
     transform: `translate(0px, ${noEase(yScrollPixels, headerEffect)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement(AboutHeader, null, /* @__PURE__ */ import_react97.default.createElement(H1, null, "What is Reserveroo?"), /* @__PURE__ */ import_react97.default.createElement(IconRow, null), /* @__PURE__ */ import_react97.default.createElement(ScrollDownIndicator, null))), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+  }, /* @__PURE__ */ import_react100.default.createElement(AboutHeader, null, /* @__PURE__ */ import_react100.default.createElement(H1, null, "What is Reserveroo?"), /* @__PURE__ */ import_react100.default.createElement(IconRow, null), /* @__PURE__ */ import_react100.default.createElement(ScrollDownIndicator, null))), /* @__PURE__ */ import_react100.default.createElement(ScrollItem, {
     transform: `translate(0px, ${easeInOut(yScrollPixels, subHeaderEasing)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement(AboutSubHeader, null)), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+  }, /* @__PURE__ */ import_react100.default.createElement(AboutSubHeader, null)), /* @__PURE__ */ import_react100.default.createElement(ScrollItem, {
     transform: `translate(0px, ${easeInOut(yScrollPixels, subSubHeaderEasing)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement(QuestionCard, {
+  }, /* @__PURE__ */ import_react100.default.createElement(QuestionCard, {
     white: false,
     title: questions[0].title
-  }, questions[0].question), /* @__PURE__ */ import_react97.default.createElement(AboutSubSubHeader, null)), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+  }, questions[0].question), /* @__PURE__ */ import_react100.default.createElement(AboutSubSubHeader, null)), /* @__PURE__ */ import_react100.default.createElement(ScrollItem, {
     transform: `translate(0px, ${easeInOut(yScrollPixels, subSubHeaderBlobEasing)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+  }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { position: "relative", maxWidth: "936px", margin: "12rem auto" }
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+  }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { position: "absolute", right: "0", top: "0", width: "322px" }
-  }, /* @__PURE__ */ import_react97.default.createElement("svg", {
+  }, /* @__PURE__ */ import_react100.default.createElement("svg", {
     width: "322",
     height: "260",
     viewBox: "0 0 322 260",
     fill: "none",
     xmlns: "http://www.w3.org/2000/svg"
-  }, /* @__PURE__ */ import_react97.default.createElement("path", {
+  }, /* @__PURE__ */ import_react100.default.createElement("path", {
     d: "M298.961 52.0567C267.327 19.5504 237.601 21.3634 192.442 14.8109C192.442 14.8109 106.606 1.36085 77.9936 1.36101C49.3814 1.36116 9.73876 -4.50162 4.22285 31.0199C-1.34129 66.8519 0.392164 55.3865 8.70401 90.6821C19.4841 136.459 -11.2671 162.591 16.288 200.695C40.3495 233.968 54.8386 244.056 94.5404 254.495C140.747 266.643 178.225 252.4 222.088 233.458C273.136 211.413 290.801 196.691 306.89 143.447C320.644 97.9325 332.117 86.1257 298.961 52.0567Z",
     fill: "#2E294E",
     stroke: "#F1F1F1"
-  }))))), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+  }))))), /* @__PURE__ */ import_react100.default.createElement(ScrollItem, {
     transform: `translate(0px, ${easeInOut(yScrollPixels, subSubHeaderIconsEasing)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+  }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { position: "relative", maxWidth: "936px", margin: "12rem auto" }
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+  }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { position: "absolute", right: "0", top: "0", width: "322px" }
-  }, /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaVolleyballBall, {
+  }, /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaVolleyballBall, {
     color: styles.colors.white,
     size: 54,
     style: { position: "absolute", top: "35px", left: "40px" }
-  }), /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaTableTennis, {
+  }), /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaTableTennis, {
     color: styles.colors.white,
     size: 54,
     style: { position: "absolute", top: "95px", left: "110px" }
-  }), /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaGolfBall, {
+  }), /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaGolfBall, {
     color: styles.colors.white,
     size: 54,
     style: { position: "absolute", top: "155px", left: "180px" }
-  }), /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaSwimmer, {
+  }), /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaSwimmer, {
     color: styles.colors.white,
     size: 54,
     style: { position: "absolute", top: "165px", left: "65px" }
-  }), /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaBowlingBall, {
+  }), /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaBowlingBall, {
     color: styles.colors.white,
     size: 54,
     style: { position: "absolute", top: "55px", left: "200px" }
-  })))), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+  })))), /* @__PURE__ */ import_react100.default.createElement(ScrollItem, {
     transform: `translate(0px, ${easeInOut(yScrollPixels, explanationSection)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+  }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { margin: "4rem auto 4rem", maxWidth: "936px" }
-  }, /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { textAlign: "center", fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.primary }
-  }, questions[4].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, questions[4].title), /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { textAlign: "center", fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.primary }
-  }, questions[5].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, questions[5].title), /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { textAlign: "center", fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.primary }
-  }, questions[6].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, questions[6].title), /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { textAlign: "center", fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.primary }
-  }, questions[7].title)), /* @__PURE__ */ import_react97.default.createElement(IconRow, {
+  }, questions[7].title)), /* @__PURE__ */ import_react100.default.createElement(IconRow, {
     invertColors: true
-  })), /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+  })), /* @__PURE__ */ import_react100.default.createElement(ScrollItem, {
     transform: `translate(0px, ${noEase(yScrollPixels, purpleSectionEffect)}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+  }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { display: "flex", maxWidth: "936px", margin: "5% auto", position: "relative", zIndex: 2, alignItems: "center" }
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+  }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { flexShrink: "1", maxWidth: "786px" }
-  }, /* @__PURE__ */ import_react97.default.createElement(Card, null, /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, /* @__PURE__ */ import_react100.default.createElement(Card2, null, /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.white }
-  }, questions[1].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, questions[1].title), /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { fontSize: "1rem", fontWeight: "400", marginTop: "0.5rem", color: styles.colors.white }
-  }, questions[1].question)), /* @__PURE__ */ import_react97.default.createElement(Card, null, /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, questions[1].question)), /* @__PURE__ */ import_react100.default.createElement(Card2, null, /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.white }
-  }, questions[2].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, questions[2].title), /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { fontSize: "1rem", fontWeight: "400", marginTop: "0.5rem", color: styles.colors.white }
-  }, questions[2].question)), /* @__PURE__ */ import_react97.default.createElement(Card, null, /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, questions[2].question)), /* @__PURE__ */ import_react100.default.createElement(Card2, null, /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { fontWeight: "bold", fontSize: "2rem", marginBottom: "0.5rem", color: styles.colors.white }
-  }, questions[3].title), /* @__PURE__ */ import_react97.default.createElement("p", {
+  }, questions[3].title), /* @__PURE__ */ import_react100.default.createElement("p", {
     style: { fontSize: "1rem", fontWeight: "400", marginTop: "0.5rem", color: styles.colors.white }
-  }, questions[3].question)))), /* @__PURE__ */ import_react97.default.createElement(PurpleSection, null)), [...Array(10).keys()].map((i) => /* @__PURE__ */ import_react97.default.createElement(ScrollItem, {
+  }, questions[3].question)))), /* @__PURE__ */ import_react100.default.createElement(PurpleSection, null)), [...Array(10).keys()].map((i) => /* @__PURE__ */ import_react100.default.createElement(ScrollItem, {
     key: i,
     transform: `translate(0px, ${easeInOut(yScrollPixels, purpleSectionIconEasings[i])}px)`
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+  }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { position: "relative", maxWidth: "936px", margin: "12rem auto" }
-  }, /* @__PURE__ */ import_react97.default.createElement("div", {
+  }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { position: "absolute", right: "0", top: "0", width: "322px" }
-  }, /* @__PURE__ */ import_react97.default.createElement(import_fa5.FaQuestionCircle, {
+  }, /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaQuestionCircle, {
     size: randomPositions[i][2],
     color: styles.colors.white,
     style: { transform: `rotate(${randomPositions[i][3] / Math.PI * 180}deg)`, position: "absolute", top: `${randomPositions[i][1]}`, left: `${randomPositions[i][0]}px` }
@@ -8691,7 +8898,7 @@ function About2() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "53099d5a", "entry": { "module": "/build/entry.client-IHW3J2V2.js", "imports": ["/build/_shared/chunk-FKVNPCUN.js", "/build/_shared/chunk-4ZPJ7ZPH.js", "/build/_shared/chunk-FN7GJDOI.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-4AKSC27V.js", "imports": ["/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-SMOIW27M.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId": { "id": "routes/$placeId", "parentId": "root", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId-42I3BZVW.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/index": { "id": "routes/$placeId/index", "parentId": "routes/$placeId", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/$placeId/index-4DEYZ7CM.js", "imports": ["/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/reserve": { "id": "routes/$placeId/reserve", "parentId": "routes/$placeId", "path": "reserve", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId/reserve-3CDPQO7Z.js", "imports": ["/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-SJGNZCZF.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin": { "id": "routes/admin", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin-5Y6MFIMP.js", "imports": ["/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories": { "id": "routes/admin/categories", "parentId": "routes/admin", "path": "categories", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories-Z66YEFR7.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/$categoryId": { "id": "routes/admin/categories/$categoryId", "parentId": "routes/admin/categories", "path": ":categoryId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/$categoryId-7Y54MTVY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/index": { "id": "routes/admin/categories/index", "parentId": "routes/admin/categories", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/categories/index-ZMS23OUI.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/new": { "id": "routes/admin/categories/new", "parentId": "routes/admin/categories", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/new-5FEGZYJY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies": { "id": "routes/admin/companies", "parentId": "routes/admin", "path": "companies", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies-MGDRJYXX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/$companyId": { "id": "routes/admin/companies/$companyId", "parentId": "routes/admin/companies", "path": ":companyId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/$companyId-UGRQMAEZ.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/index": { "id": "routes/admin/companies/index", "parentId": "routes/admin/companies", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/companies/index-SRV7RBEB.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/new": { "id": "routes/admin/companies/new", "parentId": "routes/admin/companies", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/new-55YN7JTT.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations": { "id": "routes/admin/locations", "parentId": "routes/admin", "path": "locations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations-YK6MJBBR.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/$locationId": { "id": "routes/admin/locations/$locationId", "parentId": "routes/admin/locations", "path": ":locationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/$locationId-NZPRQJJH.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/index": { "id": "routes/admin/locations/index", "parentId": "routes/admin/locations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/locations/index-74HGNSZS.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/new": { "id": "routes/admin/locations/new", "parentId": "routes/admin/locations", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/new-MFKYHSQV.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places": { "id": "routes/admin/places", "parentId": "routes/admin", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places-DTZZ753K.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/$placeId": { "id": "routes/admin/places/$placeId", "parentId": "routes/admin/places", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/$placeId-IMGSLEGW.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/index": { "id": "routes/admin/places/index", "parentId": "routes/admin/places", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/places/index-ITIOSNCI.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/new": { "id": "routes/admin/places/new", "parentId": "routes/admin/places", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/new-XNCWI2XN.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/$reservableTypeId": { "id": "routes/admin/reservableTypes/$reservableTypeId", "parentId": "routes/admin", "path": "reservableTypes/:reservableTypeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/$reservableTypeId-IZG64SI2.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/index": { "id": "routes/admin/reservableTypes/index", "parentId": "routes/admin", "path": "reservableTypes", "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/index-5V73L7PL.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/new": { "id": "routes/admin/reservableTypes/new", "parentId": "routes/admin", "path": "reservableTypes/new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/new-UGCPTN4J.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations": { "id": "routes/admin/reservations", "parentId": "routes/admin", "path": "reservations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations-Y5L3M25S.js", "imports": ["/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/$reservationId": { "id": "routes/admin/reservations/$reservationId", "parentId": "routes/admin/reservations", "path": ":reservationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/$reservationId-V6EADIMN.js", "imports": ["/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/index": { "id": "routes/admin/reservations/index", "parentId": "routes/admin/reservations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/index-QU3YMRAT.js", "imports": ["/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags": { "id": "routes/admin/tags", "parentId": "routes/admin", "path": "tags", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags-YY5X2N6Z.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/$tagId": { "id": "routes/admin/tags/$tagId", "parentId": "routes/admin/tags", "path": ":tagId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/$tagId-CMLD73RM.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/index": { "id": "routes/admin/tags/index", "parentId": "routes/admin/tags", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/tags/index-3KHD5ATQ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/new": { "id": "routes/admin/tags/new", "parentId": "routes/admin/tags", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/new-WF27CYEE.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate": { "id": "routes/authenticate", "parentId": "root", "path": "authenticate", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate-WTT7N4TV.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/login": { "id": "routes/authenticate/login", "parentId": "routes/authenticate", "path": "login", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/login-4N6H62CB.js", "imports": ["/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/register": { "id": "routes/authenticate/register", "parentId": "routes/authenticate", "path": "register", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/register-N7TOHXU7.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/doneVerifyingEmail": { "id": "routes/doneVerifyingEmail", "parentId": "root", "path": "doneVerifyingEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/doneVerifyingEmail-HNE3JJI5.js", "imports": ["/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-CW35QQSM.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/logout": { "id": "routes/logout", "parentId": "root", "path": "logout", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/logout-XMXFMUNS.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/places": { "id": "routes/places", "parentId": "root", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/places-IZ2GEH52.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile-5BUSPYID.js", "imports": ["/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/cancelReservation": { "id": "routes/profile/cancelReservation", "parentId": "routes/profile", "path": "cancelReservation", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/cancelReservation-U6TMHVQX.js", "imports": ["/build/_shared/chunk-RJTDEMRH.js", "/build/_shared/chunk-FTM4DERH.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/delete": { "id": "routes/profile/delete", "parentId": "routes/profile", "path": "delete", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/delete-5CP75NND.js", "imports": void 0, "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/edit": { "id": "routes/profile/edit", "parentId": "routes/profile", "path": "edit", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/edit-SRI2A6A4.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/index": { "id": "routes/profile/index", "parentId": "routes/profile", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/profile/index-JGCYGICE.js", "imports": ["/build/_shared/chunk-D5ZLUAG4.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/forgot": { "id": "routes/pwd/forgot", "parentId": "root", "path": "pwd/forgot", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/forgot-ZHXUCPKQ.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/reset": { "id": "routes/pwd/reset", "parentId": "root", "path": "pwd/reset", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/reset-QT7ECDIM.js", "imports": ["/build/_shared/chunk-Q4R2JNRQ.js", "/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/search": { "id": "routes/search", "parentId": "root", "path": "search", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/search-KAKQTEDV.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/verifyEmail": { "id": "routes/verifyEmail", "parentId": "root", "path": "verifyEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/verifyEmail-LNVIAKNX.js", "imports": ["/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-6GGPBSSN.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-53099D5A.js" };
+var assets_manifest_default = { "version": "2138eeeb", "entry": { "module": "/build/entry.client-IHW3J2V2.js", "imports": ["/build/_shared/chunk-FKVNPCUN.js", "/build/_shared/chunk-4ZPJ7ZPH.js", "/build/_shared/chunk-FN7GJDOI.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-4AKSC27V.js", "imports": ["/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-SMOIW27M.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId": { "id": "routes/$placeId", "parentId": "root", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId-4NAULI2K.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/index": { "id": "routes/$placeId/index", "parentId": "routes/$placeId", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/$placeId/index-R7XPXL5B.js", "imports": ["/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/reserve": { "id": "routes/$placeId/reserve", "parentId": "routes/$placeId", "path": "reserve", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId/reserve-BRS7VVY2.js", "imports": ["/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-SJGNZCZF.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin": { "id": "routes/admin", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin-EEDOZT47.js", "imports": ["/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories": { "id": "routes/admin/categories", "parentId": "routes/admin", "path": "categories", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories-Z66YEFR7.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/$categoryId": { "id": "routes/admin/categories/$categoryId", "parentId": "routes/admin/categories", "path": ":categoryId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/$categoryId-7Y54MTVY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/index": { "id": "routes/admin/categories/index", "parentId": "routes/admin/categories", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/categories/index-ZMS23OUI.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/new": { "id": "routes/admin/categories/new", "parentId": "routes/admin/categories", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/new-5FEGZYJY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies": { "id": "routes/admin/companies", "parentId": "routes/admin", "path": "companies", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies-MGDRJYXX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/$companyId": { "id": "routes/admin/companies/$companyId", "parentId": "routes/admin/companies", "path": ":companyId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/$companyId-UGRQMAEZ.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/index": { "id": "routes/admin/companies/index", "parentId": "routes/admin/companies", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/companies/index-SRV7RBEB.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/new": { "id": "routes/admin/companies/new", "parentId": "routes/admin/companies", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/new-55YN7JTT.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations": { "id": "routes/admin/locations", "parentId": "routes/admin", "path": "locations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations-YK6MJBBR.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/$locationId": { "id": "routes/admin/locations/$locationId", "parentId": "routes/admin/locations", "path": ":locationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/$locationId-NZPRQJJH.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/index": { "id": "routes/admin/locations/index", "parentId": "routes/admin/locations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/locations/index-74HGNSZS.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/new": { "id": "routes/admin/locations/new", "parentId": "routes/admin/locations", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/new-MFKYHSQV.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places": { "id": "routes/admin/places", "parentId": "routes/admin", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places-DTZZ753K.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/$placeId": { "id": "routes/admin/places/$placeId", "parentId": "routes/admin/places", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/$placeId-IMGSLEGW.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/index": { "id": "routes/admin/places/index", "parentId": "routes/admin/places", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/places/index-ITIOSNCI.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/new": { "id": "routes/admin/places/new", "parentId": "routes/admin/places", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/new-XNCWI2XN.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/$reservableTypeId": { "id": "routes/admin/reservableTypes/$reservableTypeId", "parentId": "routes/admin", "path": "reservableTypes/:reservableTypeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/$reservableTypeId-IZG64SI2.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/index": { "id": "routes/admin/reservableTypes/index", "parentId": "routes/admin", "path": "reservableTypes", "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/index-5V73L7PL.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/new": { "id": "routes/admin/reservableTypes/new", "parentId": "routes/admin", "path": "reservableTypes/new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/new-UGCPTN4J.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations": { "id": "routes/admin/reservations", "parentId": "routes/admin", "path": "reservations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations-JQHHGDQV.js", "imports": ["/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/$reservationId": { "id": "routes/admin/reservations/$reservationId", "parentId": "routes/admin/reservations", "path": ":reservationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/$reservationId-KZL7MANA.js", "imports": ["/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/index": { "id": "routes/admin/reservations/index", "parentId": "routes/admin/reservations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/index-W7MUP4T3.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/setAttendance": { "id": "routes/admin/reservations/setAttendance", "parentId": "routes/admin/reservations", "path": "setAttendance", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/setAttendance-UGT2K3IQ.js", "imports": ["/build/_shared/chunk-QR3YEJQL.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags": { "id": "routes/admin/tags", "parentId": "routes/admin", "path": "tags", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags-YY5X2N6Z.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/$tagId": { "id": "routes/admin/tags/$tagId", "parentId": "routes/admin/tags", "path": ":tagId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/$tagId-CMLD73RM.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/index": { "id": "routes/admin/tags/index", "parentId": "routes/admin/tags", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/tags/index-3KHD5ATQ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/new": { "id": "routes/admin/tags/new", "parentId": "routes/admin/tags", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/new-WF27CYEE.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/users": { "id": "routes/admin/users", "parentId": "routes/admin", "path": "users", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/users-WBWAEEKX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/users/index": { "id": "routes/admin/users/index", "parentId": "routes/admin/users", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/users/index-U6X2PFH2.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate": { "id": "routes/authenticate", "parentId": "root", "path": "authenticate", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate-WTT7N4TV.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/login": { "id": "routes/authenticate/login", "parentId": "routes/authenticate", "path": "login", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/login-MJBMA6FU.js", "imports": ["/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/register": { "id": "routes/authenticate/register", "parentId": "routes/authenticate", "path": "register", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/register-ISNZJ33A.js", "imports": ["/build/_shared/chunk-ZG4ZKHQT.js", "/build/_shared/chunk-ULQXSACI.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/doneVerifyingEmail": { "id": "routes/doneVerifyingEmail", "parentId": "root", "path": "doneVerifyingEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/doneVerifyingEmail-HNE3JJI5.js", "imports": ["/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-CW35QQSM.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/logout": { "id": "routes/logout", "parentId": "root", "path": "logout", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/logout-XMXFMUNS.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/places": { "id": "routes/places", "parentId": "root", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/places-6Y52ANJM.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile-WDMFPJAY.js", "imports": ["/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-ULQXSACI.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/cancelReservation": { "id": "routes/profile/cancelReservation", "parentId": "routes/profile", "path": "cancelReservation", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/cancelReservation-MSJCFS6P.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-FTM4DERH.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/delete": { "id": "routes/profile/delete", "parentId": "routes/profile", "path": "delete", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/delete-5CP75NND.js", "imports": void 0, "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/edit": { "id": "routes/profile/edit", "parentId": "routes/profile", "path": "edit", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/edit-EHEU7ZRG.js", "imports": ["/build/_shared/chunk-ZG4ZKHQT.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/index": { "id": "routes/profile/index", "parentId": "routes/profile", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/profile/index-HCILDNSE.js", "imports": ["/build/_shared/chunk-ZG4ZKHQT.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/forgot": { "id": "routes/pwd/forgot", "parentId": "root", "path": "pwd/forgot", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/forgot-LS4PZ2ZM.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/reset": { "id": "routes/pwd/reset", "parentId": "root", "path": "pwd/reset", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/reset-VW7QO32X.js", "imports": ["/build/_shared/chunk-ULQXSACI.js", "/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/search": { "id": "routes/search", "parentId": "root", "path": "search", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/search-UU6RPZ7D.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/verifyEmail": { "id": "routes/verifyEmail", "parentId": "root", "path": "verifyEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/verifyEmail-GYW7CTIE.js", "imports": ["/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-2138EEEB.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };
@@ -8904,6 +9111,14 @@ var routes = {
     caseSensitive: void 0,
     module: reservationId_exports
   },
+  "routes/admin/reservations/setAttendance": {
+    id: "routes/admin/reservations/setAttendance",
+    parentId: "routes/admin/reservations",
+    path: "setAttendance",
+    index: void 0,
+    caseSensitive: void 0,
+    module: setAttendance_exports
+  },
   "routes/admin/reservations/index": {
     id: "routes/admin/reservations/index",
     parentId: "routes/admin/reservations",
@@ -9039,6 +9254,22 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: new_exports5
+  },
+  "routes/admin/users": {
+    id: "routes/admin/users",
+    parentId: "routes/admin",
+    path: "users",
+    index: void 0,
+    caseSensitive: void 0,
+    module: users_exports
+  },
+  "routes/admin/users/index": {
+    id: "routes/admin/users/index",
+    parentId: "routes/admin/users",
+    path: void 0,
+    index: true,
+    caseSensitive: void 0,
+    module: users_exports2
   },
   "routes/admin/tags": {
     id: "routes/admin/tags",

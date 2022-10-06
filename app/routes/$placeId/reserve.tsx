@@ -130,6 +130,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   // These are the reservableIds we book
   const overlap = !!(reservables.map((r, i) => {
+    // TODO: Fix this shit
+    // @ts-ignore
     const start = dateTimeStart[i];
     const end = dateTimeEnd[i];
     if (r == null) return false;

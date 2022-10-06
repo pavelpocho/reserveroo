@@ -20,7 +20,6 @@ export type AuthActionData = {
     username: string | null;
     firstName: string | null;
     lastName: string | null;
-    email: string | null;
     phone: string | null;
   };
 };
@@ -43,7 +42,7 @@ export const action: ActionFunction = async ({ request }) => {
   const firstName = getFormItem('firstName');
   const lastName = getFormItem('lastName');
   const username = getFormItem('username');
-  const email = getFormItem('email');
+  // const email = getFormItem('email');
   const phone = getFormItem('phone');
 
   // const dcCheck = [await checkForUserByEmail({ email }), await checkForUserByEmail({ username })];
@@ -55,16 +54,16 @@ export const action: ActionFunction = async ({ request }) => {
     username: username ?? '',
     firstName: firstName ?? '',
     lastName: lastName ?? '',
-    email: email ?? '',
+    // email: email ?? '',
     phone: phone ?? ''
   }
 
   const un = await checkForUserByUsername({ username });
-  const ee = await checkForUserByEmail({ email });
+  // const ee = await checkForUserByEmail({ email });
   const ep = await checkForUserByPhone({ phone });
   
   const existingUsername: boolean = un != null && un.id != id;
-  const existingEmail: boolean = ee != null && ee.id != id;
+  // const existingEmail: boolean = ee != null && ee.id != id;
   const existingPhone: boolean = ep != null && ep.id != id;
 
   const usernameError = (
@@ -74,11 +73,11 @@ export const action: ActionFunction = async ({ request }) => {
     username.length > 16 ? 'Your username has to be at most 16 characters long' : null
   );
 
-  const emailError = (
-    email == null || email.length == 0 ? 'Email cannot be empty' : 
-    !isValidEmail(email) ? 'This email address is invalid' : 
-    !!existingEmail ? 'This email address is already registered' : null
-  )
+  // const emailError = (
+  //   email == null || email.length == 0 ? 'Email cannot be empty' : 
+  //   !isValidEmail(email) ? 'This email address is invalid' : 
+  //   !!existingEmail ? 'This email address is already registered' : null
+  // )
 
   const phoneError = (
     phone == null || phone.length == 0 ? 'Phone number cannot be empty' : 
@@ -90,19 +89,19 @@ export const action: ActionFunction = async ({ request }) => {
     firstName == null || firstName == '' || lastName == null || lastName == '' ? 'You must provide your first and last names' : null
   )
 
-  if (usernameError || lastNameError || emailError || phoneError) {
+  if (usernameError || lastNameError/* || emailError*/ || phoneError) {
     return badRequest({ fields, formError: 'Please check your details', fieldErrors: {
       username: usernameError,
       lastName: lastNameError,
-      email: emailError,
+      // email: emailError,
       phone: phoneError
     } });
   }
 
 
-  if (id && firstName && lastName && username && email && phone) {
+  if (id && firstName && lastName && username/* && email*/ && phone) {
     await updateUser({
-      id, firstName, lastName, username, email, phone
+      id, firstName, lastName, username/*, email*/, phone
     });
     return redirect('/profile');
   }

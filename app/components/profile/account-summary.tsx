@@ -27,7 +27,6 @@ interface AccountSummaryProps {
     username: string | null;
     firstName: string | null;
     lastName: string | null;
-    email: string | null;
     phone: string | null;
   };
 }
@@ -228,9 +227,10 @@ export const AccountSummary: React.FC<AccountSummaryProps> = ({ editing, user, f
           </div>
           <div>
             <SectionTitle>Email</SectionTitle>
-            { editing ? <TextInput setValue={(s) => { setValidEmail(isValidEmail(s)) }} name={'email'} defaultValue={fields?.email ?? user?.email} /> : <Value>{user?.email}</Value> }
-            { editing && !validEmail && <ErrorLabel>Invalid email</ErrorLabel> }
-            { fieldErrors?.email &&  <FormError>{fieldErrors.email}</FormError> }
+            {/* { editing ? <TextInput setValue={(s) => { setValidEmail(isValidEmail(s)) }} name={'email'} defaultValue={fields?.email ?? user?.email} /> : <Value>{user?.email}</Value> } */}
+            { <Value>{user?.email}</Value> }
+            {/* { editing && !validEmail && <ErrorLabel>Invalid email</ErrorLabel> } */}
+            {/* { fieldErrors?.email &&  <FormError>{fieldErrors.email}</FormError> } */}
           </div>
           <div>
             <SectionTitle>Phone</SectionTitle>

@@ -47,7 +47,7 @@ const OpeningDay = styled.p`
   margin: 0;
 `;
 
-const OpeningTime = styled.p`
+const OpeningTimeComponent = styled.p`
   font-size: 1rem;
   margin: 0;
   &::first-letter {
@@ -132,7 +132,7 @@ export default function PlaceDetails({}) {
         <TimesGrid>
           { place.openingTimes ? place.openingTimes.sort((a, b) => a.day - b.day).map(o => <div key={o.id} >
             <OpeningDay>{daysOfWeek[o.day].split('')[0].toUpperCase() + daysOfWeek[o.day].split('').slice(1).join('')}</OpeningDay>
-            <OpeningTime>{timeStr(o.open)} - {timeStr(o.close)}</OpeningTime>
+            <OpeningTimeComponent>{timeStr(o.open)} - {timeStr(o.close)}</OpeningTimeComponent>
           </div>) : null }
         </TimesGrid>
       </TimesWrap>

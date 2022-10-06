@@ -209,7 +209,7 @@ export const SearchUI: React.FC<SearchUIProps> = ({ searchParams, locations, tag
         <Title>Tags</Title>
         <InfoButton helpText='Tags show additional attractive aspects of a place.' />
         {
-          tags.slice(0, showAllTags ? tags.length - 1 : MAX_NUMBER_OF_TAGS_SHOWN)
+          tags.slice(0, showAllTags ? tags.length : MAX_NUMBER_OF_TAGS_SHOWN)
               .map(t =>
               <TagCategoryButton selected={!!selectedTags.find(st => st.id == t.id)} onClick={(e) => {
             e.preventDefault();

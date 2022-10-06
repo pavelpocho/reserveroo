@@ -44,6 +44,7 @@ export default function Admin() {
       <TabButton to='/admin/categories'>Categories</TabButton>
       <TabButton to='/admin/locations'>Locations</TabButton>
       <TabButton to='/admin/reservableTypes'>Reservable types</TabButton>
+      <TabButton to='/admin/users'>User stats</TabButton>
     </AdminHeader>
     <div>
       <Outlet />

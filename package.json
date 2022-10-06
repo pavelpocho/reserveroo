@@ -11,7 +11,8 @@
     "build": "remix build",
     "deploy": "fly deploy --remote-only",
     "dev": "npm run clean && remix dev",
-    "start": "remix-serve build"
+    "start": "remix-serve build",
+    "start:migrate:prod": "prisma migrate deploy && npm run start"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.87.0",

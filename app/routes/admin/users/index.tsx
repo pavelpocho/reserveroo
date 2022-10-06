@@ -1,36 +1,31 @@
-import { Company, Reservable, Reservation } from '@prisma/client';
-import { useLoaderData, useSearchParams, useSubmit } from '@remix-run/react';
-import { ActionFunction, json, LoaderFunction } from '@remix-run/server-runtime'
+import { useLoaderData } from '@remix-run/react';
+import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
+import { json } from '@remix-run/server-runtime'
 import { useState } from 'react';
 import styled from 'styled-components';
 import { AdminReservationGroupSummary } from '~/components/admin/reservation-group-summary';
-import { IdInput } from '~/components/inputs/ObjectInput';
-import { ReservationGroupSummary } from '~/components/profile/reservation-group-summary';
-import { Place } from '~/models/place.server';
-import { changeReservationStatus, setStatusOfReservation, setStatusOfReservationsInGroup, updateReservation } from '~/models/reservation.server';
-import { getReservationGroup, getReservationGroupForConfirmationEmail, getReservationGroupList, ReservationGroup } from '~/models/reservationGroup.server'
-import { User } from '~/models/user.server';
-import { ReservableWithCountForEmail, ReservationStatus } from '~/types/types';
+import { UserReservationSummary } from '~/components/admin/user-stat-summary';
+import { setStatusOfReservation } from '~/models/reservation.server';
+import { getReservationGroupForConfirmationEmail } from '~/models/reservationGroup.server'
+import { getUserListForAttendance } from '~/models/user.server';
+import type { ReservableWithCountForEmail} from '~/types/types';
+import { ReservationStatus } from '~/types/types';
 import { sendStatusUpdateEmail } from '~/utils/emails.server';
 import { getBaseUrl } from '~/utils/forms';
 
-interface ReservationsAdminLoaderData {
-  reservationGroups: (ReservationGroup & {
-    user: User | null;
-    reservations: (Reservation & {
-        reservable: (Reservable & {
-            place: (Place & {
-              company: Company | null;
-            });
-        }) | null;
-    })[];
-  })[]
+interface UserAdminLoaderData {
+  users: {
+    username: string,
+    reservationGroups: {
+        attended: boolean;
+    }[]
+  }[]
 }
 
 
 export const loader: LoaderFunction = async () => {
-  const reservationGroups = await getReservationGroupList();
-  return json({ reservationGroups });
+  const users = await getUserListForAttendance();
+  return json({ users: users.map(u => ({ username: u.username, reservationGroups: u.reservationGroups })) });
 }
 
 
@@ -107,25 +102,12 @@ const Title = styled.h4`
 
 export default function ReservationAdminList() {
 
-  const { reservationGroups } = useLoaderData<ReservationsAdminLoaderData>();
-
-  const [ showPast, setShowPast ] = useState<boolean>(false);
+  const { users } = useLoaderData<UserAdminLoaderData>();
 
   return <>
-    <Title>Reservations</Title>
-    <button onClick={() => { setShowPast(false) }} >Show upcoming</button>
-    <button onClick={() => { setShowPast(true) }}>Show past</button>
-    { reservationGroups.map(rg => {
-      if ((
-        rg.reservations.length > 0 && new Date(rg.reservations[0].end).getTime() < new Date().getTime() && showPast
-      ) || (
-        rg.reservations.length > 0 && new Date(rg.reservations[0].end).getTime() > new Date().getTime() && !showPast
-      )) {
-        return <AdminReservationGroupSummary key={rg.id} reservationGroup={rg} />
-      }
-      else {
-        return null
-      }
-    }) }
+    <Title>Users</Title>
+    { users.map((user, i) =>
+      <UserReservationSummary key={i} user={user} />
+    ) }
   </>
 }

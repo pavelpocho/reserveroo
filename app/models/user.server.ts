@@ -8,6 +8,15 @@ export const getUser = async ({ id }: Pick<User, 'id'>) => (await prisma.user.fi
   where: { id },
 }));
 
+export const getUserListForAttendance = async () => (await prisma.user.findMany({
+  where: { },
+  include: { reservationGroups: {
+    select: {
+      attended: true
+    }
+  } }
+}))
+
 export const getUserId = async ({ username }: Pick<User, 'username'>) => (await prisma.user.findUnique({
   where: { username },
   select: {
@@ -154,12 +163,12 @@ export const createUser = async ({
   select: { id: true, passwordHash: true }
 }));
 
-export const updateUser = async ({ id, firstName, lastName, username, email, phone }: Pick<User, 'id' | 'firstName' | 'lastName' | 'phone' | 'email' | 'username'>) => (await prisma.user.update({
+export const updateUser = async ({ id, firstName, lastName, username, phone }: Pick<User, 'id' | 'firstName' | 'lastName' | 'phone' | 'username'>) => (await prisma.user.update({
   where: {
     id
   },
   data: {
-    username, email, firstName, lastName, phone
+    username, firstName, lastName, phone
   }
 }));
 

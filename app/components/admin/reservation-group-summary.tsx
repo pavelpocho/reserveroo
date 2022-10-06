@@ -87,6 +87,14 @@ export const AdminReservationGroupSummary: React.FC<ReservationGroupSummaryProps
     value: "unavailable",
   }];
 
+  const attendedOptions = [{
+    text: "Yes",
+    value: 't',
+  }, {
+    text: "No",
+    value: 'f',
+  }];
+
   if (!!rg.reservations.find(r => r.backup)) {
     actions.push({
       text: "Confirm backup",
@@ -116,6 +124,12 @@ export const AdminReservationGroupSummary: React.FC<ReservationGroupSummaryProps
           <IdInput name='rgId' value={rg.id} />
           <p>Select a status in the input above and then hit "Update status". This WILL SEND AN EMAIL to the user!</p>
           <UpdateStatus>Update status</UpdateStatus>
+        </Form> }
+        { <Form method='post' action='/admin/reservations/setAttendance' >
+          <SingleSelectorInput name='attended' possibleValuesAndTexts={attendedOptions} defaultValueAndText={{ text: rg.attended === true ? 'Yes' : rg.attended === false ? 'No' : 'Unset', value: rg.attended === true ? 't' : rg.attended === false ? 'f' : ''}} />
+          <IdInput name='rgId' value={rg.id} />
+          <p>Select an attendance if we for example know a person didn't show up...</p>
+          <UpdateStatus>Update attendance</UpdateStatus>
         </Form> }
         <Link to={`/admin/reservations/${rg.id}`}>Edit</Link>
       </InnerWrap>

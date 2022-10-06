@@ -55,6 +55,13 @@ export const getReservationGroupForConfirmationEmail = async ({ id }: Pick<Reser
   }
 }));
 
+export const setRGAttendance = async ({ id, attended }: Pick<ReservationGroup, 'id' | 'attended'>) => (await prisma.reservationGroup.update({
+  where: { id },
+  data: {
+    attended
+  }
+}))
+
 export const getReservationGroupList = async () => (await prisma.reservationGroup.findMany({
   include: {
     user: true,
