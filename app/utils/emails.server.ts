@@ -3,6 +3,7 @@ import { Place } from "~/models/place.server";
 import { ReservableWithCountForEmail } from '~/types/types';
 import { getStringDateValue, getStringTimeValue } from './forms';
 import { signMessage } from './signing.server';
+import nodemailer from 'nodemailer';
 
 if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -74,7 +75,22 @@ export const sendEmailConfirmationEmail = async (sendToAddress: string, baseUrl:
     console.log(`${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}`);
   }
   else {
-    await sgMail.send(msg);
+    const transporter = nodemailer.createTransport({
+      host: 'mailproxy.webglobe.cz',
+      port: 465,
+      secure: true, // true for 465, false for other ports
+      auth: {
+        user: 'reserveroo@reserveroo.co.uk',
+        pass: process.env.EMAIL_ADDRESS_PWD,
+      },
+    });
+    const info = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>', // sender address
+      to: address, // list of receivers
+      subject: msg.subject, // Subject line
+      text: msg.text, // plain text body
+      html: msg.html, // html body
+    });
   }
 }
 
@@ -141,7 +157,22 @@ export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, 
     console.log(`${baseUrl}/pwd/reset?token=${username}:${signature}`);
   }
   else {
-    await sgMail.send(msg);
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.office365.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: 'reserveroo@reserveroo.co.uk',
+        pass: process.env.EMAIL_ADDRESS_PWD,
+      },
+    });
+    const info = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>', // sender address
+      to: address, // list of receivers
+      subject: msg.subject, // Subject line
+      text: msg.text, // plain text body
+      html: msg.html, // html body
+    });
   }
 }
 
@@ -217,8 +248,30 @@ export const sendCreationEmail = async (baseUrl: string, sendToAddress: string, 
     console.log('Creation email would be sent');
   }
   else {
-    await sgMail.send(msg);
-    await sgMail.send(usMsg);
+    
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.office365.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: 'reserveroo@reserveroo.co.uk',
+        pass: process.env.EMAIL_ADDRESS_PWD,
+      },
+    });
+    const info = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>', // sender address
+      to: address, // list of receivers
+      subject: msg.subject, // Subject line
+      text: msg.text, // plain text body
+      html: msg.html, // html body
+    });
+    const usInfo = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>', // sender address
+      to: usMsg.to, // list of receivers
+      subject: usMsg.subject, // Subject line
+      text: usMsg.text, // plain text body
+      html: usMsg.html, // html body
+    });
   }
 }
 
@@ -286,8 +339,29 @@ export const sendCancellationEmail = async (baseUrl: string, sendToAddress: stri
     console.log('Cancellation email would be sent');
   }
   else {
-    await sgMail.send(msg);
-    await sgMail.send(usMsg);
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.office365.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: 'reserveroo@reserveroo.co.uk',
+        pass: process.env.EMAIL_ADDRESS_PWD,
+      },
+    });
+    const info = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>', // sender address
+      to: address, // list of receivers
+      subject: msg.subject, // Subject line
+      text: msg.text, // plain text body
+      html: msg.html, // html body
+    });
+    const usInfo = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>', // sender address
+      to: usMsg.to, // list of receivers
+      subject: usMsg.subject, // Subject line
+      text: usMsg.text, // plain text body
+      html: usMsg.html, // html body
+    });
   }
 }
 
@@ -360,6 +434,21 @@ export const sendStatusUpdateEmail = async (baseUrl: string, sendToAddress: stri
     console.log('Status email would be sent');
   }
   else {
-    await sgMail.send(msg);
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.office365.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: 'reserveroo@reserveroo.co.uk',
+        pass: process.env.EMAIL_ADDRESS_PWD,
+      },
+    });
+    const info = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>', // sender address
+      to: address, // list of receivers
+      subject: msg.subject, // Subject line
+      text: msg.text, // plain text body
+      html: msg.html, // html body
+    });
   }
 }

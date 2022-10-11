@@ -1,14 +1,12 @@
 import React from "react";
-import styled from "styled-components";
-import { styles } from "~/constants/styles";
 
-interface IdInput {
+interface IdInputInterface {
   name?: string,
   value: string,
   onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined
 }
 
-export const IdInput: React.FC<IdInput> = ({ name, value, onChange }: IdInput) => {
+export const IdInput: React.FC<IdInputInterface> = ({ name, value, onChange }: IdInputInterface) => {
 
   return <>
     <input name={name} type='text' readOnly={true} value={value} hidden={true} onChange={onChange} />

@@ -27,6 +27,7 @@ interface ConfirmationDialogProps {
   backupTitle: string,
   backupText1: React.ReactNode,
   backupText2: React.ReactNode,
+  backup: boolean;
 }
 
 const Wrap = styled.div<{ hidden: boolean }>`
@@ -154,7 +155,7 @@ const FlexSL = styled.div`
   }
 `;
 
-export const ReserveConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ subHeaderText, reservables, resList, hidden, title, backupTitle, backupText1, backupText2, confirmText, cancelText, onConfirm, close }) => {
+export const ReserveConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ subHeaderText, reservables, resList, hidden, title, backupTitle, backupText1, backupText2, confirmText, cancelText, onConfirm, close, backup }) => {
 
   const wrap = React.useRef<HTMLDivElement>(null);
 
@@ -182,7 +183,7 @@ export const ReserveConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ s
           </FlexSL>
         </ResE>) }
       </SlotList> }
-      { resList.filter(r => r.isBackup).length > 0 && <BackupSlotList>
+      { backup && resList.filter(r => r.isBackup).length > 0 && <BackupSlotList>
         <SlotListTitle>{'Backup timeslots'}</SlotListTitle>
         { resList.filter(r => r.isBackup).map(r => r.startTime && r.endTime && <ResE>
           <Indicator style={{ padding: '0.5rem' }}>{reservables.find(x => x.id == r.reservableId)?.name}</Indicator>

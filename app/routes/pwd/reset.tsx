@@ -89,7 +89,7 @@ const Spacer = styled.div`
   height: 1rem;
 `;
 
-export default function ForgotPassword() {
+export default function ResetPassword() {
 
   const a = useActionData<ActionData>();
   const [ searchParams ] = useSearchParams();

@@ -1,6 +1,7 @@
 import { Form, useActionData, useLoaderData, useMatches, useParams, useSubmit } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime'
 import React, { useState } from 'react';
+import { FaArrowRight, FaChevronRight } from 'react-icons/fa';
 import styled from 'styled-components';
 import AngleLeftIcon from '~/assets/icons/AngleLeft';
 import AnglesRightIcon from '~/assets/icons/AnglesRight';
@@ -240,7 +241,22 @@ const HeaderBar = styled.div<{ color: 'primary' | 'gray' | 'none' }>`
 const Title = styled.h5`
   margin: 0;
   display: flex;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 0rem;
+  height: 2.25rem;
+  line-height: 2.25rem;
+`;
+
+const SubTitle = styled.p`
+  margin: 0;
+  display: flex;
+  font-size: 1rem;
+  font-weight: 400;
+  color: ${styles.colors.gray[50]};
+  align-items: center;
+  gap: 0rem;
+  height: 2.25rem;
+  line-height: 2.25rem;
 `;
 
 const ButtonWrap = styled.div`
@@ -351,6 +367,7 @@ export default function ReservationElement() {
   return (<Wrap>
     <ReserveConfirmationDialog 
       hidden={!confirmationDialog}
+      backup={backup}
       onConfirm={() => {
         if (formRef.current)
           s(formRef.current);
@@ -365,15 +382,15 @@ export default function ReservationElement() {
       subHeaderText={'Is all of the information bellow correct?'}
       resList={resList} 
       reservables={reservables}
-      backupTitle={resList.filter(r => r.isBackup).length > 0 ? 'What does this mean?' : 'Cannot go any other time?'}
-      backupText1={resList.filter(r => r.isBackup).length > 0 && resList.filter(r => !r.isBackup).length > 1 ? <span>
+      backupTitle={backup && resList.filter(r => r.isBackup).length > 0 ? 'What does this mean?' : 'Cannot go any other time?'}
+      backupText1={backup && resList.filter(r => r.isBackup).length > 0 && resList.filter(r => !r.isBackup).length > 1 ? <span>
         We will try to book all your primary slots. If <b>*any* (read: at least one)</b> of them are unavailable, we will try your backup option.
-      </span> : resList.filter(r => r.isBackup).length > 0 && resList.filter(r => !r.isBackup).length == 1 ? <span>
+      </span> : backup && resList.filter(r => r.isBackup).length > 0 && resList.filter(r => !r.isBackup).length == 1 ? <span>
         We will try to book your primary slot. If it's unavailable, we will try your backup option.
       </span> : <span>
         Please keep in mind that for the time being, we cannot guarantee a free spot at this business. That’s why we provide the option to choose a backupslot, which we will book you into if your first choice isn’t free.
       </span>}
-      backupText2={resList.filter(r => r.isBackup).length > 0 ? <span>
+      backupText2={backup && resList.filter(r => r.isBackup).length > 0 ? <span>
         Please keep in mind that for the time being, we cannot guarantee a free spot at this business. To help us bring this functionality to everyone, you can share this service with your friends! Thanks for understanding. :)
       </span> : <span>
         To help us bring real-time availability information to everyone, you can share this service with your friends! Thanks for understanding. :)
@@ -388,11 +405,15 @@ export default function ReservationElement() {
       <HeaderBar color={'primary'}>
         <Title>Make a Reservation</Title>
         <Flex>
-          <Title>Date</Title>
-          <DateInput disablePast={true} name={'date'} defaultValue={date} onChange={setDate} />
+          <SubTitle>
+            Scroll to see more
+            <FaChevronRight color={styles.colors.gray[50]} size={16} style={{ marginLeft: '8px', marginRight: '-8px' }} />
+            <FaChevronRight color={styles.colors.gray[50]} size={14} style={{ marginRight: '-6px' }} />
+            <FaChevronRight color={styles.colors.gray[50]} size={12} />
+          </SubTitle>
         </Flex>
       </HeaderBar>
-      { date && <ReservableTimes
+      { <ReservableTimes
         startName='start[]'
         endName='end[]'
         reservationBackupName='reservationBackup[]'
@@ -400,12 +421,11 @@ export default function ReservationElement() {
         reservableIdName='reservableId[]'
         reservables={reservables}
         setResList={setResList}
-        date={date}
-        openingTime={place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]}
+        openingTimes={place.openingTimes.sort((a, b) => a.day - b.day)/*[getDayOfWeek(date)]*/}
       /> }
       <SlotList>
         <WhiteSlotListTitle>{resList.filter(r => !r.isBackup).length == 0 ? <i style={{ fontWeight: 'normal' }}>Nothing selected.</i> :'Picked timeslots'}</WhiteSlotListTitle>
-        { resList.filter(r => !r.isBackup).map(r => r.startTime && r.endTime && <ResE>
+        { resList.filter(r => !r.isBackup).map((r, i) => r.startTime && r.endTime && <ResE key={i}>
           <Indicator style={{ padding: '0.5rem', whiteSpace: 'nowrap' }}>{reservables.find(x => x.id == r.reservableId)?.name}</Indicator>
           <FlexSL>
             <SlotText>Date: {getStringDateValue(r.startTime)}</SlotText>
@@ -420,7 +440,7 @@ export default function ReservationElement() {
           setBackup(!backup);
         }}>{ !backup ? 'Choose a' : 'Remove'} backup timeslot</SecondaryButtonBtn>
       </HeaderBar>
-      { backup && date && <ReservableTimes
+      { backup && <ReservableTimes
         backup={true}
         startName='start[]'
         endName='end[]'
@@ -428,13 +448,12 @@ export default function ReservationElement() {
         reservationIdName='reservationId[]'
         reservableIdName='reservableId[]'
         reservables={reservables}
-        date={date}
         setResList={setResList}
-        openingTime={place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]}
+        openingTimes={place.openingTimes.sort((a, b) => a.day - b.day)}
       /> }
       <BackupSlotList>
-        <SlotListTitle>{resList.filter(r => r.isBackup).length == 0 ? <i style={{ fontWeight: 'normal' }}>Nothing selected.</i> : 'Picked backup timeslots'}</SlotListTitle>
-        { resList.filter(r => r.isBackup).map(r => r.startTime && r.endTime && <ResE>
+        <SlotListTitle>{!backup || resList.filter(r => r.isBackup).length == 0 ? <i style={{ fontWeight: 'normal' }}>Nothing selected.</i> : 'Picked backup timeslots'}</SlotListTitle>
+        { backup && resList.filter(r => r.isBackup).map(r => r.startTime && r.endTime && <ResE>
           <Indicator style={{ padding: '0.5rem' }}>{reservables.find(x => x.id == r.reservableId)?.name}</Indicator>
           <FlexSL>
             <BackupSlotText>{getStringDateValue(r.startTime)}</BackupSlotText>

@@ -3017,6 +3017,7 @@ var verifyMessage = (message, signature) => {
 };
 
 // app/utils/emails.server.ts
+var import_nodemailer = __toESM(require("nodemailer"));
 if (process.env.SENDGRID_API_KEY) {
   import_mail.default.setApiKey(process.env.SENDGRID_API_KEY);
 }
@@ -3085,7 +3086,22 @@ var sendEmailConfirmationEmail = async (sendToAddress, baseUrl) => {
     console.log("Email link");
     console.log(`${baseUrl}/verifyEmail?verifyToken=${sendToAddress}:${signature}`);
   } else {
-    await import_mail.default.send(msg);
+    const transporter = import_nodemailer.default.createTransport({
+      host: "mailproxy.webglobe.cz",
+      port: 465,
+      secure: true,
+      auth: {
+        user: "reserveroo@reserveroo.co.uk",
+        pass: process.env.EMAIL_ADDRESS_PWD
+      }
+    });
+    const info = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>',
+      to: address,
+      subject: msg.subject,
+      text: msg.text,
+      html: msg.html
+    });
   }
 };
 var sendPwdResetEmail = async (sendToAddress, baseUrl, username) => {
@@ -3150,7 +3166,22 @@ var sendPwdResetEmail = async (sendToAddress, baseUrl, username) => {
     console.log("Email link");
     console.log(`${baseUrl}/pwd/reset?token=${username}:${signature}`);
   } else {
-    await import_mail.default.send(msg);
+    const transporter = import_nodemailer.default.createTransport({
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: "reserveroo@reserveroo.co.uk",
+        pass: process.env.EMAIL_ADDRESS_PWD
+      }
+    });
+    const info = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>',
+      to: address,
+      subject: msg.subject,
+      text: msg.text,
+      html: msg.html
+    });
   }
 };
 var sendCreationEmail = async (baseUrl, sendToAddress, placeName, slots) => {
@@ -3223,8 +3254,29 @@ var sendCreationEmail = async (baseUrl, sendToAddress, placeName, slots) => {
   if (baseUrl.includes("localhost")) {
     console.log("Creation email would be sent");
   } else {
-    await import_mail.default.send(msg);
-    await import_mail.default.send(usMsg);
+    const transporter = import_nodemailer.default.createTransport({
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: "reserveroo@reserveroo.co.uk",
+        pass: process.env.EMAIL_ADDRESS_PWD
+      }
+    });
+    const info = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>',
+      to: address,
+      subject: msg.subject,
+      text: msg.text,
+      html: msg.html
+    });
+    const usInfo = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>',
+      to: usMsg.to,
+      subject: usMsg.subject,
+      text: usMsg.text,
+      html: usMsg.html
+    });
   }
 };
 var sendCancellationEmail = async (baseUrl, sendToAddress, placeName, slots) => {
@@ -3290,8 +3342,29 @@ var sendCancellationEmail = async (baseUrl, sendToAddress, placeName, slots) => 
   if (baseUrl.includes("localhost")) {
     console.log("Cancellation email would be sent");
   } else {
-    await import_mail.default.send(msg);
-    await import_mail.default.send(usMsg);
+    const transporter = import_nodemailer.default.createTransport({
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: "reserveroo@reserveroo.co.uk",
+        pass: process.env.EMAIL_ADDRESS_PWD
+      }
+    });
+    const info = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>',
+      to: address,
+      subject: msg.subject,
+      text: msg.text,
+      html: msg.html
+    });
+    const usInfo = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>',
+      to: usMsg.to,
+      subject: usMsg.subject,
+      text: usMsg.text,
+      html: usMsg.html
+    });
   }
 };
 var sendStatusUpdateEmail = async (baseUrl, sendToAddress, status, placeName, slots) => {
@@ -3353,7 +3426,22 @@ var sendStatusUpdateEmail = async (baseUrl, sendToAddress, status, placeName, sl
   if (baseUrl.includes("localhost")) {
     console.log("Status email would be sent");
   } else {
-    await import_mail.default.send(msg);
+    const transporter = import_nodemailer.default.createTransport({
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: "reserveroo@reserveroo.co.uk",
+        pass: process.env.EMAIL_ADDRESS_PWD
+      }
+    });
+    const info = await transporter.sendMail({
+      from: '"Reserveroo" <reserveroo@reserveroo.co.uk>',
+      to: address,
+      subject: msg.subject,
+      text: msg.text,
+      html: msg.html
+    });
   }
 };
 
@@ -3607,7 +3695,7 @@ function ForgotPassword() {
 var reset_exports = {};
 __export(reset_exports, {
   action: () => action6,
-  default: () => ForgotPassword2,
+  default: () => ResetPassword,
   loader: () => loader8
 });
 var import_react38 = require("@remix-run/react");
@@ -3664,7 +3752,7 @@ var InputWrap2 = import_styled_components23.default.div`
 var Spacer = import_styled_components23.default.div`
   height: 1rem;
 `;
-function ForgotPassword2() {
+function ResetPassword() {
   var _a;
   const a = (0, import_react38.useActionData)();
   const [searchParams] = (0, import_react38.useSearchParams)();
@@ -4072,247 +4160,22 @@ __export(reserve_exports, {
   default: () => ReservationElement,
   loader: () => loader10
 });
-var import_react45 = require("@remix-run/react");
+var import_react44 = require("@remix-run/react");
 var import_server_runtime8 = require("@remix-run/server-runtime");
-var import_react46 = __toESM(require("react"));
-var import_styled_components28 = __toESM(require("styled-components"));
-
-// app/components/inputs/DateInput.tsx
-var import_react42 = __toESM(require("react"));
-var import_styled_components25 = __toESM(require("styled-components"));
-
-// app/assets/icons/AngleLeft.tsx
-var AngleLeftIcon = (props) => /* @__PURE__ */ React.createElement("svg", {
-  viewBox: "0 0 256 512",
-  style: {
-    height: props.height
-  },
-  fill: "none",
-  xmlns: "http://www.w3.org/2000/svg"
-}, /* @__PURE__ */ React.createElement("path", {
-  d: "M192 448c-8.188 0-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25l160-160c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25L77.25 256l137.4 137.4c12.5 12.5 12.5 32.75 0 45.25C208.4 444.9 200.2 448 192 448z",
-  fill: props.fill ?? styles.colors.black
-}));
-var AngleLeft_default = AngleLeftIcon;
-
-// app/assets/icons/Calendar.tsx
-var CalendarIcon = (props) => /* @__PURE__ */ React.createElement("svg", {
-  viewBox: "0 0 448 512",
-  style: {
-    height: props.height
-  },
-  fill: "none",
-  xmlns: "http://www.w3.org/2000/svg"
-}, /* @__PURE__ */ React.createElement("path", {
-  d: "M160 32V64H288V32C288 14.33 302.3 0 320 0C337.7 0 352 14.33 352 32V64H400C426.5 64 448 85.49 448 112V160H0V112C0 85.49 21.49 64 48 64H96V32C96 14.33 110.3 0 128 0C145.7 0 160 14.33 160 32zM0 192H448V464C448 490.5 426.5 512 400 512H48C21.49 512 0 490.5 0 464V192zM64 304C64 312.8 71.16 320 80 320H112C120.8 320 128 312.8 128 304V272C128 263.2 120.8 256 112 256H80C71.16 256 64 263.2 64 272V304zM192 304C192 312.8 199.2 320 208 320H240C248.8 320 256 312.8 256 304V272C256 263.2 248.8 256 240 256H208C199.2 256 192 263.2 192 272V304zM336 256C327.2 256 320 263.2 320 272V304C320 312.8 327.2 320 336 320H368C376.8 320 384 312.8 384 304V272C384 263.2 376.8 256 368 256H336zM64 432C64 440.8 71.16 448 80 448H112C120.8 448 128 440.8 128 432V400C128 391.2 120.8 384 112 384H80C71.16 384 64 391.2 64 400V432zM208 384C199.2 384 192 391.2 192 400V432C192 440.8 199.2 448 208 448H240C248.8 448 256 440.8 256 432V400C256 391.2 248.8 384 240 384H208zM320 432C320 440.8 327.2 448 336 448H368C376.8 448 384 440.8 384 432V400C384 391.2 376.8 384 368 384H336C327.2 384 320 391.2 320 400V432z",
-  fill: props.fill ?? styles.colors.black
-}));
-var Calendar_default = CalendarIcon;
-
-// app/components/inputs/DateInput.tsx
-var DateInputField = import_styled_components25.default.input`
-  font-size: 0.8rem;
-  line-height: 2rem;
-  padding: 0rem 1rem;
-  border: 1.5px solid ${styles.colors.gray[30]};
-  border-radius: 0.3rem;
-  outline: none;
-  width: 5ch;
-  &:focus {
-    border: 1.5px solid ${styles.colors.gray[50]};
-  }
-`;
-var Calendar = import_styled_components25.default.div`
-  width: 15rem;
-  height: 15rem;
-  padding: 0.5rem 1rem;
-  position: absolute;
-  right: 0;
-  margin-top: 0.3rem;
-  background-color: ${styles.colors.white};
-  border: 1px solid ${styles.colors.gray[140]}40;
-  box-shadow: ${styles.shadows[0]};
-  border-radius: 0.5rem;
-  z-index: 6;
-  @media(max-width: 500px) {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-`;
-var Header2 = import_styled_components25.default.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.3rem 0rem 0.1rem;
-  gap: 0.4rem;
-`;
-var Body2 = import_styled_components25.default.div`
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-`;
-var Button = import_styled_components25.default.button`
-  border-radius: 100%;
-  height: 2rem;
-  width: 2rem;
-  border: none;
-  cursor: pointer;
-  color: ${(props) => props.selected ? styles.colors.white : styles.colors.black};
-  &:disabled {
-    color: ${styles.colors.gray[60]};
-  }
-  &:hover {
-    background-color: ${(props) => props.selected ? styles.colors.primary : styles.colors.gray[20]};
-  }
-  background-color: ${(props) => props.selected ? styles.colors.primary : styles.colors.white};
-`;
-var getMaxDayOfMonth = (year, month) => month === 1 && year % 400 === 0 ? 29 : month === 1 && year % 100 === 0 ? 28 : month === 1 && year % 4 === 0 ? 29 : [3, 5, 8, 10].includes(month) ? 30 : 31;
-var getDateFromParts = (year, month, date) => `${year == null ? void 0 : year.toString()}-${month < 9 ? "0" : ""}${(month + 1).toString()}-${date < 10 ? "0" : ""}${date == null ? void 0 : date.toString()}`;
-var getYearMonthFromValue = (str) => ({ year: parseInt(str.split("-")[0]), month: parseInt(str.split("-")[1]) - 1 });
-var Wrap12 = import_styled_components25.default.button`
-  padding: 0.5rem 0.8rem;
-  display: flex;
-  gap: 1rem;
-  margin: 0;
-  cursor: pointer;
-  align-items: center;
-  border: 1.5px solid ${styles.colors.gray[140]}40;
-  border-radius: 0.5rem;
-  background-color: ${styles.colors.white};
-`;
-var DateDisplay = import_styled_components25.default.p`
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 500;
-`;
-var Month = import_styled_components25.default.p`
-  margin: 0;
-  font-size: 0.8rem;
-`;
-var HeaderButton = import_styled_components25.default.button`
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 1.2rem;
-  border-radius: 0.3rem;
-  &>svg {
-    height: 1.1rem;
-  }
-  &:hover {
-    background-color: ${styles.colors.gray[20]};
-  }
-`;
-var Overlay3 = import_styled_components25.default.div`
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 5;
-`;
-var RelativeWrapper = import_styled_components25.default.div`
-  position: relative;
-`;
-var DayButton = ({ disabled, date, selected, onClick }) => /* @__PURE__ */ import_react42.default.createElement(Button, {
-  disabled,
-  selected,
-  onClick: (e) => {
-    e.preventDefault();
-    onClick();
-  }
-}, date.toString());
-var DateInput = ({ disablePast, name: name3, defaultValue, title, onChange }) => {
-  const [value, setValue] = import_react42.default.useState(getInputDateFromString(defaultValue));
-  const [{ year, month }, setYearMonth] = import_react42.default.useState({ year: new Date().getFullYear(), month: new Date().getMonth() });
-  const [date, setDate] = import_react42.default.useState(new Date().getDate());
-  const [showCalendar, setShowCalendar] = import_react42.default.useState(false);
-  const { translations: l } = useLangs();
-  import_react42.default.useEffect(() => {
-    setValue(date ? getDateFromParts(year, month, date) : "");
-    onChange(date ? new Date(year, month, date) : null);
-  }, [date]);
-  const startPadding = new Date(year, month, 1).getDay() == 0 ? 6 : new Date(year, month, 1).getDay() - 1;
-  const maxDayOfPreviousMonth = getMaxDayOfMonth(month > 0 ? year : year - 1, month > 0 ? month - 1 : month + 11);
-  const days = [...Array(getMaxDayOfMonth(year, month)).keys()];
-  const endPadding = 7 - (days.length + startPadding) % 7;
-  return /* @__PURE__ */ import_react42.default.createElement(RelativeWrapper, null, title && /* @__PURE__ */ import_react42.default.createElement("label", null, title), /* @__PURE__ */ import_react42.default.createElement(Wrap12, {
-    onClick: (e) => {
-      e.preventDefault();
-      setShowCalendar(!showCalendar);
-    }
-  }, /* @__PURE__ */ import_react42.default.createElement(Calendar_default, {
-    height: "1rem"
-  }), /* @__PURE__ */ import_react42.default.createElement(DateDisplay, null, getStringDateValue(new Date(value)))), showCalendar && /* @__PURE__ */ import_react42.default.createElement(import_react42.default.Fragment, null, /* @__PURE__ */ import_react42.default.createElement(Overlay3, {
-    onClick: () => {
-      setShowCalendar(false);
-    }
-  }), /* @__PURE__ */ import_react42.default.createElement(Calendar, null, /* @__PURE__ */ import_react42.default.createElement(Header2, null, /* @__PURE__ */ import_react42.default.createElement(HeaderButton, {
-    onClick: (e) => {
-      e.preventDefault();
-      setYearMonth({
-        year: month == 0 ? year - 1 : year,
-        month: month == 0 ? 11 : month - 1
-      });
-    }
-  }, /* @__PURE__ */ import_react42.default.createElement(AngleLeft_default, null)), /* @__PURE__ */ import_react42.default.createElement(Month, null, l.months[month]), /* @__PURE__ */ import_react42.default.createElement(HeaderButton, {
-    onClick: (e) => {
-      e.preventDefault();
-      setYearMonth({
-        year: month == 11 ? year + 1 : year,
-        month: month == 11 ? 0 : month + 1
-      });
-    }
-  }, /* @__PURE__ */ import_react42.default.createElement(AngleRight_default, null))), /* @__PURE__ */ import_react42.default.createElement(Body2, null, [...Array(startPadding).keys()].map((_, i) => maxDayOfPreviousMonth - i).reverse().map((d) => /* @__PURE__ */ import_react42.default.createElement(DayButton, {
-    disabled: true,
-    key: d,
-    onClick: () => {
-      setYearMonth({
-        year,
-        month: month - 1
-      });
-      setDate(d);
-      setShowCalendar(false);
-    },
-    date: d
-  })), days.map((d) => /* @__PURE__ */ import_react42.default.createElement(DayButton, {
-    key: d + 32,
-    disabled: disablePast && (new Date().getDate() > d + 1 && new Date().getMonth() == month) || new Date().getMonth() > month && new Date().getFullYear() == year || new Date().getFullYear() > year,
-    selected: d + 1 == date && getYearMonthFromValue(value).month == month && getYearMonthFromValue(value).year == year,
-    date: d + 1,
-    onClick: () => {
-      setDate(d + 1);
-      setShowCalendar(false);
-    }
-  })), [...Array(endPadding).keys()].map((d) => /* @__PURE__ */ import_react42.default.createElement(DayButton, {
-    disabled: true,
-    key: d + 64,
-    date: d + 1,
-    onClick: () => {
-      setDate(d + 1);
-      setYearMonth({
-        year,
-        month: month + 1
-      });
-      setShowCalendar(false);
-    }
-  }))))), /* @__PURE__ */ import_react42.default.createElement("input", {
-    name: name3,
-    type: "date",
-    value,
-    readOnly: true,
-    hidden: true
-  }));
-};
+var import_react45 = __toESM(require("react"));
+var import_fa5 = require("react-icons/fa");
+var import_styled_components27 = __toESM(require("styled-components"));
 
 // app/components/reservable-times.tsx
-var import_react43 = __toESM(require("react"));
-var import_styled_components26 = __toESM(require("styled-components"));
-var ReservableTimes = ({ reservationBackupName, setResList, backup = false, reservationIdName, defaultReservationGroup, reservableIdName, reservables, date, openingTime, startName, endName }) => {
+var import_react42 = __toESM(require("react"));
+var import_styled_components25 = __toESM(require("styled-components"));
+var ReservableTimes = ({ reservationBackupName, setResList, backup = false, reservationIdName, defaultReservationGroup, reservableIdName, reservables, openingTimes, startName, endName }) => {
   const { lang } = useLangs();
+  const [selected, setSelected] = (0, import_react42.useState)(reservables.map((r) => ({ reservableId: r.id, isSelected: false })));
+  console.log("sel");
+  console.log(selected);
+  const [selectedRange, setSelectedRange] = import_react42.default.useState(defaultReservationGroup ? getTimeSectionOfReservation(defaultReservationGroup.reservations[0]) : null);
+  const [selectedDate, setSelectedDate] = import_react42.default.useState(defaultReservationGroup ? new Date(defaultReservationGroup.reservations[0].start) : null);
   const reservableGroups = [];
   reservables.forEach((r) => {
     if (!r.ReservableType)
@@ -4328,80 +4191,182 @@ var ReservableTimes = ({ reservationBackupName, setResList, backup = false, rese
       });
     }
   });
-  return /* @__PURE__ */ import_react43.default.createElement(GroupWrap, null, reservableGroups.map((rg) => /* @__PURE__ */ import_react43.default.createElement(ReservableGroupSection, {
+  const reduction = new Date(openingTimes[getDayOfWeek(new Date())].close).getTime() < new Date().getTime() ? 1 : 0;
+  const upcomingDates = [...Array(reservableGroups[0].reservables[0].reservableDaysAhead - reduction).keys()].map((i) => {
+    const d = new Date();
+    d.setMilliseconds(0);
+    d.setSeconds(0);
+    d.setMinutes(0);
+    d.setHours(0);
+    d.setDate(d.getDate() + i + reduction);
+    return d;
+  });
+  const openMinutesForDaysOfWeek = openingTimes.map((ot) => getDiffBetweenTwoDates(ot.close, ot.open));
+  const openSinceMinutesForDaysOfWeek = openingTimes.map((ot) => new Date(ot.open).getMinutes() + new Date(ot.open).getHours() * 60);
+  const minMin = reservableGroups[0].reservables[0].minimumReservationTime;
+  const sectionsForDaysOfWeek = openMinutesForDaysOfWeek.map((om) => Math.floor(om / Math.max(1, minMin)));
+  const timeTitleListsForDaysOfWeek = sectionsForDaysOfWeek.map((sections, i) => [...Array(Math.floor(sections / 2 + 1)).keys()].map((s) => {
+    const currentMins = openSinceMinutesForDaysOfWeek[i] + openMinutesForDaysOfWeek[i] / sections * s * 2;
+    return getStringTimeValue(new Date(0, 0, 0, Math.floor(currentMins / 60), currentMins % 60));
+  }));
+  return /* @__PURE__ */ import_react42.default.createElement(GroupWrap, {
+    days: reservableGroups[0].reservables[0].reservableDaysAhead + 1 - reduction
+  }, /* @__PURE__ */ import_react42.default.createElement(DateTimeName, null, /* @__PURE__ */ import_react42.default.createElement(DateName, null, "Date"), /* @__PURE__ */ import_react42.default.createElement(TimeName, null, "Time")), upcomingDates.map((date, i) => /* @__PURE__ */ import_react42.default.createElement(TimeDateWrap, {
+    key: i
+  }, /* @__PURE__ */ import_react42.default.createElement(DateEl, null, getStringDateValue(date)), /* @__PURE__ */ import_react42.default.createElement(Times, null, timeTitleListsForDaysOfWeek[getDayOfWeek(date)].map((t, i2) => /* @__PURE__ */ import_react42.default.createElement("p", {
+    key: i2
+  }, t))))), /* @__PURE__ */ import_react42.default.createElement("div", null), reservableGroups.map((rg, i) => /* @__PURE__ */ import_react42.default.createElement(ReservableGroupSection, {
     key: rg.typeId,
+    indexInList: i,
     reservableGroup: rg,
-    date,
-    openingTime,
+    openingTimes,
     startName,
+    upcomingDates,
+    sectionsForDaysOfWeek,
+    openSinceMinutesForDaysOfWeek,
     endName,
     backup,
     reservableIdName,
     defaultReservationGroup,
     reservationIdName,
     reservationBackupName,
-    setResList
+    setResList,
+    selectedRange,
+    setSelectedRange,
+    selectedDate,
+    setSelectedDate,
+    selected,
+    setSelected,
+    reservables
   })));
 };
-var TypeName = import_styled_components26.default.h3`
+var TypeName = import_styled_components25.default.h3`
   align-self: end;
   text-align: end;
   position: sticky;
-  left: -30%;
+  left: 0;
   font-weight: 600;
-  padding: 1.6rem 1rem 0.5rem;
+  padding: ${(props) => props.noTopPad ? "0.0" : "1.2"}rem 1rem ${(props) => props.noTopPad ? "0.0" : "1.2"}rem;
+  font-size: 1rem;
   margin-bottom: 0;
+  height: 1.5rem;
+  line-height: 1.5rem;
   margin-top: 0;
-  background-color: ${styles.colors.gray[5]};
+  background-color: ${styles.colors.gray[20]}90;
 `;
-var Times = import_styled_components26.default.div`
+var DateTimeName = import_styled_components25.default.div`
+  height: 3.9rem;
+  position: sticky;
+  padding-right: 1rem;
+  left: 0;
+  background-color: ${styles.colors.gray[20]}90;
+`;
+var DateName = import_styled_components25.default.h3`
+  padding: 0;
+  font-weight: 600;
+  margin: 0;
+  align-self: flex-start;
+  box-sizing: border-box;
+  height: unset;
+  font-size: 1rem;
+  padding: 0.8rem 0rem 0.4rem;
+  text-align: right;
+  line-height: unset;
+  position: unset;
+`;
+var TimeName = import_styled_components25.default.h5`
+  padding: 0;
+  font-weight: 600;
+  margin: 0;
+  align-self: flex-start;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  text-align: right;
+  line-height: unset;
+  font-size: 0.8rem;
+  color: ${styles.colors.gray[90]};
+`;
+var TimeDateWrap = import_styled_components25.default.div`
+  background-color: ${styles.colors.primary_background};
+`;
+var DateEl = import_styled_components25.default.p`
+  margin: 0px;
+  display: flex;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.8rem 1.15rem 0.4rem;
+`;
+var Times = import_styled_components25.default.div`
   display: flex;
   align-items: center;
-  gap: 32px;
-  padding: 1.6rem 1rem 0.5rem;
-  background-color: ${styles.colors.primary_background};
+  gap: 2.28rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: ${styles.colors.gray[90]};
+  padding: 0rem 1.1rem 0rem;
   & p {
     width: 44px;
     text-align: center;
     margin: 0;
   }
 `;
-var GroupWrap = import_styled_components26.default.div`
+var GroupWrap = import_styled_components25.default.div`
   display: grid;
   width: 100%;
   overflow-x: auto;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: max-content repeat(${(props) => props.days}, max-content);
   position: relative;
 `;
 var ReservableGroupSection = ({
   reservableGroup,
-  date,
-  openingTime,
+  openingTimes,
   startName,
   endName,
   reservableIdName,
+  indexInList,
+  sectionsForDaysOfWeek,
+  openSinceMinutesForDaysOfWeek,
   defaultReservationGroup,
   reservationIdName,
   backup,
   reservationBackupName,
-  setResList
+  setResList,
+  upcomingDates,
+  selectedRange,
+  setSelectedRange,
+  selectedDate,
+  setSelectedDate,
+  selected,
+  setSelected,
+  reservables
 }) => {
-  const openMinutes = getDiffBetweenTwoDates(openingTime.close, openingTime.open);
-  const openSinceMinutes = new Date(openingTime.open).getMinutes() + new Date(openingTime.open).getHours() * 60;
   const minMin = reservableGroup.reservables[0].minimumReservationTime;
+  const timeSectionListsForDaysOfWeek = sectionsForDaysOfWeek.map((sc, i) => [...Array(sc).keys()].map((s) => ({
+    start: { minute: Math.round((s * minMin + openSinceMinutesForDaysOfWeek[i]) % 60), hour: Math.floor((s * minMin + openSinceMinutesForDaysOfWeek[i]) / 60) },
+    end: { minute: Math.round(((s + 1) * minMin + openSinceMinutesForDaysOfWeek[i]) % 60), hour: Math.floor(((s + 1) * minMin + openSinceMinutesForDaysOfWeek[i]) / 60) }
+  })));
   const slotCapacity = reservableGroup.reservables[0].reservationsPerSlot;
-  const sections = Math.floor(openMinutes / Math.max(1, minMin));
-  const timeTitle = [...Array(Math.floor(sections / 2)).keys()].map((s) => {
-    const currentMins = openSinceMinutes + openMinutes / sections * s * 2;
-    return getStringTimeValue(new Date(0, 0, 0, Math.floor(currentMins / 60), currentMins % 60));
-  });
-  return /* @__PURE__ */ import_react43.default.createElement(import_react43.default.Fragment, null, /* @__PURE__ */ import_react43.default.createElement(TypeName, null, reservableGroup.typeName), /* @__PURE__ */ import_react43.default.createElement(Times, null, timeTitle.map((t, i) => /* @__PURE__ */ import_react43.default.createElement("p", {
+  return /* @__PURE__ */ import_react42.default.createElement(import_react42.default.Fragment, null, /* @__PURE__ */ import_react42.default.createElement(TypeName, {
+    noTopPad: true
+  }, reservableGroup.typeName), upcomingDates.map((date, i) => /* @__PURE__ */ import_react42.default.createElement(SectionWrap, {
     key: i
-  }, t))), reservableGroup.reservables.map((r) => /* @__PURE__ */ import_react43.default.createElement(ReservableSection, {
+  }, timeSectionListsForDaysOfWeek[getDayOfWeek(date)].map((_, j) => /* @__PURE__ */ import_react42.default.createElement(Section, {
+    first: j == 0,
+    last: false,
+    transparent: true,
+    key: j,
+    taken: false,
+    selected: false,
+    disabled: true
+  })))), /* @__PURE__ */ import_react42.default.createElement("div", null), reservableGroup.reservables.map((r, h) => /* @__PURE__ */ import_react42.default.createElement(ReservableSection, {
     key: r.id,
+    firstSection: h == 0,
+    lastSection: h == reservableGroup.reservables.length - 1,
     reservable: r,
-    date,
-    openingTime,
+    timeSectionListsForDaysOfWeek,
+    openingTimes,
+    upcomingDates,
     startName,
     endName,
     backup,
@@ -4409,7 +4374,14 @@ var ReservableGroupSection = ({
     reservationIdName,
     defaultReservationGroup,
     reservationBackupName,
-    setResList
+    selectedRange,
+    setSelectedRange,
+    selectedDate,
+    setSelectedDate,
+    setResList,
+    selected,
+    reservables,
+    setSelected
   })));
 };
 var getTotalMinutes = (time) => time.hour * 60 + time.minute;
@@ -4442,96 +4414,123 @@ var getTimeSectionOfReservation = (reservation) => {
 var doDaysMatch = (date1, date2, date3) => {
   return new Date(date1).getFullYear() === new Date(date2).getFullYear() && new Date(date1).getFullYear() === new Date(date3).getFullYear() && new Date(date1).getMonth() === new Date(date2).getMonth() && new Date(date1).getMonth() === new Date(date3).getMonth() && new Date(date1).getDate() === new Date(date2).getDate() && new Date(date1).getDate() === new Date(date3).getDate();
 };
-var Section = import_styled_components26.default.button`
-  border: none;
-  border-radius: 0.25rem;
+var SectionOuter = import_styled_components25.default.div`
   height: 1.5rem;
   flex-shrink: 0;
-  width: 36px;
+  width: 38px;
   cursor: pointer;
+  padding: 0;
+  padding-left: ${(props) => props.first ? "0.15rem" : "0"};
+  padding-right: ${(props) => props.last ? "0.15rem" : "0"};
+  border: none;
+  &:nth-child(even) {
+    border-right: 2px solid ${styles.colors.gray[90]};
+  }
+  &:nth-child(odd) {
+    border-right: 2px solid ${styles.colors.primary_background};
+  }
+  &:last-child {
+    border-right: none;
+  }
+  &:first-child {
+    border-left: 2px solid ${styles.colors.gray[90]};
+  }
+`;
+var SectionInner = import_styled_components25.default.button`
+  height: 1.5rem;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  padding: 0;
   transition: box-shadow 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: none;
+  border-top: 1px solid ${styles.colors.primary_background};
+  border-bottom: 1px solid ${styles.colors.primary_background};
   &:hover {
     box-shadow: ${styles.shadows[2]};
   }
-  background-color: ${(props) => props.selected ? styles.colors.action : styles.colors.gray[70]};
+  border-top-left-radius: ${(props) => props.first && props.firstSection ? "0.75rem" : ""};
+  border-bottom-left-radius: ${(props) => props.first && props.lastSection ? "0.75rem" : ""};
+  border-top-right-radius: ${(props) => props.last && props.firstSection ? "0.75rem" : ""};
+  border-bottom-right-radius: ${(props) => props.last && props.lastSection ? "0.75rem" : ""};
+  background-color: ${(props) => props.selected ? styles.colors.action : styles.colors.gray[40]};
   &:disabled {
     box-shadow: none;
     cursor: default;
-    background-color: ${styles.colors.gray[30]};
+    background-color: ${styles.colors.gray[40]}40;
   }
   ${(props) => props.taken ? `background-color: ${styles.colors.busy} !important;` : ""}
 `;
-var SectionWrap = import_styled_components26.default.div`
+var Section = (props) => /* @__PURE__ */ import_react42.default.createElement(SectionOuter, {
+  first: props.first,
+  last: props.last,
+  taken: props.taken,
+  selected: props.selected
+}, /* @__PURE__ */ import_react42.default.createElement(SectionInner, {
+  style: props.transparent ? {
+    backgroundColor: "transparent"
+  } : {},
+  first: props.first,
+  last: props.last,
+  firstSection: props.firstSection ?? false,
+  lastSection: props.lastSection ?? false,
+  taken: props.taken,
+  selected: props.selected,
+  disabled: props.disabled,
+  onClick: props.onClick
+}));
+var SectionWrap = import_styled_components25.default.div`
   display: flex;
   background-color: ${styles.colors.primary_background};
-  gap: 2px;
-  padding: 0.5rem 2rem 0.5rem 0;
+  padding: 0rem 2rem 0rem 0;
   &:last-of-type {
     padding-bottom: 1.6rem;
   }
   padding-left: 2.375rem;
 `;
-var Title6 = import_styled_components26.default.p`
+var Title6 = import_styled_components25.default.p`
   text-align: end;
   position: sticky;
-  left: -30%;
-  padding: 0.5rem 1rem;
+  left: 0px;
+  padding: 0.0rem 1rem;
   align-self: stretch;
   margin: 0;
-  font-weight: 500;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  font-size: 0.8rem;
+  color: ${styles.colors.gray[90]};
+  font-weight: 600;
   &:last-of-type {
     padding-bottom: 1.6rem;
   }
-  background-color: ${styles.colors.gray[5]};
+  background-color: ${styles.colors.gray[20]}90;
 `;
-var CannotReserve = import_styled_components26.default.div`
+var CannotReserve = import_styled_components25.default.div`
   margin: 0;
   font-weight: 500;
   font-size: 0.8rem;
   height: 1.5rem;
 `;
-var ReservableSection = ({ defaultReservationGroup, setResList, reservationBackupName, backup, reservationIdName, reservableIdName, reservable, date, openingTime, startName, endName }) => {
-  const openMinutes = getDiffBetweenTwoDates(openingTime.close, openingTime.open);
-  const openSinceMinutes = new Date(openingTime.open).getMinutes() + new Date(openingTime.open).getHours() * 60;
+var ReservableSection = ({ timeSectionListsForDaysOfWeek, firstSection, lastSection, upcomingDates, defaultReservationGroup, setResList, reservationBackupName, backup, reservationIdName, reservableIdName, reservable, openingTimes, startName, endName, selectedRange, setSelectedRange, selectedDate, setSelectedDate, selected, setSelected, reservables }) => {
+  var _a, _b, _c, _d, _e;
   const minMin = reservable.minimumReservationTime;
-  const sections = Math.floor(openMinutes / Math.max(1, minMin));
-  const timeSections = [...Array(sections).keys()].map((s) => ({
-    start: { minute: Math.round((s * minMin + openSinceMinutes) % 60), hour: Math.floor((s * minMin + openSinceMinutes) / 60) },
-    end: { minute: Math.round(((s + 1) * minMin + openSinceMinutes) % 60), hour: Math.floor(((s + 1) * minMin + openSinceMinutes) / 60) }
-  }));
   const defaultReservation = defaultReservationGroup == null ? void 0 : defaultReservationGroup.reservations.find((r) => r.backup == backup && r.reservableId == reservable.id);
-  const [selectedRange, setSelectedRange] = import_react43.default.useState(defaultReservation ? getTimeSectionOfReservation(defaultReservation) : null);
-  const [selectedDate, setSelectedDate] = import_react43.default.useState(defaultReservation ? new Date(defaultReservation == null ? void 0 : defaultReservation.start) : null);
   const maxReservableDate = new Date();
   maxReservableDate.setDate(maxReservableDate.getDate() + reservable.reservableDaysAhead);
-  return /* @__PURE__ */ import_react43.default.createElement(import_react43.default.Fragment, null, /* @__PURE__ */ import_react43.default.createElement(Title6, null, reservable.name), /* @__PURE__ */ import_react43.default.createElement(SectionWrap, null, date.getTime() > maxReservableDate.getTime() ? /* @__PURE__ */ import_react43.default.createElement(CannotReserve, null, "You cannot yet reserve this far ahead.") : timeSections.map((s) => /* @__PURE__ */ import_react43.default.createElement(Section, {
-    taken: reservable.reservations.filter((r) => doDaysMatch(date, r.start, r.end) && doSectionsOverlap(getTimeSectionOfReservation(r), s) && !(defaultReservationGroup == null ? void 0 : defaultReservationGroup.reservations.find((dr) => dr.id == r.id)) && r.status != 3 /* Cancelled */).length >= reservable.reservationsPerSlot,
-    key: getTotalMinutes(s.start),
-    disabled: (() => {
-      const inTwoHours = new Date();
-      inTwoHours.setHours(inTwoHours.getHours() + 2);
-      return !!(new Date(date.getFullYear(), date.getMonth(), date.getDate(), s.start.hour, s.start.minute).getTime() < inTwoHours.getTime());
-    })(),
-    selected: selectedRange != null && selectedDate != null && areDatesEqual(date, selectedDate) && getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.start) && getTotalMinutes(s.start) < getTotalMinutes(selectedRange.end),
-    onClick: (e) => {
-      let newRange = null;
-      if (selectedRange == null || date != selectedDate) {
-        newRange = s;
-      } else if (getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.end)) {
-        newRange = { start: selectedRange.start, end: s.end };
-      } else if (getTotalMinutes(s.start) < getTotalMinutes(selectedRange.start)) {
-        newRange = { start: s.start, end: getTimeOfTotalMinutes(getTotalMinutes(selectedRange.start) + minMin) };
-      } else if (getTotalMinutes(selectedRange.start) == getTotalMinutes(s.start) && getTotalMinutes(s.end) == getTotalMinutes(selectedRange.end)) {
-        newRange = null;
-      } else if (getTotalMinutes(selectedRange.start) <= getTotalMinutes(s.start) && getTotalMinutes(s.start) <= getTotalMinutes(selectedRange.end)) {
-        newRange = { start: selectedRange.start, end: s.end };
-      }
-      const overlap = reservable.reservations.filter((r) => doDaysMatch(date, r.start, r.end) && newRange != null && doSectionsOverlap(getTimeSectionOfReservation(r), getTimeSectionOfDates(new Date(date.getFullYear(), date.getMonth(), date.getDate(), newRange.start.hour, newRange.start.minute), new Date(date.getFullYear(), date.getMonth(), date.getDate(), newRange.end.hour, newRange.end.minute))) && !(defaultReservationGroup == null ? void 0 : defaultReservationGroup.reservations.find((dr) => dr.id == r.id)) && r.status != 3 /* Cancelled */).length >= reservable.reservationsPerSlot;
-      setSelectedRange(overlap ? selectedRange : newRange);
-      setSelectedDate(overlap ? selectedDate : date);
+  (0, import_react42.useEffect)(() => {
+    var _a2;
+    console.log("selectedRange effect");
+    if (selectedRange == null) {
+      setSelected((sAr) => {
+        const sArNew = sAr.map((s) => s.reservableId == reservable.id ? { reservableId: s.reservableId, isSelected: false } : s);
+        return sArNew;
+      });
+      setResList((s) => s.filter((sx) => sx.isBackup != backup));
+    }
+    if (selectedRange && ((_a2 = selected.find((s) => s.reservableId == reservable.id)) == null ? void 0 : _a2.isSelected))
       setResList((resList) => {
-        const r = overlap ? selectedRange : newRange;
-        const d = overlap ? selectedDate : date;
+        const r = selectedRange;
+        const d = selectedDate;
         const startDate = r && d ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.start.hour, r.start.minute) : null;
         const endDate = r && d ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.end.hour, r.end.minute) : null;
         const obj = ((startDate == null ? void 0 : startDate.getTime()) ?? 0) < ((endDate == null ? void 0 : endDate.getTime()) ?? 0) ? { reservableId: reservable.id, startTime: startDate, endTime: endDate, isBackup: backup ?? false } : null;
@@ -4540,36 +4539,101 @@ var ReservableSection = ({ defaultReservationGroup, setResList, reservationBacku
           arr.push(obj);
         return arr;
       });
-      e.preventDefault();
-    }
-  })), selectedRange && /* @__PURE__ */ import_react43.default.createElement(IdInput, {
+  }, [selectedRange, selectedDate]);
+  return /* @__PURE__ */ import_react42.default.createElement(import_react42.default.Fragment, null, /* @__PURE__ */ import_react42.default.createElement(Title6, null, reservable.name), upcomingDates.map((date, x) => /* @__PURE__ */ import_react42.default.createElement(SectionWrap, {
+    key: x
+  }, date.getTime() > maxReservableDate.getTime() ? /* @__PURE__ */ import_react42.default.createElement(CannotReserve, null, "You cannot yet reserve this far ahead.") : timeSectionListsForDaysOfWeek[getDayOfWeek(date)].map((s, z) => {
+    var _a2;
+    return /* @__PURE__ */ import_react42.default.createElement(Section, {
+      first: z == 0,
+      firstSection,
+      lastSection,
+      last: z == timeSectionListsForDaysOfWeek[getDayOfWeek(date)].length - 1,
+      taken: reservable.reservations.filter((r) => doDaysMatch(date, r.start, r.end) && doSectionsOverlap(getTimeSectionOfReservation(r), s) && !(defaultReservationGroup == null ? void 0 : defaultReservationGroup.reservations.find((dr) => dr.id == r.id)) && r.status != 3 /* Cancelled */).length >= reservable.reservationsPerSlot,
+      key: getTotalMinutes(s.start),
+      disabled: (() => {
+        var _a3;
+        const inTwoHours = new Date();
+        inTwoHours.setHours(inTwoHours.getHours() + 2);
+        return !(selectedRange != null && selectedDate != null && areDatesEqual(date, selectedDate) && getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.start) && getTotalMinutes(s.start) < getTotalMinutes(selectedRange.end)) && !((_a3 = selected.find((s2) => s2.reservableId == reservable.id)) == null ? void 0 : _a3.isSelected) && selectedRange != null && selectedDate != null || !!(new Date(date.getFullYear(), date.getMonth(), date.getDate(), s.start.hour, s.start.minute).getTime() < inTwoHours.getTime());
+      })(),
+      selected: (((_a2 = selected.find((s2) => s2.reservableId == reservable.id)) == null ? void 0 : _a2.isSelected) ?? false) && selectedRange != null && selectedDate != null && areDatesEqual(date, selectedDate) && getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.start) && getTotalMinutes(s.start) < getTotalMinutes(selectedRange.end),
+      onClick: (e) => {
+        var _a3;
+        let newRange = null;
+        let newSelected = true;
+        const lSelected = (_a3 = selected.find((s2) => s2.reservableId == reservable.id)) == null ? void 0 : _a3.isSelected;
+        if (selectedRange == null || date.getTime() != (selectedDate == null ? void 0 : selectedDate.getTime())) {
+          newRange = s;
+        } else if (lSelected && getTotalMinutes(s.start) >= getTotalMinutes(selectedRange.end)) {
+          newRange = { start: selectedRange.start, end: s.end };
+        } else if (lSelected && getTotalMinutes(s.start) < getTotalMinutes(selectedRange.start)) {
+          newRange = { start: s.start, end: getTimeOfTotalMinutes(getTotalMinutes(selectedRange.start) + minMin) };
+        } else if (lSelected && selected.filter((s2) => s2.isSelected).length == 1 && getTotalMinutes(selectedRange.start) == getTotalMinutes(s.start) && getTotalMinutes(s.end) == getTotalMinutes(selectedRange.end)) {
+          newRange = null;
+          newSelected = false;
+        } else if (lSelected && getTotalMinutes(selectedRange.start) == getTotalMinutes(s.start) && getTotalMinutes(s.end) == getTotalMinutes(selectedRange.end)) {
+          newRange = selectedRange;
+          newSelected = false;
+        } else if (lSelected && getTotalMinutes(selectedRange.start) < getTotalMinutes(s.start) && getTotalMinutes(selectedRange.end) == getTotalMinutes(s.end)) {
+          newRange = { start: s.start, end: s.end };
+        } else if (lSelected && getTotalMinutes(selectedRange.start) <= getTotalMinutes(s.start) && getTotalMinutes(s.start) <= getTotalMinutes(selectedRange.end)) {
+          newRange = { start: selectedRange.start, end: s.end };
+          console.log("4");
+        } else if (!lSelected) {
+          console.log("s");
+          console.log(s);
+          newRange = selectedRange;
+        }
+        const overlap = reservables.filter((rx) => {
+          var _a4;
+          return ((_a4 = selected.find((s2) => s2.reservableId == rx.id)) == null ? void 0 : _a4.isSelected) || rx.id == reservable.id;
+        }).find((ry) => ry.reservations.filter((r) => doDaysMatch(date, r.start, r.end) && newRange != null && doSectionsOverlap(getTimeSectionOfReservation(r), getTimeSectionOfDates(new Date(date.getFullYear(), date.getMonth(), date.getDate(), newRange.start.hour, newRange.start.minute), new Date(date.getFullYear(), date.getMonth(), date.getDate(), newRange.end.hour, newRange.end.minute))) && !(defaultReservationGroup == null ? void 0 : defaultReservationGroup.reservations.find((dr) => dr.id == r.id)) && r.status != 3 /* Cancelled */).length >= ry.reservationsPerSlot);
+        setSelectedRange(overlap ? selectedRange : newRange);
+        setSelectedDate(overlap ? selectedDate : date);
+        setSelected(overlap ? selected : selected.map((s2) => s2.reservableId == reservable.id ? { reservableId: reservable.id, isSelected: newSelected } : s2));
+        setResList((resList) => {
+          const r = overlap ? selectedRange : newRange;
+          const d = overlap ? selectedDate : date;
+          const startDate = r && d ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.start.hour, r.start.minute) : null;
+          const endDate = r && d ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), r.end.hour, r.end.minute) : null;
+          const obj = ((startDate == null ? void 0 : startDate.getTime()) ?? 0) < ((endDate == null ? void 0 : endDate.getTime()) ?? 0) && (overlap ? lSelected : newSelected) ? { reservableId: reservable.id, startTime: startDate, endTime: endDate, isBackup: backup ?? false } : null;
+          const arr = resList.filter((rx) => rx.reservableId != reservable.id || rx.isBackup != backup);
+          if (obj != null)
+            arr.push(obj);
+          return arr;
+        });
+        e.preventDefault();
+      }
+    });
+  }))), /* @__PURE__ */ import_react42.default.createElement("div", null, ((_a = selected.find((s) => s.reservableId == reservable.id)) == null ? void 0 : _a.isSelected) && selectedRange && /* @__PURE__ */ import_react42.default.createElement(IdInput, {
     name: reservationBackupName,
     value: backup ? "1" : "0"
-  }), selectedRange && /* @__PURE__ */ import_react43.default.createElement(IdInput, {
+  }), ((_b = selected.find((s) => s.reservableId == reservable.id)) == null ? void 0 : _b.isSelected) && selectedRange && /* @__PURE__ */ import_react42.default.createElement(IdInput, {
     name: reservationIdName,
     value: defaultReservation ? defaultReservation.id : "-1"
-  }), selectedRange && /* @__PURE__ */ import_react43.default.createElement("input", {
+  }), ((_c = selected.find((s) => s.reservableId == reservable.id)) == null ? void 0 : _c.isSelected) && selectedRange && /* @__PURE__ */ import_react42.default.createElement("input", {
     hidden: true,
     readOnly: true,
     name: startName,
     type: "datetime-local",
     value: selectedDate && selectedRange ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.start.hour, selectedRange.start.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ""
-  }), selectedRange && /* @__PURE__ */ import_react43.default.createElement("input", {
+  }), ((_d = selected.find((s) => s.reservableId == reservable.id)) == null ? void 0 : _d.isSelected) && selectedRange && /* @__PURE__ */ import_react42.default.createElement("input", {
     hidden: true,
     readOnly: true,
     name: endName,
     type: "datetime-local",
     value: selectedDate && selectedRange ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.end.hour, selectedRange.end.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ""
-  }), selectedRange && /* @__PURE__ */ import_react43.default.createElement(IdInput, {
+  }), ((_e = selected.find((s) => s.reservableId == reservable.id)) == null ? void 0 : _e.isSelected) && selectedRange && /* @__PURE__ */ import_react42.default.createElement(IdInput, {
     name: reservableIdName,
     value: reservable.id
   })));
 };
 
 // app/components/reserve-confirmation-dialog.tsx
-var import_react44 = __toESM(require("react"));
-var import_styled_components27 = __toESM(require("styled-components"));
-var Wrap13 = import_styled_components27.default.div`
+var import_react43 = __toESM(require("react"));
+var import_styled_components26 = __toESM(require("styled-components"));
+var Wrap12 = import_styled_components26.default.div`
   position: fixed;
   visibility: ${(props) => props.hidden ? "hidden" : "visible"};
   transition: opacity 0.15s ease-in-out, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -4584,7 +4648,7 @@ var Wrap13 = import_styled_components27.default.div`
   justify-content: center;
   align-items: center;
 `;
-var Window2 = import_styled_components27.default.div`
+var Window2 = import_styled_components26.default.div`
   background-color: ${styles.colors.white};
   box-shadow: ${styles.shadows[0]};
   width: 968px;
@@ -4605,7 +4669,7 @@ var Window2 = import_styled_components27.default.div`
   z-index: 8;
   position: relative;
 `;
-var Backdrop3 = import_styled_components27.default.div`
+var Backdrop3 = import_styled_components26.default.div`
   position: fixed;
   z-index: 7;
   display: ${(props) => props.hidden ? "none" : ""};
@@ -4618,23 +4682,23 @@ var Backdrop3 = import_styled_components27.default.div`
   height: 100vh;
   align-items: center;
 `;
-var Title7 = import_styled_components27.default.h2`
+var Title7 = import_styled_components26.default.h2`
   margin: 0px;
   font-size: 1.375rem;
   font-weight: 600;
 `;
-var Text4 = import_styled_components27.default.p`
+var Text4 = import_styled_components26.default.p`
   margin: 0px;
   font-weight: 500;
   font-size: 0.875rem;
 `;
-var ButtonRow2 = import_styled_components27.default.div`
+var ButtonRow2 = import_styled_components26.default.div`
   display: flex;
   justify-content: center;
   gap: 1.5rem;
   flex-wrap: wrap;
 `;
-var SlotList = import_styled_components27.default.div`
+var SlotList = import_styled_components26.default.div`
   padding: 1rem 1.6rem;
   display: flex;
   flex-direction: column;
@@ -4644,10 +4708,10 @@ var SlotList = import_styled_components27.default.div`
   gap: 1.5rem;
   background-color: ${styles.colors.primary};
 `;
-var BackupSlotList = (0, import_styled_components27.default)(SlotList)`
+var BackupSlotList = (0, import_styled_components26.default)(SlotList)`
   background-color: ${styles.colors.gray[5]};
 `;
-var ResE = import_styled_components27.default.div`
+var ResE = import_styled_components26.default.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -4657,20 +4721,20 @@ var ResE = import_styled_components27.default.div`
     align-items: flex-start;
   }
 `;
-var SlotListTitle = import_styled_components27.default.div`
+var SlotListTitle = import_styled_components26.default.div`
   font-size: 16px;
   font-weight: 600;
 `;
-var WhiteSlotListTitle = (0, import_styled_components27.default)(SlotListTitle)`
+var WhiteSlotListTitle = (0, import_styled_components26.default)(SlotListTitle)`
   color: ${styles.colors.white};
 `;
-var BackupSlotText = import_styled_components27.default.p`
+var BackupSlotText = import_styled_components26.default.p`
 
 `;
-var SlotText = (0, import_styled_components27.default)(BackupSlotText)`
+var SlotText = (0, import_styled_components26.default)(BackupSlotText)`
   color: ${styles.colors.white};  
 `;
-var FlexSL = import_styled_components27.default.div`
+var FlexSL = import_styled_components26.default.div`
   display: flex;
   align-items: center;
   column-gap: 1rem;
@@ -4680,9 +4744,9 @@ var FlexSL = import_styled_components27.default.div`
     margin: 0;
   }
 `;
-var ReserveConfirmationDialog = ({ subHeaderText, reservables, resList, hidden, title, backupTitle, backupText1, backupText2, confirmText, cancelText, onConfirm, close }) => {
-  const wrap = import_react44.default.useRef(null);
-  import_react44.default.useEffect(() => {
+var ReserveConfirmationDialog = ({ subHeaderText, reservables, resList, hidden, title, backupTitle, backupText1, backupText2, confirmText, cancelText, onConfirm, close, backup }) => {
+  const wrap = import_react43.default.useRef(null);
+  import_react43.default.useEffect(() => {
     setTimeout(() => {
       if (wrap.current) {
         wrap.current.style.opacity = hidden ? "0" : "1";
@@ -4690,29 +4754,29 @@ var ReserveConfirmationDialog = ({ subHeaderText, reservables, resList, hidden, 
       }
     }, 100);
   }, [hidden]);
-  return /* @__PURE__ */ import_react44.default.createElement(Wrap13, {
+  return /* @__PURE__ */ import_react43.default.createElement(Wrap12, {
     hidden,
     ref: wrap
-  }, /* @__PURE__ */ import_react44.default.createElement(Backdrop3, {
+  }, /* @__PURE__ */ import_react43.default.createElement(Backdrop3, {
     onClick: close
-  }), /* @__PURE__ */ import_react44.default.createElement(Window2, null, /* @__PURE__ */ import_react44.default.createElement(Title7, null, title), /* @__PURE__ */ import_react44.default.createElement(Text4, null, subHeaderText), resList.filter((r) => !r.isBackup).length > 0 && /* @__PURE__ */ import_react44.default.createElement(SlotList, null, /* @__PURE__ */ import_react44.default.createElement(WhiteSlotListTitle, null, resList.filter((r) => r.isBackup).length > 0 ? `Preferred timeslot${resList.filter((r) => !r.isBackup).length > 1 ? "s" : ""}` : `Picked timeslot${resList.filter((r) => !r.isBackup).length > 1 ? "s" : ""}`), resList.filter((r) => !r.isBackup).map((r, i) => {
+  }), /* @__PURE__ */ import_react43.default.createElement(Window2, null, /* @__PURE__ */ import_react43.default.createElement(Title7, null, title), /* @__PURE__ */ import_react43.default.createElement(Text4, null, subHeaderText), resList.filter((r) => !r.isBackup).length > 0 && /* @__PURE__ */ import_react43.default.createElement(SlotList, null, /* @__PURE__ */ import_react43.default.createElement(WhiteSlotListTitle, null, resList.filter((r) => r.isBackup).length > 0 ? `Preferred timeslot${resList.filter((r) => !r.isBackup).length > 1 ? "s" : ""}` : `Picked timeslot${resList.filter((r) => !r.isBackup).length > 1 ? "s" : ""}`), resList.filter((r) => !r.isBackup).map((r, i) => {
     var _a;
-    return r.startTime && r.endTime && /* @__PURE__ */ import_react44.default.createElement(ResE, {
+    return r.startTime && r.endTime && /* @__PURE__ */ import_react43.default.createElement(ResE, {
       key: i
-    }, /* @__PURE__ */ import_react44.default.createElement(Indicator, {
+    }, /* @__PURE__ */ import_react43.default.createElement(Indicator, {
       style: { padding: "0.5rem", whiteSpace: "nowrap" }
-    }, (_a = reservables.find((x) => x.id == r.reservableId)) == null ? void 0 : _a.name), /* @__PURE__ */ import_react44.default.createElement(FlexSL, null, /* @__PURE__ */ import_react44.default.createElement(SlotText, null, "Date: ", getStringDateValue(r.startTime)), /* @__PURE__ */ import_react44.default.createElement(SlotText, null, "Time: ", getStringTimeValue(r.startTime), " - ", getStringTimeValue(new Date(r.endTime)))));
-  })), resList.filter((r) => r.isBackup).length > 0 && /* @__PURE__ */ import_react44.default.createElement(BackupSlotList, null, /* @__PURE__ */ import_react44.default.createElement(SlotListTitle, null, "Backup timeslots"), resList.filter((r) => r.isBackup).map((r) => {
+    }, (_a = reservables.find((x) => x.id == r.reservableId)) == null ? void 0 : _a.name), /* @__PURE__ */ import_react43.default.createElement(FlexSL, null, /* @__PURE__ */ import_react43.default.createElement(SlotText, null, "Date: ", getStringDateValue(r.startTime)), /* @__PURE__ */ import_react43.default.createElement(SlotText, null, "Time: ", getStringTimeValue(r.startTime), " - ", getStringTimeValue(new Date(r.endTime)))));
+  })), backup && resList.filter((r) => r.isBackup).length > 0 && /* @__PURE__ */ import_react43.default.createElement(BackupSlotList, null, /* @__PURE__ */ import_react43.default.createElement(SlotListTitle, null, "Backup timeslots"), resList.filter((r) => r.isBackup).map((r) => {
     var _a;
-    return r.startTime && r.endTime && /* @__PURE__ */ import_react44.default.createElement(ResE, null, /* @__PURE__ */ import_react44.default.createElement(Indicator, {
+    return r.startTime && r.endTime && /* @__PURE__ */ import_react43.default.createElement(ResE, null, /* @__PURE__ */ import_react43.default.createElement(Indicator, {
       style: { padding: "0.5rem" }
-    }, (_a = reservables.find((x) => x.id == r.reservableId)) == null ? void 0 : _a.name), /* @__PURE__ */ import_react44.default.createElement(FlexSL, null, /* @__PURE__ */ import_react44.default.createElement(BackupSlotText, null, "Date: ", getStringDateValue(r.startTime)), /* @__PURE__ */ import_react44.default.createElement(BackupSlotText, null, "Time: ", getStringTimeValue(r.startTime), " - ", getStringTimeValue(new Date(r.endTime)))));
-  })), /* @__PURE__ */ import_react44.default.createElement(Title7, null, backupTitle), /* @__PURE__ */ import_react44.default.createElement(Text4, null, backupText1), /* @__PURE__ */ import_react44.default.createElement(Text4, null, backupText2), /* @__PURE__ */ import_react44.default.createElement(ButtonRow2, null, /* @__PURE__ */ import_react44.default.createElement(SecondaryButtonBtn, {
+    }, (_a = reservables.find((x) => x.id == r.reservableId)) == null ? void 0 : _a.name), /* @__PURE__ */ import_react43.default.createElement(FlexSL, null, /* @__PURE__ */ import_react43.default.createElement(BackupSlotText, null, "Date: ", getStringDateValue(r.startTime)), /* @__PURE__ */ import_react43.default.createElement(BackupSlotText, null, "Time: ", getStringTimeValue(r.startTime), " - ", getStringTimeValue(new Date(r.endTime)))));
+  })), /* @__PURE__ */ import_react43.default.createElement(Title7, null, backupTitle), /* @__PURE__ */ import_react43.default.createElement(Text4, null, backupText1), /* @__PURE__ */ import_react43.default.createElement(Text4, null, backupText2), /* @__PURE__ */ import_react43.default.createElement(ButtonRow2, null, /* @__PURE__ */ import_react43.default.createElement(SecondaryButtonBtn, {
     onClick: (e) => {
       e.preventDefault();
       close();
     }
-  }, cancelText), /* @__PURE__ */ import_react44.default.createElement(MainButtonBtn, {
+  }, cancelText), /* @__PURE__ */ import_react43.default.createElement(MainButtonBtn, {
     onClick: (e) => {
       onConfirm();
       close();
@@ -5056,7 +5120,7 @@ var action7 = async ({ request }) => {
   await Promise.all(promises);
   return (0, import_server_runtime8.redirect)(`/profile`);
 };
-var HeaderBar = import_styled_components28.default.div`
+var HeaderBar = import_styled_components27.default.div`
   background-color: ${(props) => props.color == "primary" ? styles.colors.primary : props.color == "gray" ? styles.colors.gray[10] : ""};
   @media (min-width: 500px) {
     border-top-left-radius: 0.5rem;
@@ -5078,16 +5142,30 @@ var HeaderBar = import_styled_components28.default.div`
     row-gap: 0.6rem;
   }
 `;
-var Title8 = import_styled_components28.default.h5`
+var Title8 = import_styled_components27.default.h5`
   margin: 0;
   display: flex;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 0rem;
+  height: 2.25rem;
+  line-height: 2.25rem;
 `;
-var ButtonWrap = import_styled_components28.default.div`
+var SubTitle = import_styled_components27.default.p`
+  margin: 0;
+  display: flex;
+  font-size: 1rem;
+  font-weight: 400;
+  color: ${styles.colors.gray[50]};
+  align-items: center;
+  gap: 0rem;
+  height: 2.25rem;
+  line-height: 2.25rem;
+`;
+var ButtonWrap = import_styled_components27.default.div`
   max-width: 400px;
   margin: 0 auto;
 `;
-var Wrap14 = import_styled_components28.default.div`
+var Wrap13 = import_styled_components27.default.div`
   max-width: 938px;
   display: flex;
   @media (min-width: 500px) {
@@ -5096,7 +5174,7 @@ var Wrap14 = import_styled_components28.default.div`
   flex-direction: column;
   margin: 2rem auto;
 `;
-var Flex5 = import_styled_components28.default.div`
+var Flex5 = import_styled_components27.default.div`
   display: flex;
   align-items: center;
   & h5 {
@@ -5104,10 +5182,10 @@ var Flex5 = import_styled_components28.default.div`
     margin-right: 1.5rem;
   }
 `;
-var TextWrap2 = import_styled_components28.default.div`
+var TextWrap2 = import_styled_components27.default.div`
   padding: 0.5rem 1.6rem;
 `;
-var SlotList2 = import_styled_components28.default.div`
+var SlotList2 = import_styled_components27.default.div`
   padding: 1rem 1.6rem;
   display: flex;
   flex-direction: column;
@@ -5118,10 +5196,10 @@ var SlotList2 = import_styled_components28.default.div`
   gap: 1.5rem;
   background-color: ${styles.colors.primary};
 `;
-var BackupSlotList2 = (0, import_styled_components28.default)(SlotList2)`
+var BackupSlotList2 = (0, import_styled_components27.default)(SlotList2)`
   background-color: ${styles.colors.gray[5]};
 `;
-var ResE2 = import_styled_components28.default.div`
+var ResE2 = import_styled_components27.default.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -5131,20 +5209,20 @@ var ResE2 = import_styled_components28.default.div`
     align-items: flex-start;
   }
 `;
-var SlotListTitle2 = import_styled_components28.default.div`
+var SlotListTitle2 = import_styled_components27.default.div`
   font-size: 16px;
   font-weight: 600;
 `;
-var WhiteSlotListTitle2 = (0, import_styled_components28.default)(SlotListTitle2)`
+var WhiteSlotListTitle2 = (0, import_styled_components27.default)(SlotListTitle2)`
   color: ${styles.colors.white};
 `;
-var BackupSlotText2 = import_styled_components28.default.p`
+var BackupSlotText2 = import_styled_components27.default.p`
 
 `;
-var SlotText2 = (0, import_styled_components28.default)(BackupSlotText2)`
+var SlotText2 = (0, import_styled_components27.default)(BackupSlotText2)`
   color: ${styles.colors.white};  
 `;
-var FlexSL2 = import_styled_components28.default.div`
+var FlexSL2 = import_styled_components27.default.div`
   display: flex;
   align-items: center;
   column-gap: 1rem;
@@ -5156,18 +5234,19 @@ var FlexSL2 = import_styled_components28.default.div`
 `;
 function ReservationElement() {
   var _a;
-  const params = (0, import_react45.useParams)();
-  const s = (0, import_react45.useSubmit)();
-  const formRef = import_react46.default.useRef(null);
-  const [confirmationDialog, setConfirmationDialog] = import_react46.default.useState(false);
-  const { username, place } = (0, import_react45.useLoaderData)();
+  const params = (0, import_react44.useParams)();
+  const s = (0, import_react44.useSubmit)();
+  const formRef = import_react45.default.useRef(null);
+  const [confirmationDialog, setConfirmationDialog] = import_react45.default.useState(false);
+  const { username, place } = (0, import_react44.useLoaderData)();
   const reservables = place.reservables;
-  const actionData = (0, import_react45.useActionData)();
-  const [resList, setResList] = (0, import_react46.useState)([]);
-  const [date, setDate] = import_react46.default.useState(null);
-  const [backup, setBackup] = import_react46.default.useState(false);
-  return /* @__PURE__ */ import_react46.default.createElement(Wrap14, null, /* @__PURE__ */ import_react46.default.createElement(ReserveConfirmationDialog, {
+  const actionData = (0, import_react44.useActionData)();
+  const [resList, setResList] = (0, import_react45.useState)([]);
+  const [date, setDate] = import_react45.default.useState(null);
+  const [backup, setBackup] = import_react45.default.useState(false);
+  return /* @__PURE__ */ import_react45.default.createElement(Wrap13, null, /* @__PURE__ */ import_react45.default.createElement(ReserveConfirmationDialog, {
     hidden: !confirmationDialog,
+    backup,
     onConfirm: () => {
       if (formRef.current)
         s(formRef.current);
@@ -5182,30 +5261,36 @@ function ReservationElement() {
     subHeaderText: "Is all of the information bellow correct?",
     resList,
     reservables,
-    backupTitle: resList.filter((r) => r.isBackup).length > 0 ? "What does this mean?" : "Cannot go any other time?",
-    backupText1: resList.filter((r) => r.isBackup).length > 0 && resList.filter((r) => !r.isBackup).length > 1 ? /* @__PURE__ */ import_react46.default.createElement("span", null, "We will try to book all your primary slots. If ", /* @__PURE__ */ import_react46.default.createElement("b", null, "*any* (read: at least one)"), " of them are unavailable, we will try your backup option.") : resList.filter((r) => r.isBackup).length > 0 && resList.filter((r) => !r.isBackup).length == 1 ? /* @__PURE__ */ import_react46.default.createElement("span", null, "We will try to book your primary slot. If it's unavailable, we will try your backup option.") : /* @__PURE__ */ import_react46.default.createElement("span", null, "Please keep in mind that for the time being, we cannot guarantee a free spot at this business. That\u2019s why we provide the option to choose a backupslot, which we will book you into if your first choice isn\u2019t free."),
-    backupText2: resList.filter((r) => r.isBackup).length > 0 ? /* @__PURE__ */ import_react46.default.createElement("span", null, "Please keep in mind that for the time being, we cannot guarantee a free spot at this business. To help us bring this functionality to everyone, you can share this service with your friends! Thanks for understanding. :)") : /* @__PURE__ */ import_react46.default.createElement("span", null, "To help us bring real-time availability information to everyone, you can share this service with your friends! Thanks for understanding. :)")
-  }), /* @__PURE__ */ import_react46.default.createElement(ButtonWrap, null, /* @__PURE__ */ import_react46.default.createElement(SecondaryButton, {
+    backupTitle: backup && resList.filter((r) => r.isBackup).length > 0 ? "What does this mean?" : "Cannot go any other time?",
+    backupText1: backup && resList.filter((r) => r.isBackup).length > 0 && resList.filter((r) => !r.isBackup).length > 1 ? /* @__PURE__ */ import_react45.default.createElement("span", null, "We will try to book all your primary slots. If ", /* @__PURE__ */ import_react45.default.createElement("b", null, "*any* (read: at least one)"), " of them are unavailable, we will try your backup option.") : backup && resList.filter((r) => r.isBackup).length > 0 && resList.filter((r) => !r.isBackup).length == 1 ? /* @__PURE__ */ import_react45.default.createElement("span", null, "We will try to book your primary slot. If it's unavailable, we will try your backup option.") : /* @__PURE__ */ import_react45.default.createElement("span", null, "Please keep in mind that for the time being, we cannot guarantee a free spot at this business. That\u2019s why we provide the option to choose a backupslot, which we will book you into if your first choice isn\u2019t free."),
+    backupText2: backup && resList.filter((r) => r.isBackup).length > 0 ? /* @__PURE__ */ import_react45.default.createElement("span", null, "Please keep in mind that for the time being, we cannot guarantee a free spot at this business. To help us bring this functionality to everyone, you can share this service with your friends! Thanks for understanding. :)") : /* @__PURE__ */ import_react45.default.createElement("span", null, "To help us bring real-time availability information to everyone, you can share this service with your friends! Thanks for understanding. :)")
+  }), /* @__PURE__ */ import_react45.default.createElement(ButtonWrap, null, /* @__PURE__ */ import_react45.default.createElement(SecondaryButton, {
     inSearch: false,
     style: { alignSelf: "start" },
     to: `/${place.id}`
-  }, "View Place Details")), /* @__PURE__ */ import_react46.default.createElement(import_react45.Form, {
+  }, "View Place Details")), /* @__PURE__ */ import_react45.default.createElement(import_react44.Form, {
     method: "post",
     ref: formRef
-  }, /* @__PURE__ */ import_react46.default.createElement(IdInput, {
+  }, /* @__PURE__ */ import_react45.default.createElement(IdInput, {
     name: "username",
     value: username
-  }), /* @__PURE__ */ import_react46.default.createElement(IdInput, {
+  }), /* @__PURE__ */ import_react45.default.createElement(IdInput, {
     name: "placeId",
     value: params.placeId ?? ""
-  }), /* @__PURE__ */ import_react46.default.createElement(HeaderBar, {
+  }), /* @__PURE__ */ import_react45.default.createElement(HeaderBar, {
     color: "primary"
-  }, /* @__PURE__ */ import_react46.default.createElement(Title8, null, "Make a Reservation"), /* @__PURE__ */ import_react46.default.createElement(Flex5, null, /* @__PURE__ */ import_react46.default.createElement(Title8, null, "Date"), /* @__PURE__ */ import_react46.default.createElement(DateInput, {
-    disablePast: true,
-    name: "date",
-    defaultValue: date,
-    onChange: setDate
-  }))), date && /* @__PURE__ */ import_react46.default.createElement(ReservableTimes, {
+  }, /* @__PURE__ */ import_react45.default.createElement(Title8, null, "Make a Reservation"), /* @__PURE__ */ import_react45.default.createElement(Flex5, null, /* @__PURE__ */ import_react45.default.createElement(SubTitle, null, "Scroll to see more", /* @__PURE__ */ import_react45.default.createElement(import_fa5.FaChevronRight, {
+    color: styles.colors.gray[50],
+    size: 16,
+    style: { marginLeft: "8px", marginRight: "-8px" }
+  }), /* @__PURE__ */ import_react45.default.createElement(import_fa5.FaChevronRight, {
+    color: styles.colors.gray[50],
+    size: 14,
+    style: { marginRight: "-6px" }
+  }), /* @__PURE__ */ import_react45.default.createElement(import_fa5.FaChevronRight, {
+    color: styles.colors.gray[50],
+    size: 12
+  })))), /* @__PURE__ */ import_react45.default.createElement(ReservableTimes, {
     startName: "start[]",
     endName: "end[]",
     reservationBackupName: "reservationBackup[]",
@@ -5213,25 +5298,26 @@ function ReservationElement() {
     reservableIdName: "reservableId[]",
     reservables,
     setResList,
-    date,
-    openingTime: place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]
-  }), /* @__PURE__ */ import_react46.default.createElement(SlotList2, null, /* @__PURE__ */ import_react46.default.createElement(WhiteSlotListTitle2, null, resList.filter((r) => !r.isBackup).length == 0 ? /* @__PURE__ */ import_react46.default.createElement("i", {
+    openingTimes: place.openingTimes.sort((a, b) => a.day - b.day)
+  }), /* @__PURE__ */ import_react45.default.createElement(SlotList2, null, /* @__PURE__ */ import_react45.default.createElement(WhiteSlotListTitle2, null, resList.filter((r) => !r.isBackup).length == 0 ? /* @__PURE__ */ import_react45.default.createElement("i", {
     style: { fontWeight: "normal" }
-  }, "Nothing selected.") : "Picked timeslots"), resList.filter((r) => !r.isBackup).map((r) => {
+  }, "Nothing selected.") : "Picked timeslots"), resList.filter((r) => !r.isBackup).map((r, i) => {
     var _a2;
-    return r.startTime && r.endTime && /* @__PURE__ */ import_react46.default.createElement(ResE2, null, /* @__PURE__ */ import_react46.default.createElement(Indicator, {
+    return r.startTime && r.endTime && /* @__PURE__ */ import_react45.default.createElement(ResE2, {
+      key: i
+    }, /* @__PURE__ */ import_react45.default.createElement(Indicator, {
       style: { padding: "0.5rem", whiteSpace: "nowrap" }
-    }, (_a2 = reservables.find((x) => x.id == r.reservableId)) == null ? void 0 : _a2.name), /* @__PURE__ */ import_react46.default.createElement(FlexSL2, null, /* @__PURE__ */ import_react46.default.createElement(SlotText2, null, "Date: ", getStringDateValue(r.startTime)), /* @__PURE__ */ import_react46.default.createElement(SlotText2, null, "Time: ", getStringTimeValue(r.startTime), " - ", getStringTimeValue(new Date(r.endTime)))));
-  })), /* @__PURE__ */ import_react46.default.createElement(HeaderBar, {
+    }, (_a2 = reservables.find((x) => x.id == r.reservableId)) == null ? void 0 : _a2.name), /* @__PURE__ */ import_react45.default.createElement(FlexSL2, null, /* @__PURE__ */ import_react45.default.createElement(SlotText2, null, "Date: ", getStringDateValue(r.startTime)), /* @__PURE__ */ import_react45.default.createElement(SlotText2, null, "Time: ", getStringTimeValue(r.startTime), " - ", getStringTimeValue(new Date(r.endTime)))));
+  })), /* @__PURE__ */ import_react45.default.createElement(HeaderBar, {
     color: "gray"
-  }, /* @__PURE__ */ import_react46.default.createElement(Title8, null, "Backup timeslot", /* @__PURE__ */ import_react46.default.createElement(info_button_default, {
+  }, /* @__PURE__ */ import_react45.default.createElement(Title8, null, "Backup timeslot", /* @__PURE__ */ import_react45.default.createElement(info_button_default, {
     helpText: `If the timeslot you selected above isn't available, we will try to get a second option for you.`
-  })), /* @__PURE__ */ import_react46.default.createElement(SecondaryButtonBtn, {
+  })), /* @__PURE__ */ import_react45.default.createElement(SecondaryButtonBtn, {
     onClick: (e) => {
       e.preventDefault();
       setBackup(!backup);
     }
-  }, !backup ? "Choose a" : "Remove", " backup timeslot")), backup && date && /* @__PURE__ */ import_react46.default.createElement(ReservableTimes, {
+  }, !backup ? "Choose a" : "Remove", " backup timeslot")), backup && /* @__PURE__ */ import_react45.default.createElement(ReservableTimes, {
     backup: true,
     startName: "start[]",
     endName: "end[]",
@@ -5239,33 +5325,32 @@ function ReservationElement() {
     reservationIdName: "reservationId[]",
     reservableIdName: "reservableId[]",
     reservables,
-    date,
     setResList,
-    openingTime: place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]
-  }), /* @__PURE__ */ import_react46.default.createElement(BackupSlotList2, null, /* @__PURE__ */ import_react46.default.createElement(SlotListTitle2, null, resList.filter((r) => r.isBackup).length == 0 ? /* @__PURE__ */ import_react46.default.createElement("i", {
+    openingTimes: place.openingTimes.sort((a, b) => a.day - b.day)
+  }), /* @__PURE__ */ import_react45.default.createElement(BackupSlotList2, null, /* @__PURE__ */ import_react45.default.createElement(SlotListTitle2, null, !backup || resList.filter((r) => r.isBackup).length == 0 ? /* @__PURE__ */ import_react45.default.createElement("i", {
     style: { fontWeight: "normal" }
-  }, "Nothing selected.") : "Picked backup timeslots"), resList.filter((r) => r.isBackup).map((r) => {
+  }, "Nothing selected.") : "Picked backup timeslots"), backup && resList.filter((r) => r.isBackup).map((r) => {
     var _a2;
-    return r.startTime && r.endTime && /* @__PURE__ */ import_react46.default.createElement(ResE2, null, /* @__PURE__ */ import_react46.default.createElement(Indicator, {
+    return r.startTime && r.endTime && /* @__PURE__ */ import_react45.default.createElement(ResE2, null, /* @__PURE__ */ import_react45.default.createElement(Indicator, {
       style: { padding: "0.5rem" }
-    }, (_a2 = reservables.find((x) => x.id == r.reservableId)) == null ? void 0 : _a2.name), /* @__PURE__ */ import_react46.default.createElement(FlexSL2, null, /* @__PURE__ */ import_react46.default.createElement(BackupSlotText2, null, getStringDateValue(r.startTime)), /* @__PURE__ */ import_react46.default.createElement(BackupSlotText2, null, getStringTimeValue(r.startTime), " - ", getStringTimeValue(new Date(r.endTime)))));
-  })), /* @__PURE__ */ import_react46.default.createElement(HeaderBar, {
+    }, (_a2 = reservables.find((x) => x.id == r.reservableId)) == null ? void 0 : _a2.name), /* @__PURE__ */ import_react45.default.createElement(FlexSL2, null, /* @__PURE__ */ import_react45.default.createElement(BackupSlotText2, null, getStringDateValue(r.startTime)), /* @__PURE__ */ import_react45.default.createElement(BackupSlotText2, null, getStringTimeValue(r.startTime), " - ", getStringTimeValue(new Date(r.endTime)))));
+  })), /* @__PURE__ */ import_react45.default.createElement(HeaderBar, {
     color: "none",
     style: { marginBottom: "0px" }
-  }, /* @__PURE__ */ import_react46.default.createElement(Title8, null, "Additional info")), /* @__PURE__ */ import_react46.default.createElement(TextWrap2, null, /* @__PURE__ */ import_react46.default.createElement(TextInput, {
+  }, /* @__PURE__ */ import_react45.default.createElement(Title8, null, "Additional info")), /* @__PURE__ */ import_react45.default.createElement(TextWrap2, null, /* @__PURE__ */ import_react45.default.createElement(TextInput, {
     name: "note",
     title: "Note",
     defaultValue: ((_a = actionData == null ? void 0 : actionData.fields) == null ? void 0 : _a.note) ?? ""
-  })), /* @__PURE__ */ import_react46.default.createElement("div", {
+  })), /* @__PURE__ */ import_react45.default.createElement("div", {
     style: { display: "flex", justifyContent: "center", marginTop: "2rem" }
-  }, (actionData == null ? void 0 : actionData.formError) && /* @__PURE__ */ import_react46.default.createElement(FormError, null, actionData.formError ?? "")), /* @__PURE__ */ import_react46.default.createElement(MainButtonBtn, {
+  }, (actionData == null ? void 0 : actionData.formError) && /* @__PURE__ */ import_react45.default.createElement(FormError, null, actionData.formError ?? "")), /* @__PURE__ */ import_react45.default.createElement(MainButtonBtn, {
     disabled: resList.filter((r) => !r.isBackup).length == 0,
     style: { margin: "2rem auto" },
     onClick: (e) => {
       e.preventDefault();
       setConfirmationDialog(true);
     }
-  }, "Create reservation", /* @__PURE__ */ import_react46.default.createElement(AnglesRight_default, {
+  }, "Create reservation", /* @__PURE__ */ import_react45.default.createElement(AnglesRight_default, {
     height: "1.5rem"
   }))));
 }
@@ -5277,10 +5362,10 @@ __export(placeId_exports2, {
   loader: () => loader11
 });
 var import_node5 = require("@remix-run/node");
-var import_react47 = require("@remix-run/react");
+var import_react46 = require("@remix-run/react");
 var import_server_runtime9 = require("@remix-run/server-runtime");
-var import_styled_components29 = __toESM(require("styled-components"));
-var Wrap15 = import_styled_components29.default.div`
+var import_styled_components28 = __toESM(require("styled-components"));
+var Wrap14 = import_styled_components28.default.div`
   padding: 2rem;
   border-radius: 1.5rem;
   margin-top: 2rem;
@@ -5289,29 +5374,29 @@ var Wrap15 = import_styled_components29.default.div`
   width: 100%;
   margin: 0px auto;
 `;
-var Title9 = import_styled_components29.default.h4`
+var Title9 = import_styled_components28.default.h4`
   font-size: 1.3rem;
   margin: 0px;
 `;
-var DetailsWrap = import_styled_components29.default.div`
+var DetailsWrap = import_styled_components28.default.div`
 
 `;
-var TimesWrap = import_styled_components29.default.div`
+var TimesWrap = import_styled_components28.default.div`
   flex-shrink: 0;
   background-color: ${styles.colors.primary};
   color: ${styles.colors.white};
   padding: 1.5rem 1.25rem;
   border-radius: 0.5rem;
 `;
-var Desc = import_styled_components29.default.p`
+var Desc = import_styled_components28.default.p`
 
 `;
-var OpeningDay = import_styled_components29.default.p`
+var OpeningDay = import_styled_components28.default.p`
   font-weight: bold;
   font-size: 0.75rem;
   margin: 0;
 `;
-var OpeningTimeComponent = import_styled_components29.default.p`
+var OpeningTimeComponent = import_styled_components28.default.p`
   font-size: 1rem;
   margin: 0;
   &::first-letter {
@@ -5325,20 +5410,20 @@ var loader11 = async ({ params }) => {
   }
   return (0, import_server_runtime9.json)({ place });
 };
-var GalleryImage = import_styled_components29.default.img`
+var GalleryImage = import_styled_components28.default.img`
   object-fit: cover;
   width: 20rem;
   aspect-ratio: 1;
   max-width: 90%;
 `;
-var Gallery = import_styled_components29.default.div`
+var Gallery = import_styled_components28.default.div`
   overflow-x: scroll;
   width: 100%;
   border-radius: 0.5rem;
   margin-top: 1rem;
   white-space: nowrap;
 `;
-var FlexApart3 = import_styled_components29.default.div`
+var FlexApart3 = import_styled_components28.default.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -5349,7 +5434,7 @@ var FlexApart3 = import_styled_components29.default.div`
     flex-wrap: wrap;
   }
 `;
-var TimesGrid = import_styled_components29.default.div`
+var TimesGrid = import_styled_components28.default.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   align-items: center;
@@ -5357,12 +5442,14 @@ var TimesGrid = import_styled_components29.default.div`
   margin-top: 1rem;
 `;
 function PlaceDetails({}) {
-  const { place } = (0, import_react47.useLoaderData)();
+  const { place } = (0, import_react46.useLoaderData)();
   const timeStr = (date) => {
-    return `${new Date(date).getHours()}:${new Date(date).getMinutes()}`;
+    const h = new Date(date).getHours();
+    const m = new Date(date).getMinutes();
+    return `${h < 10 ? `0${h}` : h}:${m < 10 ? `0${m}` : m}`;
   };
   const daysOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-  return place && /* @__PURE__ */ React.createElement(Wrap15, null, /* @__PURE__ */ React.createElement(FlexApart3, null, /* @__PURE__ */ React.createElement(Title9, null, "Make a reservation"), /* @__PURE__ */ React.createElement(MainButton, {
+  return place && /* @__PURE__ */ React.createElement(Wrap14, null, /* @__PURE__ */ React.createElement(FlexApart3, null, /* @__PURE__ */ React.createElement(Title9, null, "Make a reservation"), /* @__PURE__ */ React.createElement(MainButton, {
     inSearch: false,
     to: `/${place.id}/reserve`
   }, "Reserve", /* @__PURE__ */ React.createElement(AnglesRight_default, {
@@ -5383,22 +5470,38 @@ __export(profile_exports, {
   default: () => Profile,
   loader: () => loader12
 });
-var import_react50 = require("@remix-run/react");
+var import_react49 = require("@remix-run/react");
 
 // app/components/profile/reservation-group-summary.tsx
-var import_react48 = require("@remix-run/react");
-var import_react49 = __toESM(require("react"));
-var import_styled_components31 = __toESM(require("styled-components"));
+var import_react47 = require("@remix-run/react");
+var import_react48 = __toESM(require("react"));
+var import_styled_components30 = __toESM(require("styled-components"));
 
 // app/components/profile/reservation-summary.tsx
-var import_styled_components30 = __toESM(require("styled-components"));
-var Wrap16 = import_styled_components30.default.div`
+var import_styled_components29 = __toESM(require("styled-components"));
+
+// app/assets/icons/Calendar.tsx
+var CalendarIcon = (props) => /* @__PURE__ */ React.createElement("svg", {
+  viewBox: "0 0 448 512",
+  style: {
+    height: props.height
+  },
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg"
+}, /* @__PURE__ */ React.createElement("path", {
+  d: "M160 32V64H288V32C288 14.33 302.3 0 320 0C337.7 0 352 14.33 352 32V64H400C426.5 64 448 85.49 448 112V160H0V112C0 85.49 21.49 64 48 64H96V32C96 14.33 110.3 0 128 0C145.7 0 160 14.33 160 32zM0 192H448V464C448 490.5 426.5 512 400 512H48C21.49 512 0 490.5 0 464V192zM64 304C64 312.8 71.16 320 80 320H112C120.8 320 128 312.8 128 304V272C128 263.2 120.8 256 112 256H80C71.16 256 64 263.2 64 272V304zM192 304C192 312.8 199.2 320 208 320H240C248.8 320 256 312.8 256 304V272C256 263.2 248.8 256 240 256H208C199.2 256 192 263.2 192 272V304zM336 256C327.2 256 320 263.2 320 272V304C320 312.8 327.2 320 336 320H368C376.8 320 384 312.8 384 304V272C384 263.2 376.8 256 368 256H336zM64 432C64 440.8 71.16 448 80 448H112C120.8 448 128 440.8 128 432V400C128 391.2 120.8 384 112 384H80C71.16 384 64 391.2 64 400V432zM208 384C199.2 384 192 391.2 192 400V432C192 440.8 199.2 448 208 448H240C248.8 448 256 440.8 256 432V400C256 391.2 248.8 384 240 384H208zM320 432C320 440.8 327.2 448 336 448H368C376.8 448 384 440.8 384 432V400C384 391.2 376.8 384 368 384H336C327.2 384 320 391.2 320 400V432z",
+  fill: props.fill ?? styles.colors.black
+}));
+var Calendar_default = CalendarIcon;
+
+// app/components/profile/reservation-summary.tsx
+var Wrap15 = import_styled_components29.default.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 1rem;
 `;
-var Flex6 = import_styled_components30.default.div`
+var Flex6 = import_styled_components29.default.div`
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -5409,7 +5512,7 @@ var Flex6 = import_styled_components30.default.div`
     gap: 0.7rem;
   }
 `;
-var Value2 = import_styled_components30.default.p`
+var Value2 = import_styled_components29.default.p`
   font-size: 0.9125rem;
   margin-top: 0.2rem;
   font-weight: 500;
@@ -5418,7 +5521,7 @@ var Value2 = import_styled_components30.default.p`
 var ReservationSummary = ({ reservation: r, style }) => {
   var _a;
   const { lang } = useLangs();
-  return /* @__PURE__ */ React.createElement(Wrap16, {
+  return /* @__PURE__ */ React.createElement(Wrap15, {
     style
   }, ((_a = r == null ? void 0 : r.reservable) == null ? void 0 : _a.ReservableType.multiLangName) && /* @__PURE__ */ React.createElement(Indicator, {
     style: { padding: "0.5rem 1rem" },
@@ -5431,25 +5534,25 @@ var ReservationSummary = ({ reservation: r, style }) => {
 };
 
 // app/components/profile/reservation-group-summary.tsx
-var Title10 = (0, import_styled_components31.default)(import_react48.Link)`
+var Title10 = (0, import_styled_components30.default)(import_react47.Link)`
   margin: 0;
   font-weight: bold;
   text-decoration: none;
   color: ${styles.colors.black};
   font-size: 1.2rem;
 `;
-var NoteTitle = import_styled_components31.default.p`
+var NoteTitle = import_styled_components30.default.p`
   font-weight: bold;
   font-size: 0.9rem;
   margin: 0;
   color: ${styles.colors.action};
 `;
-var Value3 = import_styled_components31.default.p`
+var Value3 = import_styled_components30.default.p`
   font-size: 1.2rem;
   margin-top: 0.2rem;
   margin-bottom: 0;
 `;
-var Wrap17 = import_styled_components31.default.div`
+var Wrap16 = import_styled_components30.default.div`
   display: grid;
   grid-template-rows: 9rem auto;
   @media (min-width: 550px) {
@@ -5471,14 +5574,14 @@ var Wrap17 = import_styled_components31.default.div`
     flex-shrink: 0;
   } */
 `;
-var CancelWrap = import_styled_components31.default.div`
+var CancelWrap = import_styled_components30.default.div`
   width: 100%;
   @media (min-width: 550px) {
     width: auto;
     align-self: flex-end;
   }
 `;
-var TitleStatus = import_styled_components31.default.div`
+var TitleStatus = import_styled_components30.default.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -5490,16 +5593,16 @@ var TitleStatus = import_styled_components31.default.div`
     gap: 1rem;
   }
 `;
-var SlotTitle = import_styled_components31.default.p`
+var SlotTitle = import_styled_components30.default.p`
   margin: 0;
 `;
-var InnerWrap3 = import_styled_components31.default.div`
+var InnerWrap3 = import_styled_components30.default.div`
   display: flex;
   flex-direction: column;
   gap: 0.87rem;
   align-items: flex-start;
 `;
-var Status = import_styled_components31.default.p`
+var Status = import_styled_components30.default.p`
   text-transform: uppercase;
   font-weight: 600;
   display: flex;
@@ -5509,16 +5612,16 @@ var Status = import_styled_components31.default.p`
   border-radius: 0.25rem;
   margin: 0;
 `;
-var Line = import_styled_components31.default.div`
+var Line = import_styled_components30.default.div`
   height: 1px;
   width: 100%;
   background-color: ${styles.colors.gray[30]};
 `;
 var ReservationGroupSummary = ({ reservationGroup: rg, onCancel }) => {
   var _a, _b, _c;
-  const ref = import_react49.default.useRef(null);
-  const formRef = import_react49.default.useRef(null);
-  const [showConfirmation, setShowConfirmation] = import_react49.default.useState(false);
+  const ref = import_react48.default.useRef(null);
+  const formRef = import_react48.default.useRef(null);
+  const [showConfirmation, setShowConfirmation] = import_react48.default.useState(false);
   const cancelReservation = () => {
     if (ref.current) {
     }
@@ -5533,7 +5636,7 @@ var ReservationGroupSummary = ({ reservationGroup: rg, onCancel }) => {
   const backgroundColor = prefStatus == 0 /* AwaitingConfirmation */ || backupStatus == 0 /* AwaitingConfirmation */ ? styles.colors.warn : prefStatus == 1 /* Confirmed */ && backupStatus == null ? styles.colors.free : prefStatus == 2 /* Rejected */ && backupStatus == null ? styles.colors.busy : prefStatus == 3 /* Cancelled */ && backupStatus == null ? styles.colors.gray[70] : prefStatus == 1 /* Confirmed */ && backupStatus == 3 /* Cancelled */ ? styles.colors.free : prefStatus == 2 /* Rejected */ && backupStatus == 1 /* Confirmed */ ? styles.colors.free : prefStatus == 2 /* Rejected */ && backupStatus == 2 /* Rejected */ ? styles.colors.busy : prefStatus == 3 /* Cancelled */ && backupStatus == 3 /* Cancelled */ ? styles.colors.gray[70] : "";
   const color = prefStatus == 0 /* AwaitingConfirmation */ || backupStatus == 0 /* AwaitingConfirmation */ ? styles.colors.black : prefStatus == 1 /* Confirmed */ && backupStatus == null ? styles.colors.black : prefStatus == 2 /* Rejected */ && backupStatus == null ? styles.colors.white : prefStatus == 3 /* Cancelled */ && backupStatus == null ? styles.colors.black : prefStatus == 1 /* Confirmed */ && backupStatus == 3 /* Cancelled */ ? styles.colors.black : prefStatus == 2 /* Rejected */ && backupStatus == 1 /* Confirmed */ ? styles.colors.black : prefStatus == 2 /* Rejected */ && backupStatus == 2 /* Rejected */ ? styles.colors.white : prefStatus == 3 /* Cancelled */ && backupStatus == 3 /* Cancelled */ ? styles.colors.black : "";
   const helpText = prefStatus == 0 /* AwaitingConfirmation */ || backupStatus == 0 /* AwaitingConfirmation */ ? "We are confirming your reservation with the business." : prefStatus == 1 /* Confirmed */ && backupStatus == null ? "Your timeslot is confirmed. Enjoy!" : prefStatus == 2 /* Rejected */ && backupStatus == null ? "Your timeslot is unfortunately unavailable. You can try booking a different time though!" : prefStatus == 3 /* Cancelled */ && backupStatus == null ? "You have cancelled this booking." : prefStatus == 1 /* Confirmed */ && backupStatus == 3 /* Cancelled */ ? "Your preferred timeslot is confirmed. Enjoy!" : prefStatus == 2 /* Rejected */ && backupStatus == 1 /* Confirmed */ ? "Your BACKUP timeslot is confirmed. It is highlighed below. Enjoy!" : prefStatus == 2 /* Rejected */ && backupStatus == 2 /* Rejected */ ? "Your timeslots are unfortunately unavailable. You can try booking a different time though!" : prefStatus == 3 /* Cancelled */ && backupStatus == 3 /* Cancelled */ ? "You have cancelled this booking." : "";
-  return /* @__PURE__ */ import_react49.default.createElement(import_react49.default.Fragment, null, /* @__PURE__ */ import_react49.default.createElement(ConfirmationDialog, {
+  return /* @__PURE__ */ import_react48.default.createElement(import_react48.default.Fragment, null, /* @__PURE__ */ import_react48.default.createElement(ConfirmationDialog, {
     title: "Confirm cancellation",
     text: "Are you sure you want to cancel your reservation? (This cannot be undone!)",
     hidden: !showConfirmation,
@@ -5545,56 +5648,56 @@ var ReservationGroupSummary = ({ reservationGroup: rg, onCancel }) => {
     },
     confirmText: "Cancel my reservation",
     cancelText: "Keep my reservation"
-  }), /* @__PURE__ */ import_react49.default.createElement(Wrap17, {
+  }), /* @__PURE__ */ import_react48.default.createElement(Wrap16, {
     key: rg.id,
     ref
-  }, /* @__PURE__ */ import_react49.default.createElement(PlaceImage, {
+  }, /* @__PURE__ */ import_react48.default.createElement(PlaceImage, {
     shape: "square",
     imageUrl: (_a = rg.reservations[0].reservable) == null ? void 0 : _a.place.profilePicUrl
-  }), /* @__PURE__ */ import_react49.default.createElement(InnerWrap3, null, /* @__PURE__ */ import_react49.default.createElement(TitleStatus, null, /* @__PURE__ */ import_react49.default.createElement(Title10, {
+  }), /* @__PURE__ */ import_react48.default.createElement(InnerWrap3, null, /* @__PURE__ */ import_react48.default.createElement(TitleStatus, null, /* @__PURE__ */ import_react48.default.createElement(Title10, {
     to: `/${(_b = rg.reservations[0].reservable) == null ? void 0 : _b.place.id}`
-  }, rg.reservations.length > 0 ? (_c = rg.reservations[0].reservable) == null ? void 0 : _c.place.name : "Reservation"), /* @__PURE__ */ import_react49.default.createElement(Status, {
+  }, rg.reservations.length > 0 ? (_c = rg.reservations[0].reservable) == null ? void 0 : _c.place.name : "Reservation"), /* @__PURE__ */ import_react48.default.createElement(Status, {
     style: {
       backgroundColor,
       color
     }
-  }, text, /* @__PURE__ */ import_react49.default.createElement(info_button_default, {
+  }, text, /* @__PURE__ */ import_react48.default.createElement(info_button_default, {
     color,
     left: true,
     bottom: true,
     helpText
-  }))), prefs > 0 && /* @__PURE__ */ import_react49.default.createElement(import_react49.default.Fragment, null, /* @__PURE__ */ import_react49.default.createElement(SlotTitle, {
+  }))), prefs > 0 && /* @__PURE__ */ import_react48.default.createElement(import_react48.default.Fragment, null, /* @__PURE__ */ import_react48.default.createElement(SlotTitle, {
     style: text == "Backup Confirmed" || text == "Cancelled" ? { opacity: 0.5 } : {}
-  }, "Preffered slot", prefs > 1 && "s", ":"), rg.reservations.filter((r) => !r.backup).map((r) => /* @__PURE__ */ import_react49.default.createElement("div", {
+  }, "Preffered slot", prefs > 1 && "s", ":"), rg.reservations.filter((r) => !r.backup).map((r) => /* @__PURE__ */ import_react48.default.createElement("div", {
     key: r.id
-  }, /* @__PURE__ */ import_react49.default.createElement(ReservationSummary, {
+  }, /* @__PURE__ */ import_react48.default.createElement(ReservationSummary, {
     style: text == "Backup Confirmed" || text == "Cancelled" ? { opacity: 0.5 } : {},
     reservation: r
-  }))), /* @__PURE__ */ import_react49.default.createElement(Line, null)), backups > 0 && /* @__PURE__ */ import_react49.default.createElement(import_react49.default.Fragment, null, /* @__PURE__ */ import_react49.default.createElement(SlotTitle, {
+  }))), /* @__PURE__ */ import_react48.default.createElement(Line, null)), backups > 0 && /* @__PURE__ */ import_react48.default.createElement(import_react48.default.Fragment, null, /* @__PURE__ */ import_react48.default.createElement(SlotTitle, {
     style: text == "Preferred Confirmed" || text == "Cancelled" ? { opacity: 0.5 } : {}
-  }, "Backup slot", backups > 1 && "s", ":"), rg.reservations.filter((r) => r.backup).map((r) => /* @__PURE__ */ import_react49.default.createElement("div", {
+  }, "Backup slot", backups > 1 && "s", ":"), rg.reservations.filter((r) => r.backup).map((r) => /* @__PURE__ */ import_react48.default.createElement("div", {
     key: r.id
-  }, /* @__PURE__ */ import_react49.default.createElement(ReservationSummary, {
+  }, /* @__PURE__ */ import_react48.default.createElement(ReservationSummary, {
     style: text == "Preferred Confirmed" || text == "Cancelled" ? { opacity: 0.5 } : {},
     reservation: r
-  }))), /* @__PURE__ */ import_react49.default.createElement(Line, null)), rg.note && /* @__PURE__ */ import_react49.default.createElement("div", null, /* @__PURE__ */ import_react49.default.createElement(NoteTitle, null, "Note"), /* @__PURE__ */ import_react49.default.createElement(Value3, null, rg.note)), /* @__PURE__ */ import_react49.default.createElement(CancelWrap, null, text != "Cancelled" && /* @__PURE__ */ import_react49.default.createElement(SecondaryButtonBtn, {
+  }))), /* @__PURE__ */ import_react48.default.createElement(Line, null)), rg.note && /* @__PURE__ */ import_react48.default.createElement("div", null, /* @__PURE__ */ import_react48.default.createElement(NoteTitle, null, "Note"), /* @__PURE__ */ import_react48.default.createElement(Value3, null, rg.note)), /* @__PURE__ */ import_react48.default.createElement(CancelWrap, null, text != "Cancelled" && /* @__PURE__ */ import_react48.default.createElement(SecondaryButtonBtn, {
     style: { width: "100%" },
     onClick: (e) => {
       setShowConfirmation(true);
     }
-  }, "Cancel reservation"))), /* @__PURE__ */ import_react49.default.createElement(import_react48.Form, {
+  }, "Cancel reservation"))), /* @__PURE__ */ import_react48.default.createElement(import_react47.Form, {
     ref: formRef,
     method: "post",
     action: "/profile/cancelReservation",
     style: { visibility: "hidden" }
-  }, /* @__PURE__ */ import_react49.default.createElement(IdInput, {
+  }, /* @__PURE__ */ import_react48.default.createElement(IdInput, {
     name: "rgId",
     value: rg.id
   }))));
 };
 
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/profile.tsx
-var import_styled_components32 = __toESM(require("styled-components"));
+var import_styled_components31 = __toESM(require("styled-components"));
 var loader12 = async ({ request }) => {
   const user = await getUserByUsername({ username: (await requireUsernameAndAdmin(request)).username });
   if (user) {
@@ -5602,32 +5705,32 @@ var loader12 = async ({ request }) => {
   }
   return { user };
 };
-var ReservationsWrap = import_styled_components32.default.div`
+var ReservationsWrap = import_styled_components31.default.div`
   padding: 2rem 0.5rem;
   max-width: 968px;
   margin: 0 auto;
 `;
-var ReservationsTitle = import_styled_components32.default.h4`
+var ReservationsTitle = import_styled_components31.default.h4`
   margin-top: 0;
   @media (min-width: 500px) {
     font-size: 1.8rem;
   }
   margin-left: 1rem;
 `;
-var NoReservations = import_styled_components32.default.p`
+var NoReservations = import_styled_components31.default.p`
   margin-left: 1rem;
   font-weight: 500;
 `;
 function Profile() {
-  const { user } = (0, import_react50.useLoaderData)();
-  const submit = (0, import_react50.useSubmit)();
+  const { user } = (0, import_react49.useLoaderData)();
+  const submit = (0, import_react49.useSubmit)();
   const cancelRg = (form) => {
     submit(form, { replace: true });
   };
   const reservationGroups = user == null ? void 0 : user.reservationGroups.filter((rg) => rg.reservations.length > 0);
   const twoWeeksAgo = new Date();
   twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(import_react50.Outlet, null), /* @__PURE__ */ React.createElement(ReservationsWrap, null, /* @__PURE__ */ React.createElement(ReservationsTitle, null, "Your Reservations"), (reservationGroups == null ? void 0 : reservationGroups.length) == 0 && /* @__PURE__ */ React.createElement(NoReservations, null, "You don't have any reservations :'(. Go ahead and make some!"), reservationGroups == null ? void 0 : reservationGroups.filter((rg) => rg.reservations.length > 0 && new Date(rg.reservations[0].end).getTime() > twoWeeksAgo.getTime()).map((rg) => /* @__PURE__ */ React.createElement("div", {
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(import_react49.Outlet, null), /* @__PURE__ */ React.createElement(ReservationsWrap, null, /* @__PURE__ */ React.createElement(ReservationsTitle, null, "Your Reservations"), (reservationGroups == null ? void 0 : reservationGroups.length) == 0 && /* @__PURE__ */ React.createElement(NoReservations, null, "You don't have any reservations :'(. Go ahead and make some!"), reservationGroups == null ? void 0 : reservationGroups.filter((rg) => rg.reservations.length > 0 && new Date(rg.reservations[0].end).getTime() > twoWeeksAgo.getTime()).map((rg) => /* @__PURE__ */ React.createElement("div", {
     key: rg.id
   }, /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(ReservationGroupSummary, {
     onCancel: (rgId, formRef) => {
@@ -5709,7 +5812,7 @@ __export(profile_exports2, {
   default: () => ProfileIndex,
   loader: () => loader14
 });
-var import_react51 = require("@remix-run/react");
+var import_react50 = require("@remix-run/react");
 var loader14 = async ({ request }) => {
   const user = await getUserByUsername({ username: (await requireUsernameAndAdmin(request)).username });
   if (user) {
@@ -5718,7 +5821,7 @@ var loader14 = async ({ request }) => {
   return { user };
 };
 function ProfileIndex() {
-  const { user } = (0, import_react51.useLoaderData)();
+  const { user } = (0, import_react50.useLoaderData)();
   return /* @__PURE__ */ React.createElement(AccountSummary, {
     user: user ?? null,
     editing: false
@@ -5733,7 +5836,7 @@ __export(edit_exports, {
   loader: () => loader15
 });
 var import_node6 = require("@remix-run/node");
-var import_react52 = require("@remix-run/react");
+var import_react51 = require("@remix-run/react");
 var import_server_runtime11 = require("@remix-run/server-runtime");
 var loader15 = async ({ request }) => {
   const user = await getUserByUsername({ username: (await requireUsernameAndAdmin(request)).username });
@@ -5783,8 +5886,8 @@ var action10 = async ({ request }) => {
   return {};
 };
 function ProfileEdit() {
-  const { user } = (0, import_react52.useLoaderData)();
-  const a = (0, import_react52.useActionData)();
+  const { user } = (0, import_react51.useLoaderData)();
+  const a = (0, import_react51.useActionData)();
   return /* @__PURE__ */ React.createElement(AccountSummary, {
     fieldErrors: a == null ? void 0 : a.fieldErrors,
     formError: (a == null ? void 0 : a.formError) ?? null,
@@ -5817,8 +5920,8 @@ __export(places_exports, {
   loader: () => loader16
 });
 var import_server_runtime12 = require("@remix-run/server-runtime");
-var import_react55 = require("@remix-run/react");
-var import_styled_components35 = __toESM(require("styled-components"));
+var import_react54 = require("@remix-run/react");
+var import_styled_components34 = __toESM(require("styled-components"));
 
 // app/models/location.server.ts
 var createLocation = async ({ multiLangCity, multiLangCountry }) => await prisma.location.create({
@@ -6022,9 +6125,9 @@ var getCategoryList = async ({ nameFragment }) => await prisma.category.findMany
 });
 
 // app/components/recent-search.tsx
-var import_react53 = require("@remix-run/react");
-var import_react54 = __toESM(require("react"));
-var import_styled_components33 = __toESM(require("styled-components"));
+var import_react52 = require("@remix-run/react");
+var import_react53 = __toESM(require("react"));
+var import_styled_components32 = __toESM(require("styled-components"));
 
 // app/assets/icons/TableList.tsx
 var TableListIcon = (props) => /* @__PURE__ */ React.createElement("svg", {
@@ -6055,7 +6158,7 @@ var TagsIcon = (props) => /* @__PURE__ */ React.createElement("svg", {
 var Tags_default = TagsIcon;
 
 // app/components/recent-search.tsx
-var Wrap18 = import_styled_components33.default.button`
+var Wrap17 = import_styled_components32.default.button`
   background-color: ${styles.colors.primary};
   border-radius: 0.5rem;
   cursor: pointer;
@@ -6076,11 +6179,11 @@ var Wrap18 = import_styled_components33.default.button`
     border-radius: 0;
   }
 `;
-var Title11 = import_styled_components33.default.h5`
+var Title11 = import_styled_components32.default.h5`
   font-size: 1.25rem;
   margin: 0 0 1.1rem 0;
 `;
-var Grid = import_styled_components33.default.div`
+var Grid = import_styled_components32.default.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, auto));
@@ -6090,67 +6193,67 @@ var Grid = import_styled_components33.default.div`
   }
   gap: 1.25rem;
 `;
-var Flex7 = import_styled_components33.default.div`
+var Flex7 = import_styled_components32.default.div`
   display: flex;
   align-items: center;
   gap: 0.8125rem;
 `;
-var Text5 = import_styled_components33.default.p`
+var Text5 = import_styled_components32.default.p`
   font-size: 1rem;
   margin: 0;
 `;
 var RecentSearch = ({ searchPhrase, location, categories, tags }) => {
   const { lang } = useLangs();
-  const s = (0, import_react53.useSubmit)();
-  const form = import_react54.default.useRef(null);
-  return /* @__PURE__ */ import_react54.default.createElement(Wrap18, {
+  const s = (0, import_react52.useSubmit)();
+  const form = import_react53.default.useRef(null);
+  return /* @__PURE__ */ import_react53.default.createElement(Wrap17, {
     onClick: () => {
       if (form.current) {
         s(form.current);
       }
     }
-  }, /* @__PURE__ */ import_react54.default.createElement(import_react53.Form, {
+  }, /* @__PURE__ */ import_react53.default.createElement(import_react52.Form, {
     method: "get",
     action: "/search",
     ref: form
-  }, /* @__PURE__ */ import_react54.default.createElement(IdInput, {
+  }, /* @__PURE__ */ import_react53.default.createElement(IdInput, {
     name: "selectedLocation",
     value: (location == null ? void 0 : location.cityCountry) ?? ""
-  }), categories.map((c) => /* @__PURE__ */ import_react54.default.createElement(IdInput, {
+  }), categories.map((c) => /* @__PURE__ */ import_react53.default.createElement(IdInput, {
     key: c.id,
     value: c.id,
     name: "categories[]"
-  })), tags.map((t) => /* @__PURE__ */ import_react54.default.createElement(IdInput, {
+  })), tags.map((t) => /* @__PURE__ */ import_react53.default.createElement(IdInput, {
     key: t.id,
     value: t.id,
     name: "tags[]"
-  })), /* @__PURE__ */ import_react54.default.createElement(IdInput, {
+  })), /* @__PURE__ */ import_react53.default.createElement(IdInput, {
     name: "searchTerm",
     value: searchPhrase
-  }), /* @__PURE__ */ import_react54.default.createElement(IdInput, {
+  }), /* @__PURE__ */ import_react53.default.createElement(IdInput, {
     name: "page",
     value: "1"
-  }), /* @__PURE__ */ import_react54.default.createElement(IdInput, {
+  }), /* @__PURE__ */ import_react53.default.createElement(IdInput, {
     name: "dontSave",
     value: "1"
-  })), /* @__PURE__ */ import_react54.default.createElement(Title11, null, searchPhrase != "" ? `"${searchPhrase}"` : categories.length == 1 ? categories[0].multiLangName && categories[0].multiLangName[lang] : "All Activities", " ", (location == null ? void 0 : location.multiLangCity) && `in ${location.multiLangCity[lang]}`), /* @__PURE__ */ import_react54.default.createElement(Grid, null, /* @__PURE__ */ import_react54.default.createElement(Flex7, null, (location == null ? void 0 : location.multiLangCity) && /* @__PURE__ */ import_react54.default.createElement(Location_default, {
+  })), /* @__PURE__ */ import_react53.default.createElement(Title11, null, searchPhrase != "" ? `"${searchPhrase}"` : categories.length == 1 ? categories[0].multiLangName && categories[0].multiLangName[lang] : "All Activities", " ", (location == null ? void 0 : location.multiLangCity) && `in ${location.multiLangCity[lang]}`), /* @__PURE__ */ import_react53.default.createElement(Grid, null, /* @__PURE__ */ import_react53.default.createElement(Flex7, null, (location == null ? void 0 : location.multiLangCity) && /* @__PURE__ */ import_react53.default.createElement(Location_default, {
     fill: styles.colors.white,
     height: "1.25rem"
-  }), (location == null ? void 0 : location.multiLangCity) && (location == null ? void 0 : location.multiLangCity[lang]), ((location == null ? void 0 : location.multiLangCity) || (location == null ? void 0 : location.multiLangCountry)) && ",", " ", (location == null ? void 0 : location.multiLangCountry) && (location == null ? void 0 : location.multiLangCountry[lang])), /* @__PURE__ */ import_react54.default.createElement(Flex7, null, categories.length > 0 && /* @__PURE__ */ import_react54.default.createElement(TableList_default, {
+  }), (location == null ? void 0 : location.multiLangCity) && (location == null ? void 0 : location.multiLangCity[lang]), ((location == null ? void 0 : location.multiLangCity) || (location == null ? void 0 : location.multiLangCountry)) && ",", " ", (location == null ? void 0 : location.multiLangCountry) && (location == null ? void 0 : location.multiLangCountry[lang])), /* @__PURE__ */ import_react53.default.createElement(Flex7, null, categories.length > 0 && /* @__PURE__ */ import_react53.default.createElement(TableList_default, {
     fill: styles.colors.white,
     height: "1.25rem"
-  }), categories.map((c) => (c == null ? void 0 : c.multiLangName) ? c.multiLangName[lang] : "").join(", ")), /* @__PURE__ */ import_react54.default.createElement(Flex7, null, /* @__PURE__ */ import_react54.default.createElement(Search_default, {
+  }), categories.map((c) => (c == null ? void 0 : c.multiLangName) ? c.multiLangName[lang] : "").join(", ")), /* @__PURE__ */ import_react53.default.createElement(Flex7, null, /* @__PURE__ */ import_react53.default.createElement(Search_default, {
     fill: styles.colors.white,
     height: "1.25rem"
-  }), /* @__PURE__ */ import_react54.default.createElement(Text5, null, searchPhrase == "" ? /* @__PURE__ */ import_react54.default.createElement("i", null, "No search phrase") : searchPhrase)), /* @__PURE__ */ import_react54.default.createElement(Flex7, null, tags.length > 0 && /* @__PURE__ */ import_react54.default.createElement(Tags_default, {
+  }), /* @__PURE__ */ import_react53.default.createElement(Text5, null, searchPhrase == "" ? /* @__PURE__ */ import_react53.default.createElement("i", null, "No search phrase") : searchPhrase)), /* @__PURE__ */ import_react53.default.createElement(Flex7, null, tags.length > 0 && /* @__PURE__ */ import_react53.default.createElement(Tags_default, {
     fill: styles.colors.white,
     height: "1.25rem"
   }), tags.map((t) => (t == null ? void 0 : t.multiLangName) ? t.multiLangName[lang] : "").join(", "))));
 };
 
 // app/components/other/width-restrictor.tsx
-var import_styled_components34 = __toESM(require("styled-components"));
-var WidthRestrictor = import_styled_components34.default.div`
+var import_styled_components33 = __toESM(require("styled-components"));
+var WidthRestrictor = import_styled_components33.default.div`
   width: 100%;
   margin: 0 auto;
   @media (min-width: 550px) {
@@ -6177,7 +6280,7 @@ var loader16 = async ({ request }) => {
     searchHistory: usernameAndAdmin.username ? (_a = await getSearchHistory({ username: usernameAndAdmin.username })) == null ? void 0 : _a.searchHistory : null
   });
 };
-var Title12 = import_styled_components35.default.h6`
+var Title12 = import_styled_components34.default.h6`
   font-size: 2.625rem;
   @media (max-width: 800px) {
     font-size: 2rem;
@@ -6192,7 +6295,7 @@ var Title12 = import_styled_components35.default.h6`
   margin: 0 0 0.625rem 0;
   color: ${styles.colors.white};
 `;
-var TopSegment = import_styled_components35.default.div`
+var TopSegment = import_styled_components34.default.div`
   padding: 2.45rem 0 2.375rem;
   @media (max-width: 800px) {
     padding: 1.45rem 0.75rem 2rem;
@@ -6207,13 +6310,13 @@ var TopSegment = import_styled_components35.default.div`
   background-color: ${styles.colors.primary};
   overflow-x: hidden;
 `;
-var MainSegment = import_styled_components35.default.div`
+var MainSegment = import_styled_components34.default.div`
   padding: 3rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
-var WelcomeWrap = import_styled_components35.default.div`
+var WelcomeWrap = import_styled_components34.default.div`
   background-color: ${styles.colors.primary_background};
   @media (min-width: 550px) {
     border-radius: 1rem;
@@ -6221,30 +6324,30 @@ var WelcomeWrap = import_styled_components35.default.div`
   padding: 2rem;
   position: relative;
 `;
-var WelcomeTitle = import_styled_components35.default.h4`
+var WelcomeTitle = import_styled_components34.default.h4`
   margin: 0 0 2rem 0;
   font-size: 1.3rem;
   font-size: 700;
 `;
-var SectionWrap2 = import_styled_components35.default.div`
+var SectionWrap2 = import_styled_components34.default.div`
 `;
-var SectionTitle2 = import_styled_components35.default.h4`
+var SectionTitle2 = import_styled_components34.default.h4`
   margin: 2rem 0 2rem 2rem;
   font-size: 1.3rem;
   font-size: 700;
 `;
-var WelcomeText = import_styled_components35.default.p`
+var WelcomeText = import_styled_components34.default.p`
   margin: 0 0 1rem;
   font-weight: 500;
   font-size: 0.8rem;
 `;
-var HeartWrap = import_styled_components35.default.div`
+var HeartWrap = import_styled_components34.default.div`
   position: absolute;
   bottom: 1rem;
   right: 5rem;
   transform: rotate(35deg);
 `;
-var SearchHistory = import_styled_components35.default.div`
+var SearchHistory = import_styled_components34.default.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   @media (max-width: 900px) {
@@ -6252,12 +6355,12 @@ var SearchHistory = import_styled_components35.default.div`
   }
   gap: 1.25rem;
 `;
-var It = import_styled_components35.default.i`
+var It = import_styled_components34.default.i`
   margin-left: 2rem;
 `;
 function Places() {
-  const { places, locations, tags, categories, searchHistory } = (0, import_react55.useLoaderData)();
-  const searchParams = (0, import_react55.useSearchParams)()[0];
+  const { places, locations, tags, categories, searchHistory } = (0, import_react54.useLoaderData)();
+  const searchParams = (0, import_react54.useSearchParams)()[0];
   return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(TopSegment, null, /* @__PURE__ */ React.createElement(WidthRestrictor, null, /* @__PURE__ */ React.createElement(Title12, null, "Book a spot anywhere. Right here."), /* @__PURE__ */ React.createElement(IconRow, null), /* @__PURE__ */ React.createElement(SearchUI, {
     searchParams,
     locations,
@@ -6285,9 +6388,9 @@ __export(search_exports, {
   loader: () => loader17
 });
 var import_server_runtime13 = require("@remix-run/server-runtime");
-var import_react56 = require("@remix-run/react");
-var import_styled_components36 = __toESM(require("styled-components"));
-var import_react57 = require("react");
+var import_react55 = require("@remix-run/react");
+var import_styled_components35 = __toESM(require("styled-components"));
+var import_react56 = require("react");
 var loader17 = async ({ request }) => {
   var _a;
   const url = new URL(request.url);
@@ -6318,20 +6421,20 @@ var loader17 = async ({ request }) => {
     places: await getSearchPlaces({ name: searchTerm ?? "", cityCountry: !location || location == "" ? void 0 : location, tagIds: tags, catIds: categories, itemsPerPage: 10, page: parseInt(page) })
   });
 };
-var Title13 = import_styled_components36.default.h6`
+var Title13 = import_styled_components35.default.h6`
   font-size: 1.7rem;
   margin: 0 0 1.5rem 0;
   @media (max-width: 800px) {
     padding: 0rem 2rem;
   }
 `;
-var TopSegment2 = import_styled_components36.default.div`
+var TopSegment2 = import_styled_components35.default.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: ${styles.colors.primary};
 `;
-var MainSegment2 = import_styled_components36.default.div`
+var MainSegment2 = import_styled_components35.default.div`
   padding: 3rem 0;
   display: grid;
   gap: 2rem;
@@ -6342,20 +6445,20 @@ var MainSegment2 = import_styled_components36.default.div`
     grid-template-rows: auto 1fr;
   }
 `;
-var PlacesColumn = import_styled_components36.default.div`
+var PlacesColumn = import_styled_components35.default.div`
   flex-grow: 1;
 `;
 function Search() {
-  const { places: defaultPlaces, locations, tags, categories } = (0, import_react56.useLoaderData)();
-  const [page, setPage] = (0, import_react57.useState)(1);
-  const [places, setPlaces] = (0, import_react57.useState)(defaultPlaces);
-  const [fetching, setFetching] = (0, import_react57.useState)(false);
-  const [scrollState, setScrollState] = (0, import_react57.useState)({ height: 0, scrollHeight: 0, scrollY: 0 });
-  const [reachedEnd, setReachedEnd] = (0, import_react57.useState)(false);
-  const searchParams = (0, import_react56.useSearchParams)()[0];
-  const fetcher = (0, import_react56.useFetcher)();
-  const fetcherForm = (0, import_react57.useRef)(null);
-  (0, import_react57.useEffect)(() => {
+  const { places: defaultPlaces, locations, tags, categories } = (0, import_react55.useLoaderData)();
+  const [page, setPage] = (0, import_react56.useState)(1);
+  const [places, setPlaces] = (0, import_react56.useState)(defaultPlaces);
+  const [fetching, setFetching] = (0, import_react56.useState)(false);
+  const [scrollState, setScrollState] = (0, import_react56.useState)({ height: 0, scrollHeight: 0, scrollY: 0 });
+  const [reachedEnd, setReachedEnd] = (0, import_react56.useState)(false);
+  const searchParams = (0, import_react55.useSearchParams)()[0];
+  const fetcher = (0, import_react55.useFetcher)();
+  const fetcherForm = (0, import_react56.useRef)(null);
+  (0, import_react56.useEffect)(() => {
     if (typeof window != "undefined") {
       const scrollListener = () => {
         setScrollState({
@@ -6372,18 +6475,18 @@ function Search() {
       };
     }
   }, []);
-  (0, import_react57.useEffect)(() => {
+  (0, import_react56.useEffect)(() => {
     if (scrollState.height + scrollState.scrollY > scrollState.scrollHeight && !fetching && !reachedEnd) {
       setPage(page + 1);
       setFetching(true);
     }
   }, [scrollState]);
-  (0, import_react57.useEffect)(() => {
+  (0, import_react56.useEffect)(() => {
     if (fetcherForm.current) {
       fetcher.submit(fetcherForm.current);
     }
   }, [page]);
-  (0, import_react57.useEffect)(() => {
+  (0, import_react56.useEffect)(() => {
     var _a, _b;
     if (((_a = fetcher.data) == null ? void 0 : _a.places) && page != 1) {
       if (fetcher.data.places.length == 0) {
@@ -6395,7 +6498,7 @@ function Search() {
       }));
     }
   }, [fetcher.data]);
-  (0, import_react57.useEffect)(() => {
+  (0, import_react56.useEffect)(() => {
     setFetching(false);
   }, [places]);
   const locationCityCountry = searchParams.get("selectedLocation");
@@ -6444,9 +6547,9 @@ var about_exports = {};
 __export(about_exports, {
   default: () => About
 });
-var import_react58 = require("@remix-run/react");
+var import_react57 = require("@remix-run/react");
 function About() {
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "Welcome to the best place in the world."), /* @__PURE__ */ React.createElement(import_react58.Link, {
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "Welcome to the best place in the world."), /* @__PURE__ */ React.createElement(import_react57.Link, {
     to: "/"
   }, "See place list."));
 }
@@ -6457,9 +6560,9 @@ __export(admin_exports, {
   default: () => Admin,
   loader: () => loader18
 });
-var import_react59 = require("@remix-run/react");
+var import_react58 = require("@remix-run/react");
 var import_server_runtime14 = require("@remix-run/server-runtime");
-var import_styled_components37 = __toESM(require("styled-components"));
+var import_styled_components36 = __toESM(require("styled-components"));
 var forbidden = (data) => (0, import_server_runtime14.json)(data, { status: 403 });
 var loader18 = async ({ request }) => {
   const { admin } = await requireUsernameAndAdmin(request);
@@ -6468,19 +6571,19 @@ var loader18 = async ({ request }) => {
   }
   return forbidden({ forbidden: true });
 };
-var AdminHeader = import_styled_components37.default.div`
+var AdminHeader = import_styled_components36.default.div`
   background-color: ${styles.colors.gray[10]};
   display: flex;
   gap: 2rem;
 `;
-var TabButton = (0, import_styled_components37.default)(UnstyledLink)`
+var TabButton = (0, import_styled_components36.default)(UnstyledLink)`
   color: ${styles.colors.black};
   display: block;
   padding: 1rem 1.5rem;
   font-size: 1.2rem;
 `;
 function Admin() {
-  return (0, import_react59.useLoaderData)().forbidden ? /* @__PURE__ */ React.createElement("div", null, "Iiii dont think ur an admin m8") : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(AdminHeader, null, /* @__PURE__ */ React.createElement(TabButton, {
+  return (0, import_react58.useLoaderData)().forbidden ? /* @__PURE__ */ React.createElement("div", null, "Iiii dont think ur an admin m8") : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(AdminHeader, null, /* @__PURE__ */ React.createElement(TabButton, {
     to: "/admin/reservations"
   }, "Reservations"), /* @__PURE__ */ React.createElement(TabButton, {
     to: "/admin/places"
@@ -6496,7 +6599,7 @@ function Admin() {
     to: "/admin/reservableTypes"
   }, "Reservable types"), /* @__PURE__ */ React.createElement(TabButton, {
     to: "/admin/users"
-  }, "User stats")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(import_react59.Outlet, null)));
+  }, "User stats")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(import_react58.Outlet, null)));
 }
 
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservableTypes/$reservableTypeId.tsx
@@ -6506,9 +6609,9 @@ __export(reservableTypeId_exports, {
   default: () => AdminReservableTypeDetail,
   loader: () => loader19
 });
-var import_react60 = require("@remix-run/react");
+var import_react59 = require("@remix-run/react");
 var import_server_runtime15 = require("@remix-run/server-runtime");
-var import_styled_components38 = __toESM(require("styled-components"));
+var import_styled_components37 = __toESM(require("styled-components"));
 
 // app/models/reservableType.server.ts
 var createReservableType = async ({ multiLangName }) => await prisma.reservableType.create({
@@ -6580,14 +6683,14 @@ var action12 = async ({ request }) => {
   await updateReservableType({ multiLangName: reservableType, id: getFormItem("id") });
   return (0, import_server_runtime15.redirect)("/admin/reservableTypes");
 };
-var ArrayInputWrap = import_styled_components38.default.div`
+var ArrayInputWrap = import_styled_components37.default.div`
   display: flex;
 `;
 function AdminReservableTypeDetail() {
   var _a, _b;
-  const { reservableType } = (0, import_react60.useLoaderData)();
+  const { reservableType } = (0, import_react59.useLoaderData)();
   const { lang } = useLangs();
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "RESERVABLE TYPE ", (reservableType == null ? void 0 : reservableType.multiLangName) && (reservableType == null ? void 0 : reservableType.multiLangName[lang])), /* @__PURE__ */ React.createElement(import_react60.Form, {
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "RESERVABLE TYPE ", (reservableType == null ? void 0 : reservableType.multiLangName) && (reservableType == null ? void 0 : reservableType.multiLangName[lang])), /* @__PURE__ */ React.createElement(import_react59.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(IdInput, {
     name: "id",
@@ -6611,19 +6714,19 @@ __export(reservableTypes_exports, {
   default: () => CategoriesAdminIndex,
   loader: () => loader20
 });
-var import_react61 = require("@remix-run/react");
+var import_react60 = require("@remix-run/react");
 var loader20 = async ({ request, params }) => {
   const categories = await getReservableTypeList({ nameFragment: params.reservableTypeId ?? "" });
   return { categories };
 };
 function CategoriesAdminIndex() {
-  const { categories } = (0, import_react61.useLoaderData)();
+  const { categories } = (0, import_react60.useLoaderData)();
   const { lang } = useLangs();
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", null, categories.map((c) => /* @__PURE__ */ React.createElement("div", {
     key: c.id
-  }, /* @__PURE__ */ React.createElement("p", null, "Name: ", c.multiLangName && c.multiLangName[lang]), /* @__PURE__ */ React.createElement(import_react61.Link, {
+  }, /* @__PURE__ */ React.createElement("p", null, "Name: ", c.multiLangName && c.multiLangName[lang]), /* @__PURE__ */ React.createElement(import_react60.Link, {
     to: `/admin/reservableTypes/${c.id}`
-  }, "View / Edit"))), /* @__PURE__ */ React.createElement(import_react61.Link, {
+  }, "View / Edit"))), /* @__PURE__ */ React.createElement(import_react60.Link, {
     to: "/admin/reservableTypes/new"
   }, "New reservable type")));
 }
@@ -6635,7 +6738,7 @@ __export(new_exports, {
   default: () => AdminCompanyDetail,
   loader: () => loader21
 });
-var import_react62 = require("@remix-run/react");
+var import_react61 = require("@remix-run/react");
 var import_server_runtime16 = require("@remix-run/server-runtime");
 var loader21 = async ({ request, params }) => {
   return {};
@@ -6655,8 +6758,8 @@ var action13 = async ({ request }) => {
 };
 function AdminCompanyDetail() {
   var _a, _b, _c;
-  const a = (0, import_react62.useActionData)();
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "RESERVABLE TYPE ", ((_a = a == null ? void 0 : a.field) == null ? void 0 : _a.nameEnglish) ?? ""), /* @__PURE__ */ React.createElement(import_react62.Form, {
+  const a = (0, import_react61.useActionData)();
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", null, "RESERVABLE TYPE ", ((_a = a == null ? void 0 : a.field) == null ? void 0 : _a.nameEnglish) ?? ""), /* @__PURE__ */ React.createElement(import_react61.Form, {
     method: "post"
   }, /* @__PURE__ */ React.createElement(IdInput, {
     name: "id",
@@ -6679,13 +6782,13 @@ var reservations_exports = {};
 __export(reservations_exports, {
   default: () => ReservationsAdmin
 });
-var import_react63 = require("@remix-run/react");
-var import_styled_components39 = __toESM(require("styled-components"));
-var Wrap19 = import_styled_components39.default.div`
+var import_react62 = require("@remix-run/react");
+var import_styled_components38 = __toESM(require("styled-components"));
+var Wrap18 = import_styled_components38.default.div`
   
 `;
 function ReservationsAdmin() {
-  return /* @__PURE__ */ React.createElement(Wrap19, null, /* @__PURE__ */ React.createElement(import_react63.Outlet, null));
+  return /* @__PURE__ */ React.createElement(Wrap18, null, /* @__PURE__ */ React.createElement(import_react62.Outlet, null));
 }
 
 // route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservations/$reservationId.tsx
@@ -6699,6 +6802,225 @@ var import_react64 = require("@remix-run/react");
 var import_server_runtime17 = require("@remix-run/server-runtime");
 var import_react65 = __toESM(require("react"));
 var import_styled_components40 = __toESM(require("styled-components"));
+
+// app/components/inputs/DateInput.tsx
+var import_react63 = __toESM(require("react"));
+var import_styled_components39 = __toESM(require("styled-components"));
+
+// app/assets/icons/AngleLeft.tsx
+var AngleLeftIcon = (props) => /* @__PURE__ */ React.createElement("svg", {
+  viewBox: "0 0 256 512",
+  style: {
+    height: props.height
+  },
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg"
+}, /* @__PURE__ */ React.createElement("path", {
+  d: "M192 448c-8.188 0-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25l160-160c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25L77.25 256l137.4 137.4c12.5 12.5 12.5 32.75 0 45.25C208.4 444.9 200.2 448 192 448z",
+  fill: props.fill ?? styles.colors.black
+}));
+var AngleLeft_default = AngleLeftIcon;
+
+// app/components/inputs/DateInput.tsx
+var DateInputField = import_styled_components39.default.input`
+  font-size: 0.8rem;
+  line-height: 2rem;
+  padding: 0rem 1rem;
+  border: 1.5px solid ${styles.colors.gray[30]};
+  border-radius: 0.3rem;
+  outline: none;
+  width: 5ch;
+  &:focus {
+    border: 1.5px solid ${styles.colors.gray[50]};
+  }
+`;
+var Calendar = import_styled_components39.default.div`
+  width: 15rem;
+  height: 15rem;
+  padding: 0.5rem 1rem;
+  position: absolute;
+  right: 0;
+  margin-top: 0.3rem;
+  background-color: ${styles.colors.white};
+  border: 1px solid ${styles.colors.gray[140]}40;
+  box-shadow: ${styles.shadows[0]};
+  border-radius: 0.5rem;
+  z-index: 6;
+  @media(max-width: 500px) {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+`;
+var Header2 = import_styled_components39.default.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0rem 0.1rem;
+  gap: 0.4rem;
+`;
+var Body2 = import_styled_components39.default.div`
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+`;
+var Button = import_styled_components39.default.button`
+  border-radius: 100%;
+  height: 2rem;
+  width: 2rem;
+  border: none;
+  cursor: pointer;
+  color: ${(props) => props.selected ? styles.colors.white : styles.colors.black};
+  &:disabled {
+    color: ${styles.colors.gray[60]};
+  }
+  &:hover {
+    background-color: ${(props) => props.selected ? styles.colors.primary : styles.colors.gray[20]};
+  }
+  background-color: ${(props) => props.selected ? styles.colors.primary : styles.colors.white};
+`;
+var getMaxDayOfMonth = (year, month) => month === 1 && year % 400 === 0 ? 29 : month === 1 && year % 100 === 0 ? 28 : month === 1 && year % 4 === 0 ? 29 : [3, 5, 8, 10].includes(month) ? 30 : 31;
+var getDateFromParts = (year, month, date) => `${year == null ? void 0 : year.toString()}-${month < 9 ? "0" : ""}${(month + 1).toString()}-${date < 10 ? "0" : ""}${date == null ? void 0 : date.toString()}`;
+var getYearMonthFromValue = (str) => ({ year: parseInt(str.split("-")[0]), month: parseInt(str.split("-")[1]) - 1 });
+var Wrap19 = import_styled_components39.default.button`
+  padding: 0.5rem 0.8rem;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  cursor: pointer;
+  align-items: center;
+  border: 1.5px solid ${styles.colors.gray[140]}40;
+  border-radius: 0.5rem;
+  background-color: ${styles.colors.white};
+`;
+var DateDisplay = import_styled_components39.default.p`
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+`;
+var Month = import_styled_components39.default.p`
+  margin: 0;
+  font-size: 0.8rem;
+`;
+var HeaderButton = import_styled_components39.default.button`
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.2rem;
+  border-radius: 0.3rem;
+  &>svg {
+    height: 1.1rem;
+  }
+  &:hover {
+    background-color: ${styles.colors.gray[20]};
+  }
+`;
+var Overlay3 = import_styled_components39.default.div`
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5;
+`;
+var RelativeWrapper = import_styled_components39.default.div`
+  position: relative;
+`;
+var DayButton = ({ disabled, date, selected, onClick }) => /* @__PURE__ */ import_react63.default.createElement(Button, {
+  disabled,
+  selected,
+  onClick: (e) => {
+    e.preventDefault();
+    onClick();
+  }
+}, date.toString());
+var DateInput = ({ disablePast, name: name3, defaultValue, title, onChange }) => {
+  const [value, setValue] = import_react63.default.useState(getInputDateFromString(defaultValue));
+  const [{ year, month }, setYearMonth] = import_react63.default.useState({ year: new Date().getFullYear(), month: new Date().getMonth() });
+  const [date, setDate] = import_react63.default.useState(new Date().getDate());
+  const [showCalendar, setShowCalendar] = import_react63.default.useState(false);
+  const { translations: l } = useLangs();
+  import_react63.default.useEffect(() => {
+    setValue(date ? getDateFromParts(year, month, date) : "");
+    onChange(date ? new Date(year, month, date) : null);
+  }, [date]);
+  const startPadding = new Date(year, month, 1).getDay() == 0 ? 6 : new Date(year, month, 1).getDay() - 1;
+  const maxDayOfPreviousMonth = getMaxDayOfMonth(month > 0 ? year : year - 1, month > 0 ? month - 1 : month + 11);
+  const days = [...Array(getMaxDayOfMonth(year, month)).keys()];
+  const endPadding = 7 - (days.length + startPadding) % 7;
+  return /* @__PURE__ */ import_react63.default.createElement(RelativeWrapper, null, title && /* @__PURE__ */ import_react63.default.createElement("label", null, title), /* @__PURE__ */ import_react63.default.createElement(Wrap19, {
+    onClick: (e) => {
+      e.preventDefault();
+      setShowCalendar(!showCalendar);
+    }
+  }, /* @__PURE__ */ import_react63.default.createElement(Calendar_default, {
+    height: "1rem"
+  }), /* @__PURE__ */ import_react63.default.createElement(DateDisplay, null, getStringDateValue(new Date(value)))), showCalendar && /* @__PURE__ */ import_react63.default.createElement(import_react63.default.Fragment, null, /* @__PURE__ */ import_react63.default.createElement(Overlay3, {
+    onClick: () => {
+      setShowCalendar(false);
+    }
+  }), /* @__PURE__ */ import_react63.default.createElement(Calendar, null, /* @__PURE__ */ import_react63.default.createElement(Header2, null, /* @__PURE__ */ import_react63.default.createElement(HeaderButton, {
+    onClick: (e) => {
+      e.preventDefault();
+      setYearMonth({
+        year: month == 0 ? year - 1 : year,
+        month: month == 0 ? 11 : month - 1
+      });
+    }
+  }, /* @__PURE__ */ import_react63.default.createElement(AngleLeft_default, null)), /* @__PURE__ */ import_react63.default.createElement(Month, null, l.months[month]), /* @__PURE__ */ import_react63.default.createElement(HeaderButton, {
+    onClick: (e) => {
+      e.preventDefault();
+      setYearMonth({
+        year: month == 11 ? year + 1 : year,
+        month: month == 11 ? 0 : month + 1
+      });
+    }
+  }, /* @__PURE__ */ import_react63.default.createElement(AngleRight_default, null))), /* @__PURE__ */ import_react63.default.createElement(Body2, null, [...Array(startPadding).keys()].map((_, i) => maxDayOfPreviousMonth - i).reverse().map((d) => /* @__PURE__ */ import_react63.default.createElement(DayButton, {
+    disabled: true,
+    key: d,
+    onClick: () => {
+      setYearMonth({
+        year,
+        month: month - 1
+      });
+      setDate(d);
+      setShowCalendar(false);
+    },
+    date: d
+  })), days.map((d) => /* @__PURE__ */ import_react63.default.createElement(DayButton, {
+    key: d + 32,
+    disabled: disablePast && (new Date().getDate() > d + 1 && new Date().getMonth() == month) || new Date().getMonth() > month && new Date().getFullYear() == year || new Date().getFullYear() > year,
+    selected: d + 1 == date && getYearMonthFromValue(value).month == month && getYearMonthFromValue(value).year == year,
+    date: d + 1,
+    onClick: () => {
+      setDate(d + 1);
+      setShowCalendar(false);
+    }
+  })), [...Array(endPadding).keys()].map((d) => /* @__PURE__ */ import_react63.default.createElement(DayButton, {
+    disabled: true,
+    key: d + 64,
+    date: d + 1,
+    onClick: () => {
+      setDate(d + 1);
+      setYearMonth({
+        year,
+        month: month + 1
+      });
+      setShowCalendar(false);
+    }
+  }))))), /* @__PURE__ */ import_react63.default.createElement("input", {
+    name: name3,
+    type: "date",
+    value,
+    readOnly: true,
+    hidden: true
+  }));
+};
+
+// route:/Users/pavelpocho/Projects/reserveroo-remix-app/reserveroo/app/routes/admin/reservations/$reservationId.tsx
 var loader22 = async ({ params }) => {
   const reservationGroupId = params.reservationId;
   const rGroup = await getReservationGroup({ id: reservationGroupId ?? "" });
@@ -8376,7 +8698,7 @@ var import_react99 = require("@remix-run/react");
 var import_react100 = __toESM(require("react"));
 var import_styled_components60 = __toESM(require("styled-components"));
 var import_react_fontawesome = require("@fortawesome/react-fontawesome");
-var import_fa5 = require("react-icons/fa");
+var import_fa6 = require("react-icons/fa");
 
 // app/components/scroll-effects/index.tsx
 var import_styled_components59 = __toESM(require("styled-components"));
@@ -8466,62 +8788,62 @@ var questions = [
   {
     title: "Imagine you are somewhere new with your friend and want to do something fun.",
     question: "A game of tennis, or perhaps a round of billiards. Whatever you desire.",
-    icon: import_fa5.FaUserFriends
+    icon: import_fa6.FaUserFriends
   },
   {
     title: "You can try just walking into a billiard bar.",
     question: "But it could be full. Or empty and closed.",
-    icon: import_fa5.FaSearch
+    icon: import_fa6.FaSearch
   },
   {
     title: "Or find one of the three local tennis places.",
     question: "Except they all require bookings. And no one picks up the phone.",
-    icon: import_fa5.FaEye
+    icon: import_fa6.FaEye
   },
   {
     title: "We think it should be easier.",
     question: "",
-    icon: import_fa5.FaQuestion
+    icon: import_fa6.FaQuestion
   },
   {
     title: "Reserveroo will let you see all the local  leisure activities. Wherever you happen to be.",
     question: "",
-    icon: import_fa5.FaCalendarAlt
+    icon: import_fa6.FaCalendarAlt
   },
   {
     title: "And you can book with a single click.",
     question: "",
-    icon: import_fa5.FaQuestionCircle
+    icon: import_fa6.FaQuestionCircle
   },
   {
     title: "No learning the local way of doing things.",
     question: "",
-    icon: import_fa5.FaPhone
+    icon: import_fa6.FaPhone
   },
   {
     title: "No phone calls required.",
     question: "",
-    icon: import_fa5.FaPhoneSlash
+    icon: import_fa6.FaPhoneSlash
   },
   {
     title: "What now?",
     question: "Keep on trying? You hate calling people...",
-    icon: import_fa5.FaRedoAlt
+    icon: import_fa6.FaRedoAlt
   },
   {
     title: "This is not fun..",
     question: "So what? Email them?",
-    icon: import_fa5.FaMailBulk
+    icon: import_fa6.FaMailBulk
   },
   {
     title: "Maybe?",
     question: "No that's pointless, they won't reply in time...",
-    icon: import_fa5.FaSadCry
+    icon: import_fa6.FaSadCry
   },
   {
     title: "Hold on a second!",
     question: "This all seems needlessly complicated.",
-    icon: import_fa5.FaBackward
+    icon: import_fa6.FaBackward
   }
 ];
 var H1 = import_styled_components60.default.h1`
@@ -8602,7 +8924,7 @@ var fade = import_styled_components60.keyframes`
   60% { opacity: 0 }
   100% { opacity: 0 }
 `;
-var FaAngleDownA = (0, import_styled_components60.default)(import_fa5.FaAngleDown)`
+var FaAngleDownA = (0, import_styled_components60.default)(import_fa6.FaAngleDown)`
   animation: ${fade} 1.5s linear 0s infinite;
 `;
 var ScrollItem = (0, import_styled_components60.default)(import_react_spring.animated.div).attrs((props) => {
@@ -8831,23 +9153,23 @@ function About2() {
     style: { position: "relative", maxWidth: "936px", margin: "12rem auto" }
   }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { position: "absolute", right: "0", top: "0", width: "322px" }
-  }, /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaVolleyballBall, {
+  }, /* @__PURE__ */ import_react100.default.createElement(import_fa6.FaVolleyballBall, {
     color: styles.colors.white,
     size: 54,
     style: { position: "absolute", top: "35px", left: "40px" }
-  }), /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaTableTennis, {
+  }), /* @__PURE__ */ import_react100.default.createElement(import_fa6.FaTableTennis, {
     color: styles.colors.white,
     size: 54,
     style: { position: "absolute", top: "95px", left: "110px" }
-  }), /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaGolfBall, {
+  }), /* @__PURE__ */ import_react100.default.createElement(import_fa6.FaGolfBall, {
     color: styles.colors.white,
     size: 54,
     style: { position: "absolute", top: "155px", left: "180px" }
-  }), /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaSwimmer, {
+  }), /* @__PURE__ */ import_react100.default.createElement(import_fa6.FaSwimmer, {
     color: styles.colors.white,
     size: 54,
     style: { position: "absolute", top: "165px", left: "65px" }
-  }), /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaBowlingBall, {
+  }), /* @__PURE__ */ import_react100.default.createElement(import_fa6.FaBowlingBall, {
     color: styles.colors.white,
     size: 54,
     style: { position: "absolute", top: "55px", left: "200px" }
@@ -8890,7 +9212,7 @@ function About2() {
     style: { position: "relative", maxWidth: "936px", margin: "12rem auto" }
   }, /* @__PURE__ */ import_react100.default.createElement("div", {
     style: { position: "absolute", right: "0", top: "0", width: "322px" }
-  }, /* @__PURE__ */ import_react100.default.createElement(import_fa5.FaQuestionCircle, {
+  }, /* @__PURE__ */ import_react100.default.createElement(import_fa6.FaQuestionCircle, {
     size: randomPositions[i][2],
     color: styles.colors.white,
     style: { transform: `rotate(${randomPositions[i][3] / Math.PI * 180}deg)`, position: "absolute", top: `${randomPositions[i][1]}`, left: `${randomPositions[i][0]}px` }
@@ -8898,7 +9220,7 @@ function About2() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "2138eeeb", "entry": { "module": "/build/entry.client-IHW3J2V2.js", "imports": ["/build/_shared/chunk-FKVNPCUN.js", "/build/_shared/chunk-4ZPJ7ZPH.js", "/build/_shared/chunk-FN7GJDOI.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-4AKSC27V.js", "imports": ["/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-SMOIW27M.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId": { "id": "routes/$placeId", "parentId": "root", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId-4NAULI2K.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/index": { "id": "routes/$placeId/index", "parentId": "routes/$placeId", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/$placeId/index-R7XPXL5B.js", "imports": ["/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/reserve": { "id": "routes/$placeId/reserve", "parentId": "routes/$placeId", "path": "reserve", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId/reserve-BRS7VVY2.js", "imports": ["/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-SJGNZCZF.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin": { "id": "routes/admin", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin-EEDOZT47.js", "imports": ["/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories": { "id": "routes/admin/categories", "parentId": "routes/admin", "path": "categories", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories-Z66YEFR7.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/$categoryId": { "id": "routes/admin/categories/$categoryId", "parentId": "routes/admin/categories", "path": ":categoryId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/$categoryId-7Y54MTVY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/index": { "id": "routes/admin/categories/index", "parentId": "routes/admin/categories", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/categories/index-ZMS23OUI.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/new": { "id": "routes/admin/categories/new", "parentId": "routes/admin/categories", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/new-5FEGZYJY.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies": { "id": "routes/admin/companies", "parentId": "routes/admin", "path": "companies", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies-MGDRJYXX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/$companyId": { "id": "routes/admin/companies/$companyId", "parentId": "routes/admin/companies", "path": ":companyId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/$companyId-UGRQMAEZ.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/index": { "id": "routes/admin/companies/index", "parentId": "routes/admin/companies", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/companies/index-SRV7RBEB.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/new": { "id": "routes/admin/companies/new", "parentId": "routes/admin/companies", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/new-55YN7JTT.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations": { "id": "routes/admin/locations", "parentId": "routes/admin", "path": "locations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations-YK6MJBBR.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/$locationId": { "id": "routes/admin/locations/$locationId", "parentId": "routes/admin/locations", "path": ":locationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/$locationId-NZPRQJJH.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/index": { "id": "routes/admin/locations/index", "parentId": "routes/admin/locations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/locations/index-74HGNSZS.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/new": { "id": "routes/admin/locations/new", "parentId": "routes/admin/locations", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/new-MFKYHSQV.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places": { "id": "routes/admin/places", "parentId": "routes/admin", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places-DTZZ753K.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/$placeId": { "id": "routes/admin/places/$placeId", "parentId": "routes/admin/places", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/$placeId-IMGSLEGW.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/index": { "id": "routes/admin/places/index", "parentId": "routes/admin/places", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/places/index-ITIOSNCI.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/new": { "id": "routes/admin/places/new", "parentId": "routes/admin/places", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/new-XNCWI2XN.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/$reservableTypeId": { "id": "routes/admin/reservableTypes/$reservableTypeId", "parentId": "routes/admin", "path": "reservableTypes/:reservableTypeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/$reservableTypeId-IZG64SI2.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/index": { "id": "routes/admin/reservableTypes/index", "parentId": "routes/admin", "path": "reservableTypes", "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/index-5V73L7PL.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/new": { "id": "routes/admin/reservableTypes/new", "parentId": "routes/admin", "path": "reservableTypes/new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/new-UGCPTN4J.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations": { "id": "routes/admin/reservations", "parentId": "routes/admin", "path": "reservations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations-JQHHGDQV.js", "imports": ["/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/$reservationId": { "id": "routes/admin/reservations/$reservationId", "parentId": "routes/admin/reservations", "path": ":reservationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/$reservationId-KZL7MANA.js", "imports": ["/build/_shared/chunk-EDHEW5F4.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/index": { "id": "routes/admin/reservations/index", "parentId": "routes/admin/reservations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/index-W7MUP4T3.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/setAttendance": { "id": "routes/admin/reservations/setAttendance", "parentId": "routes/admin/reservations", "path": "setAttendance", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/setAttendance-UGT2K3IQ.js", "imports": ["/build/_shared/chunk-QR3YEJQL.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags": { "id": "routes/admin/tags", "parentId": "routes/admin", "path": "tags", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags-YY5X2N6Z.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/$tagId": { "id": "routes/admin/tags/$tagId", "parentId": "routes/admin/tags", "path": ":tagId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/$tagId-CMLD73RM.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/index": { "id": "routes/admin/tags/index", "parentId": "routes/admin/tags", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/tags/index-3KHD5ATQ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/new": { "id": "routes/admin/tags/new", "parentId": "routes/admin/tags", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/new-WF27CYEE.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/users": { "id": "routes/admin/users", "parentId": "routes/admin", "path": "users", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/users-WBWAEEKX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/users/index": { "id": "routes/admin/users/index", "parentId": "routes/admin/users", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/users/index-U6X2PFH2.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate": { "id": "routes/authenticate", "parentId": "root", "path": "authenticate", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate-WTT7N4TV.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/login": { "id": "routes/authenticate/login", "parentId": "routes/authenticate", "path": "login", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/login-MJBMA6FU.js", "imports": ["/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/register": { "id": "routes/authenticate/register", "parentId": "routes/authenticate", "path": "register", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/register-ISNZJ33A.js", "imports": ["/build/_shared/chunk-ZG4ZKHQT.js", "/build/_shared/chunk-ULQXSACI.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/doneVerifyingEmail": { "id": "routes/doneVerifyingEmail", "parentId": "root", "path": "doneVerifyingEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/doneVerifyingEmail-HNE3JJI5.js", "imports": ["/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-CW35QQSM.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/logout": { "id": "routes/logout", "parentId": "root", "path": "logout", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/logout-XMXFMUNS.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/places": { "id": "routes/places", "parentId": "root", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/places-6Y52ANJM.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile-WDMFPJAY.js", "imports": ["/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-ULQXSACI.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/cancelReservation": { "id": "routes/profile/cancelReservation", "parentId": "routes/profile", "path": "cancelReservation", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/cancelReservation-MSJCFS6P.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-FTM4DERH.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/delete": { "id": "routes/profile/delete", "parentId": "routes/profile", "path": "delete", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/delete-5CP75NND.js", "imports": void 0, "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/edit": { "id": "routes/profile/edit", "parentId": "routes/profile", "path": "edit", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/edit-EHEU7ZRG.js", "imports": ["/build/_shared/chunk-ZG4ZKHQT.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/index": { "id": "routes/profile/index", "parentId": "routes/profile", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/profile/index-HCILDNSE.js", "imports": ["/build/_shared/chunk-ZG4ZKHQT.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/forgot": { "id": "routes/pwd/forgot", "parentId": "root", "path": "pwd/forgot", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/forgot-LS4PZ2ZM.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/reset": { "id": "routes/pwd/reset", "parentId": "root", "path": "pwd/reset", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/reset-VW7QO32X.js", "imports": ["/build/_shared/chunk-ULQXSACI.js", "/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/search": { "id": "routes/search", "parentId": "root", "path": "search", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/search-UU6RPZ7D.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/verifyEmail": { "id": "routes/verifyEmail", "parentId": "root", "path": "verifyEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/verifyEmail-GYW7CTIE.js", "imports": ["/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-IH773WC5.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-FMSNE223.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-WARXSPZD.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-2138EEEB.js" };
+var assets_manifest_default = { "version": "161e6926", "entry": { "module": "/build/entry.client-I2R4GLO3.js", "imports": ["/build/_shared/chunk-CQBW27FL.js", "/build/_shared/chunk-4ZPJ7ZPH.js", "/build/_shared/chunk-FN7GJDOI.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-TBJLPQEA.js", "imports": ["/build/_shared/chunk-TVUIR4OO.js", "/build/_shared/chunk-MTAI2TMS.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId": { "id": "routes/$placeId", "parentId": "root", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId-HGVLYGNM.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-RRINC4VF.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/index": { "id": "routes/$placeId/index", "parentId": "routes/$placeId", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/$placeId/index-AZS72OZ6.js", "imports": ["/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/$placeId/reserve": { "id": "routes/$placeId/reserve", "parentId": "routes/$placeId", "path": "reserve", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/$placeId/reserve-U234XSFU.js", "imports": ["/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-H2TO7GKC.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-MTAI2TMS.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/about": { "id": "routes/about", "parentId": "root", "path": "about", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/about-SJGNZCZF.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin": { "id": "routes/admin", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin-EEDOZT47.js", "imports": ["/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories": { "id": "routes/admin/categories", "parentId": "routes/admin", "path": "categories", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories-Z66YEFR7.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/$categoryId": { "id": "routes/admin/categories/$categoryId", "parentId": "routes/admin/categories", "path": ":categoryId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/$categoryId-TC6GNI6Y.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/index": { "id": "routes/admin/categories/index", "parentId": "routes/admin/categories", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/categories/index-ZMS23OUI.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/categories/new": { "id": "routes/admin/categories/new", "parentId": "routes/admin/categories", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/categories/new-W7MI5KUL.js", "imports": ["/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies": { "id": "routes/admin/companies", "parentId": "routes/admin", "path": "companies", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies-MGDRJYXX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/$companyId": { "id": "routes/admin/companies/$companyId", "parentId": "routes/admin/companies", "path": ":companyId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/$companyId-TCZOINCM.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/index": { "id": "routes/admin/companies/index", "parentId": "routes/admin/companies", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/companies/index-SRV7RBEB.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/companies/new": { "id": "routes/admin/companies/new", "parentId": "routes/admin/companies", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/companies/new-2DYKWC44.js", "imports": ["/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations": { "id": "routes/admin/locations", "parentId": "routes/admin", "path": "locations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations-YK6MJBBR.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/$locationId": { "id": "routes/admin/locations/$locationId", "parentId": "routes/admin/locations", "path": ":locationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/$locationId-LBKHSM3Z.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/index": { "id": "routes/admin/locations/index", "parentId": "routes/admin/locations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/locations/index-74HGNSZS.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/locations/new": { "id": "routes/admin/locations/new", "parentId": "routes/admin/locations", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/locations/new-N4PBUCGE.js", "imports": ["/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places": { "id": "routes/admin/places", "parentId": "routes/admin", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places-DTZZ753K.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/$placeId": { "id": "routes/admin/places/$placeId", "parentId": "routes/admin/places", "path": ":placeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/$placeId-J5FJVBF6.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-AGRFSO7Q.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/index": { "id": "routes/admin/places/index", "parentId": "routes/admin/places", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/places/index-ITIOSNCI.js", "imports": ["/build/_shared/chunk-Y7WZK7Z5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/places/new": { "id": "routes/admin/places/new", "parentId": "routes/admin/places", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/places/new-XNCWI2XN.js", "imports": ["/build/_shared/chunk-24YAGIHL.js", "/build/_shared/chunk-6VTZ5AQ7.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/$reservableTypeId": { "id": "routes/admin/reservableTypes/$reservableTypeId", "parentId": "routes/admin", "path": "reservableTypes/:reservableTypeId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/$reservableTypeId-WZQBAXZA.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/index": { "id": "routes/admin/reservableTypes/index", "parentId": "routes/admin", "path": "reservableTypes", "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/index-5V73L7PL.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservableTypes/new": { "id": "routes/admin/reservableTypes/new", "parentId": "routes/admin", "path": "reservableTypes/new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservableTypes/new-FLOGSE5M.js", "imports": ["/build/_shared/chunk-VF5KXXSQ.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations": { "id": "routes/admin/reservations", "parentId": "routes/admin", "path": "reservations", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations-JQHHGDQV.js", "imports": ["/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/$reservationId": { "id": "routes/admin/reservations/$reservationId", "parentId": "routes/admin/reservations", "path": ":reservationId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/$reservationId-OSZVSPP2.js", "imports": ["/build/_shared/chunk-H2TO7GKC.js", "/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/index": { "id": "routes/admin/reservations/index", "parentId": "routes/admin/reservations", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/index-RWU5B7R3.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/reservations/setAttendance": { "id": "routes/admin/reservations/setAttendance", "parentId": "routes/admin/reservations", "path": "setAttendance", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/reservations/setAttendance-UGT2K3IQ.js", "imports": ["/build/_shared/chunk-QR3YEJQL.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags": { "id": "routes/admin/tags", "parentId": "routes/admin", "path": "tags", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags-YY5X2N6Z.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/$tagId": { "id": "routes/admin/tags/$tagId", "parentId": "routes/admin/tags", "path": ":tagId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/$tagId-574VHANR.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/index": { "id": "routes/admin/tags/index", "parentId": "routes/admin/tags", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/tags/index-3KHD5ATQ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-I3H5JW2H.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/tags/new": { "id": "routes/admin/tags/new", "parentId": "routes/admin/tags", "path": "new", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/tags/new-7GSKLEKQ.js", "imports": ["/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/users": { "id": "routes/admin/users", "parentId": "routes/admin", "path": "users", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/admin/users-WBWAEEKX.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/admin/users/index": { "id": "routes/admin/users/index", "parentId": "routes/admin/users", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/admin/users/index-U6X2PFH2.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate": { "id": "routes/authenticate", "parentId": "root", "path": "authenticate", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate-WTT7N4TV.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/login": { "id": "routes/authenticate/login", "parentId": "routes/authenticate", "path": "login", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/login-JK6NNUQY.js", "imports": ["/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-RRINC4VF.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/authenticate/register": { "id": "routes/authenticate/register", "parentId": "routes/authenticate", "path": "register", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/authenticate/register-KFGQWAHN.js", "imports": ["/build/_shared/chunk-D66OECT7.js", "/build/_shared/chunk-QYHXVWHK.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-RRINC4VF.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/doneVerifyingEmail": { "id": "routes/doneVerifyingEmail", "parentId": "root", "path": "doneVerifyingEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/doneVerifyingEmail-S33NZYPO.js", "imports": ["/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-6FLRIYUT.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js"], "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/logout": { "id": "routes/logout", "parentId": "root", "path": "logout", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/logout-XMXFMUNS.js", "imports": ["/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/places": { "id": "routes/places", "parentId": "root", "path": "places", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/places-PPIPPXQE.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-RRINC4VF.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile-AAPWACPN.js", "imports": ["/build/_shared/chunk-R42YLMIZ.js", "/build/_shared/chunk-QYHXVWHK.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-RRINC4VF.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/cancelReservation": { "id": "routes/profile/cancelReservation", "parentId": "routes/profile", "path": "cancelReservation", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/cancelReservation-MSJCFS6P.js", "imports": ["/build/_shared/chunk-JBPUE2AP.js", "/build/_shared/chunk-QR3YEJQL.js", "/build/_shared/chunk-FTM4DERH.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/delete": { "id": "routes/profile/delete", "parentId": "routes/profile", "path": "delete", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/delete-5CP75NND.js", "imports": void 0, "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/edit": { "id": "routes/profile/edit", "parentId": "routes/profile", "path": "edit", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/profile/edit-BZZAS5LK.js", "imports": ["/build/_shared/chunk-D66OECT7.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/profile/index": { "id": "routes/profile/index", "parentId": "routes/profile", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/profile/index-TBIFEENW.js", "imports": ["/build/_shared/chunk-D66OECT7.js", "/build/_shared/chunk-I3H5JW2H.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-UPPUCL2Z.js", "/build/_shared/chunk-26MBYJD5.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/forgot": { "id": "routes/pwd/forgot", "parentId": "root", "path": "pwd/forgot", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/forgot-3ILZK3DS.js", "imports": ["/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-RRINC4VF.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/pwd/reset": { "id": "routes/pwd/reset", "parentId": "root", "path": "pwd/reset", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/pwd/reset-AIONQZXO.js", "imports": ["/build/_shared/chunk-QYHXVWHK.js", "/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-RRINC4VF.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/search": { "id": "routes/search", "parentId": "root", "path": "search", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/search-WW7NQV42.js", "imports": ["/build/_shared/chunk-OFKKLFFE.js", "/build/_shared/chunk-N7PYVKJ4.js", "/build/_shared/chunk-65DR2DTC.js", "/build/_shared/chunk-BTTOKG7D.js", "/build/_shared/chunk-Y7WZK7Z5.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-RRINC4VF.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/verifyEmail": { "id": "routes/verifyEmail", "parentId": "root", "path": "verifyEmail", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/verifyEmail-YN33FSR2.js", "imports": ["/build/_shared/chunk-M7P7K3AI.js", "/build/_shared/chunk-EKLSP4EQ.js", "/build/_shared/chunk-UO7E4SR4.js", "/build/_shared/chunk-FTM4DERH.js", "/build/_shared/chunk-RRINC4VF.js", "/build/_shared/chunk-62TKU3CI.js", "/build/_shared/chunk-KM45GVAK.js", "/build/_shared/chunk-FQOS4KYI.js", "/build/_shared/chunk-4KNSR4EK.js", "/build/_shared/chunk-UU4IUIAR.js", "/build/_shared/chunk-EJPCZY6L.js", "/build/_shared/chunk-FWISOD5D.js", "/build/_shared/chunk-EUWCKCHD.js"], "hasAction": true, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-161E6926.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };

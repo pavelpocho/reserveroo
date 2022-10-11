@@ -110,7 +110,9 @@ export default function PlaceDetails({}) {
   const { place } = useLoaderData<PlaceDetailsLoaderData>();
 
   const timeStr = (date: Date) => {
-    return `${new Date(date).getHours()}:${new Date(date).getMinutes()}`;
+    const h = new Date(date).getHours();
+    const m = new Date(date).getMinutes();
+    return `${h < 10 ? `0${h}` : h}:${m < 10 ? `0${m}` : m}`;
   }
 
   const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
