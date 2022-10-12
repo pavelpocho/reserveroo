@@ -53,6 +53,6 @@ export const updateReservable = async ({
   }
 }));
 
-export const deleteReservable = ({ id }: Pick<Reservable, 'id'>) => (prisma.reservable.deleteMany({
+export const deleteReservable = ({ id }: Pick<Reservable, 'id'>) => (prisma.reservable.delete({
     where: { id },
 }));

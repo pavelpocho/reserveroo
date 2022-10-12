@@ -12,11 +12,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Question from "~/components/landing-page/question";
 import QuestionMark from "~/components/landing-page/question-mark";
 import { IconRow } from "~/components/icon-row";
-import { FaAngleDown, FaArrowDown, FaBackward, FaBowlingBall, FaBroom, FaCalendarAlt, FaCaretDown, FaEye, FaGolfBall, FaMailBulk, FaPhone, FaPhoneSlash, FaQuestion, FaQuestionCircle, FaRedo, FaRedoAlt, FaSadCry, FaSadTear, FaSearch, FaSwimmer, FaTableTennis, FaUserFriends, FaVolleyballBall, FaWeight } from "react-icons/fa";
+import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleDown, FaArrowDown, FaBackward, FaBowlingBall, FaBroom, FaCalendarAlt, FaCaretDown, FaEye, FaGolfBall, FaMailBulk, FaPhone, FaPhoneSlash, FaQuestion, FaQuestionCircle, FaRedo, FaRedoAlt, FaSadCry, FaSadTear, FaSearch, FaSwimmer, FaTableTennis, FaUserFriends, FaVolleyballBall, FaWeight } from "react-icons/fa";
 import { easeIn, easeInOut, easeOut, EffectSetupObject, noEase, NoEaseObject, ScrollEffectInner, ScrollEffectWrap, getEasingFunctionXandZ as getEasingInfo } from "~/components/scroll-effects";
 import { useInterval } from "~/components/scroll-effects/useInterval";
 import { useSpring, animated } from 'react-spring'
 import { config } from "aws-sdk";
+import book from '../assets/images/book.png';
+import search from '../assets/images/search.png';
+import details from '../assets/images/details.png';
+
 const questions = [
   {
     title: "Imagine you are somewhere new with your friend and want to do something fun.",
@@ -129,7 +133,7 @@ const questionMarks = [
 ];
 
 const H1 = styled.h1`
-  padding-top: 12%;
+  padding-top: 12vh;
   margin-top: 0rem;
   margin-bottom: 1rem;
   font-size: 2.625rem;
@@ -240,7 +244,7 @@ const FaAngleDownA = styled(FaAngleDown)`
 const ScrollItem = styled(animated.div).attrs(
   (props: any): any => {
     const sp = props.transform.split(',')[1].split('px')[0];
-    if (sp < 1500 && sp > -800) {
+    if (sp < (props.extendPresence ? 2000 : 1000) && sp > (props.extendPresence ? -1200 : -600)) {
       return {
         style: {
           transform: props.transform,
@@ -256,6 +260,12 @@ const ScrollItem = styled(animated.div).attrs(
   }
 )`
   top: 0px;
+  z-index: ${props => props.extendedPresence ? '5' : ''};
+  ${ props => props.onlyDesktop ? `
+    @media(max-width: 968px) {
+      display: none;
+    }
+  ` : ``};
   position: fixed;
   left: 0px;
   width: 100%;
@@ -280,7 +290,7 @@ const AboutHeader = styled.div`
 `;
 
 const AboutSubHeader = styled.div`
-  height: 300px;
+  height: 30vh;
   width: 100%;
   box-shadow: 0px -2px 24px -12px #33333399;
   background-color: ${styles.colors.gray[20]};
@@ -303,7 +313,7 @@ const PurpleSection = styled.div`
 `;
 
 const ScrollDownIndicator = () => (
-  <div style={{ width: '100%', marginTop: '15%' }}>
+  <div style={{ width: '100%', marginTop: '15vh' }}>
     <H1X>Scroll down to find out!</H1X>
     <div style={{ textAlign: 'center', marginTop: '2rem' }}>
       <FaAngleDownA size={24} color={styles.colors.white} style={{ animationDelay: '-1s' }} className="fade-arrow" />
@@ -340,6 +350,39 @@ const Card = styled.div`
   /* background-color: ${styles.colors.primary}; */
 `;
 
+const HowItWorksLineWrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 0;
+`;
+
+const HowDoesItWorkItem = (props: { title: string, imgSrc: string, back: boolean }) => <HowItWorksLineWrap style={props.back ? {
+  background: 'linear-gradient(to right, #f1f1f100, #f1f1f1ff, #f1f1f100)'
+} : {}}>
+  <h4 style={{ fontSize: '1.4rem' }}>{props.title}</h4>
+  <img style={{ boxShadow: styles.shadows[0] }} width={560} src={props.imgSrc} alt={''}/>
+</HowItWorksLineWrap>
+
+const HowItWorksWrap = styled.div`
+  max-width: 968px;
+  margin: 0 auto;
+`
+
+const ContactUs = styled.a`
+  background-color: ${styles.colors.action};
+  color: ${styles.colors.black};
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.25rem;
+  display: flex;
+  width: max-content;
+  margin: 2rem auto;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+  text-decoration: none;
+`;
+
 const QuestionCard: React.FC<React.PropsWithChildren<{title: string, white: boolean}>> = ({ title, children, white }) => {
 
   return <div style={{ margin: '12rem auto', maxWidth: '938px', zIndex: 2, position: 'relative', display: 'flex' }}>
@@ -367,30 +410,20 @@ export default function About() {
     slope: -0.5
   }
 
-  const subHeaderEffect: NoEaseObject = {
-    startValue: screenHeight * 0.78,
-    slope: -1
-  }
-
-  const subSubHeaderEffect: NoEaseObject = {
-    startValue: screenHeight * 0.88,
-    slope: -1.1
-  }
-
   const purpleSectionEffect: NoEaseObject = {
     startValue: screenHeight * 1.5,
     slope: -1.2
   }
 
   const subHeaderEasing = useMemo(() => getEasingInfo({
-    start: { value: screenHeight * 0.78, slope: -1.5 },
-    stand: { scroll: 800, value: 0 },
-    end: { scroll: 1500, slope: -1 }
+    start: { value: screenHeight * 0.58, slope: -1.2 },
+    stand: { scroll: 600, value: 0 },
+    end: { scroll: 1300, slope: -1 }
   }), [screenHeight]);
 
   const subSubHeaderEasing = useMemo(() => getEasingInfo({
-    start: { value: screenHeight * 0.88, slope: -1.7 },
-    stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
+    start: { value: screenHeight * 0.68, slope: -1.7 },
+    stand: { scroll: screenHeight * 0.4, value: 0.2 * screenHeight },
     end: { scroll: screenHeight * 0.82, slope: -1.7 }
   }), [screenHeight]);
   const subSubHeaderBlobEasing = useMemo(() => getEasingInfo({
@@ -409,11 +442,6 @@ export default function About() {
     stand: { scroll: screenHeight * 0.7, value: 0.8 * screenHeight },
     end: { scroll: screenHeight * 1.2 + ((Math.random() - 0.5) * 0.2), slope: -2.1 + ((Math.random() - 0.5) * 0.8) }
   }))), [screenHeight]);
-
-  const dd: NoEaseObject = {
-    startValue: screenHeight * 2.2,
-    slope: -1.3
-  }
 
   const explanationSection = useMemo(() => getEasingInfo({
     start: { value: screenHeight * 1.4, slope: -1 },
@@ -457,6 +485,12 @@ export default function About() {
     [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
     [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2]
   ]), []);
+
+  const howItWorks: NoEaseObject = {
+    startValue: screenHeight * 2.3,
+    slope: -1
+  }
+
   
   return (
     <>
@@ -478,7 +512,7 @@ export default function About() {
           <QuestionCard white={false} title={questions[0].title}>{questions[0].question}</QuestionCard>
           <AboutSubSubHeader />
         </ScrollItem>
-        <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderBlobEasing)}px)`}>
+        <ScrollItem onlyDesktop={true} transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderBlobEasing)}px)`}>
           <div style={{ position: 'relative', maxWidth: '936px', margin: '12rem auto' }}>
             <div style={{ position: 'absolute', right: '0', top: '0', width: '322px' }}>
               <svg width="322" height="260" viewBox="0 0 322 260" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -487,7 +521,7 @@ export default function About() {
             </div>
           </div>
         </ScrollItem>
-        <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderIconsEasing)}px)`}>
+        <ScrollItem onlyDesktop={true} transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderIconsEasing)}px)`}>
           <div style={{ position: 'relative', maxWidth: '936px', margin: '12rem auto' }}>
             <div style={{ position: 'absolute', right: '0', top: '0', width: '322px' }}>
               <FaVolleyballBall color={styles.colors.white} size={54} style={{ position: 'absolute', top: '35px', left: '40px' }} />
@@ -527,7 +561,7 @@ export default function About() {
           <PurpleSection />
         </ScrollItem>
         { [...Array(10).keys()].map(i => (
-          <ScrollItem key={i} transform={`translate(0px, ${easeInOut(yScrollPixels, purpleSectionIconEasings[i])}px)`}>
+          <ScrollItem onlyDesktop={true} key={i} transform={`translate(0px, ${easeInOut(yScrollPixels, purpleSectionIconEasings[i])}px)`}>
             <div style={{ position: 'relative', maxWidth: '936px', margin: '12rem auto' }}>
               <div style={{ position: 'absolute', right: '0', top: '0', width: '322px' }}>
               <FaQuestionCircle size={randomPositions[i][2]} color={styles.colors.white} style={{ transform: `rotate(${randomPositions[i][3] / Math.PI * 180}deg)`, position: 'absolute', top: `${randomPositions[i][1]}`, left: `${randomPositions[i][0]}px` }} />
@@ -535,6 +569,29 @@ export default function About() {
             </div>
           </ScrollItem>
         )) }
+        <ScrollItem extendPresence={true} transform={`translate(0px, ${noEase(yScrollPixels, howItWorks)}px)`}>
+          <HowItWorksWrap>
+            <h3 style={{ fontSize: '1.6rem' }}>How does it work?</h3>
+            <HowDoesItWorkItem back={false} title={'1. Find your favourite activity'} imgSrc={search} />
+            <HowDoesItWorkItem back={true} title={'2. Check out all the details'} imgSrc={details} />
+            <HowDoesItWorkItem back={false} title={'3. Book and enjoy!'} imgSrc={book} />
+          </HowItWorksWrap>
+          <div style={{
+            height: '2px',
+            borderRadius: '1px',
+            maxWidth: '968px',
+            width: '100%',
+            margin: '4rem auto',
+            backgroundColor: styles.colors.gray[90]
+          }} ></div>
+          <h2 style={{ maxWidth: '968px', margin: '0 auto' }}>Would you like to list your place on Reserveroo?</h2>
+          <p style={{
+            fontSize: '1rem',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            margin: '2rem auto'
+          }}>Contact us at: reserveroo@reserveroo.co.uk</p>
+        </ScrollItem>
       </ScrollEffectWrap>
     </>
   );
