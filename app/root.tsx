@@ -108,7 +108,8 @@ export default function App() {
   const location = useLocation();
   const [ username, setUsername ] = useState<string | null>(loaderData.username);
   const [ translations, setTranslations ] = useState<typeof en_texts>(loaderData.langs.includes('cs') ? cs_texts : en_texts);
-  const [ lang, setLang ] = useState<'english' | 'czech'>(loaderData.langs.includes('cs') ? 'czech' : 'english');
+  const [ lang, setLang ] = useState<'english' | 'czech'>(/*loaderData.langs.includes('cs') ? 'czech' : */'english');
+  // TODO: Re-enable this auto-language detection once we have multi-lingual UI done and once it's necessary
   const [ usernameToVerify, setUsernameToVerify ] = useState<string | null>(loaderData.usernameToVerify);
   const [ admin, setAdmin ] = useState<boolean | null>(loaderData.admin);
 

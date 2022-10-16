@@ -288,9 +288,11 @@ export default function AppHeader({ children, data }: AppHeaderProps) {
           </BarLink>
           <Separator />
           <BarButton
+            title='Reserveroo is only available in English at the moment.'
             onClick={() => {
-              setL(lang == "czech" ? en_texts : cs_texts);
-              setLang(lang == "czech" ? "english" : "czech");
+              // setL(lang == "czech" ? en_texts : cs_texts);
+              // setLang(lang == "czech" ? "english" : "czech");
+              // This is disabled for now
             }}
           >
             {l.name == "cs" ? (

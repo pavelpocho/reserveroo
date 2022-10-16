@@ -1,16 +1,15 @@
-import { Category } from '@prisma/client';
 import { Link, useLoaderData } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/server-runtime';
 import { useLangs } from '~/contexts/langsContext';
-import { getCategoryList } from '~/models/category.server';
-import { CategoryWithTexts } from '~/types/types';
+import { getAllCategories } from '~/models/category.server';
+import type { CategoryWithTexts } from '~/types/types';
 
 interface CategoriesAdminLoaderData {
   categories: CategoryWithTexts[];
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  const categories = await getCategoryList({ nameFragment: params.categoryId ?? '' });
+  const categories = await getAllCategories();
   return { categories }
 }
 

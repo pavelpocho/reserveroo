@@ -22,11 +22,12 @@ export const createLocation = async ({ multiLangCity, multiLangCountry }: { mult
   },
 }));
 
-export const updateLocation = async ({ id, multiLangCity, multiLangCountry }: { id: string, multiLangCountry: MultilingualName, multiLangCity: MultilingualDesc }) => (await prisma.location.update({
+export const updateLocation = async ({ id, multiLangCity, multiLangCountry, hidden }: { id: string, multiLangCountry: MultilingualName, multiLangCity: MultilingualDesc, hidden: boolean }) => (await prisma.location.update({
   where: {
     id
   },
   data: {
+    hidden,
     multiLangCity: {
       update: {
         czech: multiLangCity.czech,
@@ -73,6 +74,17 @@ export const getLocationList = async ({ cityCountry: nameFragment }: Pick<Locati
 }));
 
 export const getAllLocations = async () => (await prisma.location.findMany({
+  include: {
+    places: true,
+    multiLangCity: true,
+    multiLangCountry: true
+  }
+}));
+
+export const getShownLocations = async () => (await prisma.location.findMany({
+  where: {
+    hidden: false
+  },
   include: {
     places: true,
     multiLangCity: true,

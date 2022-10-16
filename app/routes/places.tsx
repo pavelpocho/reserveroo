@@ -1,16 +1,17 @@
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { useLoaderData, useSearchParams } from "@remix-run/react";
-import { getNewPlaces, Place } from "~/models/place.server";
+import type { Place } from "~/models/place.server";
+import { getNewPlaces } from "~/models/place.server";
 import styled from "styled-components";
 import { PlaceSummary } from "~/components/place/place-summary";
 import { styles } from "~/constants/styles";
-import { OpeningTime, Reservable, Search } from "@prisma/client";
+import type { OpeningTime, Reservable, Search } from "@prisma/client";
 import { SearchUI } from "~/components/search/search-ui";
-import { getAllLocations } from "~/models/location.server";
+import { getShownLocations } from "~/models/location.server";
 import { getTagList } from "~/models/tag.server";
 import { getCategoryList } from "~/models/category.server";
-import { CategoryWithTexts, LocationWithEverything, ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
+import type { CategoryWithTexts, LocationWithEverything, ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
 import { IconRow } from "~/components/icon-row";
 import HeartIcon from "~/assets/icons/Heart";
 import { RecentSearch } from "~/components/recent-search";
@@ -37,17 +38,10 @@ interface LoaderData {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const url = new URL(request.url);
-  const searchTerm = url.searchParams.get('searchTerm');
-  const location =  url.searchParams.get('selectedLocation');
-  const tags = url.searchParams.getAll('tags[]');
-  const categories = url.searchParams.getAll('categories[]');
-
   const usernameAndAdmin = await getUsernameAndAdmin(request);
-
   return json({
     places: await getNewPlaces(),
-    locations: await getAllLocations(),
+    locations: await getShownLocations(),
     tags: await getTagList({ nameFragment: '' }),
     categories: await getCategoryList({ nameFragment: '' }),
     searchHistory: usernameAndAdmin.username ? (await getSearchHistory({ username: usernameAndAdmin.username }))?.searchHistory : null

@@ -118,7 +118,11 @@ export default function PlaceDetails({}) {
   const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
   return place && <Wrap>
-    <FlexApart>
+    <FlexApart style={{
+      borderBottom: `1px solid ${styles.colors.gray[50]}`,
+      paddingBottom: '2rem',
+      marginBottom: '2rem'
+    }}>
       <Title>Make a reservation</Title>
       <MainButton inSearch={false} to={`/${place.id}/reserve`} >Reserve<AnglesRightIcon height='1.25rem' /></MainButton>
     </FlexApart>

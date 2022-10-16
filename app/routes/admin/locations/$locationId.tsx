@@ -3,7 +3,9 @@ import { Form, useLoaderData } from '@remix-run/react';
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { MultiSelectorInput } from '~/components/inputs/MultiSelectorInput';
 import { IdInput } from '~/components/inputs/ObjectInput';
+import { SingleSelectorInput } from '~/components/inputs/SingleSelectorInput';
 import { TextInput } from '~/components/inputs/TextInput';
 import { useLangs } from '~/contexts/langsContext';
 import { getLocation, updateLocation } from '~/models/location.server';
@@ -23,7 +25,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const { getFormItem, getFormItems } = await getFormEssentials(request);
 
-  const location: Pick<Location, 'id'> & {
+  const location: Pick<Location, 'id' | 'hidden'> & {
     multiLangCountry: MultilingualName
     multiLangCity: MultilingualDesc
   } = {
@@ -38,6 +40,7 @@ export const action: ActionFunction = async ({ request }) => {
       czech: getFormItem('countryCzech'),
       english: getFormItem('countryEnglish'),
     },
+    hidden: getFormItem('hidden') == '1'
   }
   
   await updateLocation(location);
@@ -66,6 +69,7 @@ export default function AdminLocationDetail() {
         <TextInput name='countryCzech' title='Country (Czech)' defaultValue={location?.multiLangCountry?.czech ?? ''} />
         <TextInput name='cityEnglish' title='City (English)' defaultValue={location?.multiLangCity?.english ?? ''} />
         <TextInput name='countryEnglish' title='Country (English)' defaultValue={location?.multiLangCountry?.english ?? ''} />
+        <SingleSelectorInput name='hidden' possibleValuesAndTexts={[{ value: '1', text: 'Hidden' }, { value: '0', text: 'Visible' }]} defaultValueAndText={{ value: location?.hidden ? '1' : '0', text: location?.hidden ? 'Hidden' : 'Visible' }} />
 
         <input type='submit'/>
       </Form>

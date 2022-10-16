@@ -18,12 +18,18 @@ export const getPlace = async ({ id }: Pick<Place, 'id'>) => (await prisma.place
     },
     openingTimes: true,
     tags: {
+      where: {
+        hidden: false,
+      },
       include: {
         multiLangName: true,
         multiLangDesc: true
       }
     },
     categories: {
+      where: {
+        hidden: false,
+      },
       include: {
         multiLangName: true
       }
@@ -102,12 +108,18 @@ export const getSearchPlaces = async ({ name: nameFragment, cityCountry, tagIds,
       }
     },
     tags: {
+      where: {
+        hidden: false
+      },
       include: {
         multiLangDesc: true,
         multiLangName: true
       }
     },
     categories: {
+      where: {
+        hidden: false
+      },
       include: {
         multiLangName: true
       }
@@ -139,12 +151,18 @@ export const getNewPlaces = async () => (await prisma.place.findMany({
       }
     },
     tags: {
+      where: {
+        hidden: false
+      },
       include: {
         multiLangDesc: true,
         multiLangName: true
       }
     },
     categories: {
+      where: {
+        hidden: false
+      },
       include: {
         multiLangName: true
       }

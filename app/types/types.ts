@@ -65,12 +65,12 @@ export enum ReservationStatus {
   Past
 }
 
-export type TagWithTexts = Pick<Tag, 'id'> & {
+export type TagWithTexts = Pick<Tag, 'id' | 'hidden'> & {
   multiLangName: MultilingualName | null;
   multiLangDesc: MultilingualDesc | null;
 };
 
-export type CategoryWithTexts = Pick<Category, 'id'> & {
+export type CategoryWithTexts = Pick<Category, 'id' | 'hidden'> & {
   multiLangName: MultilingualName | null;
 };
 
@@ -78,7 +78,7 @@ export type ReservableTypeWithTexts = Pick<Category, 'id'> & {
   multiLangName: MultilingualName | null;
 };
 
-export type LocationWithTexts = Pick<Location, 'id'> & {
+export type LocationWithTexts = Pick<Location, 'id' | 'hidden'> & {
   multiLangCountry: MultilingualName | null;
   multiLangCity: MultilingualDesc | null;
 };

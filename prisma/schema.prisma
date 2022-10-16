@@ -122,6 +122,7 @@ model Tag {
   places          Place[]
   Search          Search[]
   searchId        String?
+  hidden          Boolean         @default(false)
 }
 
 model MultilingualName {
@@ -151,6 +152,7 @@ model Category {
   multilingualNameId String
   Searches           Search[]
   searchId           String?
+  hidden             Boolean          @default(false)
 }
 
 model Location {
@@ -164,6 +166,7 @@ model Location {
   multilingualCountryId String?
   multilingualCityId    String?
   Search                Search[]
+  hidden                Boolean           @default(false)
 }
 
 model OpeningTime {

@@ -19,7 +19,7 @@ export const sendEmailConfirmationEmail = async (sendToAddress: string, baseUrl:
     to: address,
     from: {
       name: 'Reserveroo Security',
-      email: 'security@reserveroo.com'
+      email: 'reserveroo@reserveroo.com'
     },
     subject: 'Reserveroo Email Verification',
     text: `
@@ -76,9 +76,9 @@ export const sendEmailConfirmationEmail = async (sendToAddress: string, baseUrl:
   }
   else {
     const transporter = nodemailer.createTransport({
-      host: 'mailproxy.webglobe.cz',
-      port: 465,
-      secure: true, // true for 465, false for other ports
+      host: 'smtp.office365.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: 'reserveroo@reserveroo.co.uk',
         pass: process.env.EMAIL_ADDRESS_PWD,
@@ -104,7 +104,7 @@ export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, 
     to: address,
     from: {
       name: 'Reserveroo Security',
-      email: 'security@reserveroo.com'
+      email: 'reserveroo@reserveroo.com'
     },
     subject: 'Reserveroo Password Reset',
     text: `Please click the following link: ${baseUrl}/pwd/reset?token=${username}:${signature}`,

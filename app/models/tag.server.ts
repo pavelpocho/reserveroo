@@ -21,11 +21,12 @@ export const createTag = async ({ multiLangName, multiLangDesc }: { multiLangNam
   },
 }));
 
-export const updateTag = async ({ id, multiLangName, multiLangDesc }: { id: string, multiLangName: MultilingualName, multiLangDesc: MultilingualDesc }) => (await prisma.tag.update({
+export const updateTag = async ({ id, multiLangName, multiLangDesc, hidden }: { id: string, multiLangName: MultilingualName, multiLangDesc: MultilingualDesc, hidden: boolean }) => (await prisma.tag.update({
   where: {
     id
   },
   data: {
+    hidden,
     multiLangDesc: {
       update: {
         czech: multiLangDesc.czech,
@@ -52,6 +53,7 @@ export const getTag = async ({ id }: Pick<Tag, 'id'>) => (await prisma.tag.findF
 
 export const getTagList = async ({ nameFragment }: { nameFragment: string }) => (await prisma.tag.findMany({
   where: {
+    hidden: false,
     OR: [{
       multiLangName: {
         english: {

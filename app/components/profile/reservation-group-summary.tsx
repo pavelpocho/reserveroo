@@ -242,7 +242,7 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
           <Value>{rg.note}</Value>
         </div>}
         <CancelWrap>
-          { (text != 'Cancelled') && <SecondaryButtonBtn style={{ width: '100%' }} onClick={(e) => {
+          { (text != 'Cancelled' && text != 'Unavailable') && <SecondaryButtonBtn style={{ width: '100%' }} onClick={(e) => {
             setShowConfirmation(true);
           }}>Cancel reservation</SecondaryButtonBtn> }
         </CancelWrap>

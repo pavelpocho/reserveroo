@@ -1,11 +1,10 @@
 import { Form } from "@remix-run/react";
 import React, {useState} from "react";
 import styled from "styled-components";
-import CircleInfoIcon from "~/assets/icons/CircleInfo";
 import SearchIcon from "~/assets/icons/Search";
 import { styles } from "~/constants/styles";
 import { useLangs } from "~/contexts/langsContext";
-import { CategoryWithTexts, LocationWithEverything, TagWithTexts } from "~/types/types";
+import type { CategoryWithTexts, LocationWithEverything, TagWithTexts } from "~/types/types";
 import InfoButton from "../info-button";
 import { MultiSelectorInput } from "../inputs/MultiSelectorInput";
 import { IdInput } from "../inputs/ObjectInput";

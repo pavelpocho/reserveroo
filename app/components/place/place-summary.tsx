@@ -176,9 +176,9 @@ export const getNextImportantTime = (place: Place & {
   const openTomorrow = new Date(place.openingTimes.find(o => o.day == getDayOfWeek(tomorrow))?.open ?? '');
   
   if (new Date().getHours() * 60 + new Date().getMinutes() > closeToday.getHours() * 60 + closeToday.getMinutes()) {
-    return `Opens at ${openTomorrow.toLocaleTimeString()} tomorrow.`;
+    return `Opens at ${openTomorrow.toLocaleTimeString().slice(0, 5)} tomorrow.`;
   }
-  return `Closes at ${closeToday.toLocaleTimeString()} today.`;
+  return `Closes at ${closeToday.toLocaleTimeString().slice(0, 5)} today.`;
 }
 
 export const PlaceSummary: React.FC<PlaceProps> = ({ place, inSearch }) => {

@@ -1,16 +1,16 @@
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
-import { FormProps, Link, useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
-import { getSearchPlaces, Place } from "~/models/place.server";
+import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
+import type { Place } from "~/models/place.server";
+import { getSearchPlaces } from "~/models/place.server";
 import styled from "styled-components";
-import { SearchBar } from "~/components/search/search-bar";
 import { PlaceSummary } from "~/components/place/place-summary";
 import { styles } from "~/constants/styles";
-import { Category, Location, OpeningTime, Reservable, Tag } from "@prisma/client";
-import { getAllLocations, getLocation, getLocationByName } from "~/models/location.server";
+import type { OpeningTime, Reservable } from "@prisma/client";
+import { getLocationByName, getShownLocations } from "~/models/location.server";
 import { getTagList } from "~/models/tag.server";
 import { getCategoryList } from "~/models/category.server";
-import { CategoryWithTexts, LocationWithEverything, LocationWithTexts, ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
+import type { CategoryWithTexts, LocationWithEverything, ReservableTypeWithTexts, TagWithTexts } from "~/types/types";
 import { IconRow } from "~/components/icon-row";
 import { addToSearchHistory } from "~/models/user.server";
 import { getUsernameAndAdmin } from "~/utils/session.server";
@@ -48,12 +48,18 @@ export const loader: LoaderFunction = async ({ request }) => {
     locationId: location ? (await getLocationByName({ cityCountry: location }))?.id ?? null : null,
     tagIds: tags,
     categoryIds: categories
-  })
+  });
+
+  console.log('server');
+  console.log();
+
+  const places = await getSearchPlaces({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories, itemsPerPage: 10, page: 1 });
+  console.log(places.map(p => p.name));
 
   if (page === '1' || page == null || isNaN(parseInt(page))) {
     return json({
-      places: await getSearchPlaces({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories, itemsPerPage: 10, page: 1 }),
-      locations: await getAllLocations(),
+      places,
+      locations: await getShownLocations(),
       tags: await getTagList({ nameFragment: '' }),
       categories: await getCategoryList({ nameFragment: '' }),
     });
@@ -136,7 +142,16 @@ export default function Search() {
   }, []);
 
   useEffect(() => {
+    setPlaces(defaultPlaces);
+    setPage(1);
+    setScrollState({ height: 0, scrollHeight: 0, scrollY: 0 });
+    setReachedEnd(false);
+    window.scrollTo({ top: 0 });
+  }, [defaultPlaces, locations, tags, categories]);
+
+  useEffect(() => {
     if (scrollState.height + scrollState.scrollY > scrollState.scrollHeight && !fetching && !reachedEnd) {
+      console.log('scrollState detect');
       setPage(page + 1);
       setFetching(true);
     }
@@ -149,6 +164,7 @@ export default function Search() {
   }, [page]);
 
   useEffect(() => {
+    console.log('fetcher');
     if (fetcher.data?.places && page != 1) {
       if (fetcher.data.places.length == 0) {
         setReachedEnd(true);
@@ -171,7 +187,7 @@ export default function Search() {
   const searchTerm = searchParams.get('searchTerm');
 
   return (
-    <div>
+    <div key={searchTerm + tagIds.join(',') + categoryIds.join(',') + locationCityCountry}>
       <TopSegment>
         <IconRow />
       </TopSegment>

@@ -15,11 +15,12 @@ export const createCategory = async ({ multiLangName }: { multiLangName: Multili
   },
 }));
 
-export const updateCategory = async ({ id, multiLangName }: { id: string, multiLangName: MultilingualName }) => (await prisma.category.update({
+export const updateCategory = async ({ id, multiLangName, hidden }: { id: string, multiLangName: MultilingualName, hidden: boolean }) => (await prisma.category.update({
   where: {
     id
   },
   data: {
+    hidden,
     multiLangName: {
       update: {
         czech: multiLangName.czech,
@@ -40,6 +41,7 @@ export const getCategory = async ({ id }: Pick<Category, 'id'>) => (await prisma
 
 export const getCategoryList = async ({ nameFragment }: { nameFragment: string }) => (await prisma.category.findMany({
   where: {
+    hidden: false,
     OR: [{
       multiLangName: {
         english: {
@@ -62,7 +64,7 @@ export const getCategoryList = async ({ nameFragment }: { nameFragment: string }
   }
 }));
 
-export const getAllCategorys = async () => (await prisma.category.findMany({
+export const getAllCategories = async () => (await prisma.category.findMany({
   include: {
     places: true,
     multiLangName: true
