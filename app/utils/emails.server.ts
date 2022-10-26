@@ -212,7 +212,7 @@ export const sendCreationEmail = async (baseUrl: string, sendToAddress: string, 
           <td style="padding-bottom: 32px; text-align: center; font-weight: 700; color: red">We will try to confirm your reservation as soon as possible.</td>
         </tr>
         <tr>
-          <td style="padding-bottom: 16px; text-align: center; font-weight: 700">Thank you for using Reserveroo! We received your request. To see more information about your reservation, please visit your profile page.</td>
+          <td style="padding-bottom: 16px; text-align: center; font-weight: 700">Thank you for using Reserveroo! We received your request. To see more information about your reservation, please visit your <a href='https://www.reserveroo.co.uk/profile' >profile</a> page.</td>
         </tr>
         <tr>
           <td style="font-size: 20px; font-weight: 700">Reservation details</td>
@@ -405,13 +405,17 @@ export const sendStatusUpdateEmail = async (baseUrl: string, sendToAddress: stri
         <table style="font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif; margin: 30px auto 0px; background-color: #F2F2F8; width: 100%; max-width: 572px; padding: 24px; border-top-left-radius: 8px; border-top-right-radius: 8px">
           <tr>
             <td style="padding-bottom: 16px; text-align: center; font-weight: 700">${
+              status == 'confirm_preferred' ? `<p style="width: 200px; font-weight: 400; font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0px auto 20px;font-size: 18px;background-color: #74D06C;color: black;border-radius: 6px;padding: 8px;">CONFIRMED</p>` :
+              status == 'confirm_backup' ? `<p style="width: 200px; font-weight: 400; font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0px auto 20px;font-size: 18px;background-color: #247BA0;color: white;border-radius: 6px;padding: 8px;">BACKUP CONFIRMED</p>` :
+              status == 'unavailable' ? `<p style="width: 200px; font-weight: 400; font-family: 'Roboto', Verdana, Geneva, Tahoma, sans-serif;margin: 0px auto 20px;font-size: 18px;background-color: #D7263D;color: white;border-radius: 6px;padding: 8px;">UNAVAILABLE</p>` : ''
+            }${
               status == 'confirm_preferred' ? `Thank you for using Reserveroo! Your time is available and confirmed. Have fun!` :
               status == 'confirm_backup' ? `Your preffered slot was not available, but your backup was free! Have fun!` :
               status == 'unavailable' ? `Unfortunately, your timeslot was not available. Feel free to go for another time though!` : ''
             }</td>
           </tr>
           <tr>
-            <td style="padding-bottom: 16px; text-align: center; font-weight: 700">Please check your profile for more information about your reservation.</td>
+            <td style="padding-bottom: 16px; text-align: center; font-weight: 700">Please check your <a href='https://www.reserveroo.co.uk/profile' >profile</a> for more information about your reservation.</td>
           </tr>
           <tr>
             <td style="font-size: 20px; font-weight: 700">Reservation details</td>

@@ -43,22 +43,27 @@ export const getPlace = async ({ id }: Pick<Place, 'id'>) => (await prisma.place
   }
 }));
 
-export const getPlaceWithReservations = async ({ id }: Pick<Place, 'id'>) => (await prisma.place.findFirst({
-  where: { id },
-  include: {
-    reservables: {
-      include: {
-        reservations: true,
-        ReservableType: {
-          include: {
-            multiLangName: true
+export const getPlaceWithReservations = async ({ id }: Pick<Place, 'id'>) => {
+  const p = (await prisma.place.findFirst({
+    where: { id },
+    include: {
+      reservables: {
+        include: {
+          reservations: true,
+          ReservableType: {
+            include: {
+              multiLangName: true
+            }
           }
         }
-      }
-    },
-    openingTimes: true
-  }
-}));
+      },
+      openingTimes: true
+    }
+  }));
+  console.log('server');
+  p?.reservables.forEach(res => res.reservations.forEach(r => console.log(r)));
+  return p;
+};
 
 export const getSearchPlaces = async ({ name: nameFragment, cityCountry, tagIds, catIds, page, itemsPerPage }: Pick<Place, 'name'> & { cityCountry: string | undefined, tagIds: string[], catIds: string[], itemsPerPage: number, page: number }) => (await prisma.place.findMany({
   orderBy: [{

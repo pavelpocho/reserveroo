@@ -52,11 +52,13 @@ export const AdminReservationSummary: React.FC<ReservationSummaryProps> = ({ res
     </div>
     <div>
       <Title>Start</Title>
-      <Value>{new Date(r.start).toLocaleDateString()} - {getStringTimeValue(new Date(r.start))}</Value>
+      { /* @ts-ignore */ }
+      <Value>{new Date(r.start.slice(0, 16)).toLocaleDateString()} - {getStringTimeValue(new Date(r.start.slice(0, 16)))}</Value>
     </div>
     <div>
       <Title>End</Title>
-      <Value>{new Date(r.end).toLocaleDateString()} - {getStringTimeValue(new Date(r.end))}</Value>
+      { /* @ts-ignore */ }
+      <Value>{new Date(r.end.slice(0, 16)).toLocaleDateString()} - {getStringTimeValue(new Date(r.end.slice(0, 16)))}</Value>
     </div>
     <div>
       <Title>Status</Title>

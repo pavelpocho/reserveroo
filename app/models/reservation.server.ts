@@ -6,17 +6,21 @@ import { ReservationStatus } from "~/types/types";
 export type { Reservation } from "@prisma/client";
 
 export const getReservation = async ({ id }: Pick<Reservation, 'id'>) => (await prisma.reservation.findFirst({
-  where: { id },
-}));
+    where: { id },
+  }));
 
 export const getReservationList = async () => (await prisma.reservation.findMany({
 }));
 
-export const createReservation = async ({ backup, reservationGroupId, reservableId, start, end }: Pick<Reservation, 'backup' | 'reservationGroupId' | 'reservableId' | 'start' | 'end'>) => (await prisma.reservation.create({
-  data: {
-    reservableId, reservationGroupId, start, end, backup
-  },
-}));
+export const createReservation = async ({ backup, reservationGroupId, reservableId, start, end }: Pick<Reservation, 'backup' | 'reservationGroupId' | 'reservableId' | 'start' | 'end'>) => {
+  console.log('creating');
+  console.log(start);
+  return (await prisma.reservation.create({
+    data: {
+      reservableId, reservationGroupId, start, end, backup
+    },
+  }))
+};
 
 export const updateReservation = async ({ id, backup, reservationGroupId, reservableId, start, end }: Pick<Reservation, 'id' | 'backup' | 'reservationGroupId' | 'reservableId' | 'start' | 'end'>) => (await prisma.reservation.update({
   where: {

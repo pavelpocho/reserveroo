@@ -169,7 +169,7 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
     prefStatus == R.Rejected && backupStatus == null ? styles.colors.busy : 
     prefStatus == R.Cancelled && backupStatus == null ? styles.colors.gray[70] : 
     prefStatus == R.Confirmed && backupStatus == R.Cancelled ? styles.colors.free : 
-    prefStatus == R.Rejected && backupStatus == R.Confirmed ? styles.colors.free : 
+    prefStatus == R.Rejected && backupStatus == R.Confirmed ? styles.colors.backup : 
     prefStatus == R.Rejected && backupStatus == R.Rejected ? styles.colors.busy : 
     prefStatus == R.Cancelled && backupStatus == R.Cancelled ? styles.colors.gray[70] : ''
   );
@@ -180,7 +180,7 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
     prefStatus == R.Rejected && backupStatus == null ? styles.colors.white : 
     prefStatus == R.Cancelled && backupStatus == null ? styles.colors.black : 
     prefStatus == R.Confirmed && backupStatus == R.Cancelled ? styles.colors.black : 
-    prefStatus == R.Rejected && backupStatus == R.Confirmed ? styles.colors.black : 
+    prefStatus == R.Rejected && backupStatus == R.Confirmed ? styles.colors.white : 
     prefStatus == R.Rejected && backupStatus == R.Rejected ? styles.colors.white : 
     prefStatus == R.Cancelled && backupStatus == R.Cancelled ? styles.colors.black : ''
   );
@@ -224,16 +224,16 @@ export const ReservationGroupSummary: React.FC<ReservationGroupSummaryProps> = (
           </Status>
         </TitleStatus>
         {prefs > 0 && <>
-          <SlotTitle style={text == 'Backup Confirmed' || text == 'Cancelled' ? { opacity: 0.5 } : {}}>Preffered slot{prefs > 1 && 's'}:</SlotTitle>
+          <SlotTitle style={text == 'Backup Confirmed' || text == 'Cancelled' || text == 'Unavailable' ? { opacity: 0.25 } : {}}>Preffered slot{prefs > 1 && 's'}:</SlotTitle>
           { rg.reservations.filter(r => !r.backup).map(r => <div key={r.id}>
-            <ReservationSummary style={text == 'Backup Confirmed' || text == 'Cancelled' ? { opacity: 0.5 } : {}} reservation={r} />
+            <ReservationSummary style={text == 'Backup Confirmed' || text == 'Cancelled' || text == 'Unavailable' ? { opacity: 0.25 } : {}} reservation={r} />
           </div>) }
           <Line />
         </>}
         {backups > 0 && <>
-          <SlotTitle style={text == 'Preferred Confirmed' || text == 'Cancelled' ? { opacity: 0.5 } : {}}>Backup slot{backups > 1 && 's'}:</SlotTitle>
+          <SlotTitle style={text == 'Preferred Confirmed' || text == 'Cancelled' || text == 'Unavailable' ? { opacity: 0.25 } : {}}>Backup slot{backups > 1 && 's'}:</SlotTitle>
           { rg.reservations.filter(r => r.backup).map(r => <div key={r.id}>
-            <ReservationSummary style={text == 'Preferred Confirmed' || text == 'Cancelled' ? { opacity: 0.5 } : {}} reservation={r} />
+            <ReservationSummary style={text == 'Preferred Confirmed' || text == 'Cancelled' || text == 'Unavailable' ? { opacity: 0.25 } : {}} reservation={r} />
           </div>) }
           <Line />
         </>}

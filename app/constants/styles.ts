@@ -9,6 +9,7 @@ export const styles = {
     warn: '#EEB868',
     black: '#000000',
     free: '#74D06C',
+    backup: '#247BA0',
     gray: {
       5: '#F7F7F7',
       10: '#F1F1F1',

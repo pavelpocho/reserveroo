@@ -68,7 +68,8 @@ export default function Profile() {
       <ReservationsWrap>
         <ReservationsTitle>Your Reservations</ReservationsTitle>
         { reservationGroups?.length == 0 && <NoReservations>You don't have any reservations :'(. Go ahead and make some!</NoReservations> }
-        { reservationGroups?.filter(rg => rg.reservations.length > 0 && new Date(rg.reservations[0].end).getTime() > twoWeeksAgo.getTime()).map(rg => <div key={rg.id}>
+        { /* @ts-ignore */ }
+        { reservationGroups?.filter(rg => rg.reservations.length > 0 && new Date(rg.reservations[0].end.slice(0, 16)).getTime() > twoWeeksAgo.getTime()).map(rg => <div key={rg.id}>
           <>
             <ReservationGroupSummary onCancel={(rgId, formRef) => {
               setTimeout(() => {

@@ -42,10 +42,10 @@ interface ReservableSelected {
 export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBackupName, setResList, backup = false, reservationIdName, defaultReservationGroup, reservableIdName, reservables, openingTimes, startName, endName }: ReservableTimesProps) => {
 
   const { lang } = useLangs();
+
+  console.log(reservables);
   
   const [ selected, setSelected ] = useState<ReservableSelected[]>(reservables.map(r => ({ reservableId: r.id, isSelected: false })));
-  console.log('sel');
-  console.log(selected);
 
   const [ selectedRange, setSelectedRange ] = React.useState<TimeSection | null>(defaultReservationGroup ? getTimeSectionOfReservation(defaultReservationGroup.reservations[0]) : null);
   const [ selectedDate, setSelectedDate ] = React.useState<Date | null>(defaultReservationGroup ? new Date(defaultReservationGroup.reservations[0].start) : null);
@@ -327,14 +327,22 @@ const getTimeSectionOfDates = (start: Date, end: Date) => {
 }
 
 const getTimeSectionOfReservation = (reservation: Reservation) => {
-  return getTimeSectionOfDates(new Date(reservation.start), new Date(reservation.end));
+  // @ts-ignore
+  return getTimeSectionOfDates(new Date(reservation.start.slice(0, 16)), new Date(reservation.end.slice(0, 16)));
 }
 
-const doDaysMatch = (date1: Date | string, date2: Date | string, date3: Date | string) => {
+export const doDaysMatch = (date1: Date, date2: Date | string, date3: Date | string) => {
+  // TODO: Fix this mess
+  // date1 is usually the date we have selected or are showing, so it's a date object
+  // date2 and date3 come from reservations from db, which means they are strings
+  // if they don't get sliced, they get interpreted as UTC time and if the user is not in GMT, it generates the wrong time...
   return (
-    new Date(date1).getFullYear() === new Date(date2).getFullYear() && new Date(date1).getFullYear() === new Date(date3).getFullYear() &&
-    new Date(date1).getMonth() === new Date(date2).getMonth() && new Date(date1).getMonth() === new Date(date3).getMonth() &&
-    new Date(date1).getDate() === new Date(date2).getDate() && new Date(date1).getDate() === new Date(date3).getDate()
+    // @ts-ignore
+    new Date(date1).getFullYear() === new Date(typeof date2 == 'string' ? date2.slice(0, 16) : date2).getFullYear() && new Date(date1).getFullYear() === new Date(typeof date3 == 'string' ? date3.slice(0, 16) : date3).getFullYear() &&
+    // @ts-ignore
+    new Date(date1).getMonth() === new Date(typeof date2 == 'string' ? date2.slice(0, 16) : date2).getMonth() && new Date(date1).getMonth() === new Date(typeof date3 == 'string' ? date3.slice(0, 16) : date3).getMonth() &&
+    // @ts-ignore
+    new Date(date1).getDate() === new Date(typeof date2 == 'string' ? date2.slice(0, 16) : date2).getDate() && new Date(date1).getDate() === new Date(typeof date3 == 'string' ? date3.slice(0, 16) : date3).getDate()
   );
 }
 
@@ -593,7 +601,7 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ timeSectionListsF
       <div>
         {selected.find(s => s.reservableId == reservable.id)?.isSelected && selectedRange && <IdInput name={reservationBackupName} value={backup ? '1' : '0'} />}
         {selected.find(s => s.reservableId == reservable.id)?.isSelected && selectedRange && <IdInput name={reservationIdName} value={defaultReservation ? defaultReservation.id : '-1'} /> }
-        {selected.find(s => s.reservableId == reservable.id)?.isSelected && selectedRange && <input hidden={true} readOnly={true} name={startName} type='datetime-local' value={selectedDate && selectedRange ?
+        {selected.find(s => s.reservableId == reservable.id)?.isSelected && selectedRange && <input hidden={true} readOnly={true} name={startName} type={'datetime-local'} value={selectedDate && selectedRange ?
           new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedRange.start.hour, selectedRange.start.minute - new Date().getTimezoneOffset()).toISOString().slice(0, 16) : ''
         } /> }
         {selected.find(s => s.reservableId == reservable.id)?.isSelected && selectedRange && <input hidden={true} readOnly={true} name={endName} type='datetime-local' value={selectedDate && selectedRange ?

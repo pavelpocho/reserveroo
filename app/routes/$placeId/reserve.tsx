@@ -1,34 +1,31 @@
-import { Form, useActionData, useLoaderData, useMatches, useParams, useSubmit } from '@remix-run/react';
-import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/server-runtime'
+import { Form, useActionData, useLoaderData, useParams, useSubmit } from '@remix-run/react';
+import type { ActionFunction, LoaderFunction} from '@remix-run/server-runtime';
+import { json, redirect } from '@remix-run/server-runtime'
 import React, { useState } from 'react';
-import { FaArrowRight, FaChevronRight } from 'react-icons/fa';
-import styled from 'styled-components';
-import AngleLeftIcon from '~/assets/icons/AngleLeft';
+import { FaChevronRight } from 'react-icons/fa';
+import styled, { css } from 'styled-components';
 import AnglesRightIcon from '~/assets/icons/AnglesRight';
-import { Button } from '~/components/button';
-import { ConfirmationDialog } from '~/components/confirmation-dialog';
 import InfoButton from '~/components/info-button';
-import { DateInput } from '~/components/inputs/DateInput';
 import { IdInput } from '~/components/inputs/ObjectInput';
-import { RadioInput } from '~/components/inputs/RadioInput';
 import { TextInput } from '~/components/inputs/TextInput';
-import { TimeInput } from '~/components/inputs/TimeInput';
 import { FormError } from '~/components/other/auth-components';
 import { Indicator } from '~/components/place/facilities-indicator';
-import { MainButton, MainButtonBtn, SecondaryButton, SecondaryButtonBtn } from '~/components/place/place-summary';
-import { ReservableTimes } from '~/components/reservable-times';
+import { MainButtonBtn, SecondaryButton, SecondaryButtonBtn } from '~/components/place/place-summary';
+import { doDaysMatch, ReservableTimes } from '~/components/reservable-times';
 import { ReserveConfirmationDialog } from '~/components/reserve-confirmation-dialog';
 import { styles } from '~/constants/styles';
-import { useUsername } from '~/contexts/usernameContext';
-import { OpeningTime } from '~/models/openingTime.server';
-import { getPlace, getPlaceWithReservations, Place } from '~/models/place.server';
-import { getReservable, getReservableList, getReservableWReservations, Reservable } from '~/models/reservable.server';
-import { createReservation, Reservation } from '~/models/reservation.server';
+import type { OpeningTime } from '~/models/openingTime.server';
+import type { Place } from '~/models/place.server';
+import { getPlaceWithReservations } from '~/models/place.server';
+import { getReservableWReservations } from '~/models/reservable.server';
+import type { Reservation } from '~/models/reservation.server';
+import { createReservation } from '~/models/reservation.server';
 import { createReservationGroup } from '~/models/reservationGroup.server';
 import { getUserId } from '~/models/user.server';
-import { ReservableTypeWithTexts, ReservableWithCountForEmail, ReservableWithReservations, ReservationStatus, Time, TimeSection } from '~/types/types';
+import type { ReservableTypeWithTexts, ReservableWithCountForEmail, ReservableWithReservations, Time, TimeSection } from '~/types/types';
+import { ReservationStatus } from '~/types/types';
 import { sendCreationEmail } from '~/utils/emails.server';
-import { getBaseUrl, getDayOfWeek, getStringDateValue, getStringTimeValue } from '~/utils/forms';
+import { getBaseUrl, getStringDateValue, getStringTimeValue } from '~/utils/forms';
 import { requireUsernameAndAdmin } from '~/utils/session.server'
 
 interface ReserveLoaderData {
@@ -56,6 +53,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   // Return availability data
   const { username } = await requireUsernameAndAdmin(request);
   const place = await getPlaceWithReservations({ id: params.placeId ?? '' });
+  console.log('p');
+  place?.reservables.forEach(r => r.reservations.map(re => console.log(re)));
   return json({ username, place });
 }
 
@@ -69,16 +68,9 @@ export const action: ActionFunction = async ({ request }) => {
 
   const getTotalMinutes = (time: Time) => time.hour * 60 + time.minute;
 
-  const doDaysMatch = (date1: Date | string, date2: Date | string, date3: Date | string) => {
-    return (
-      new Date(date1).getFullYear() === new Date(date2).getFullYear() && new Date(date1).getFullYear() === new Date(date3).getFullYear() &&
-      new Date(date1).getMonth() === new Date(date2).getMonth() && new Date(date1).getMonth() === new Date(date3).getMonth() &&
-      new Date(date1).getDate() === new Date(date2).getDate() && new Date(date1).getDate() === new Date(date3).getDate()
-    );
-  }
-
   const getTimeSectionOfReservation = (reservation: Reservation) => {
-    return getTimeSectionOfDates(new Date(reservation.start), new Date(reservation.end));
+    // @ts-ignore
+    return getTimeSectionOfDates(new Date(reservation.start.slice(0, 16)), new Date(reservation.end.slice(0, 16)));
   }
 
   const getTimeSectionOfDates = (start: Date, end: Date) => {
@@ -102,6 +94,9 @@ export const action: ActionFunction = async ({ request }) => {
   const reservableId = form.getAll('reservableId[]').map(r => r.toString()).filter(r => r != '-1');
   const dateTimeStart = form.getAll('start[]').map(r => r.toString());
   const dateTimeEnd = form.getAll('end[]').map(r => r.toString());
+
+  console.log('got at  server');
+  console.log(dateTimeStart[0]);
 
   const reservablePromises = reservableId.map((r) => getReservableWReservations({ id: r }));
   const reservables = await Promise.all(reservablePromises);
@@ -206,7 +201,13 @@ export const action: ActionFunction = async ({ request }) => {
 
   const promises: Promise<object>[] = []
   dateTimeStart.forEach((d, i) => {
-    promises.push(createReservation({ backup: reservationBackup[i] == '1', start: new Date(dateTimeStart[i]), end: new Date(dateTimeEnd[i]), reservableId: reservableId[i] ?? null, reservationGroupId: resGroup.id ?? null }));
+    promises.push(createReservation({
+      backup: reservationBackup[i] == '1',
+      start: new Date(new Date(dateTimeStart[i]).setMinutes(new Date(dateTimeStart[i]).getMinutes() - new Date().getTimezoneOffset())), 
+      end: new Date(new Date(dateTimeEnd[i]).setMinutes(new Date(dateTimeEnd[i]).getMinutes() - new Date().getTimezoneOffset())),
+      reservableId: reservableId[i] ?? null,
+      reservationGroupId: resGroup.id ?? null 
+    }));
   });
   await Promise.all(promises);
 

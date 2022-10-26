@@ -117,9 +117,11 @@ export default function ReservationAdminList() {
     <button onClick={() => { setShowPast(true) }}>Show past</button>
     { reservationGroups.map(rg => {
       if ((
-        rg.reservations.length > 0 && new Date(rg.reservations[0].end).getTime() < new Date().getTime() && showPast
+        // @ts-ignore
+        rg.reservations.length > 0 && new Date(rg.reservations[0].end.slice(0, 16)).getTime() < new Date().getTime() && showPast
       ) || (
-        rg.reservations.length > 0 && new Date(rg.reservations[0].end).getTime() > new Date().getTime() && !showPast
+        // @ts-ignore
+        rg.reservations.length > 0 && new Date(rg.reservations[0].end.slice(0, 16)).getTime() > new Date().getTime() && !showPast
       )) {
         return <AdminReservationGroupSummary key={rg.id} reservationGroup={rg} />
       }

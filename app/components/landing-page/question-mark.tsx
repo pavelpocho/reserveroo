@@ -4,26 +4,26 @@ import { ParallaxLayer } from "@react-spring/parallax";
 import styled from "styled-components";
 
 const QuestionMarkIcon = styled(FontAwesomeIcon)`
-  right: ${(props: QuestionMark) => (props.right ? props.right : "initial")};
-  left: ${(props: QuestionMark) => (props.left ? props.left : "initial")};
-  margin-top: ${(props: QuestionMark) =>
+  right: ${(props: QuestionMarkInterface) => (props.right ? props.right : "initial")};
+  left: ${(props: QuestionMarkInterface) => (props.left ? props.left : "initial")};
+  margin-top: ${(props: QuestionMarkInterface) =>
     props["margin-top"] ? props["margin-top"] : "initial"};
   transform: rotate(
-    ${(props: QuestionMark) => (props.rotation && props.rotation)}
+    ${(props: QuestionMarkInterface) => (props.rot && props.rot)}
   );
   font-size: 2.5rem;
   position: absolute;
 `;
 
-interface QuestionMark {
+interface QuestionMarkInterface {
   left?: string;
   right?: string;
   "margin-top": string;
-  rotation: string;
+  rot: string;
   start: number;
 }
 
-const QuestionMark: React.FC<QuestionMark> = (questionMark: QuestionMark) => {
+const QuestionMark: React.FC<QuestionMarkInterface> = (questionMark: QuestionMarkInterface) => {
   console.log(questionMark)
   return (
     <ParallaxLayer sticky={{ start: questionMark.start, end: 9 }}>

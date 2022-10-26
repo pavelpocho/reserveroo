@@ -113,12 +113,11 @@ export default function EditReservation() {
     <IdInput name={'placeId'} value={place.id} />
     <IdInput name={'rgId'} value={reservationGroup.id} />
     <TextInput name={'note'} title={'Note'} defaultValue={reservationGroup.note} />
-    <DateInput name={'date'} defaultValue={date} title={'Date'} onChange={setDate} />
+    {/* <DateInput name={'date'} defaultValue={date} title={'Date'} onChange={setDate} /> */}
     { date && place?.reservables && <ReservableTimes
       reservationBackupName={'reservationBackup[]'}
       reservables={place.reservables}
-      date={date}
-      openingTime={place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]}
+      openingTimes={place.openingTimes.sort((a, b) => a.day - b.day)}
       startName={'start[]'}
       endName={'end[]'}
       reservableIdName={'reservableId[]'}
@@ -131,8 +130,7 @@ export default function EditReservation() {
       reservationBackupName={'reservationBackup[]'}
       backup={true}
       reservables={place.reservables}
-      date={date}
-      openingTime={place.openingTimes.sort((a, b) => a.day - b.day)[getDayOfWeek(date)]}
+      openingTimes={place.openingTimes.sort((a, b) => a.day - b.day)}
       startName={'start[]'}
       endName={'end[]'}
       reservableIdName={'reservableId[]'}
