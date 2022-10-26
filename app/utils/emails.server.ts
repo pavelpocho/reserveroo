@@ -94,9 +94,9 @@ export const sendEmailConfirmationEmail = async (sendToAddress: string, baseUrl:
   }
 }
 
-export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, username: string) => {
+export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, email: string) => {
   let address = 'pavlik.pocho@gmail.com';
-  const signature = signMessage(username);
+  const signature = signMessage(email);
   if (process.env.NODE_ENV === 'production') {
     address = sendToAddress;
   }
@@ -107,7 +107,7 @@ export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, 
       email: 'reserveroo@reserveroo.com'
     },
     subject: 'Reserveroo Password Reset',
-    text: `Please click the following link: ${baseUrl}/pwd/reset?token=${username}:${signature}`,
+    text: `Please click the following link: ${baseUrl}/pwd/reset?token=${email}:${signature}`,
     html: `
     <head>
       <!--[if (gte mso 9)|(IE)]><!-->
@@ -133,7 +133,7 @@ export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, 
         </tr>
         <tr>
           <td style="padding-bottom: 32px; text-align: center;">
-            <a style="color: black; padding: 16px 24px; text-decoration: none; background-color: #ACC196; width: 160px; height: 32px; text-align: center; line-height: 24px; margin: 0 auto; border-radius: 4px;" href="${baseUrl}/pwd/reset?token=${username}:${signature}">
+            <a style="color: black; padding: 16px 24px; text-decoration: none; background-color: #ACC196; width: 160px; height: 32px; text-align: center; line-height: 24px; margin: 0 auto; border-radius: 4px;" href="${baseUrl}/pwd/reset?token=${email}:${signature}">
               Reset password
             </a>
           </td>
@@ -142,8 +142,8 @@ export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, 
           <td>
             <p>
               You can also click or copy this loong link:
-              <a style="font-size: 13px;white-space: pre-wrap;white-space: -moz-pre-wrap !important;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: pre-wrap;word-wrap: break-word;word-break: break-all;white-space: normal;" href="${baseUrl}/pwd/reset?token=${username}:${signature}">
-              ${baseUrl}/pwd/reset?token=${username}:${signature}
+              <a style="font-size: 13px;white-space: pre-wrap;white-space: -moz-pre-wrap !important;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: pre-wrap;word-wrap: break-word;word-break: break-all;white-space: normal;" href="${baseUrl}/pwd/reset?token=${email}:${signature}">
+              ${baseUrl}/pwd/reset?token=${email}:${signature}
               </a>
             </p>
           </td>
@@ -154,7 +154,7 @@ export const sendPwdResetEmail = async (sendToAddress: string, baseUrl: string, 
   }
   if (baseUrl.includes('localhost')) {
     console.log('Email link');
-    console.log(`${baseUrl}/pwd/reset?token=${username}:${signature}`);
+    console.log(`${baseUrl}/pwd/reset?token=${email}:${signature}`);
   }
   else {
     const transporter = nodemailer.createTransport({

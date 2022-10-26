@@ -29,7 +29,7 @@ const badRequest = (data: ActionData) => json(data, { status: 200 });
 
 export const action: ActionFunction = async ({ request }) => {
   const { getFormItem } = await getFormEssentials(request);
-  const username = getFormItem('token').split(':')[0];
+  const email = getFormItem('token').split(':')[0];
   const signature = getFormItem('token').split(':')[1];
   const password = getFormItem('password');
   const confirmPassword = getFormItem('confirmPassword');
@@ -40,7 +40,7 @@ export const action: ActionFunction = async ({ request }) => {
     password.length < 6 ? 'Your password must have at least 6 characters' : null  
   );
 
-  const goodSource = verifyMessage(username, signature);
+  const goodSource = verifyMessage(email, signature);
   if (!goodSource) {
     return badRequest({
       fields: { password },
@@ -62,7 +62,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
   
   const passwordHash = await generateHashAndSalt(password);
-  const user = await changeUserPassword({ username, passwordHash });
+  await changeUserPassword({ email, passwordHash });
 
   return redirect('/authenticate/login');
 

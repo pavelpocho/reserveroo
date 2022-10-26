@@ -7,7 +7,7 @@ import { IconRow } from '~/components/icon-row'
 import { TextInput } from '~/components/inputs/TextInput'
 import { AuthWrap, FormError, Title } from '~/components/other/auth-components'
 import { MainButtonBtn } from '~/components/place/place-summary'
-import { getEmailFromUsername } from '~/models/user.server'
+import { checkForUserByEmail, getEmailFromUsername } from '~/models/user.server'
 import { sendPwdResetEmail } from '~/utils/emails.server'
 import { badRequest, getBaseUrl, getFormEssentials } from '~/utils/forms'
 import { getUsernameAndAdmin } from '~/utils/session.server'
@@ -19,21 +19,21 @@ interface ActionData {
   msg?: string;
   goodMsg?: string;
   fields?: {
-    username?: string | null
+    email?: string | null
   }
 }
 
 export const action: ActionFunction = async ({ request }) => {
   const { getFormItem } = await getFormEssentials(request);
-  const username = getFormItem('username');
+  const email = getFormItem('email');
 
-  const user = await getEmailFromUsername({ username });
+  const user = await checkForUserByEmail({ email });
 
-  if (user == null) return badRequest({ msg: "Username not found", fields: { username: username } });
+  if (user == null) return badRequest({ msg: "Email not found", fields: { email } });
 
-  await sendPwdResetEmail(user?.email, getBaseUrl(request), username);
+  await sendPwdResetEmail(user?.email, getBaseUrl(request), email);
 
-  return json({ goodMsg: "Okay! Check your inbox.", fields: { username: username } });
+  return json({ goodMsg: "Okay! Check your inbox.", fields: { email } });
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -59,13 +59,13 @@ export default function ForgotPassword() {
     <Title>Password Reset - Step 1</Title>
     <IconRow invertColors={true} />
     <AuthWrap style={{ paddingBottom: '2rem' }}>
-      <Text>Enter your username. If it exists, we will send a password recovery link to the email address paired with your account.</Text>
+      <Text>Enter your email. If you have an account, we will send you a password recovery link.</Text>
       <Form method='post' ref={ref}>
         <div style={{ margin: '0 1rem' }}>
           {a?.msg && <FormError>{a?.msg}</FormError>}
         </div>
         <InputWrap style={{ marginBottom: '1rem' }}>
-          <TextInput name='username' title='Username' defaultValue={a?.fields?.username ?? ''} />
+          <TextInput name='email' title='Email' defaultValue={a?.fields?.email ?? ''} />
         </InputWrap>
         <div style={{ margin: '0 1rem' }}>
           {a?.goodMsg && <FormError style={{ color: styles.colors.primary }}>{a?.goodMsg}</FormError>}

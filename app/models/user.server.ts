@@ -37,7 +37,7 @@ export const getEmailFromUsername = async ({ username }: Pick<User, 'username'>)
 
 export const checkForUserByEmail = async ({ email }: Pick<User, 'email'>) => (await prisma.user.findUnique({
   where: { email },
-  select: { id: true, passwordHash: true, admin: true }
+  select: { id: true, passwordHash: true, admin: true, email: true }
 }));
 
 export const checkForUserByPhone = async ({ phone }: Pick<User, 'phone'>) => (await prisma.user.findUnique({
@@ -121,9 +121,9 @@ export const verifyUserEmail = async (email: string) => (await prisma.user.updat
   }
 }));
 
-export const changeUserPassword = async({ username, passwordHash }: Pick<User, 'username' | 'passwordHash'>) => (await prisma.user.update({
+export const changeUserPassword = async({ email, passwordHash }: Pick<User, 'email' | 'passwordHash'>) => (await prisma.user.update({
   where: {
-    username
+    email
   },
   data: {
     passwordHash
