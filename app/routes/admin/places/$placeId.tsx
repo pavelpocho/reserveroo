@@ -235,7 +235,10 @@ export default function AdminPlaceDetail() {
           <IdInput name='reservableId[]' value={r.id} />
           <TextInput title='Reservable name' name='reservableName[]' defaultValue={r.name} />
           <NumberInput title='Minimum reservation interval (minutes)' name='minimumReservationTime[]' defaultValue={r.minimumReservationTime} />
-          <NumberInput title='Reservations per slot' name='reservationsPerSlot[]' defaultValue={r.reservationsPerSlot} />
+          <div>
+            <p>DO NOT CHANGE RESERVATIONS PER SLOT TO ANYTHING OTHER THAN 1</p>
+            <NumberInput title='Reservations per slot' name='reservationsPerSlot[]' defaultValue={r.reservationsPerSlot} />
+          </div>
           <NumberInput title='Reservable days ahead' name='reservableDaysAhead[]' defaultValue={r.reservableDaysAhead} />
           <SingleSelectorInput defaultValueAndText={
             r.reservableTypeId ? { value: r.reservableTypeId, text: findReservableTypeName(r.reservableTypeId) } : null
