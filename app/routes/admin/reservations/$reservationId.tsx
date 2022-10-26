@@ -7,10 +7,11 @@ import { DateInput } from '~/components/inputs/DateInput';
 import { IdInput } from '~/components/inputs/ObjectInput';
 import { TextInput } from '~/components/inputs/TextInput';
 import { ReservableTimes } from '~/components/reservable-times';
+import { getPlaceWithReservations } from '~/models/place.server';
 import { createReservation, deleteReservation, updateReservation } from '~/models/reservation.server';
 import { getReservationGroup, updateReservationGroup } from '~/models/reservationGroup.server';
 import { Res } from '~/routes/$placeId/reserve';
-import { ReservableWithReservations, ReservationGroupForEdit } from '~/types/types';
+import { ReservableWithReservations, ReservationGroupForEdit, Time } from '~/types/types';
 import { badRequest, getDayOfWeek } from '~/utils/forms';
 
 interface LoaderData {
@@ -67,10 +68,23 @@ export const action: ActionFunction = async ({ request }) => {
   const promises: Promise<object>[] = []
   dateTimeStart.forEach((d, i) => {
     if (reservationId[i] == '-1') {
-      promises.push(createReservation({ backup: reservationBackup[i] == '1', start: new Date(dateTimeStart[i]), end: new Date(dateTimeEnd[i]), reservableId: reservableId[i] ?? null, reservationGroupId: resGroup.id ?? null }));
+      promises.push(createReservation({
+        backup: reservationBackup[i] == '1',
+        start: new Date(new Date(dateTimeStart[i]).setMinutes(new Date(dateTimeStart[i]).getMinutes() - new Date().getTimezoneOffset())), 
+        end: new Date(new Date(dateTimeEnd[i]).setMinutes(new Date(dateTimeEnd[i]).getMinutes() - new Date().getTimezoneOffset())),
+        reservableId: reservableId[i] ?? null,
+        reservationGroupId: resGroup.id ?? null
+      }));
     }
     else {
-      promises.push(updateReservation({ id: reservationId[i], backup: reservationBackup[i] == '1',  start: new Date(dateTimeStart[i]), end: new Date(dateTimeEnd[i]), reservableId: reservableId[i] ?? null, reservationGroupId: resGroup.id ?? null }));
+      promises.push(updateReservation({
+        id: reservationId[i],
+        backup: reservationBackup[i] == '1',
+        start: new Date(new Date(dateTimeStart[i]).setMinutes(new Date(dateTimeStart[i]).getMinutes() - new Date().getTimezoneOffset())), 
+        end: new Date(new Date(dateTimeEnd[i]).setMinutes(new Date(dateTimeEnd[i]).getMinutes() - new Date().getTimezoneOffset())),
+        reservableId: reservableId[i] ?? null,
+        reservationGroupId: resGroup.id ?? null
+      }));
     }
   });
   // These reservationId(s) only get sent when a time is selected
@@ -114,7 +128,7 @@ export default function EditReservation() {
     <IdInput name={'rgId'} value={reservationGroup.id} />
     <TextInput name={'note'} title={'Note'} defaultValue={reservationGroup.note} />
     {/* <DateInput name={'date'} defaultValue={date} title={'Date'} onChange={setDate} /> */}
-    { date && place?.reservables && <ReservableTimes
+    { place?.reservables && <ReservableTimes
       reservationBackupName={'reservationBackup[]'}
       reservables={place.reservables}
       openingTimes={place.openingTimes.sort((a, b) => a.day - b.day)}
@@ -126,7 +140,7 @@ export default function EditReservation() {
       setResList={setResList}
     /> }
     <p>Backup timeslots (if any):</p>
-    { date && place?.reservables && <ReservableTimes
+    { place?.reservables && <ReservableTimes
       reservationBackupName={'reservationBackup[]'}
       backup={true}
       reservables={place.reservables}

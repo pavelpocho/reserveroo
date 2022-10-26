@@ -43,10 +43,12 @@ export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBac
 
   const { lang } = useLangs();
   
-  const [ selected, setSelected ] = useState<ReservableSelected[]>(reservables.map(r => ({ reservableId: r.id, isSelected: false })));
+  const [ selected, setSelected ] = useState<ReservableSelected[]>(reservables.map(r => ({ reservableId: r.id, isSelected: !!defaultReservationGroup?.reservations.find(rx => rx.backup == backup && rx.reservable?.id == r.id) })));
 
-  const [ selectedRange, setSelectedRange ] = React.useState<TimeSection | null>(defaultReservationGroup ? getTimeSectionOfReservation(defaultReservationGroup.reservations[0]) : null);
-  const [ selectedDate, setSelectedDate ] = React.useState<Date | null>(defaultReservationGroup ? new Date(defaultReservationGroup.reservations[0].start) : null);
+  const [ selectedRange, setSelectedRange ] = React.useState<TimeSection | null>(defaultReservationGroup && selected.filter(s => s.isSelected).length > 0 ? getTimeSectionOfReservation(defaultReservationGroup.reservations[0]) : null);
+  console.log(selectedRange);
+  const [ selectedDate, setSelectedDate ] = React.useState<Date | null>(defaultReservationGroup && selected.filter(s => s.isSelected).length > 0 ? new Date(defaultReservationGroup.reservations[0].start) : null);
+  console.log(selectedDate);
 
   const reservableGroups: ReservableGroup[] = [];
   reservables.forEach(r => {
