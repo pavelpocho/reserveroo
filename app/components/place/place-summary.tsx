@@ -187,7 +187,7 @@ export const PlaceSummary: React.FC<PlaceProps> = ({ place, inSearch }) => {
     <PlaceImage shape='square' imageUrl={place.profilePicUrl} />
     <PlaceInfoWrap>
       <FlexApart inSearch={inSearch ?? false}>
-        <PlaceName inSearch={inSearch ?? false} to={`/${place.id}`}>{place.name}</PlaceName>
+        <PlaceName style={{ color: styles.colors.black }} inSearch={inSearch ?? false} to={`/${place.id}`}>{place.name}</PlaceName>
       </FlexApart>
       <FlexApart inSearch={inSearch ?? false}>
         <Flex inSearch={inSearch ?? false}>
