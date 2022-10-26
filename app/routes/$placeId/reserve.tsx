@@ -53,8 +53,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   // Return availability data
   const { username } = await requireUsernameAndAdmin(request);
   const place = await getPlaceWithReservations({ id: params.placeId ?? '' });
-  console.log('p');
-  place?.reservables.forEach(r => r.reservations.map(re => console.log(re)));
   return json({ username, place });
 }
 
@@ -95,9 +93,6 @@ export const action: ActionFunction = async ({ request }) => {
   const dateTimeStart = form.getAll('start[]').map(r => r.toString());
   const dateTimeEnd = form.getAll('end[]').map(r => r.toString());
 
-  console.log('got at  server');
-  console.log(dateTimeStart[0]);
-
   const reservablePromises = reservableId.map((r) => getReservableWReservations({ id: r }));
   const reservables = await Promise.all(reservablePromises);
   const reservablesWithBackup = reservables.map((r, i) => ({
@@ -113,7 +108,6 @@ export const action: ActionFunction = async ({ request }) => {
    * 4) Something else missing
    */
 
-    console.log(reservationBackup);
    if (reservationBackup.filter(b => b === '0').length == 0) {
     // Problem 1)
     return badRequest({

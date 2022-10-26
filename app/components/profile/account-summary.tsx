@@ -240,8 +240,9 @@ export const AccountSummary: React.FC<AccountSummaryProps> = ({ editing, user, f
           </div>
           <div>
             <SectionTitle>Username</SectionTitle>
-            { editing ? <TextInput name={'username'} defaultValue={fields?.username ?? user?.username ?? ''} /> : <Value>{user?.username}</Value> }
-            { fieldErrors?.username &&  <FormError>{fieldErrors.username}</FormError> }
+            {/* { editing ? <TextInput name={'username'} defaultValue={fields?.username ?? user?.username ?? ''} /> : <Value>{user?.username}</Value> } */}
+            {/* { fieldErrors?.username &&  <FormError>{fieldErrors.username}</FormError> } */}
+            <Value>{user?.username}</Value>
           </div>
           <div>
             <SectionTitle>Reserving since</SectionTitle>

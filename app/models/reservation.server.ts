@@ -13,8 +13,6 @@ export const getReservationList = async () => (await prisma.reservation.findMany
 }));
 
 export const createReservation = async ({ backup, reservationGroupId, reservableId, start, end }: Pick<Reservation, 'backup' | 'reservationGroupId' | 'reservableId' | 'start' | 'end'>) => {
-  console.log('creating');
-  console.log(start);
   return (await prisma.reservation.create({
     data: {
       reservableId, reservationGroupId, start, end, backup

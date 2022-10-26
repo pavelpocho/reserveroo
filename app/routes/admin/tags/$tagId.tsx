@@ -47,7 +47,6 @@ const ArrayInputWrap = styled.div`
 export default function AdminTagDetail() {
 
   const { tag } = useLoaderData<AdminTagDetailLoaderData>();
-  console.log(tag);
 
   return (
     <div>

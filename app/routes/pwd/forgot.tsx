@@ -65,7 +65,9 @@ export default function ForgotPassword() {
           {a?.msg && <FormError>{a?.msg}</FormError>}
         </div>
         <InputWrap style={{ marginBottom: '1rem' }}>
-          <TextInput name='email' title='Email' defaultValue={a?.fields?.email ?? ''} />
+          <TextInput name='email' title='Email' defaultValue={a?.fields?.email ?? ''} setValue={() => {
+            setDisable(false);
+          }} />
         </InputWrap>
         <div style={{ margin: '0 1rem' }}>
           {a?.goodMsg && <FormError style={{ color: styles.colors.primary }}>{a?.goodMsg}</FormError>}

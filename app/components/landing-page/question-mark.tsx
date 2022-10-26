@@ -24,7 +24,6 @@ interface QuestionMarkInterface {
 }
 
 const QuestionMark: React.FC<QuestionMarkInterface> = (questionMark: QuestionMarkInterface) => {
-  console.log(questionMark)
   return (
     <ParallaxLayer sticky={{ start: questionMark.start, end: 9 }}>
       <QuestionMarkIcon icon={faQuestion} {...questionMark}></QuestionMarkIcon>

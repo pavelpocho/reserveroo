@@ -50,11 +50,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     categoryIds: categories
   });
 
-  console.log('server');
-  console.log();
-
   const places = await getSearchPlaces({ name: searchTerm ?? '', cityCountry: !location || location == '' ? undefined : location, tagIds: tags, catIds: categories, itemsPerPage: 10, page: 1 });
-  console.log(places.map(p => p.name));
 
   if (page === '1' || page == null || isNaN(parseInt(page))) {
     return json({
@@ -151,7 +147,6 @@ export default function Search() {
 
   useEffect(() => {
     if (scrollState.height + scrollState.scrollY > scrollState.scrollHeight && !fetching && !reachedEnd) {
-      console.log('scrollState detect');
       setPage(page + 1);
       setFetching(true);
     }
@@ -164,7 +159,6 @@ export default function Search() {
   }, [page]);
 
   useEffect(() => {
-    console.log('fetcher');
     if (fetcher.data?.places && page != 1) {
       if (fetcher.data.places.length == 0) {
         setReachedEnd(true);

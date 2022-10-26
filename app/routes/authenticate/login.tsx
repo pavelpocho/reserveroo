@@ -71,9 +71,6 @@ export default function Login() {
   const a = useActionData<AuthActionData>();
   const t = useTransition();
 
-  console.log(searchParams.get('redirectTo'));
-  console.log(a?.fields?.redirectTo);
-
   return (<AuthWrap>
     <Form method='post' action='/authenticate/login'>
       <FieldSet disabled={t.state === 'submitting'}>

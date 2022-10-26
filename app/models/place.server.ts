@@ -60,7 +60,6 @@ export const getPlaceWithReservations = async ({ id }: Pick<Place, 'id'>) => {
       openingTimes: true
     }
   }));
-  console.log('server');
   p?.reservables.forEach(res => res.reservations.forEach(r => console.log(r)));
   return p;
 };

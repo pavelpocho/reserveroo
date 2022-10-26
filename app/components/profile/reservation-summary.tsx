@@ -48,9 +48,6 @@ export const ReservationSummary: React.FC<ReservationSummaryProps> = ({ reservat
 
   const { lang } = useLangs();
 
-  // @ts-ignore
-  console.log(new Date(r.start.slice(0, 16)));
-
   return <Wrap style={style}>
     { r?.reservable?.ReservableType.multiLangName && <Indicator style={{ padding: '0.5rem 1rem' }} key={r.id}>{r.reservable.ReservableType.multiLangName[lang]}</Indicator>}
     <Flex>

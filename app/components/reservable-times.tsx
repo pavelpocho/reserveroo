@@ -42,8 +42,6 @@ interface ReservableSelected {
 export const ReservableTimes: React.FC<ReservableTimesProps> = ({ reservationBackupName, setResList, backup = false, reservationIdName, defaultReservationGroup, reservableIdName, reservables, openingTimes, startName, endName }: ReservableTimesProps) => {
 
   const { lang } = useLangs();
-
-  console.log(reservables);
   
   const [ selected, setSelected ] = useState<ReservableSelected[]>(reservables.map(r => ({ reservableId: r.id, isSelected: false })));
 
@@ -483,7 +481,6 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ timeSectionListsF
   maxReservableDate.setDate(maxReservableDate.getDate() + reservable.reservableDaysAhead);
 
   useEffect(() => {
-    console.log("selectedRange effect");
     if (selectedRange == null) {
       setSelected(sAr => {
         const sArNew = sAr.map(s => s.reservableId == reservable.id ? { reservableId: s.reservableId, isSelected: false } : s);
@@ -561,11 +558,8 @@ const ReservableSection: React.FC<ReservableSectionProps> = ({ timeSectionListsF
               }
               else if (lSelected && getTotalMinutes(selectedRange.start) <= getTotalMinutes(s.start) && getTotalMinutes(s.start) <= getTotalMinutes(selectedRange.end)) {
                 newRange = { start: selectedRange.start, end: s.end };
-                console.log('4');
               }
               else if (!lSelected) {
-                console.log('s');
-                console.log(s);
                 newRange = selectedRange;
               }
               const overlap = reservables.filter(rx => selected.find(s => s.reservableId == rx.id)?.isSelected || rx.id == reservable.id).find(ry => ry.reservations.filter(

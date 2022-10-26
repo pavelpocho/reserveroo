@@ -163,12 +163,12 @@ export const createUser = async ({
   select: { id: true, passwordHash: true }
 }));
 
-export const updateUser = async ({ id, firstName, lastName, username, phone }: Pick<User, 'id' | 'firstName' | 'lastName' | 'phone' | 'username'>) => (await prisma.user.update({
+export const updateUser = async ({ id, firstName, lastName, phone }: Pick<User, 'id' | 'firstName' | 'lastName' | 'phone'>) => (await prisma.user.update({
   where: {
     id
   },
   data: {
-    username, firstName, lastName, phone
+    firstName, lastName, phone
   }
 }));
 
