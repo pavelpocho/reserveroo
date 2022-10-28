@@ -313,7 +313,7 @@ const PurpleSection = styled.div`
 `;
 
 const ScrollDownIndicator = () => (
-  <div style={{ width: '100%', marginTop: '15vh' }}>
+  <div style={{ width: '100%', marginTop: '5vh' }}>
     <H1X>Scroll down to find out!</H1X>
     <div style={{ textAlign: 'center', marginTop: '2rem' }}>
       <FaAngleDownA size={24} color={styles.colors.white} style={{ animationDelay: '-1s' }} className="fade-arrow" />
@@ -487,16 +487,15 @@ export default function About() {
   ]), []);
 
   const howItWorks: NoEaseObject = {
-    startValue: screenHeight * 2.3,
+    startValue: screenHeight * 2.4,
     slope: -1
   }
-
   
   return (
     <>
       <ScrollEffectWrap style={ screenHeight == -1 ? { opacity: 0 } : { opacity: 1 }} ref={scrollEffectWrap}>
         {/* </animated.div> */}
-        <ScrollEffectInner space={10}>
+        <ScrollEffectInner space={4.5}>
         </ScrollEffectInner>
         <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, headerEffect)}px)`} >
           <AboutHeader>
