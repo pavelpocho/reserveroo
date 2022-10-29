@@ -346,8 +346,9 @@ const Card = styled.div`
   padding: 12px 24px;
   border-radius: 12px;
   max-width: 576px;
-  color: ${styles.colors.black};
-  /* background-color: ${styles.colors.primary}; */
+  @media (max-width: 1004px) {
+    margin: 0 auto;
+  }
 `;
 
 const HowItWorksLineWrap = styled.div`
@@ -355,6 +356,9 @@ const HowItWorksLineWrap = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 2rem 0;
+  @media (max-width: 1004px) {
+    flex-direction: column;
+  }
 `;
 
 const HowDoesItWorkItem = (props: { title: string, imgSrc: string, back: boolean }) => <HowItWorksLineWrap style={props.back ? {
@@ -367,6 +371,33 @@ const HowDoesItWorkItem = (props: { title: string, imgSrc: string, back: boolean
 const HowItWorksWrap = styled.div`
   max-width: 968px;
   margin: 0 auto;
+`
+
+const HowItWorksTitle = styled.h3`
+  font-size: 1.6rem;
+  @media (max-width: 1004px) {
+    text-align: center;
+  }
+`
+
+const QuestionTitle = styled.p`
+  text-align: center;
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: ${styles.colors.primary};
+`
+
+const SecondScrollItemContainer = styled.div`
+  display: flex;
+  max-width: 936px;
+  margin: 5% auto;
+  position: relative;
+  z-index: 2;
+  align-items: center;
+  @media (max-width: 1004px) {
+    justify-content: center;
+  }
 `
 
 const ContactUs = styled.a`
@@ -399,6 +430,7 @@ export default function About() {
   const scrollEffectWrap = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number | null>(null);
   const [ screenHeight, setScreenHeight ] = useState<number>(-1);
+  const [ screenWidth, setScreenWidth ] = useState<number>(-1);
   // const [ scrollPosition, setScrollPosition ] = useState<number>(0);
   // const [ yScroll, setYScroll ] = useState<number>(0);
   const [ yScrollPixels, setYScrollPixels ] = useState<number>(0);
@@ -452,6 +484,7 @@ export default function About() {
   React.useEffect(() => {
     setLandingPage(true);
     setScreenHeight(screen.height);
+    setScreenWidth(window.innerWidth);
     const handleScroll = (ev: Event) => {
       if (requestRef.current != null) {
         cancelAnimationFrame(requestRef.current);
@@ -462,7 +495,6 @@ export default function About() {
         setYScrollPixels(() => (ev.target?.scrollTop ?? 0));
       })
     };
-
     if (scrollEffectWrap.current) scrollEffectWrap.current.onscroll = handleScroll;
 
     const c = scrollEffectWrap.current;
@@ -533,15 +565,15 @@ export default function About() {
         </ScrollItem>
         <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, explanationSection)}px)`}>
           <div style={{ margin: '4rem auto 4rem', maxWidth: '936px' }}>
-            <p style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.primary }}>{questions[4].title}</p>
-            <p style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.primary }}>{questions[5].title}</p>
-            <p style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.primary }}>{questions[6].title}</p>
-            <p style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.primary }}>{questions[7].title}</p>
+            <QuestionTitle>{questions[4].title}</QuestionTitle>
+            <QuestionTitle>{questions[5].title}</QuestionTitle>
+            <QuestionTitle>{questions[6].title}</QuestionTitle>
+            <QuestionTitle>{questions[7].title}</QuestionTitle>
           </div>
           <IconRow invertColors={true} />
         </ScrollItem>
         <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, purpleSectionEffect)}px)`}>
-          <div style={{ display: 'flex', maxWidth: '936px', margin: '5% auto', position: 'relative', zIndex: 2, alignItems: 'center' }}>
+          <SecondScrollItemContainer>
             <div style={{ flexShrink: '1', maxWidth: '786px' }}>
               <Card>
                 <p style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.white }}>{questions[1].title}</p>
@@ -556,7 +588,7 @@ export default function About() {
                 <p style={{ fontSize: '1rem', fontWeight: '400', marginTop: '0.5rem', color: styles.colors.white }}>{questions[3].question}</p>
               </Card>
             </div>
-          </div>
+          </SecondScrollItemContainer>
           <PurpleSection />
         </ScrollItem>
         { [...Array(10).keys()].map(i => (
@@ -570,7 +602,7 @@ export default function About() {
         )) }
         <ScrollItem extendPresence={true} transform={`translate(0px, ${noEase(yScrollPixels, howItWorks)}px)`}>
           <HowItWorksWrap>
-            <h3 style={{ fontSize: '1.6rem' }}>How does it work?</h3>
+            <HowItWorksTitle>How does it work?</HowItWorksTitle>
             <HowDoesItWorkItem back={false} title={'1. Find your favourite activity'} imgSrc={search} />
             <HowDoesItWorkItem back={true} title={'2. Check out all the details'} imgSrc={details} />
             <HowDoesItWorkItem back={false} title={'3. Book and enjoy!'} imgSrc={book} />
