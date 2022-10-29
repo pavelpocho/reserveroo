@@ -371,6 +371,9 @@ const HowDoesItWorkItem = (props: { title: string, imgSrc: string, back: boolean
 const HowItWorksWrap = styled.div`
   max-width: 968px;
   margin: 0 auto;
+  @media (max-width: 1004px) {
+    margin-top: 10rem;
+  }
 `
 
 const HowItWorksTitle = styled.h3`
@@ -385,8 +388,9 @@ const QuestionTitle = styled.p`
   font-weight: bold;
   font-size: 2rem;
   margin-bottom: 0.5rem;
+  padding: 0 1.5rem;
   color: ${styles.colors.primary};
-`
+`;
 
 const SecondScrollItemContainer = styled.div`
   display: flex;
@@ -425,6 +429,9 @@ const TitleInsideCard = styled.p`
   font-weight: bold;
   font-size: 2rem;
   margin-bottom: 0.5rem;
+  @media (max-width: 420px) {
+    margin-bottom: -0.5rem;
+  }
   color: ${styles.colors.white};
 `
 
@@ -539,12 +546,18 @@ export default function About() {
     startValue: screenHeight * 2.4,
     slope: -1
   }
-  
+
+  function getSpaceByScreenWidth (screenWidth: number): number {
+    if(screenWidth > 1200) return 4.5;
+    if(screenWidth < 420) return 5.6;
+    return 5.2;
+  }
+
   return (
     <>
       <ScrollEffectWrap style={ screenHeight == -1 ? { opacity: 0 } : { opacity: 1 }} ref={scrollEffectWrap}>
         {/* </animated.div> */}
-        <ScrollEffectInner space={screenWidth < 1004 ? 5 : 4.5}>
+        <ScrollEffectInner space={getSpaceByScreenWidth(screenWidth)}>
         </ScrollEffectInner>
         <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, headerEffect)}px)`} >
           <AboutHeader>
@@ -632,7 +645,7 @@ export default function About() {
             margin: '4rem auto',
             backgroundColor: styles.colors.gray[90]
           }} ></div>
-          <h2 style={{ maxWidth: '968px', margin: '0 auto' }}>Would you like to list your place on Reserveroo?</h2>
+          <h2 style={{ maxWidth: '968px', margin: '0 auto', padding: '0 1.5rem', textAlign: 'center'}}>Would you like to list your place on Reserveroo?</h2>
           <p style={{
             fontSize: '1rem',
             fontWeight: 'bold',
