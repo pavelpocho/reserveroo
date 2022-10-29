@@ -361,11 +361,11 @@ const HowItWorksLineWrap = styled.div`
   }
 `;
 
-const HowDoesItWorkItem = (props: { title: string, imgSrc: string, back: boolean }) => <HowItWorksLineWrap style={props.back ? {
+const HowDoesItWorkItem = (props: { title: string, imgSrc: string, back: boolean, screenWidth: number }) => <HowItWorksLineWrap style={props.back ? {
   background: 'linear-gradient(to right, #f1f1f100, #f1f1f1ff, #f1f1f100)'
 } : {}}>
-  <h4 style={{ fontSize: '1.4rem' }}>{props.title}</h4>
-  <img style={{ boxShadow: styles.shadows[0] }} width={560} src={props.imgSrc} alt={''}/>
+  <h4 style={{ fontSize: '1.4rem', textAlign: props.screenWidth > 600 ? 'unset' : 'center', padding: '1.5rem' }}>{props.title}</h4>
+  <img style={{ boxShadow: styles.shadows[0] }} width={props.screenWidth > 600 ? 560 : props.screenWidth * 0.85} src={props.imgSrc} alt={''}/>
 </HowItWorksLineWrap>
 
 const HowItWorksWrap = styled.div`
@@ -414,6 +414,20 @@ const ContactUs = styled.a`
   text-decoration: none;
 `;
 
+const QuestionInsideCard = styled.p`
+  font-size: 1rem;
+  font-weight: 400;
+  margin-top: 0.5rem;
+  color: ${styles.colors.white};
+`
+
+const TitleInsideCard = styled.p`
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: ${styles.colors.white};
+`
+
 const QuestionCard: React.FC<React.PropsWithChildren<{title: string, white: boolean}>> = ({ title, children, white }) => {
 
   return <div style={{ margin: '12rem auto', maxWidth: '938px', zIndex: 2, position: 'relative', display: 'flex' }}>
@@ -431,6 +445,7 @@ export default function About() {
   const requestRef = useRef<number | null>(null);
   const [ screenHeight, setScreenHeight ] = useState<number>(-1);
   const [ screenWidth, setScreenWidth ] = useState<number>(-1);
+  const [ isMobile, setIsMobile ] = useState<boolean>(true);
   // const [ scrollPosition, setScrollPosition ] = useState<number>(0);
   // const [ yScroll, setYScroll ] = useState<number>(0);
   const [ yScrollPixels, setYScrollPixels ] = useState<number>(0);
@@ -483,8 +498,10 @@ export default function About() {
 
   React.useEffect(() => {
     setLandingPage(true);
-    setScreenHeight(screen.height);
+    const isMobile = window.innerWidth < 420;
+    setScreenHeight(isMobile ? screen.height + 200 : screen.height);
     setScreenWidth(window.innerWidth);
+    setIsMobile(isMobile);
     const handleScroll = (ev: Event) => {
       if (requestRef.current != null) {
         cancelAnimationFrame(requestRef.current);
@@ -527,7 +544,7 @@ export default function About() {
     <>
       <ScrollEffectWrap style={ screenHeight == -1 ? { opacity: 0 } : { opacity: 1 }} ref={scrollEffectWrap}>
         {/* </animated.div> */}
-        <ScrollEffectInner space={4.5}>
+        <ScrollEffectInner space={screenWidth < 1004 ? 5 : 4.5}>
         </ScrollEffectInner>
         <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, headerEffect)}px)`} >
           <AboutHeader>
@@ -576,16 +593,16 @@ export default function About() {
           <SecondScrollItemContainer>
             <div style={{ flexShrink: '1', maxWidth: '786px' }}>
               <Card>
-                <p style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.white }}>{questions[1].title}</p>
-                <p style={{ fontSize: '1rem', fontWeight: '400', marginTop: '0.5rem', color: styles.colors.white }}>{questions[1].question}</p>
+                <TitleInsideCard>{questions[1].title}</TitleInsideCard>
+                <QuestionInsideCard>{questions[1].question}</QuestionInsideCard>
               </Card>
               <Card>
-                <p style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.white }}>{questions[2].title}</p>
-                <p style={{ fontSize: '1rem', fontWeight: '400', marginTop: '0.5rem', color: styles.colors.white }}>{questions[2].question}</p>
+                <TitleInsideCard>{questions[2].title}</TitleInsideCard>
+                <QuestionInsideCard>{questions[2].question}</QuestionInsideCard>
               </Card>
               <Card>
-                <p style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: styles.colors.white }}>{questions[3].title}</p>
-                <p style={{ fontSize: '1rem', fontWeight: '400', marginTop: '0.5rem', color: styles.colors.white }}>{questions[3].question}</p>
+                <TitleInsideCard>{questions[3].title}</TitleInsideCard>
+                <QuestionInsideCard>{questions[3].question}</QuestionInsideCard>
               </Card>
             </div>
           </SecondScrollItemContainer>
@@ -603,9 +620,9 @@ export default function About() {
         <ScrollItem extendPresence={true} transform={`translate(0px, ${noEase(yScrollPixels, howItWorks)}px)`}>
           <HowItWorksWrap>
             <HowItWorksTitle>How does it work?</HowItWorksTitle>
-            <HowDoesItWorkItem back={false} title={'1. Find your favourite activity'} imgSrc={search} />
-            <HowDoesItWorkItem back={true} title={'2. Check out all the details'} imgSrc={details} />
-            <HowDoesItWorkItem back={false} title={'3. Book and enjoy!'} imgSrc={book} />
+            <HowDoesItWorkItem screenWidth={screenWidth} back={false} title={'1. Find your favourite activity'} imgSrc={search} />
+            <HowDoesItWorkItem screenWidth={screenWidth} back={true} title={'2. Check out all the details'} imgSrc={details} />
+            <HowDoesItWorkItem screenWidth={screenWidth} back={false} title={'3. Book and enjoy!'} imgSrc={book} />
           </HowItWorksWrap>
           <div style={{
             height: '2px',
