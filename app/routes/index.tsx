@@ -43,7 +43,7 @@ const questions = [
     icon: FaQuestion
   },
   {
-    title: "Reserveroo will let you see all the local  leisure activities. Wherever you happen to be.",
+    title: "Reserveroo will let you see all the local leisure activities. Wherever you happen to be.",
     question: "",
     icon: FaCalendarAlt
   },
@@ -135,100 +135,19 @@ const questionMarks = [
 const H1 = styled.h1`
   padding-top: 12vh;
   margin-top: 0rem;
-  margin-bottom: 1rem;
-  font-size: 2.625rem;
+  margin-bottom: 1vh;
+  font-size: min(6vh, 8vw);
   color: ${styles.colors.white};
   text-align: center;
 `;
 
 const H1X = styled.h1`
-  font-size: 1.5rem;
+  font-size: min(3vh, 4vw);;
   width: 80%;
-  margin: 0.5rem auto;
+  margin: 1vh auto;
   color: ${styles.colors.gray[30]};
   text-align: center;
 `;
-
-const Button = styled.button`
-  color: ${styles.colors.white};
-  background-color: ${styles.colors.primary};
-  border-radius: 0.4rem;
-  padding: 0.7rem;
-  cursor: pointer;
-  margin: 0 auto;
-  display: block;
-  border: none;
-`;
-
-const Wrapper = styled.h1`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: ${styles.shadows[1]};
-  width: 300px;
-  padding: 2rem;
-  color: ${styles.colors.primary};
-  background-color: ${styles.colors.gray};
-`;
-
-const ALink = styled(Link)`
-  text-decoration: none;
-`;
-
-const Arrow = styled(FontAwesomeIcon)`
-  display: flex;
-  margin: 0 auto;
-  font-size: 2.5rem;
-  color: ${styles.colors.primary};
-`;
-
-const FirstQuestionMark = styled(FontAwesomeIcon)`
-  right: 5rem;
-  margin-top: 3rem;
-  font-size: 2.5rem;
-  transform: rotate(25deg);
-  position: absolute;
-`;
-const SecondQuestionMark = styled(FontAwesomeIcon)`
-  left: 10rem;
-  margin-top: 5rem;
-  font-size: 2.5rem;
-  transform: rotate(-25deg);
-  position: absolute;
-`;
-const ThirdQuestionMark = styled(FontAwesomeIcon)`
-  left: 15rem;
-  margin-top: 25rem;
-  font-size: 2.5rem;
-  transform: rotate(25deg);
-  position: absolute;
-`;
-const FourthQuestionMark = styled(FontAwesomeIcon)`
-  right: 20rem;
-  margin-top: 20rem;
-  font-size: 2.5rem;
-  transform: rotate(-25deg);
-  position: absolute;
-`;
-
-// const BackgroundStripe = styled.div<{ space: number, height: number }>`
-//   width: 100%;
-//   height: ${props => props.height}px;
-//   background-color: ${styles.colors.primary};
-//   margin-top: ${props => props.space}px;
-// `;
-
-// const BigText = styled.p<{ color: string }>`
-//   font-size: 4rem;
-//   width: 60%;
-//   top: 50%;
-//   position: fixed;
-//   left: 50%;
-//   transform: translateX(-50%);
-//   text-align: center;
-//   font-weight: bold;
-//   color: ${props => props.color};
-// `;
 
 const fade = keyframes`
   0% { opacity: 0 }
@@ -263,7 +182,7 @@ const ScrollItem = styled(animated.div).attrs(
   z-index: ${props => props.extendedPresence ? '5' : ''};
   ${ props => props.onlyDesktop ? `
     @media(max-width: 968px) {
-      display: none;
+      opacity: 0.25;
     }
   ` : ``};
   position: fixed;
@@ -305,24 +224,24 @@ const AboutSubSubHeader = styled.div`
 `;
 
 const PurpleSection = styled.div`
-  height: 600px;
+  height: 55vh;
   width: 100%;
   top: 0;
   position: absolute;
   background-color: ${styles.colors.primary};
 `;
 
-const ScrollDownIndicator = () => (
+const ScrollDownIndicator = ({ screenHeight }: {screenHeight: number}) => (
   <div style={{ width: '100%', marginTop: '5vh' }}>
     <H1X>Scroll down to find out!</H1X>
-    <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-      <FaAngleDownA size={24} color={styles.colors.white} style={{ animationDelay: '-1s' }} className="fade-arrow" />
+    <div style={{ textAlign: 'center', marginTop: '2vh' }}>
+      <FaAngleDownA size={24 / 1080 * screenHeight} color={styles.colors.white} style={{ animationDelay: '-1s' }} className="fade-arrow" />
     </div>
     <div style={{ textAlign: 'center' }}>
-      <FaAngleDownA size={24} color={styles.colors.white} style={{ animationDelay: '-0.5s' }} className="fade-arrow" />
+      <FaAngleDownA size={24 / 1080 * screenHeight} color={styles.colors.white} style={{ animationDelay: '-0.5s' }} className="fade-arrow" />
     </div>
     <div style={{ textAlign: 'center' }}>
-      <FaAngleDownA size={24} color={styles.colors.white} style={{ animationDelay: '0s' }} className="fade-arrow" />
+      <FaAngleDownA size={24 / 1080 * screenHeight} color={styles.colors.white} style={{ animationDelay: '0s' }} className="fade-arrow" />
     </div>
     {/* <div style={{ margin: '0 auto', textAlign: 'center' }}>
       <FaAngleDownA style={{ animationDelay: '-1s' }} className="fade-arrow" />
@@ -343,7 +262,7 @@ const ScrollDownIndicator = () => (
 )
 
 const Card = styled.div`
-  padding: 12px 24px;
+  padding: 1.2vh 24px;
   border-radius: 12px;
   max-width: 576px;
   @media (max-width: 1004px) {
@@ -364,7 +283,7 @@ const HowItWorksLineWrap = styled.div`
 const HowDoesItWorkItem = (props: { title: string, imgSrc: string, back: boolean, screenWidth: number }) => <HowItWorksLineWrap style={props.back ? {
   background: 'linear-gradient(to right, #f1f1f100, #f1f1f1ff, #f1f1f100)'
 } : {}}>
-  <h4 style={{ fontSize: '1.4rem', textAlign: props.screenWidth > 600 ? 'unset' : 'center', padding: '1.5rem' }}>{props.title}</h4>
+  <h4 style={{ fontSize: 'max(min(1.5vh, 3vw), 1rem)', textAlign: props.screenWidth > 600 ? 'unset' : 'center', padding: '1.5rem' }}>{props.title}</h4>
   <img style={{ boxShadow: styles.shadows[0] }} width={props.screenWidth > 600 ? 560 : props.screenWidth * 0.85} src={props.imgSrc} alt={''}/>
 </HowItWorksLineWrap>
 
@@ -386,7 +305,7 @@ const HowItWorksTitle = styled.h3`
 const QuestionTitle = styled.p`
   text-align: center;
   font-weight: bold;
-  font-size: 2rem;
+  font-size: max(min(4vh, 6vw), 1.5rem);
   margin-bottom: 0.5rem;
   padding: 0 1.5rem;
   color: ${styles.colors.primary};
@@ -395,7 +314,7 @@ const QuestionTitle = styled.p`
 const SecondScrollItemContainer = styled.div`
   display: flex;
   max-width: 936px;
-  margin: 5% auto;
+  margin: 5vh auto;
   position: relative;
   z-index: 2;
   align-items: center;
@@ -419,7 +338,7 @@ const ContactUs = styled.a`
 `;
 
 const QuestionInsideCard = styled.p`
-  font-size: 1rem;
+  font-size: max(min(1.5vh, 2.5vw), 0.8rem);
   font-weight: 400;
   margin-top: 0.5rem;
   color: ${styles.colors.white};
@@ -427,7 +346,7 @@ const QuestionInsideCard = styled.p`
 
 const TitleInsideCard = styled.p`
   font-weight: bold;
-  font-size: 2rem;
+  font-size: max(min(3vh, 5vw), 1.3rem);
   margin-bottom: 0.5rem;
   @media (max-width: 420px) {
     margin-bottom: -0.5rem;
@@ -437,10 +356,10 @@ const TitleInsideCard = styled.p`
 
 const QuestionCard: React.FC<React.PropsWithChildren<{title: string, white: boolean}>> = ({ title, children, white }) => {
 
-  return <div style={{ margin: '12rem auto', maxWidth: '938px', zIndex: 2, position: 'relative', display: 'flex' }}>
+  return <div style={{ margin: '14vh auto', maxWidth: '938px', zIndex: 2, position: 'relative', display: 'flex' }}>
     <Card>
-      <p style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '0.5rem', color: white ? styles.colors.white : styles.colors.primary }}>{title}</p>
-      <p style={{ fontSize: '1rem', fontWeight: '400', marginTop: '0.5rem', color: white ? styles.colors.white : styles.colors.black }}>{children}</p>
+      <p style={{ fontWeight: 'bold', fontSize: 'max(min(4vh, 6vw), 1.5rem)', marginBottom: '1vh', color: white ? styles.colors.white : styles.colors.primary }}>{title}</p>
+      <p style={{ fontSize: 'max(min(2vh, 3vw), 1rem)', fontWeight: '400', marginTop: '1vh', color: white ? styles.colors.white : styles.colors.black }}>{children}</p>
     </Card>
   </div>
 }
@@ -452,10 +371,14 @@ export default function About() {
   const requestRef = useRef<number | null>(null);
   const [ screenHeight, setScreenHeight ] = useState<number>(-1);
   const [ screenWidth, setScreenWidth ] = useState<number>(-1);
-  const [ isMobile, setIsMobile ] = useState<boolean>(true);
   // const [ scrollPosition, setScrollPosition ] = useState<number>(0);
   // const [ yScroll, setYScroll ] = useState<number>(0);
   const [ yScrollPixels, setYScrollPixels ] = useState<number>(0);
+
+  const howItWorksRef = useRef<HTMLDivElement>(null);
+
+  // Convert screen height percent to pixels and account for topbar (90px)
+  const gSHP = (fraction: number, sh: number) => sh * fraction + 90;
 
   // const [styles, api] = useSpring(() => ({ config: { friction: 25, tension: 300, mass: 0.5 },to: {transform: `translate3d(0px, 200px, 0px)` }}));
 
@@ -465,50 +388,56 @@ export default function About() {
   }
 
   const purpleSectionEffect: NoEaseObject = {
-    startValue: screenHeight * 1.5,
+    startValue: gSHP(1.6, screenHeight),
     slope: -1.2
   }
 
+  // All the +90 here is to account for the topbar!
   const subHeaderEasing = useMemo(() => getEasingInfo({
-    start: { value: screenHeight * 0.58, slope: -1.2 },
-    stand: { scroll: 600, value: 0 },
-    end: { scroll: 1300, slope: -1 }
+    start: { value: gSHP(0.5, screenHeight), slope: -1.2 },
+    stand: { scroll: gSHP(0.8, screenHeight), value: gSHP(-0.1, screenHeight) },
+    end: { scroll: gSHP(1, screenHeight), slope: -1 }
   }), [screenHeight]);
 
   const subSubHeaderEasing = useMemo(() => getEasingInfo({
-    start: { value: screenHeight * 0.68, slope: -1.7 },
-    stand: { scroll: screenHeight * 0.4, value: 0.2 * screenHeight },
-    end: { scroll: screenHeight * 0.82, slope: -1.7 }
-  }), [screenHeight]);
-  const subSubHeaderBlobEasing = useMemo(() => getEasingInfo({
-    start: { value: screenHeight * 0.92, slope: -1.8 },
-    stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
-    end: { scroll: screenHeight * 0.82, slope: -2 }
-  }), [screenHeight]);
-  const subSubHeaderIconsEasing = useMemo(() => getEasingInfo({
-    start: { value: screenHeight * 0.96, slope: -1.9 },
-    stand: { scroll: screenHeight * 0.5, value: 0.2 * screenHeight },
-    end: { scroll: screenHeight * 0.82, slope: -2.1 }
+    start: { value: gSHP(0.68, screenHeight), slope: -1.7 },
+    stand: { scroll: gSHP(0.4, screenHeight), value: gSHP(0.2, screenHeight) },
+    end: { scroll: gSHP(0.82, screenHeight), slope: -1.7 }
   }), [screenHeight]);
 
-  const purpleSectionIconEasings = useMemo(() => ([...Array(10).keys()].map((i) => getEasingInfo({
-    start: { value: screenHeight * 0.9 + ((Math.random() - 0.5) * 0.8), slope: -1.2 },
-    stand: { scroll: screenHeight * 0.7, value: 0.8 * screenHeight },
-    end: { scroll: screenHeight * 1.2 + ((Math.random() - 0.5) * 0.2), slope: -2.1 + ((Math.random() - 0.5) * 0.8) }
+  const subSubHeaderBlobEasing = useMemo(() => getEasingInfo({
+    start: { value: gSHP(0.92, screenHeight), slope: -1.8 },
+    stand: { scroll: gSHP(0.5, screenHeight), value: gSHP(0.2, screenHeight) },
+    end: { scroll: gSHP(0.82, screenHeight), slope: -2 }
+  }), [screenHeight]);
+
+  const subSubHeaderIconsEasing = useMemo(() => getEasingInfo({
+    start: { value: gSHP(0.96, screenHeight), slope: -1.9 },
+    stand: { scroll: gSHP(0.5, screenHeight), value: gSHP(0.2, screenHeight) },
+    end: { scroll: gSHP(0.82, screenHeight), slope: -2.1 }
+  }), [screenHeight]);
+
+  // const purpleSectionIconEasings = useMemo(() => ([...Array(10).keys()].map((i) => getEasingInfo({
+  //   start: { value: gSHP(1.6, screenHeight) + ((Math.random() - 0.5) * 0.8), slope: -1.2 },
+  //   stand: { scroll: gSHP(1.3, screenHeight), value: gSHP(0, screenHeight) },
+  //   end: { scroll: gSHP(1.5, screenHeight) + ((Math.random() - 0.5) * 0.2), slope: -3.1 + ((Math.random() - 0.5) * 0.8) }
+  // }))), [screenHeight]);
+
+  const purpleSectionIconEasings = useMemo(() => ([...Array(10).keys()].map((i): NoEaseObject => ({
+    startValue: gSHP(1.4 + ((Math.random() - 0.5) * 0.02), screenHeight),
+    slope: -1.2 + ((Math.random() - 0.5) * 0.3)
   }))), [screenHeight]);
 
   const explanationSection = useMemo(() => getEasingInfo({
-    start: { value: screenHeight * 1.4, slope: -1 },
-    stand: { scroll: screenHeight * 1.5, value: 0.3 * screenHeight },
-    end: { scroll: screenHeight * 1.8, slope: -1.2 }
+    start: { value: gSHP(1.4, screenHeight), slope: -1 },
+    stand: { scroll: gSHP(1.7, screenHeight), value: gSHP(0.1, screenHeight) },
+    end: { scroll: gSHP(1.9, screenHeight), slope: -1.2 }
   }), [screenHeight]);
 
   React.useEffect(() => {
     setLandingPage(true);
-    const isMobile = window.innerWidth < 420;
-    setScreenHeight(isMobile ? screen.height + 200 : screen.height);
+    setScreenHeight(window.innerHeight);
     setScreenWidth(window.innerWidth);
-    setIsMobile(isMobile);
     const handleScroll = (ev: Event) => {
       if (requestRef.current != null) {
         cancelAnimationFrame(requestRef.current);
@@ -523,6 +452,11 @@ export default function About() {
 
     const c = scrollEffectWrap.current;
 
+    window.onresize = e => {
+      setScreenHeight(window.innerHeight);
+      setScreenWidth(window.innerWidth);
+    };
+
     return () => {
       setLandingPage(false);
       if (c) c.onscroll = null;
@@ -530,40 +464,39 @@ export default function About() {
   }, []);
 
   const randomPositions = useMemo(() => ([
-    [0, 0, 20],
-    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
-    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
-    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
-    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
-    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
-    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
-    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
-    [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2],
+    [0, 0, 20]
+  ].concat([...Array(9).keys()].map(i =>
     [Math.random() * 300, Math.random() * 200 + 10, Math.random() * 60 + 30, (Math.random() - 0.5) * 2]
-  ]), []);
+  ))), []);
 
   const howItWorks: NoEaseObject = {
-    startValue: screenHeight * 2.4,
+    startValue: gSHP(2.5, screenHeight),
     slope: -1
   }
 
-  function getSpaceByScreenWidth (screenWidth: number): number {
-    if(screenWidth > 1200) return 4.5;
-    if(screenWidth < 420) return 5.6;
-    return 5.2;
+  function getSpaceByScreenWidth (screenHeight: number, screenWidth: number): number {
+    if (screenWidth > 1005) {
+      return 4 + (screenHeight < 900 ? 0.5 : 0);
+    }
+    if(screenWidth < 420) {
+      return 5.4 + (screenHeight < 900 ? 0.5 : 0);
+    }
+    return 4.6 + (screenHeight < 900 ? 0.5 : 0);
   }
 
   return (
     <>
       <ScrollEffectWrap style={ screenHeight == -1 ? { opacity: 0 } : { opacity: 1 }} ref={scrollEffectWrap}>
         {/* </animated.div> */}
-        <ScrollEffectInner space={getSpaceByScreenWidth(screenWidth)}>
+        <ScrollEffectInner space={(noEase(0, howItWorks) + (screenWidth < 1005 ? 2000 : 1400)) / screenHeight}>
         </ScrollEffectInner>
         <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, headerEffect)}px)`} >
           <AboutHeader>
             <H1>What is Reserveroo?</H1>
-            <IconRow />
-            <ScrollDownIndicator />
+            <div style={{ transform: `scale(${screenHeight / 1080 * 1.5}` }}>
+              <IconRow />
+            </div>
+            <ScrollDownIndicator screenHeight={screenHeight} />
           </AboutHeader>
         </ScrollItem>
         <ScrollItem transform={`translate(0px, ${easeInOut(yScrollPixels, subHeaderEasing)}px)`}>
@@ -573,18 +506,18 @@ export default function About() {
           <QuestionCard white={false} title={questions[0].title}>{questions[0].question}</QuestionCard>
           <AboutSubSubHeader />
         </ScrollItem>
-        <ScrollItem onlyDesktop={true} transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderBlobEasing)}px)`}>
+        <ScrollItem onlyDesktop={true} transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderBlobEasing) + (screenWidth < 936 ? 200 : 0)}px)`}>
           <div style={{ position: 'relative', maxWidth: '936px', margin: '12rem auto' }}>
-            <div style={{ position: 'absolute', right: '0', top: '0', width: '322px' }}>
+            <div style={{ position: 'absolute', right: screenWidth < 936 ? '25%' : '0', top: '0', width: '322px' }}>
               <svg width="322" height="260" viewBox="0 0 322 260" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M298.961 52.0567C267.327 19.5504 237.601 21.3634 192.442 14.8109C192.442 14.8109 106.606 1.36085 77.9936 1.36101C49.3814 1.36116 9.73876 -4.50162 4.22285 31.0199C-1.34129 66.8519 0.392164 55.3865 8.70401 90.6821C19.4841 136.459 -11.2671 162.591 16.288 200.695C40.3495 233.968 54.8386 244.056 94.5404 254.495C140.747 266.643 178.225 252.4 222.088 233.458C273.136 211.413 290.801 196.691 306.89 143.447C320.644 97.9325 332.117 86.1257 298.961 52.0567Z" fill="#2E294E" stroke="#F1F1F1"/>
               </svg>
             </div>
           </div>
         </ScrollItem>
-        <ScrollItem onlyDesktop={true} transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderIconsEasing)}px)`}>
+        <ScrollItem onlyDesktop={true} transform={`translate(0px, ${easeInOut(yScrollPixels, subSubHeaderIconsEasing) + (screenWidth < 936 ? 200 : 0)}px)`}>
           <div style={{ position: 'relative', maxWidth: '936px', margin: '12rem auto' }}>
-            <div style={{ position: 'absolute', right: '0', top: '0', width: '322px' }}>
+            <div style={{ position: 'absolute', right: screenWidth < 936 ? '25%' : '0', top: '0', width: '322px' }}>
               <FaVolleyballBall color={styles.colors.white} size={54} style={{ position: 'absolute', top: '35px', left: '40px' }} />
               <FaTableTennis color={styles.colors.white} size={54} style={{ position: 'absolute', top: '95px', left: '110px' }} />
               <FaGolfBall color={styles.colors.white} size={54} style={{ position: 'absolute', top: '155px', left: '180px' }} />
@@ -602,7 +535,7 @@ export default function About() {
           </div>
           <IconRow invertColors={true} />
         </ScrollItem>
-        <ScrollItem transform={`translate(0px, ${noEase(yScrollPixels, purpleSectionEffect)}px)`}>
+        <ScrollItem extendPresence={true} transform={`translate(0px, ${noEase(yScrollPixels, purpleSectionEffect)}px)`}>
           <SecondScrollItemContainer>
             <div style={{ flexShrink: '1', maxWidth: '786px' }}>
               <Card>
@@ -622,7 +555,7 @@ export default function About() {
           <PurpleSection />
         </ScrollItem>
         { [...Array(10).keys()].map(i => (
-          <ScrollItem onlyDesktop={true} key={i} transform={`translate(0px, ${easeInOut(yScrollPixels, purpleSectionIconEasings[i])}px)`}>
+          <ScrollItem onlyDesktop={true} key={i} transform={`translate(0px, ${noEase(yScrollPixels, purpleSectionIconEasings[i])}px)`}>
             <div style={{ position: 'relative', maxWidth: '936px', margin: '12rem auto' }}>
               <div style={{ position: 'absolute', right: '0', top: '0', width: '322px' }}>
               <FaQuestionCircle size={randomPositions[i][2]} color={styles.colors.white} style={{ transform: `rotate(${randomPositions[i][3] / Math.PI * 180}deg)`, position: 'absolute', top: `${randomPositions[i][1]}`, left: `${randomPositions[i][0]}px` }} />
@@ -630,7 +563,7 @@ export default function About() {
             </div>
           </ScrollItem>
         )) }
-        <ScrollItem extendPresence={true} transform={`translate(0px, ${noEase(yScrollPixels, howItWorks)}px)`}>
+        <ScrollItem ref={howItWorksRef} extendPresence={true} transform={`translate(0px, ${noEase(yScrollPixels, howItWorks)}px)`}>
           <HowItWorksWrap>
             <HowItWorksTitle>How does it work?</HowItWorksTitle>
             <HowDoesItWorkItem screenWidth={screenWidth} back={false} title={'1. Find your favourite activity'} imgSrc={search} />
@@ -650,7 +583,8 @@ export default function About() {
             fontSize: '1rem',
             fontWeight: 'bold',
             textAlign: 'center',
-            margin: '2rem auto'
+            margin: '2rem auto',
+            padding: '0 1rem'
           }}>Contact us at: reserveroo@reserveroo.co.uk</p>
         </ScrollItem>
       </ScrollEffectWrap>
